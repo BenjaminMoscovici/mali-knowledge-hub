@@ -1829,7 +1829,7 @@ st.markdown(
 <style>
     .block-container {
         max-width: 1180px;
-        padding-top: 2.4rem;
+        padding-top: 5.2rem;
         padding-bottom: 4rem;
     }
 
@@ -1846,23 +1846,8 @@ st.markdown(
         font-size: 1.08rem;
         line-height: 1.55;
         color: #53657a;
-        margin-bottom: 2rem;
-        max-width: 900px;
-    }
-
-    .kh-search-header {
-        font-size: 2.15rem;
-        line-height: 1.15;
-        font-weight: 800;
-        letter-spacing: -0.025em;
-        color: #0b2b55;
-        margin: 0 0 0.25rem 0;
-    }
-
-    .kh-search-copy {
-        color: #607086;
-        font-size: 1rem;
-        margin-bottom: 0.65rem;
+        margin-bottom: 1.8rem;
+        max-width: 980px;
     }
 
     .kh-examples-label {
@@ -1888,8 +1873,53 @@ st.markdown(
     }
 
     div[data-testid="stButton"] > button {
-        border-radius: 10px;
+        border-radius: 12px;
         font-weight: 650;
+    }
+
+    button[kind="primary"] {
+        background: #2489d8 !important;
+        border-color: #2489d8 !important;
+        color: white !important;
+        min-height: 3.05rem;
+        font-size: 1rem;
+    }
+
+    button[kind="primary"]:hover {
+        background: #1678c6 !important;
+        border-color: #1678c6 !important;
+    }
+
+    .kh-example-card {
+        border: 1px solid #d9e6f2;
+        border-radius: 14px;
+        padding: 1rem 1rem 0.9rem 1rem;
+        min-height: 128px;
+        background: #fbfdff;
+        box-shadow: 0 2px 10px rgba(26, 79, 126, 0.045);
+        margin-bottom: 0.45rem;
+    }
+
+    .kh-example-kicker {
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.025em;
+        color: #237dc4;
+        margin-bottom: 0.45rem;
+    }
+
+    .kh-example-text {
+        font-size: 0.96rem;
+        line-height: 1.42;
+        color: #17334f;
+        min-height: 66px;
+    }
+
+    .kh-how-copy {
+        color: #6b7b8d;
+        font-size: 0.92rem;
+        margin-top: -0.2rem;
+        margin-bottom: 0.3rem;
     }
 
     .kh-section-spacer {
@@ -1901,18 +1931,6 @@ st.markdown(
 <div class="kh-subtitle">
 AI-powered knowledge and analysis platform for Humanitarian,
 Development and Peace stakeholders in Mali
-</div>
-""",
-    unsafe_allow_html=True
-)
-
-
-st.markdown(
-    """
-<div class="kh-search-header">Ask the Knowledge Hub</div>
-<div class="kh-search-copy">
-Get evidence-grounded answers across government frameworks,
-humanitarian needs and NGO activities.
 </div>
 """,
     unsafe_allow_html=True
@@ -1944,7 +1962,7 @@ ask = st.button(
 
 
 st.markdown(
-    '<div class="kh-examples-label">Or try one of these example questions:</div>',
+    '<div class="kh-examples-label">Try one of these example questions:</div>',
     unsafe_allow_html=True
 )
 
@@ -1956,23 +1974,47 @@ example_col1, example_col2, example_col3 = st.columns(
 
 
 with example_col1:
+    st.markdown(
+        """
+<div class="kh-example-card">
+    <div class="kh-example-kicker">🔎 SEARCH</div>
+    <div class="kh-example-text">
+        What are the Government's priorities for local development
+        in Kayes?
+    </div>
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
     st.button(
-        "🔎  SEARCH  ·  What are the Government of Mali's priorities "
-        "for decentralisation and local development?",
+        "Use this question →",
         key="example_search",
         use_container_width=True,
         on_click=set_example_question,
         args=(
-            "What are the Government of Mali's priorities for "
-            "decentralisation and local development?",
+            "What are the Government's priorities for local "
+            "development in Kayes?",
         )
     )
 
 
 with example_col2:
+    st.markdown(
+        """
+<div class="kh-example-card">
+    <div class="kh-example-kicker">↔ COMPARE</div>
+    <div class="kh-example-text">
+        In Mopti, how do humanitarian needs compare with current
+        NGO interventions?
+    </div>
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
     st.button(
-        "↔️  COMPARE  ·  In Mopti, how do humanitarian needs compare "
-        "with current NGO interventions?",
+        "Use this question →",
         key="example_compare",
         use_container_width=True,
         on_click=set_example_question,
@@ -1984,16 +2026,27 @@ with example_col2:
 
 
 with example_col3:
+    st.markdown(
+        """
+<div class="kh-example-card">
+    <div class="kh-example-kicker">💡 ANALYSE &amp; PLAN</div>
+    <div class="kh-example-text">
+        Where are the main gaps and opportunities for stronger
+        Humanitarian-Development-Peace coordination in Gao?
+    </div>
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
     st.button(
-        "💡  ANALYSE & PLAN  ·  Where are the main gaps and "
-        "opportunities for stronger Humanitarian-Development-Peace "
-        "coordination in Mopti?",
+        "Use this question →",
         key="example_plan",
         use_container_width=True,
         on_click=set_example_question,
         args=(
             "Where are the main gaps and opportunities for stronger "
-            "Humanitarian-Development-Peace coordination in Mopti?",
+            "Humanitarian-Development-Peace coordination in Gao?",
         )
     )
 
@@ -2007,6 +2060,11 @@ st.markdown(
 # ------------------------------------------------------------
 # HOW THE HUB WORKS — PHASE 1 PLACEHOLDER
 # ------------------------------------------------------------
+
+st.markdown(
+    '<div class="kh-how-copy">From your question to an evidence-based answer — in 6 steps</div>',
+    unsafe_allow_html=True
+)
 
 with st.expander(
     "How does the Knowledge Hub work?"
