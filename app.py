@@ -1,5 +1,11 @@
 
 import os
+import re
+import unicodedata
+import importlib.util
+from pathlib import Path
+from collections import defaultdict
+
 import streamlit as st
 
 from supabase import create_client
@@ -16,6 +22,7 @@ st.set_page_config(
     layout="wide"
 )
 
+
 def get_secret(name):
     try:
         return st.secrets[name]
@@ -26,6 +33,10 @@ def get_secret(name):
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_SECRET_KEY = get_secret("SUPABASE_SECRET_KEY")
 OPENAI_API_KEY = get_secret("OPENAI_API_KEY")
+HDX_HAPI_APP_IDENTIFIER = get_secret(
+    "HDX_HAPI_APP_IDENTIFIER"
+)
+
 
 supabase = create_client(
     SUPABASE_URL,
@@ -38,99 +49,1587 @@ openai_client = OpenAI(
 
 
 # ============================================================
-# RETRIEVAL
+# OPERATIONAL RUNTIME
 # ============================================================
 
-def search_knowledge_base(question, match_count=12):
+RUNTIME_BUCKET = "knowledge-hub-runtime"
+RUNTIME_STORAGE_PATH = "knowledge_hub_runtime_v0_3.py"
 
-    embedding_response = openai_client.embeddings.create(
-        model="text-embedding-3-small",
-        input=question
+runtime_local_path = Path(
+    "/tmp/knowledge_hub_runtime_v0_3.py"
+)
+
+runtime_bytes = (
+    supabase
+    .storage
+    .from_(RUNTIME_BUCKET)
+    .download(RUNTIME_STORAGE_PATH)
+)
+
+runtime_local_path.write_bytes(
+    runtime_bytes
+)
+
+spec = importlib.util.spec_from_file_location(
+    "knowledge_hub_runtime",
+    runtime_local_path
+)
+
+knowledge_hub_runtime = (
+    importlib.util.module_from_spec(spec)
+)
+
+spec.loader.exec_module(
+    knowledge_hub_runtime
+)
+
+knowledge_hub_runtime.configure_runtime(
+    supabase,
+    openai_client,
+    HDX_HAPI_APP_IDENTIFIER
+)
+
+
+# ============================================================
+# OPERATIONAL SOURCE FUNCTIONS
+# ============================================================
+
+search_knowledge_base = (
+    knowledge_hub_runtime.search_knowledge_base
+)
+
+research_humanitarian_needs = (
+    knowledge_hub_runtime.research_humanitarian_needs
+)
+
+run_fongim_sync_extract = (
+    knowledge_hub_runtime.run_fongim_sync_extract
+)
+
+
+# ============================================================
+# TEXT NORMALIZATION
+# ============================================================
+
+def normalize_text(value):
+    value = str(value or "")
+
+    value = unicodedata.normalize(
+        "NFKD",
+        value
     )
 
-    query_embedding = embedding_response.data[0].embedding
+    value = "".join(
+        c
+        for c in value
+        if not unicodedata.combining(c)
+    )
 
-    response = supabase.rpc(
-        "match_chunks",
-        {
-            "query_embedding": query_embedding,
-            "match_count": match_count
-        }
-    ).execute()
+    return value.lower().strip()
 
-    raw_results = response.data or []
 
-    document_ids = list({
-        r.get("document_id")
-        for r in raw_results
-        if r.get("document_id")
-    })
+# ============================================================
+# SUPABASE PAGINATION
+# ============================================================
 
-    documents_by_id = {}
+def fetch_all_rows(
+    table_name,
+    columns="*",
+    eq_filters=None,
+    page_size=1000
+):
 
-    if document_ids:
+    if eq_filters is None:
+        eq_filters = {}
 
-        docs_response = (
+    rows = []
+    start = 0
+
+    while True:
+
+        query = (
             supabase
-            .table("documents")
-            .select(
-                "id,title,organization,publication_date,"
-                "valid_from,valid_until,document_type,"
-                "language,geographic_scope,status,version"
+            .table(table_name)
+            .select(columns)
+        )
+
+        for key, value in eq_filters.items():
+
+            query = query.eq(
+                key,
+                value
             )
-            .in_("id", document_ids)
+
+        response = (
+            query
+            .range(
+                start,
+                start + page_size - 1
+            )
             .execute()
         )
 
-        documents_by_id = {
-            d["id"]: d
-            for d in docs_response.data
+        batch = response.data or []
+
+        rows.extend(batch)
+
+        if len(batch) < page_size:
+            break
+
+        start += page_size
+
+    return rows
+
+
+# ============================================================
+# GEOGRAPHY RESOLVER
+# ============================================================
+
+@st.cache_data(ttl=3600)
+def get_fongim_geographies():
+
+    rows = fetch_all_rows(
+        "fongim_project_locations",
+        columns="region,cercle",
+        eq_filters={
+            "is_present_in_source": True
         }
+    )
 
-    results = []
+    regions = sorted({
+        row.get("region")
+        for row in rows
+        if row.get("region")
+    })
 
-    for r in raw_results:
+    cercles = sorted({
+        row.get("cercle")
+        for row in rows
+        if row.get("cercle")
+    })
 
-        doc = documents_by_id.get(
-            r.get("document_id"),
-            {}
+    return {
+        "regions": regions,
+        "cercles": cercles
+    }
+
+
+def find_name_in_question(
+    question,
+    candidates
+):
+
+    q = normalize_text(question)
+
+    matches = []
+
+    for candidate in candidates:
+
+        normalized_candidate = normalize_text(
+            candidate
         )
 
-        results.append({
-            **r,
-            "document_title": doc.get("title"),
-            "organization": doc.get("organization"),
-            "document_type": doc.get("document_type"),
-            "version": doc.get("version")
-        })
+        pattern = (
+            r"(?<!\w)"
+            + re.escape(normalized_candidate)
+            + r"(?!\w)"
+        )
 
-    return results
+        if re.search(
+            pattern,
+            q
+        ):
+            matches.append(candidate)
+
+    matches = sorted(
+        matches,
+        key=lambda x: len(str(x)),
+        reverse=True
+    )
+
+    return matches
+
+
+def resolve_geography(question):
+
+    geographies = get_fongim_geographies()
+
+    region_matches = find_name_in_question(
+        question,
+        geographies["regions"]
+    )
+
+    cercle_matches = find_name_in_question(
+        question,
+        geographies["cercles"]
+    )
+
+    q = normalize_text(question)
+
+    explicit_region = None
+    explicit_cercle = None
+
+    for region in region_matches:
+
+        r = normalize_text(region)
+
+        if (
+            f"region de {r}" in q
+            or f"region du {r}" in q
+            or f"region d'{r}" in q
+            or f"region {r}" in q
+        ):
+            explicit_region = region
+            break
+
+    for cercle in cercle_matches:
+
+        c = normalize_text(cercle)
+
+        if (
+            f"cercle de {c}" in q
+            or f"cercle du {c}" in q
+            or f"cercle d'{c}" in q
+            or f"cercle {c}" in q
+        ):
+            explicit_cercle = cercle
+            break
+
+    if explicit_cercle:
+
+        return {
+            "region": explicit_region,
+            "cercle": explicit_cercle,
+            "assumption": None
+        }
+
+    if explicit_region:
+
+        return {
+            "region": explicit_region,
+            "cercle": None,
+            "assumption": None
+        }
+
+    if region_matches:
+
+        region = region_matches[0]
+
+        assumption = None
+
+        if any(
+            normalize_text(c)
+            == normalize_text(region)
+            for c in cercle_matches
+        ):
+
+            assumption = (
+                f"Interpreted '{region}' as the region, "
+                f"not the cercle."
+            )
+
+        return {
+            "region": region,
+            "cercle": None,
+            "assumption": assumption
+        }
+
+    if cercle_matches:
+
+        return {
+            "region": None,
+            "cercle": cercle_matches[0],
+            "assumption": None
+        }
+
+    return {
+        "region": None,
+        "cercle": None,
+        "assumption": None
+    }
 
 
 # ============================================================
-# EVIDENCE BUNDLE
+# SOURCE ROUTER
 # ============================================================
 
-def build_evidence_bundle(results):
+HUMANITARIAN_KEYWORDS = [
+    "humanitarian",
+    "humanitaire",
+    "besoin",
+    "needs",
+    "people in need",
+    "personnes dans le besoin",
+    "pin",
+    "food security",
+    "securite alimentaire",
+    "nutrition",
+    "wash",
+    "eha",
+    "health",
+    "sante",
+    "protection",
+    "gbv",
+    "violence basee sur le genre",
+    "mine action",
+    "deplacement",
+    "deplace",
+    "displacement"
+]
 
+
+FONGIM_KEYWORDS = [
+    "project",
+    "projet",
+    "intervention",
+    "programme",
+    "organization",
+    "organisation",
+    "ong",
+    "ngo",
+    "actor",
+    "acteur",
+    "partner",
+    "partenaire",
+    "coverage",
+    "couverture",
+    "who works",
+    "qui intervient",
+    "sector",
+    "secteur",
+    "presence",
+    "présence"
+]
+
+
+def contains_any_keyword(
+    question,
+    keywords
+):
+
+    q = normalize_text(question)
+
+    return any(
+        normalize_text(keyword) in q
+        for keyword in keywords
+    )
+
+
+def plan_sources(
+    question,
+    geography
+):
+
+    use_hapi = contains_any_keyword(
+        question,
+        HUMANITARIAN_KEYWORDS
+    )
+
+    use_fongim = contains_any_keyword(
+        question,
+        FONGIM_KEYWORDS
+    )
+
+    return {
+        "documents": True,
+        "hapi": use_hapi,
+        "fongim": use_fongim
+    }
+
+
+# ============================================================
+# DOCUMENT FAMILY CLASSIFICATION
+# ============================================================
+
+def classify_document_family(item):
+
+    title = normalize_text(
+        item.get("document_title")
+    )
+
+    organization = normalize_text(
+        item.get("organization")
+    )
+
+    if (
+        "besoins humanitaires" in title
+        or "plan de reponse" in title
+        or "humanitarian" in title
+        or "ocha" in organization
+    ):
+
+        return (
+            "Humanitarian Response Plan / HNRP"
+        )
+
+    return "Government strategies"
+
+
+# ============================================================
+# DOCUMENT EVIDENCE
+# ============================================================
+
+@st.cache_data(ttl=3600)
+def get_document_groups():
+    """
+    Resolve document families dynamically from the document registry.
+
+    The HNRP is identified from existing document metadata.
+    Every other document in the current corpus belongs to the
+    government/development family.
+    """
+
+    documents = (
+        supabase
+        .table("documents")
+        .select("id,title,document_type,organization")
+        .execute()
+        .data
+        or []
+    )
+
+    hnrp_document_ids = []
+    government_document_ids = []
+
+    for document in documents:
+
+        document_id = document.get("id")
+
+        if not document_id:
+            continue
+
+        document_type = normalize_text(
+            document.get("document_type")
+        )
+
+        title = normalize_text(
+            document.get("title")
+        )
+
+        organization = normalize_text(
+            document.get("organization")
+        )
+
+        is_hnrp = (
+            document_type
+            == normalize_text(
+                "Humanitarian Needs and Response Plan"
+            )
+            or "besoins humanitaires" in title
+            or "plan de reponse" in title
+            or "humanitarian needs" in title
+            or (
+                "humanitarian" in title
+                and "ocha" in organization
+            )
+        )
+
+        if is_hnrp:
+            hnrp_document_ids.append(
+                str(document_id)
+            )
+        else:
+            government_document_ids.append(
+                str(document_id)
+            )
+
+    return {
+        "government":
+            government_document_ids,
+
+        "hnrp":
+            hnrp_document_ids
+    }
+
+
+def build_document_evidence(
+    question,
+    government_count=10,
+    hnrp_count=10
+):
+    """
+    Retrieve government/development evidence and HNRP evidence
+    as two independently filtered vector searches.
+
+    Filtering happens inside the Supabase match_chunks RPC before
+    vector ranking, so one document family cannot crowd out the other.
+    """
+
+    document_groups = get_document_groups()
+
+    government_document_ids = (
+        document_groups["government"]
+    )
+
+    hnrp_document_ids = (
+        document_groups["hnrp"]
+    )
+
+
+    # --------------------------------------------------------
+    # 1. GOVERNMENT / DEVELOPMENT STRATEGIES
+    # --------------------------------------------------------
+
+    government_results = []
+
+    if government_document_ids:
+
+        government_query = f"""
+{question}
+
+Retrieve evidence specifically about Mali's national development
+strategy, long-term policy priorities, government objectives,
+Vision Mali 2063, SNEDD 2024-2033, structural projects and
+development planning.
+
+Focus on the government/development evidence that is most relevant
+to the user's question.
+"""
+
+        government_results = search_knowledge_base(
+            government_query,
+            match_count=government_count,
+            filter_document_ids=government_document_ids
+        )
+
+
+    # --------------------------------------------------------
+    # 2. HUMANITARIAN RESPONSE PLAN / HNRP
+    # --------------------------------------------------------
+
+    hnrp_results = []
+
+    if hnrp_document_ids:
+
+        hnrp_query = f"""
+{question}
+
+Retrieve evidence specifically from Mali's humanitarian needs
+and response planning documents, including humanitarian needs,
+response priorities, humanitarian objectives and HNRP 2026.
+
+Focus on the humanitarian planning evidence that is most relevant
+to the user's question.
+"""
+
+        hnrp_results = search_knowledge_base(
+            hnrp_query,
+            match_count=hnrp_count,
+            filter_document_ids=hnrp_document_ids
+        )
+
+
+    # --------------------------------------------------------
+    # 3. COMBINE + DEDUPLICATE
+    # --------------------------------------------------------
+
+    combined = (
+        government_results
+        + hnrp_results
+    )
+
+    seen = set()
     evidence = []
 
-    for i, r in enumerate(results, 1):
+    for result in combined:
+
+        dedupe_key = (
+            result.get("document_id"),
+            result.get("page_number"),
+            result.get("section_title"),
+            result.get("content")
+        )
+
+        if dedupe_key in seen:
+            continue
+
+        seen.add(
+            dedupe_key
+        )
 
         evidence.append({
-            "evidence_id": f"E{i}",
-            "document_id": r.get("document_id"),
-            "document_title": r.get("document_title"),
-            "document_type": r.get("document_type"),
-            "organization": r.get("organization"),
-            "version": r.get("version"),
-            "page": r.get("page_number"),
-            "section": r.get("section_title"),
-            "similarity": r.get("similarity"),
-            "content": r.get("content")
+            "source_type":
+                "knowledge_base_document",
+
+            "source_family":
+                classify_document_family(
+                    result
+                ),
+
+            "document_id":
+                result.get(
+                    "document_id"
+                ),
+
+            "document_title":
+                result.get(
+                    "document_title"
+                ),
+
+            "document_type":
+                result.get(
+                    "document_type"
+                ),
+
+            "organization":
+                result.get(
+                    "organization"
+                ),
+
+            "version":
+                result.get(
+                    "version"
+                ),
+
+            "page":
+                result.get(
+                    "page_number"
+                ),
+
+            "section":
+                result.get(
+                    "section_title"
+                ),
+
+            "similarity":
+                result.get(
+                    "similarity"
+                ),
+
+            "content":
+                result.get(
+                    "content"
+                )
         })
 
     return evidence
+
+
+# ============================================================
+# HAPI REDUCER
+# ============================================================
+
+def reduce_hapi_humanitarian_evidence(
+    evidence_items,
+    max_sector_examples=6
+):
+
+    if not evidence_items:
+        return []
+
+    total_rows = [
+        item
+        for item in evidence_items
+        if normalize_text(
+            item.get(
+                "population_category"
+            )
+        ) == "total"
+    ]
+
+    if not total_rows:
+        return evidence_items[:30]
+
+    intersectoral = [
+        item
+        for item in total_rows
+        if item.get(
+            "sector_name"
+        ) == "Intersectoral"
+    ]
+
+    intersectoral = sorted(
+        intersectoral,
+        key=lambda x: (
+            x.get("admin1_name") or "",
+            x.get("admin2_name") or ""
+        )
+    )
+
+    sector_rows = [
+        item
+        for item in total_rows
+        if item.get(
+            "sector_name"
+        ) != "Intersectoral"
+    ]
+
+    sector_rows = sorted(
+        sector_rows,
+        key=lambda x:
+            x.get("value") or 0,
+        reverse=True
+    )
+
+    sector_examples = []
+    used_sectors = set()
+
+    for item in sector_rows:
+
+        sector = item.get(
+            "sector_name"
+        )
+
+        if sector not in used_sectors:
+
+            sector_examples.append(
+                item
+            )
+
+            used_sectors.add(
+                sector
+            )
+
+        if (
+            len(sector_examples)
+            >= max_sector_examples
+        ):
+            break
+
+    return (
+        intersectoral
+        + sector_examples
+    )
+
+
+def build_hapi_evidence(
+    geography
+):
+
+    raw = research_humanitarian_needs(
+        admin1_name=(
+            geography.get("region")
+            if not geography.get("cercle")
+            else None
+        ),
+        admin2_name=geography.get(
+            "cercle"
+        ),
+        population_status="INN",
+        latest_only=True,
+        limit=10000
+    )
+
+    reduced = (
+        reduce_hapi_humanitarian_evidence(
+            raw
+        )
+    )
+
+    evidence = []
+
+    for item in reduced:
+
+        evidence.append({
+            **item,
+
+            "source_family":
+                "OCHA humanitarian data",
+
+            "content":
+                item.get("passage"),
+
+            "document_title":
+                item.get(
+                    "dataset_title"
+                )
+                or item.get(
+                    "document_title"
+                )
+                or "HDX HAPI",
+
+            "page":
+                None,
+
+            "section":
+                item.get(
+                    "sector_name"
+                ),
+
+            "organization":
+                item.get(
+                    "provider_name"
+                )
+                or "OCHA / HDX",
+
+            "version":
+                None
+        })
+
+    return {
+        "raw_count": len(raw),
+        "evidence": evidence
+    }
+
+
+# ============================================================
+# FONGIM STRUCTURED RESEARCH
+# ============================================================
+
+def get_rows_for_project_ids(
+    table_name,
+    columns,
+    project_ids,
+    chunk_size=300
+):
+
+    if not project_ids:
+        return []
+
+    rows = []
+
+    for start in range(
+        0,
+        len(project_ids),
+        chunk_size
+    ):
+
+        chunk = project_ids[
+            start:start + chunk_size
+        ]
+
+        response = (
+            supabase
+            .table(table_name)
+            .select(columns)
+            .in_(
+                "fongim_project_id",
+                chunk
+            )
+            .eq(
+                "is_present_in_source",
+                True
+            )
+            .execute()
+        )
+
+        rows.extend(
+            response.data or []
+        )
+
+    return rows
+
+
+def research_fongim(
+    geography
+):
+
+    location_filters = {
+        "is_present_in_source": True
+    }
+
+    if geography.get("region"):
+
+        location_filters[
+            "region"
+        ] = geography["region"]
+
+    if geography.get("cercle"):
+
+        location_filters[
+            "cercle"
+        ] = geography["cercle"]
+
+    locations = fetch_all_rows(
+        "fongim_project_locations",
+        columns=(
+            "fongim_project_id,"
+            "region,"
+            "cercle,"
+            "commune_raw,"
+            "last_synced_at"
+        ),
+        eq_filters=location_filters
+    )
+
+    project_ids = sorted({
+        row.get(
+            "fongim_project_id"
+        )
+        for row in locations
+        if row.get(
+            "fongim_project_id"
+        ) is not None
+    })
+
+    if not project_ids:
+
+        return {
+            "project_count": 0,
+            "location_count": 0,
+            "evidence": []
+        }
+
+    projects = get_rows_for_project_ids(
+        "fongim_projects",
+        (
+            "fongim_project_id,"
+            "project_name,"
+            "start_date,"
+            "end_date,"
+            "status,"
+            "project_type,"
+            "beneficiaries,"
+            "donor,"
+            "funding_amount_raw,"
+            "last_synced_at"
+        ),
+        project_ids
+    )
+
+    sectors = get_rows_for_project_ids(
+        "fongim_project_sectors",
+        (
+            "fongim_project_id,"
+            "sector,"
+            "sector_other_raw"
+        ),
+        project_ids
+    )
+
+    project_orgs = get_rows_for_project_ids(
+        "fongim_project_organizations",
+        (
+            "fongim_project_id,"
+            "fongim_organization_id"
+        ),
+        project_ids
+    )
+
+    organization_ids = sorted({
+        row.get(
+            "fongim_organization_id"
+        )
+        for row in project_orgs
+        if row.get(
+            "fongim_organization_id"
+        ) is not None
+    })
+
+    organizations = []
+
+    if organization_ids:
+
+        response = (
+            supabase
+            .table(
+                "fongim_organizations"
+            )
+            .select(
+                "fongim_organization_id,"
+                "organization_name"
+            )
+            .in_(
+                "fongim_organization_id",
+                organization_ids
+            )
+            .eq(
+                "is_present_in_source",
+                True
+            )
+            .execute()
+        )
+
+        organizations = (
+            response.data or []
+        )
+
+    org_name_by_id = {
+        row.get(
+            "fongim_organization_id"
+        ):
+        row.get(
+            "organization_name"
+        )
+        for row in organizations
+    }
+
+
+    # --------------------------------------------------------
+    # SECTOR COUNTS
+    # --------------------------------------------------------
+
+    sector_projects = defaultdict(
+        set
+    )
+
+    for row in sectors:
+
+        sector = (
+            row.get("sector")
+            or "Unspecified"
+        )
+
+        sector_projects[
+            sector
+        ].add(
+            row.get(
+                "fongim_project_id"
+            )
+        )
+
+    top_sectors = sorted(
+        (
+            (
+                sector,
+                len(ids)
+            )
+            for sector, ids
+            in sector_projects.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+
+    # --------------------------------------------------------
+    # CERCLE COUNTS
+    # --------------------------------------------------------
+
+    circle_projects = defaultdict(
+        set
+    )
+
+    for row in locations:
+
+        cercle = row.get(
+            "cercle"
+        )
+
+        if cercle:
+
+            circle_projects[
+                cercle
+            ].add(
+                row.get(
+                    "fongim_project_id"
+                )
+            )
+
+    top_cercles = sorted(
+        (
+            (
+                cercle,
+                len(ids)
+            )
+            for cercle, ids
+            in circle_projects.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+
+    # --------------------------------------------------------
+    # ORGANIZATION COUNTS
+    # --------------------------------------------------------
+
+    org_projects = defaultdict(
+        set
+    )
+
+    for row in project_orgs:
+
+        org_id = row.get(
+            "fongim_organization_id"
+        )
+
+        org_name = (
+            org_name_by_id.get(
+                org_id
+            )
+            or str(org_id)
+        )
+
+        org_projects[
+            org_name
+        ].add(
+            row.get(
+                "fongim_project_id"
+            )
+        )
+
+    top_orgs = sorted(
+        (
+            (
+                org,
+                len(ids)
+            )
+            for org, ids
+            in org_projects.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+
+    # --------------------------------------------------------
+    # GEOGRAPHIC SCOPE
+    # --------------------------------------------------------
+
+    scope_parts = []
+
+    if geography.get("region"):
+
+        scope_parts.append(
+            f"region={geography['region']}"
+        )
+
+    if geography.get("cercle"):
+
+        scope_parts.append(
+            f"cercle={geography['cercle']}"
+        )
+
+    geographic_scope = (
+        ", ".join(scope_parts)
+        if scope_parts
+        else "Mali"
+    )
+
+
+    latest_sync = max(
+        [
+            str(
+                row.get(
+                    "last_synced_at"
+                )
+            )
+            for row in projects
+            if row.get(
+                "last_synced_at"
+            )
+        ],
+        default=None
+    )
+
+
+    # --------------------------------------------------------
+    # BUILD STRUCTURED EVIDENCE
+    # --------------------------------------------------------
+
+    evidence = []
+
+
+    evidence.append({
+        "source_type":
+            "fongim_structured",
+
+        "source_family":
+            "FONGIM intervention data",
+
+        "document_title":
+            "FONGIM operational project data",
+
+        "document_type":
+            "structured_operational_data",
+
+        "organization":
+            "FONGIM",
+
+        "version":
+            None,
+
+        "page":
+            None,
+
+        "section":
+            geographic_scope,
+
+        "content": (
+            f"FONGIM records "
+            f"{len(project_ids)} unique projects "
+            f"with at least one recorded location in "
+            f"{geographic_scope}, represented by "
+            f"{len(locations)} project-location records. "
+            f"Latest synchronization timestamp among "
+            f"these project records: {latest_sync}. "
+            f"These counts describe recorded project presence; "
+            f"they do not demonstrate funding adequacy, "
+            f"population coverage, implementation quality "
+            f"or impact."
+        )
+    })
+
+
+    if top_sectors:
+
+        sector_text = "; ".join(
+            f"{sector}: {count} projects"
+            for sector, count
+            in top_sectors[:10]
+        )
+
+        evidence.append({
+            "source_type":
+                "fongim_structured",
+
+            "source_family":
+                "FONGIM intervention data",
+
+            "document_title":
+                "FONGIM operational project data",
+
+            "document_type":
+                "structured_operational_data",
+
+            "organization":
+                "FONGIM",
+
+            "version":
+                None,
+
+            "page":
+                None,
+
+            "section":
+                "Sector profile",
+
+            "content": (
+                f"Among FONGIM projects with at least one "
+                f"recorded location in {geographic_scope}, "
+                f"the number of unique projects associated "
+                f"with each leading sector is: "
+                f"{sector_text}. "
+                f"A project may be associated with more than "
+                f"one sector, so sector counts must not be summed "
+                f"to derive a project total."
+            )
+        })
+
+
+    if top_cercles:
+
+        cercle_text = "; ".join(
+            f"{cercle}: {count} projects"
+            for cercle, count
+            in top_cercles[:10]
+        )
+
+        evidence.append({
+            "source_type":
+                "fongim_structured",
+
+            "source_family":
+                "FONGIM intervention data",
+
+            "document_title":
+                "FONGIM operational project data",
+
+            "document_type":
+                "structured_operational_data",
+
+            "organization":
+                "FONGIM",
+
+            "version":
+                None,
+
+            "page":
+                None,
+
+            "section":
+                "Recorded geographic presence",
+
+            "content": (
+                f"Unique FONGIM projects with a recorded "
+                f"location in each cercle within the selected "
+                f"scope: {cercle_text}. "
+                f"This is a count of recorded project presence, "
+                f"not a measure of needs coverage or resources."
+            )
+        })
+
+
+    if top_orgs:
+
+        org_text = "; ".join(
+            f"{org}: {count} projects"
+            for org, count
+            in top_orgs[:10]
+        )
+
+        evidence.append({
+            "source_type":
+                "fongim_structured",
+
+            "source_family":
+                "FONGIM intervention data",
+
+            "document_title":
+                "FONGIM operational project data",
+
+            "document_type":
+                "structured_operational_data",
+
+            "organization":
+                "FONGIM",
+
+            "version":
+                None,
+
+            "page":
+                None,
+
+            "section":
+                "Organizations",
+
+            "content": (
+                f"Primary organizations associated with "
+                f"FONGIM projects in {geographic_scope}: "
+                f"{org_text}. "
+                f"Counts refer to projects linked to each "
+                f"primary organization in the source."
+            )
+        })
+
+
+    project_examples = sorted(
+        [
+            p
+            for p in projects
+            if p.get(
+                "project_name"
+            )
+        ],
+        key=lambda x:
+            str(
+                x.get(
+                    "project_name"
+                )
+            )
+    )[:8]
+
+
+    if project_examples:
+
+        examples_text = "; ".join(
+            (
+                f"{p.get('project_name')}"
+                + (
+                    f" [{p.get('status')}]"
+                    if p.get(
+                        "status"
+                    )
+                    else ""
+                )
+            )
+            for p in project_examples
+        )
+
+        evidence.append({
+            "source_type":
+                "fongim_structured",
+
+            "source_family":
+                "FONGIM intervention data",
+
+            "document_title":
+                "FONGIM operational project data",
+
+            "document_type":
+                "structured_operational_data",
+
+            "organization":
+                "FONGIM",
+
+            "version":
+                None,
+
+            "page":
+                None,
+
+            "section":
+                "Illustrative project records",
+
+            "content": (
+                f"Illustrative project records from the "
+                f"selected FONGIM result set: "
+                f"{examples_text}. "
+                f"These examples are illustrative and are "
+                f"not a ranking of projects."
+            )
+        })
+
+
+    return {
+        "project_count":
+            len(project_ids),
+
+        "location_count":
+            len(locations),
+
+        "evidence":
+            evidence
+    }
+
+
+# ============================================================
+# UNIFIED EVIDENCE LEDGER
+# ============================================================
+
+def build_unified_evidence(
+    document_evidence,
+    hapi_evidence,
+    fongim_evidence
+):
+
+    combined = (
+        document_evidence
+        + hapi_evidence
+        + fongim_evidence
+    )
+
+    ledger = []
+
+    for index, item in enumerate(
+        combined,
+        1
+    ):
+
+        ledger.append({
+            **item,
+            "evidence_id":
+                f"E{index:02d}"
+        })
+
+    return ledger
+
+
+# ============================================================
+# EVIDENCE SERIALIZATION
+# ============================================================
+
+def evidence_to_prompt(
+    ledger
+):
+
+    blocks = []
+
+    for item in ledger:
+
+        blocks.append(
+            f"""
+[{item['evidence_id']}]
+SOURCE FAMILY: {item.get('source_family')}
+SOURCE TYPE: {item.get('source_type')}
+SOURCE: {item.get('document_title')}
+ORGANIZATION: {item.get('organization')}
+TYPE: {item.get('document_type')}
+VERSION: {item.get('version')}
+PAGE: {item.get('page')}
+SECTION: {item.get('section')}
+
+EVIDENCE:
+{item.get('content')}
+
+---
+"""
+        )
+
+    return "\n".join(
+        blocks
+    )
+
+
+# ============================================================
+# FOUR-SOURCE RESEARCH
+# ============================================================
+
+def run_four_source_research(
+    question
+):
+
+    geography = resolve_geography(
+        question
+    )
+
+    source_plan = plan_sources(
+        question,
+        geography
+    )
+
+    document_evidence = (
+        build_document_evidence(
+            question
+        )
+    )
+
+
+    hapi_result = {
+        "raw_count": 0,
+        "evidence": []
+    }
+
+    if source_plan["hapi"]:
+
+        hapi_result = (
+            build_hapi_evidence(
+                geography
+            )
+        )
+
+
+    fongim_result = {
+        "project_count": 0,
+        "location_count": 0,
+        "evidence": []
+    }
+
+    if source_plan["fongim"]:
+
+        fongim_result = (
+            research_fongim(
+                geography
+            )
+        )
+
+
+    ledger = build_unified_evidence(
+        document_evidence,
+        hapi_result["evidence"],
+        fongim_result["evidence"]
+    )
+
+
+    family_counts = defaultdict(
+        int
+    )
+
+    for item in ledger:
+
+        family_counts[
+            item.get(
+                "source_family"
+            )
+        ] += 1
+
+
+    return {
+        "geography":
+            geography,
+
+        "source_plan":
+            source_plan,
+
+        "ledger":
+            ledger,
+
+        "family_counts":
+            dict(
+                family_counts
+            ),
+
+        "hapi_raw_count":
+            hapi_result[
+                "raw_count"
+            ],
+
+        "fongim_project_count":
+            fongim_result[
+                "project_count"
+            ]
+    }
 
 
 # ============================================================
@@ -139,97 +1638,181 @@ def build_evidence_bundle(results):
 
 def generate_grounded_answer(
     question,
-    match_count=12,
     model="gpt-5-mini"
 ):
 
-    results = search_knowledge_base(
-        question,
-        match_count=match_count
+    research = (
+        run_four_source_research(
+            question
+        )
     )
 
-    evidence = build_evidence_bundle(results)
+    ledger = research[
+        "ledger"
+    ]
 
-    evidence_text = ""
+    evidence_text = (
+        evidence_to_prompt(
+            ledger
+        )
+    )
 
-    for e in evidence:
-
-        evidence_text += f"""
-[{e['evidence_id']}]
-DOCUMENT: {e['document_title']}
-DOCUMENT_ID: {e['document_id']}
-TYPE: {e['document_type']}
-ORGANIZATION: {e['organization']}
-VERSION: {e['version']}
-PAGE: {e['page']}
-SECTION: {e['section']}
-
-CONTENT:
-{e['content']}
-
----
-"""
 
     system_prompt = """
 You are the analytical engine of the Mali Knowledge Hub.
 
-Answer questions using ONLY the evidence passages provided.
+Your task is to answer the user's question exclusively from the
+evidence ledger supplied to you.
+
+The ledger may contain four distinct evidence families:
+
+1. Government strategies
+2. Humanitarian Response Plan / HNRP
+3. OCHA humanitarian structured data
+4. FONGIM intervention data
+
+CORE EPISTEMIC RULE:
+
+Reason across evidence.
+Do not reason beyond evidence.
 
 STRICT RULES:
 
 1. Do not use outside knowledge.
-2. Do not invent facts, policies, targets, relationships or citations.
-3. Every substantive factual claim must be supported by the evidence.
-4. Cite claims using the exact evidence IDs provided, for example [E3].
-5. Never attribute a claim to a document unless that evidence passage
-   explicitly comes from that document.
-6. Distinguish carefully between:
-   - current policy or strategic priorities
-   - diagnosis of existing problems
-   - targets
-   - past results
-   - recommendations
-   - scenarios or hypothetical futures
-7. Scenario passages describe hypothetical or alternative futures.
-   They must NEVER be used as evidence for current conditions,
-   current government policy, current priorities, or observed results.
-   If relevant, they may only be discussed explicitly as scenarios.
-8. If the evidence is insufficient, explicitly say so.
-9. If documents differ in emphasis, preserve that distinction.
-10. Prefer synthesis over simply listing retrieved passages.
 
-At the end provide:
+2. Do not invent facts, policies, projects, interventions,
+   causal relationships, geographic aggregates or citations.
 
-EVIDENCE STATUS: SUPPORTED
-or
-EVIDENCE STATUS: PARTIAL
-or
-EVIDENCE STATUS: INSUFFICIENT
+3. Every substantive factual claim must be supported by one or
+   more exact evidence IDs, for example [E03] or [E03, E11].
 
-Use the language of the user's question.
+4. You may connect concepts across sources only when the concepts
+   themselves are documented in the supplied evidence.
+
+5. Clearly distinguish:
+   - source facts
+   - analytical synthesis
+   - cautious inference
+   - evidence limitations
+
+6. Government strategy documents establish stated priorities,
+   objectives, diagnoses, targets or scenarios. They do not by
+   themselves demonstrate implementation or impact.
+
+7. Humanitarian planning documents and structured humanitarian
+   data must not be treated as equivalent evidence if their
+   reference periods, definitions or geographic levels differ.
+
+8. NEVER sum Admin2 humanitarian observations to manufacture an
+   Admin1 total unless the evidence explicitly provides such an
+   aggregate.
+
+9. If the supplied HAPI evidence consists of Admin2 observations,
+   describe them as Admin2 observations.
+
+10. Sector examples selected from humanitarian data are examples,
+    not a regional ranking unless the evidence explicitly supports
+    such a ranking.
+
+11. FONGIM project counts describe recorded project presence.
+    They do NOT establish:
+    - funding adequacy
+    - needs coverage
+    - service quality
+    - implementation quality
+    - effectiveness
+    - impact
+
+12. Do not infer a programming gap merely because one FONGIM
+    sector has fewer recorded projects than another.
+
+13. A FONGIM project may have multiple sectors and locations.
+    Never sum sector or location counts to reconstruct the number
+    of projects.
+
+14. If a relationship between humanitarian needs, government
+    priorities and operational interventions is only thematic,
+    say that it is thematic rather than causal.
+
+15. Scenario passages must never be presented as current facts.
+
+16. If the evidence is insufficient for part of the question,
+    state exactly what cannot be established from the supplied
+    evidence.
+
+17. Preserve disagreements, different reference periods and
+    different levels of aggregation across sources.
+
+18. Prefer concise analytical synthesis over a source-by-source
+    dump.
+
+19. Use the language of the user's question.
+
+20. End with a short section titled "Evidence limitations" when
+    material limitations affect interpretation.
+
+Do not include a generic bibliography at the end. Citations should
+appear directly after the claims they support.
 """
 
+
     user_prompt = f"""
-QUESTION:
+QUESTION
 
 {question}
 
-EVIDENCE:
+
+EVIDENCE LEDGER
 
 {evidence_text}
 
-Answer the question based exclusively on this evidence.
+
+Produce an evidence-grounded analytical answer.
 """
 
-    response = openai_client.responses.create(
-        model=model,
-        instructions=system_prompt,
-        input=user_prompt
+
+    response = (
+        openai_client
+        .responses
+        .create(
+            model=model,
+            instructions=system_prompt,
+            input=user_prompt
+        )
     )
 
+
     return {
-        "answer": response.output_text,
-        "evidence": evidence
+        "answer":
+            response.output_text,
+
+        "evidence":
+            ledger,
+
+        "geography":
+            research[
+                "geography"
+            ],
+
+        "source_plan":
+            research[
+                "source_plan"
+            ],
+
+        "family_counts":
+            research[
+                "family_counts"
+            ],
+
+        "hapi_raw_count":
+            research[
+                "hapi_raw_count"
+            ],
+
+        "fongim_project_count":
+            research[
+                "fongim_project_count"
+            ]
     }
 
 
@@ -237,85 +1820,348 @@ Answer the question based exclusively on this evidence.
 # USER INTERFACE
 # ============================================================
 
-st.title("🇲🇱 Mali Knowledge Hub")
+st.title(
+    "🇲🇱 Mali Knowledge Hub"
+)
 
 st.caption(
-    "Evidence-grounded research across Mali's institutional knowledge base"
+    "Evidence-grounded analysis across policy, "
+    "humanitarian and operational data"
 )
 
-st.info(
-    "Answers are generated exclusively from documents contained "
-    "in the Knowledge Hub."
+
+# ------------------------------------------------------------
+# AVAILABLE EVIDENCE
+# ------------------------------------------------------------
+
+st.subheader(
+    "Available evidence"
 )
+
+
+col1, col2, col3, col4 = st.columns(
+    4
+)
+
+
+with col1:
+
+    st.markdown(
+        "**Government strategies**"
+    )
+
+    st.caption(
+        "National visions, strategies and "
+        "priority investment frameworks"
+    )
+
+
+with col2:
+
+    st.markdown(
+        "**HNRP**"
+    )
+
+    st.caption(
+        "Humanitarian needs and response "
+        "planning documents"
+    )
+
+
+with col3:
+
+    st.markdown(
+        "**OCHA humanitarian data**"
+    )
+
+    st.caption(
+        "Live structured humanitarian "
+        "needs data via HDX HAPI"
+    )
+
+
+with col4:
+
+    st.markdown(
+        "**FONGIM interventions**"
+    )
+
+    st.caption(
+        "Current structured project and "
+        "actor data from FONGIM"
+    )
+
+
+with st.expander(
+    "What are these sources?"
+):
+
+    st.markdown(
+        """
+**Government strategies**
+Authoritative policy and planning documents. They describe
+priorities, diagnoses, objectives and targets, but do not by
+themselves prove implementation or impact.
+
+**HNRP**
+Humanitarian needs and response planning documents stored in the
+Knowledge Hub and retrieved at passage level.
+
+**OCHA humanitarian data**
+Structured humanitarian indicators queried live through HDX HAPI.
+Geographic level, population category, sector and reference period
+are preserved. The Hub does not manufacture higher-level totals
+from lower-level observations.
+
+**FONGIM intervention data**
+Structured operational records synchronized from FONGIM. Project
+counts show recorded presence, not funding adequacy, coverage,
+quality or impact.
+"""
+    )
+
+
+with st.expander(
+    "How does the Knowledge Hub work?"
+):
+
+    st.markdown(
+        """
+The Hub first determines which evidence sources are relevant to the
+question. It then retrieves document passages and, where relevant,
+queries structured humanitarian and intervention data.
+
+Government strategy evidence and humanitarian planning evidence are
+retrieved separately so that one document family cannot crowd out
+the other in broad cross-source questions.
+
+The language model receives only the retrieved evidence. It may
+connect concepts documented across sources, but it is instructed
+not to introduce substantive facts or causal claims that are absent
+from the evidence.
+
+**Core rule:** Reason across evidence. Do not reason beyond evidence.
+"""
+    )
+
+
+st.divider()
+
+
+# ------------------------------------------------------------
+# QUESTION
+# ------------------------------------------------------------
 
 question = st.text_area(
-    "Ask a question",
+    "Ask the Knowledge Hub",
     placeholder=(
-        "Example: What are Mali's priorities for decentralisation "
-        "and local development?"
+        "Example: What are the main humanitarian needs "
+        "in the region of Mopti, what interventions are "
+        "recorded there, and how do they relate to Mali's "
+        "long-term development priorities?"
     ),
-    height=120
+    height=130
 )
 
+
 ask = st.button(
-    "Search Knowledge Hub",
+    "Analyse evidence",
     type="primary"
 )
 
 
+# ------------------------------------------------------------
+# ANSWER
+# ------------------------------------------------------------
+
 if ask and question.strip():
 
     with st.spinner(
-        "Searching documents and analysing evidence..."
+        "Retrieving and analysing evidence..."
     ):
 
         try:
 
-            result = generate_grounded_answer(
-                question.strip()
+            result = (
+                generate_grounded_answer(
+                    question.strip()
+                )
             )
 
-            st.subheader("Answer")
+
+            geography = result[
+                "geography"
+            ]
+
+
+            if geography.get(
+                "assumption"
+            ):
+
+                st.info(
+                    geography[
+                        "assumption"
+                    ]
+                )
+
+
+            st.subheader(
+                "Analysis"
+            )
 
             st.markdown(
-                result["answer"]
+                result[
+                    "answer"
+                ]
             )
+
 
             st.divider()
 
-            st.subheader("Sources")
 
-            for e in result["evidence"]:
+            # ------------------------------------------------
+            # SOURCES USED
+            # ------------------------------------------------
 
-                label = (
-                    f"{e['evidence_id']} — "
-                    f"{e['document_title']} · "
-                    f"p. {e['page']}"
+            st.subheader(
+                "Sources used for this analysis"
+            )
+
+
+            family_counts = result[
+                "family_counts"
+            ]
+
+
+            source_labels = [
+                "Government strategies",
+                "Humanitarian Response Plan / HNRP",
+                "OCHA humanitarian data",
+                "FONGIM intervention data"
+            ]
+
+
+            for family in source_labels:
+
+                count = family_counts.get(
+                    family,
+                    0
                 )
 
-                with st.expander(label):
+                if count:
 
-                    if e["section"]:
-                        st.markdown(
-                            f"**Section:** {e['section']}"
-                        )
-
-                    if e["document_type"]:
-                        st.markdown(
-                            f"**Document type:** "
-                            f"{e['document_type']}"
-                        )
-
-                    if e["version"]:
-                        st.markdown(
-                            f"**Version:** {e['version']}"
-                        )
-
-                    st.markdown("**Retrieved evidence:**")
-
-                    st.write(
-                        e["content"]
+                    st.markdown(
+                        f"**✓ {family}** "
+                        f"— {count} evidence items"
                     )
+
+
+            if result[
+                "hapi_raw_count"
+            ]:
+
+                st.caption(
+                    "OCHA structured data were reduced from "
+                    f"{result['hapi_raw_count']} source records "
+                    "to a smaller evidence set while preserving "
+                    "the documented geographic structure."
+                )
+
+
+            if result[
+                "fongim_project_count"
+            ]:
+
+                st.caption(
+                    "FONGIM analysis covered "
+                    f"{result['fongim_project_count']} unique "
+                    "projects matching the selected geographic scope."
+                )
+
+
+            # ------------------------------------------------
+            # EVIDENCE LEDGER
+            # ------------------------------------------------
+
+            with st.expander(
+                "Inspect evidence"
+            ):
+
+                for item in result[
+                    "evidence"
+                ]:
+
+                    page = (
+                        f" · p. {item['page']}"
+                        if item.get(
+                            "page"
+                        ) is not None
+                        else ""
+                    )
+
+
+                    label = (
+                        f"{item['evidence_id']} — "
+                        f"{item.get('source_family')}"
+                        f"{page}"
+                    )
+
+
+                    with st.expander(
+                        label
+                    ):
+
+                        if item.get(
+                            "document_title"
+                        ):
+
+                            st.markdown(
+                                "**Source:** "
+                                f"{item['document_title']}"
+                            )
+
+
+                        if item.get(
+                            "organization"
+                        ):
+
+                            st.markdown(
+                                "**Organization:** "
+                                f"{item['organization']}"
+                            )
+
+
+                        if item.get(
+                            "section"
+                        ):
+
+                            st.markdown(
+                                "**Section / dimension:** "
+                                f"{item['section']}"
+                            )
+
+
+                        if item.get(
+                            "version"
+                        ):
+
+                            st.markdown(
+                                "**Version:** "
+                                f"{item['version']}"
+                            )
+
+
+                        st.markdown(
+                            "**Evidence:**"
+                        )
+
+
+                        st.write(
+                            item.get(
+                                "content"
+                            )
+                        )
+
 
         except Exception as exc:
 
@@ -323,8 +2169,10 @@ if ask and question.strip():
                 f"Knowledge Hub error: {exc}"
             )
 
+
 elif ask:
 
     st.warning(
         "Please enter a question."
     )
+
