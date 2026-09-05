@@ -1820,106 +1820,193 @@ Produce an evidence-grounded analytical answer.
 # USER INTERFACE
 # ============================================================
 
-st.title(
-    "🇲🇱 Mali Knowledge Hub"
+# ------------------------------------------------------------
+# LANDING / SEARCH EXPERIENCE
+# ------------------------------------------------------------
+
+st.markdown(
+    """
+<style>
+    .block-container {
+        max-width: 1180px;
+        padding-top: 2.4rem;
+        padding-bottom: 4rem;
+    }
+
+    .kh-title {
+        font-size: 3.05rem;
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        margin: 0 0 0.45rem 0;
+        color: #0b2b55;
+    }
+
+    .kh-subtitle {
+        font-size: 1.08rem;
+        line-height: 1.55;
+        color: #53657a;
+        margin-bottom: 2rem;
+        max-width: 900px;
+    }
+
+    .kh-search-header {
+        font-size: 2.15rem;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        color: #0b2b55;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .kh-search-copy {
+        color: #607086;
+        font-size: 1rem;
+        margin-bottom: 0.65rem;
+    }
+
+    .kh-examples-label {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #334a63;
+        margin-top: 0.55rem;
+        margin-bottom: -0.25rem;
+    }
+
+    div[data-testid="stTextArea"] textarea {
+        border-radius: 14px;
+        border: 1px solid #bfd8ef;
+        background: #ffffff;
+        font-size: 1rem;
+        min-height: 112px;
+        box-shadow: 0 3px 14px rgba(32, 100, 160, 0.06);
+    }
+
+    div[data-testid="stTextArea"] textarea:focus {
+        border-color: #2f8fd5;
+        box-shadow: 0 0 0 1px #2f8fd5;
+    }
+
+    div[data-testid="stButton"] > button {
+        border-radius: 10px;
+        font-weight: 650;
+    }
+
+    .kh-section-spacer {
+        height: 0.9rem;
+    }
+</style>
+
+<div class="kh-title">Mali Knowledge Hub</div>
+<div class="kh-subtitle">
+AI-powered knowledge and analysis platform for Humanitarian,
+Development and Peace stakeholders in Mali
+</div>
+""",
+    unsafe_allow_html=True
 )
 
-st.caption(
-    "Evidence-grounded analysis across policy, "
-    "humanitarian and operational data"
+
+st.markdown(
+    """
+<div class="kh-search-header">Ask the Knowledge Hub</div>
+<div class="kh-search-copy">
+Get evidence-grounded answers across government frameworks,
+humanitarian needs and NGO activities.
+</div>
+""",
+    unsafe_allow_html=True
+)
+
+
+if "knowledge_hub_question" not in st.session_state:
+    st.session_state["knowledge_hub_question"] = ""
+
+
+def set_example_question(example_question):
+    st.session_state["knowledge_hub_question"] = example_question
+
+
+question = st.text_area(
+    "Question",
+    key="knowledge_hub_question",
+    label_visibility="collapsed",
+    placeholder="Type your question here...",
+    height=112
+)
+
+
+ask = st.button(
+    "Analyse evidence",
+    type="primary",
+    use_container_width=True
+)
+
+
+st.markdown(
+    '<div class="kh-examples-label">Or try one of these example questions:</div>',
+    unsafe_allow_html=True
+)
+
+
+example_col1, example_col2, example_col3 = st.columns(
+    3,
+    gap="medium"
+)
+
+
+with example_col1:
+    st.button(
+        "🔎  SEARCH  ·  What are the Government of Mali's priorities "
+        "for decentralisation and local development?",
+        key="example_search",
+        use_container_width=True,
+        on_click=set_example_question,
+        args=(
+            "What are the Government of Mali's priorities for "
+            "decentralisation and local development?",
+        )
+    )
+
+
+with example_col2:
+    st.button(
+        "↔️  COMPARE  ·  In Mopti, how do humanitarian needs compare "
+        "with current NGO interventions?",
+        key="example_compare",
+        use_container_width=True,
+        on_click=set_example_question,
+        args=(
+            "In Mopti, how do humanitarian needs compare with "
+            "current NGO interventions?",
+        )
+    )
+
+
+with example_col3:
+    st.button(
+        "💡  ANALYSE & PLAN  ·  Where are the main gaps and "
+        "opportunities for stronger Humanitarian-Development-Peace "
+        "coordination in Mopti?",
+        key="example_plan",
+        use_container_width=True,
+        on_click=set_example_question,
+        args=(
+            "Where are the main gaps and opportunities for stronger "
+            "Humanitarian-Development-Peace coordination in Mopti?",
+        )
+    )
+
+
+st.markdown(
+    '<div class="kh-section-spacer"></div>',
+    unsafe_allow_html=True
 )
 
 
 # ------------------------------------------------------------
-# AVAILABLE EVIDENCE
+# HOW THE HUB WORKS — PHASE 1 PLACEHOLDER
 # ------------------------------------------------------------
-
-st.subheader(
-    "Available evidence"
-)
-
-
-col1, col2, col3, col4 = st.columns(
-    4
-)
-
-
-with col1:
-
-    st.markdown(
-        "**Government strategies**"
-    )
-
-    st.caption(
-        "National visions, strategies and "
-        "priority investment frameworks"
-    )
-
-
-with col2:
-
-    st.markdown(
-        "**HNRP**"
-    )
-
-    st.caption(
-        "Humanitarian needs and response "
-        "planning documents"
-    )
-
-
-with col3:
-
-    st.markdown(
-        "**OCHA humanitarian data**"
-    )
-
-    st.caption(
-        "Live structured humanitarian "
-        "needs data via HDX HAPI"
-    )
-
-
-with col4:
-
-    st.markdown(
-        "**FONGIM interventions**"
-    )
-
-    st.caption(
-        "Current structured project and "
-        "actor data from FONGIM"
-    )
-
-
-with st.expander(
-    "What are these sources?"
-):
-
-    st.markdown(
-        """
-**Government strategies**
-Authoritative policy and planning documents. They describe
-priorities, diagnoses, objectives and targets, but do not by
-themselves prove implementation or impact.
-
-**HNRP**
-Humanitarian needs and response planning documents stored in the
-Knowledge Hub and retrieved at passage level.
-
-**OCHA humanitarian data**
-Structured humanitarian indicators queried live through HDX HAPI.
-Geographic level, population category, sector and reference period
-are preserved. The Hub does not manufacture higher-level totals
-from lower-level observations.
-
-**FONGIM intervention data**
-Structured operational records synchronized from FONGIM. Project
-counts show recorded presence, not funding adequacy, coverage,
-quality or impact.
-"""
-    )
-
 
 with st.expander(
     "How does the Knowledge Hub work?"
@@ -1931,7 +2018,7 @@ The Hub first determines which evidence sources are relevant to the
 question. It then retrieves document passages and, where relevant,
 queries structured humanitarian and intervention data.
 
-Government strategy evidence and humanitarian planning evidence are
+Government framework evidence and humanitarian planning evidence are
 retrieved separately so that one document family cannot crowd out
 the other in broad cross-source questions.
 
@@ -1940,34 +2027,76 @@ connect concepts documented across sources, but it is instructed
 not to introduce substantive facts or causal claims that are absent
 from the evidence.
 
-**Core rule:** Reason across evidence. Do not reason beyond evidence.
+**Core rule:** The AI interprets retrieved evidence; it is not itself
+the source of truth.
 """
     )
 
 
+# ------------------------------------------------------------
+# ALREADY AVAILABLE SOURCES — PHASE 1
+# ------------------------------------------------------------
+
+st.subheader(
+    "Already Available Sources"
+)
+
+
+source_col1, source_col2, source_col3, source_col4 = st.columns(
+    4,
+    gap="medium"
+)
+
+
+with source_col1:
+
+    st.markdown(
+        "**Government Framework Documents**"
+    )
+
+    st.caption(
+        "National, regional, local and sectoral "
+        "strategies and plans"
+    )
+
+
+with source_col2:
+
+    st.markdown(
+        "**Humanitarian Needs Assessment**"
+    )
+
+    st.caption(
+        "Humanitarian needs and response "
+        "planning documents"
+    )
+
+
+with source_col3:
+
+    st.markdown(
+        "**OCHA Database**"
+    )
+
+    st.caption(
+        "Live structured humanitarian needs "
+        "data via HDX HAPI"
+    )
+
+
+with source_col4:
+
+    st.markdown(
+        "**International NGO Activities**"
+    )
+
+    st.caption(
+        "Structured project information "
+        "through the FONGIM database"
+    )
+
+
 st.divider()
-
-
-# ------------------------------------------------------------
-# QUESTION
-# ------------------------------------------------------------
-
-question = st.text_area(
-    "Ask the Knowledge Hub",
-    placeholder=(
-        "Example: What are the main humanitarian needs "
-        "in the region of Mopti, what interventions are "
-        "recorded there, and how do they relate to Mali's "
-        "long-term development priorities?"
-    ),
-    height=130
-)
-
-
-ask = st.button(
-    "Analyse evidence",
-    type="primary"
-)
 
 
 # ------------------------------------------------------------
