@@ -133,30 +133,136 @@ SOURCE_REGISTRY = {
 
 
 def is_source_inventory_question(question):
-    q = normalize_text(question)
+    """
+    Detect questions about the Knowledge Hub's own source inventory.
 
-    patterns = [
-        "what sources",
-        "which sources",
-        "what data sources",
-        "which data sources",
-        "what documents",
-        "which documents",
-        "what do you have access to",
-        "what can you access",
-        "what evidence do you have",
-        "quelles sources",
-        "quels documents",
-        "quelles donnees",
-        "welche quellen",
-        "welche dokumente",
-        "welche daten"
+    This must be broader than exact phrase matching because users may ask:
+    - What are your sources?
+    - What data do you use?
+    - Which databases can you access?
+    - What's in the Knowledge Hub?
+    - Where does your information come from?
+    """
+
+    q = normalize_text(question).strip()
+
+    if not q:
+        return False
+
+    exact_or_near_exact = [
+        "what are your sources",
+        "what are the sources",
+        "what sources do you use",
+        "which sources do you use",
+        "what sources do you have",
+        "which sources do you have",
+        "what sources do you have access to",
+        "which sources do you have access to",
+        "what data do you use",
+        "which data do you use",
+        "what data do you have",
+        "which data do you have",
+        "what data can you access",
+        "which data can you access",
+        "what databases do you use",
+        "which databases do you use",
+        "what databases can you access",
+        "which databases can you access",
+        "what documents do you have",
+        "which documents do you have",
+        "what documents can you access",
+        "which documents can you access",
+        "what evidence do you use",
+        "which evidence do you use",
+        "where does your information come from",
+        "where do your data come from",
+        "where does your data come from",
+        "what is in the knowledge hub",
+        "whats in the knowledge hub",
+        "what does the knowledge hub contain",
+        "quelles sont tes sources",
+        "quelles sont vos sources",
+        "quelles sources utilises tu",
+        "quelles sources utilisez vous",
+        "quelles donnees utilises tu",
+        "quelles donnees utilisez vous",
+        "a quelles sources as tu acces",
+        "a quelles sources avez vous acces",
+        "welche quellen hast du",
+        "welche quellen nutzt du",
+        "auf welche quellen hast du zugriff",
+        "welche daten nutzt du",
+        "welche daten hast du",
+        "auf welche daten hast du zugriff",
+        "welche dokumente hast du",
+        "auf welche dokumente hast du zugriff"
     ]
 
-    return any(
-        pattern in q
-        for pattern in patterns
+    if any(
+        phrase in q
+        for phrase in exact_or_near_exact
+    ):
+        return True
+
+    # Robust semantic-style rule for short platform-inventory questions.
+    source_terms = [
+        "source",
+        "sources",
+        "data source",
+        "data sources",
+        "database",
+        "databases",
+        "document",
+        "documents",
+        "evidence",
+        "quellen",
+        "quelle",
+        "daten",
+        "dokumente",
+        "sources",
+        "donnees",
+        "documents"
+    ]
+
+    inventory_terms = [
+        "your",
+        "you use",
+        "you have",
+        "you access",
+        "available",
+        "access to",
+        "knowledge hub",
+        "tes ",
+        "vos ",
+        "utilises",
+        "utilisez",
+        "acces",
+        "hast du",
+        "nutzt du",
+        "zugriff",
+        "verfugbar"
+    ]
+
+    has_source_term = any(
+        term in q
+        for term in source_terms
     )
+
+    has_inventory_term = any(
+        term in q
+        for term in inventory_terms
+    )
+
+    # Keep this deliberately limited to short questions so that
+    # substantive research questions mentioning "sources" are not hijacked.
+    if (
+        has_source_term
+        and has_inventory_term
+        and len(q.split()) <= 14
+    ):
+        return True
+
+    return False
 
 
 def source_inventory_answer():
