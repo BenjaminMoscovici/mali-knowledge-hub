@@ -1286,16 +1286,10 @@ def research_fongim(
     }
 
     if geography.get("region"):
-
-        location_filters[
-            "region"
-        ] = geography["region"]
+        location_filters["region"] = geography["region"]
 
     if geography.get("cercle"):
-
-        location_filters[
-            "cercle"
-        ] = geography["cercle"]
+        location_filters["cercle"] = geography["cercle"]
 
     locations = fetch_all_rows(
         "fongim_project_locations",
@@ -1310,17 +1304,12 @@ def research_fongim(
     )
 
     project_ids = sorted({
-        row.get(
-            "fongim_project_id"
-        )
+        row.get("fongim_project_id")
         for row in locations
-        if row.get(
-            "fongim_project_id"
-        ) is not None
+        if row.get("fongim_project_id") is not None
     })
 
     if not project_ids:
-
         return {
             "project_count": 0,
             "location_count": 0,
@@ -1364,24 +1353,17 @@ def research_fongim(
     )
 
     organization_ids = sorted({
-        row.get(
-            "fongim_organization_id"
-        )
+        row.get("fongim_organization_id")
         for row in project_orgs
-        if row.get(
-            "fongim_organization_id"
-        ) is not None
+        if row.get("fongim_organization_id") is not None
     })
 
     organizations = []
 
     if organization_ids:
-
         response = (
             supabase
-            .table(
-                "fongim_organizations"
-            )
+            .table("fongim_organizations")
             .select(
                 "fongim_organization_id,"
                 "organization_name"
@@ -1397,52 +1379,57 @@ def research_fongim(
             .execute()
         )
 
-        organizations = (
-            response.data or []
-        )
+        organizations = response.data or []
 
     org_name_by_id = {
-        row.get(
-            "fongim_organization_id"
-        ):
-        row.get(
-            "organization_name"
-        )
+        row.get("fongim_organization_id"):
+        row.get("organization_name")
         for row in organizations
     }
+
+
+    # --------------------------------------------------------
+    # PROJECT-LEVEL RELATIONAL MAPS
+    # --------------------------------------------------------
+
+    sectors_by_project = defaultdict(set)
+
+    for row in sectors:
+        project_id = row.get("fongim_project_id")
+        sector = row.get("sector") or "Unspecified"
+
+        if project_id is not None:
+            sectors_by_project[project_id].add(sector)
+
+    orgs_by_project = defaultdict(set)
+
+    for row in project_orgs:
+        project_id = row.get("fongim_project_id")
+        org_id = row.get("fongim_organization_id")
+
+        org_name = (
+            org_name_by_id.get(org_id)
+            or str(org_id)
+        )
+
+        if project_id is not None:
+            orgs_by_project[project_id].add(org_name)
 
 
     # --------------------------------------------------------
     # SECTOR COUNTS
     # --------------------------------------------------------
 
-    sector_projects = defaultdict(
-        set
-    )
+    sector_projects = defaultdict(set)
 
-    for row in sectors:
-
-        sector = (
-            row.get("sector")
-            or "Unspecified"
-        )
-
-        sector_projects[
-            sector
-        ].add(
-            row.get(
-                "fongim_project_id"
-            )
-        )
+    for project_id, project_sectors in sectors_by_project.items():
+        for sector in project_sectors:
+            sector_projects[sector].add(project_id)
 
     top_sectors = sorted(
         (
-            (
-                sector,
-                len(ids)
-            )
-            for sector, ids
-            in sector_projects.items()
+            (sector, len(ids))
+            for sector, ids in sector_projects.items()
         ),
         key=lambda x: x[1],
         reverse=True
@@ -1453,34 +1440,20 @@ def research_fongim(
     # CERCLE COUNTS
     # --------------------------------------------------------
 
-    circle_projects = defaultdict(
-        set
-    )
+    circle_projects = defaultdict(set)
 
     for row in locations:
-
-        cercle = row.get(
-            "cercle"
-        )
+        cercle = row.get("cercle")
 
         if cercle:
-
-            circle_projects[
-                cercle
-            ].add(
-                row.get(
-                    "fongim_project_id"
-                )
+            circle_projects[cercle].add(
+                row.get("fongim_project_id")
             )
 
     top_cercles = sorted(
         (
-            (
-                cercle,
-                len(ids)
-            )
-            for cercle, ids
-            in circle_projects.items()
+            (cercle, len(ids))
+            for cercle, ids in circle_projects.items()
         ),
         key=lambda x: x[1],
         reverse=True
@@ -1491,42 +1464,80 @@ def research_fongim(
     # ORGANIZATION COUNTS
     # --------------------------------------------------------
 
-    org_projects = defaultdict(
-        set
-    )
+    org_projects = defaultdict(set)
 
-    for row in project_orgs:
-
-        org_id = row.get(
-            "fongim_organization_id"
-        )
-
-        org_name = (
-            org_name_by_id.get(
-                org_id
-            )
-            or str(org_id)
-        )
-
-        org_projects[
-            org_name
-        ].add(
-            row.get(
-                "fongim_project_id"
-            )
-        )
+    for project_id, project_org_names in orgs_by_project.items():
+        for org_name in project_org_names:
+            org_projects[org_name].add(project_id)
 
     top_orgs = sorted(
         (
-            (
-                org,
-                len(ids)
-            )
-            for org, ids
-            in org_projects.items()
+            (org, len(ids))
+            for org, ids in org_projects.items()
         ),
         key=lambda x: x[1],
         reverse=True
+    )
+
+
+    # --------------------------------------------------------
+    # CROSS-DIMENSIONAL ORGANIZATION × SECTOR ANALYSIS
+    # --------------------------------------------------------
+
+    org_sector_projects = defaultdict(
+        lambda: defaultdict(set)
+    )
+
+    sector_org_projects = defaultdict(
+        lambda: defaultdict(set)
+    )
+
+    for project_id in project_ids:
+
+        project_org_names = orgs_by_project.get(
+            project_id,
+            set()
+        )
+
+        project_sectors = sectors_by_project.get(
+            project_id,
+            set()
+        )
+
+        for org_name in project_org_names:
+            for sector in project_sectors:
+
+                org_sector_projects[
+                    org_name
+                ][
+                    sector
+                ].add(project_id)
+
+                sector_org_projects[
+                    sector
+                ][
+                    org_name
+                ].add(project_id)
+
+
+    org_sector_breadth = sorted(
+        (
+            (
+                org_name,
+                len(sector_map),
+                sum(
+                    len(ids)
+                    for ids in sector_map.values()
+                )
+            )
+            for org_name, sector_map
+            in org_sector_projects.items()
+        ),
+        key=lambda x: (
+            -x[1],
+            -x[2],
+            x[0]
+        )
     )
 
 
@@ -1537,13 +1548,11 @@ def research_fongim(
     scope_parts = []
 
     if geography.get("region"):
-
         scope_parts.append(
             f"region={geography['region']}"
         )
 
     if geography.get("cercle"):
-
         scope_parts.append(
             f"cercle={geography['cercle']}"
         )
@@ -1554,18 +1563,11 @@ def research_fongim(
         else "Mali"
     )
 
-
     latest_sync = max(
         [
-            str(
-                row.get(
-                    "last_synced_at"
-                )
-            )
+            str(row.get("last_synced_at"))
             for row in projects
-            if row.get(
-                "last_synced_at"
-            )
+            if row.get("last_synced_at")
         ],
         default=None
     )
@@ -1577,35 +1579,17 @@ def research_fongim(
 
     evidence = []
 
-
     evidence.append({
-        "source_type":
-            "fongim_structured",
-
-        "source_family":
-            "FONGIM intervention data",
-
-        "document_title":
-            "FONGIM operational project data",
-
-        "document_type":
-            "structured_operational_data",
-
-        "organization":
-            "FONGIM",
-
-        "version":
-            None,
-
-        "page":
-            None,
-
-        "section":
-            geographic_scope,
-
+        "source_type": "fongim_structured",
+        "source_family": "FONGIM intervention data",
+        "document_title": "FONGIM operational project data",
+        "document_type": "structured_operational_data",
+        "organization": "FONGIM",
+        "version": None,
+        "page": None,
+        "section": geographic_scope,
         "content": (
-            f"FONGIM records "
-            f"{len(project_ids)} unique projects "
+            f"FONGIM records {len(project_ids)} unique projects "
             f"with at least one recorded location in "
             f"{geographic_scope}, represented by "
             f"{len(locations)} project-location records. "
@@ -1623,35 +1607,18 @@ def research_fongim(
 
         sector_text = "; ".join(
             f"{sector}: {count} projects"
-            for sector, count
-            in top_sectors[:10]
+            for sector, count in top_sectors[:10]
         )
 
         evidence.append({
-            "source_type":
-                "fongim_structured",
-
-            "source_family":
-                "FONGIM intervention data",
-
-            "document_title":
-                "FONGIM operational project data",
-
-            "document_type":
-                "structured_operational_data",
-
-            "organization":
-                "FONGIM",
-
-            "version":
-                None,
-
-            "page":
-                None,
-
-            "section":
-                "Sector profile",
-
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Sector profile",
             "content": (
                 f"Among FONGIM projects with at least one "
                 f"recorded location in {geographic_scope}, "
@@ -1669,35 +1636,18 @@ def research_fongim(
 
         cercle_text = "; ".join(
             f"{cercle}: {count} projects"
-            for cercle, count
-            in top_cercles[:10]
+            for cercle, count in top_cercles[:10]
         )
 
         evidence.append({
-            "source_type":
-                "fongim_structured",
-
-            "source_family":
-                "FONGIM intervention data",
-
-            "document_title":
-                "FONGIM operational project data",
-
-            "document_type":
-                "structured_operational_data",
-
-            "organization":
-                "FONGIM",
-
-            "version":
-                None,
-
-            "page":
-                None,
-
-            "section":
-                "Recorded geographic presence",
-
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Recorded geographic presence",
             "content": (
                 f"Unique FONGIM projects with a recorded "
                 f"location in each cercle within the selected "
@@ -1712,35 +1662,18 @@ def research_fongim(
 
         org_text = "; ".join(
             f"{org}: {count} projects"
-            for org, count
-            in top_orgs[:10]
+            for org, count in top_orgs[:10]
         )
 
         evidence.append({
-            "source_type":
-                "fongim_structured",
-
-            "source_family":
-                "FONGIM intervention data",
-
-            "document_title":
-                "FONGIM operational project data",
-
-            "document_type":
-                "structured_operational_data",
-
-            "organization":
-                "FONGIM",
-
-            "version":
-                None,
-
-            "page":
-                None,
-
-            "section":
-                "Organizations",
-
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Organizations",
             "content": (
                 f"Primary organizations associated with "
                 f"FONGIM projects in {geographic_scope}: "
@@ -1751,22 +1684,147 @@ def research_fongim(
         })
 
 
+    # --------------------------------------------------------
+    # ORGANIZATION × SECTOR EVIDENCE
+    # --------------------------------------------------------
+
+    if org_sector_breadth:
+
+        org_sector_lines = []
+
+        for org_name, sector_count, _ in org_sector_breadth:
+
+            sector_map = org_sector_projects[
+                org_name
+            ]
+
+            sector_details = sorted(
+                (
+                    (
+                        sector,
+                        len(ids)
+                    )
+                    for sector, ids
+                    in sector_map.items()
+                ),
+                key=lambda x: (
+                    -x[1],
+                    x[0]
+                )
+            )
+
+            sector_text = ", ".join(
+                f"{sector} ({count} projects)"
+                for sector, count
+                in sector_details
+            )
+
+            org_sector_lines.append(
+                f"{org_name}: "
+                f"{sector_count} distinct sectors — "
+                f"{sector_text}"
+            )
+
+        evidence.append({
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Organization-sector relationships",
+            "content": (
+                f"Project-level organization-sector relationships "
+                f"for FONGIM projects in {geographic_scope}. "
+                f"Each organization below is linked to the listed "
+                f"sector because at least one project associated "
+                f"with that organization is also associated with "
+                f"that sector. Counts in parentheses are unique "
+                f"projects for that organization-sector combination. "
+                f"Distinct-sector counts describe recorded thematic "
+                f"breadth, not organizational effectiveness or "
+                f"quality. "
+                + "; ".join(org_sector_lines)
+            )
+        })
+
+
+    # --------------------------------------------------------
+    # SECTOR × ORGANIZATION EVIDENCE
+    # --------------------------------------------------------
+
+    if sector_org_projects:
+
+        sector_org_lines = []
+
+        for sector, org_map in sorted(
+            sector_org_projects.items(),
+            key=lambda item: (
+                -len(sector_projects.get(
+                    item[0],
+                    set()
+                )),
+                item[0]
+            )
+        ):
+
+            org_details = sorted(
+                (
+                    (
+                        org_name,
+                        len(ids)
+                    )
+                    for org_name, ids
+                    in org_map.items()
+                ),
+                key=lambda x: (
+                    -x[1],
+                    x[0]
+                )
+            )
+
+            org_text = ", ".join(
+                f"{org_name} ({count} projects)"
+                for org_name, count
+                in org_details
+            )
+
+            sector_org_lines.append(
+                f"{sector}: {org_text}"
+            )
+
+        evidence.append({
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Sector-organization relationships",
+            "content": (
+                f"Project-level sector-organization relationships "
+                f"for FONGIM projects in {geographic_scope}. "
+                f"Organizations are listed under a sector when "
+                f"at least one project associated with that "
+                f"organization is also associated with that sector. "
+                f"Counts in parentheses are unique projects for "
+                f"that sector-organization combination. "
+                + "; ".join(sector_org_lines)
+            )
+        })
+
+
     project_examples = sorted(
         [
             p
             for p in projects
-            if p.get(
-                "project_name"
-            )
+            if p.get("project_name")
         ],
         key=lambda x:
-            str(
-                x.get(
-                    "project_name"
-                )
-            )
+            str(x.get("project_name"))
     )[:8]
-
 
     if project_examples:
 
@@ -1775,9 +1833,7 @@ def research_fongim(
                 f"{p.get('project_name')}"
                 + (
                     f" [{p.get('status')}]"
-                    if p.get(
-                        "status"
-                    )
+                    if p.get("status")
                     else ""
                 )
             )
@@ -1785,30 +1841,14 @@ def research_fongim(
         )
 
         evidence.append({
-            "source_type":
-                "fongim_structured",
-
-            "source_family":
-                "FONGIM intervention data",
-
-            "document_title":
-                "FONGIM operational project data",
-
-            "document_type":
-                "structured_operational_data",
-
-            "organization":
-                "FONGIM",
-
-            "version":
-                None,
-
-            "page":
-                None,
-
-            "section":
-                "Illustrative project records",
-
+            "source_type": "fongim_structured",
+            "source_family": "FONGIM intervention data",
+            "document_title": "FONGIM operational project data",
+            "document_type": "structured_operational_data",
+            "organization": "FONGIM",
+            "version": None,
+            "page": None,
+            "section": "Illustrative project records",
             "content": (
                 f"Illustrative project records from the "
                 f"selected FONGIM result set: "
@@ -1820,16 +1860,10 @@ def research_fongim(
 
 
     return {
-        "project_count":
-            len(project_ids),
-
-        "location_count":
-            len(locations),
-
-        "evidence":
-            evidence
+        "project_count": len(project_ids),
+        "location_count": len(locations),
+        "evidence": evidence
     }
-
 
 # ============================================================
 # UNIFIED EVIDENCE LEDGER
