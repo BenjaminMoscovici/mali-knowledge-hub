@@ -3,8 +3,10 @@ import os
 import re
 import unicodedata
 import importlib.util
+import time
 from pathlib import Path
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 
 import streamlit as st
 
@@ -105,6 +107,79 @@ research_humanitarian_needs = (
 run_fongim_sync_extract = (
     knowledge_hub_runtime.run_fongim_sync_extract
 )
+
+
+# ============================================================
+# SOURCE REGISTRY
+# ============================================================
+
+SOURCE_REGISTRY = {
+    "Government Framework Documents": [
+        "Vision Mali 2063 — Mali Kura Ɲɛtaasira ka bɛn san 2063 ma",
+        "Stratégie Nationale pour l’Émergence et le Développement Durable (SNEDD 2024–2033)",
+        "Projets Structurants Prioritaires pour la mise en œuvre de Mali Kura 2063 et de la SNEDD 2024–2033",
+        "Phasage des Projets Structurants Prioritaires"
+    ],
+    "Humanitarian Needs Assessment": [
+        "Mali — Besoins humanitaires et Plan de Réponse 2026 (OCHA / Équipe Humanitaire Pays)"
+    ],
+    "OCHA Database": [
+        "Live structured humanitarian-needs data queried through HDX HAPI"
+    ],
+    "International NGO Activities": [
+        "Structured FONGIM project, location, sector and organization data from the synchronized Knowledge Hub operational mirror"
+    ]
+}
+
+
+def is_source_inventory_question(question):
+    q = normalize_text(question)
+
+    patterns = [
+        "what sources",
+        "which sources",
+        "what data sources",
+        "which data sources",
+        "what documents",
+        "which documents",
+        "what do you have access to",
+        "what can you access",
+        "what evidence do you have",
+        "quelles sources",
+        "quels documents",
+        "quelles donnees",
+        "welche quellen",
+        "welche dokumente",
+        "welche daten"
+    ]
+
+    return any(
+        pattern in q
+        for pattern in patterns
+    )
+
+
+def source_inventory_answer():
+    return """
+I currently have access to **four source families**:
+
+**1. Government Framework Documents**
+- Vision Mali 2063 — *Mali Kura Ɲɛtaasira ka bɛn san 2063 ma*
+- Stratégie Nationale pour l’Émergence et le Développement Durable (SNEDD 2024–2033)
+- Projets Structurants Prioritaires for implementation of Mali Kura 2063 and SNEDD 2024–2033
+- Phasage des Projets Structurants Prioritaires
+
+**2. Humanitarian Needs Assessment**
+- *Mali — Besoins humanitaires et Plan de Réponse 2026* (OCHA / Équipe Humanitaire Pays)
+
+**3. OCHA Database**
+- Live structured humanitarian-needs data queried through **HDX HAPI**. The Hub retrieves only records relevant to the question and preserves the source geography and categories.
+
+**4. International NGO Activities**
+- Structured **FONGIM** project data, including projects, locations, sectors and organizations. The app queries the synchronized Knowledge Hub operational mirror of the FONGIM source data.
+
+The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
+""".strip()
 
 
 # ============================================================
@@ -415,12 +490,38 @@ def contains_any_keyword(
     )
 
 
-def plan_sources(
-    question,
-    geography
-):
+GOVERNMENT_KEYWORDS = [
+    "government", "gouvernement", "etat", "state",
+    "policy", "politique", "strategy", "strategie",
+    "strategic", "priority", "priorite", "priorities",
+    "vision", "snedd", "mali 2063", "mali kura",
+    "projet structurant", "structural project",
+    "local development", "developpement local",
+    "decentralisation", "decentralization",
+    "governance", "gouvernance"
+]
 
-    use_hapi = contains_any_keyword(
+
+CROSS_SOURCE_KEYWORDS = [
+    "compare", "comparison", "comparer", "comparaison",
+    "gap", "gaps", "lacune", "lacunes",
+    "alignment", "alignement", "coordination",
+    "nexus", "hdp", "humanitarian-development-peace",
+    "humanitarian development peace",
+    "opportunity", "opportunities",
+    "opportunite", "opportunites",
+    "mismatch", "tension", "synergy", "synergies"
+]
+
+
+def plan_sources(question, geography):
+
+    use_government = contains_any_keyword(
+        question,
+        GOVERNMENT_KEYWORDS
+    )
+
+    use_humanitarian = contains_any_keyword(
         question,
         HUMANITARIAN_KEYWORDS
     )
@@ -430,10 +531,56 @@ def plan_sources(
         FONGIM_KEYWORDS
     )
 
+    cross_source = contains_any_keyword(
+        question,
+        CROSS_SOURCE_KEYWORDS
+    )
+
+    if cross_source:
+        return {
+            "government_docs": True,
+            "hnrp_docs": True,
+            "hapi": True,
+            "fongim": True
+        }
+
+    if use_fongim and not use_government and not use_humanitarian:
+        return {
+            "government_docs": False,
+            "hnrp_docs": False,
+            "hapi": False,
+            "fongim": True
+        }
+
+    if use_government and not use_humanitarian and not use_fongim:
+        return {
+            "government_docs": True,
+            "hnrp_docs": False,
+            "hapi": False,
+            "fongim": False
+        }
+
+    if use_humanitarian and not use_government and not use_fongim:
+        return {
+            "government_docs": False,
+            "hnrp_docs": True,
+            "hapi": True,
+            "fongim": False
+        }
+
+    if use_government or use_humanitarian or use_fongim:
+        return {
+            "government_docs": use_government,
+            "hnrp_docs": use_humanitarian,
+            "hapi": use_humanitarian,
+            "fongim": use_fongim
+        }
+
     return {
-        "documents": True,
-        "hapi": use_hapi,
-        "fongim": use_fongim
+        "government_docs": True,
+        "hnrp_docs": True,
+        "hapi": False,
+        "fongim": False
     }
 
 
@@ -544,35 +691,20 @@ def get_document_groups():
 
 def build_document_evidence(
     question,
-    government_count=10,
-    hnrp_count=10
+    use_government=True,
+    use_hnrp=True,
+    government_count=8,
+    hnrp_count=8
 ):
-    """
-    Retrieve government/development evidence and HNRP evidence
-    as two independently filtered vector searches.
-
-    Filtering happens inside the Supabase match_chunks RPC before
-    vector ranking, so one document family cannot crowd out the other.
-    """
 
     document_groups = get_document_groups()
 
-    government_document_ids = (
-        document_groups["government"]
-    )
+    government_document_ids = document_groups["government"]
+    hnrp_document_ids = document_groups["hnrp"]
 
-    hnrp_document_ids = (
-        document_groups["hnrp"]
-    )
-
-
-    # --------------------------------------------------------
-    # 1. GOVERNMENT / DEVELOPMENT STRATEGIES
-    # --------------------------------------------------------
-
-    government_results = []
-
-    if government_document_ids:
+    def retrieve_government():
+        if not use_government or not government_document_ids:
+            return []
 
         government_query = f"""
 {question}
@@ -582,24 +714,19 @@ strategy, long-term policy priorities, government objectives,
 Vision Mali 2063, SNEDD 2024-2033, structural projects and
 development planning.
 
-Focus on the government/development evidence that is most relevant
-to the user's question.
+Focus on the government/development evidence most relevant to the
+user's question.
 """
 
-        government_results = search_knowledge_base(
+        return search_knowledge_base(
             government_query,
             match_count=government_count,
             filter_document_ids=government_document_ids
         )
 
-
-    # --------------------------------------------------------
-    # 2. HUMANITARIAN RESPONSE PLAN / HNRP
-    # --------------------------------------------------------
-
-    hnrp_results = []
-
-    if hnrp_document_ids:
+    def retrieve_hnrp():
+        if not use_hnrp or not hnrp_document_ids:
+            return []
 
         hnrp_query = f"""
 {question}
@@ -608,31 +735,36 @@ Retrieve evidence specifically from Mali's humanitarian needs
 and response planning documents, including humanitarian needs,
 response priorities, humanitarian objectives and HNRP 2026.
 
-Focus on the humanitarian planning evidence that is most relevant
-to the user's question.
+Focus on the humanitarian planning evidence most relevant to the
+user's question.
 """
 
-        hnrp_results = search_knowledge_base(
+        return search_knowledge_base(
             hnrp_query,
             match_count=hnrp_count,
             filter_document_ids=hnrp_document_ids
         )
 
+    if use_government and use_hnrp:
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            government_future = executor.submit(
+                retrieve_government
+            )
+            hnrp_future = executor.submit(
+                retrieve_hnrp
+            )
+            government_results = government_future.result()
+            hnrp_results = hnrp_future.result()
+    else:
+        government_results = retrieve_government()
+        hnrp_results = retrieve_hnrp()
 
-    # --------------------------------------------------------
-    # 3. COMBINE + DEDUPLICATE
-    # --------------------------------------------------------
-
-    combined = (
-        government_results
-        + hnrp_results
-    )
+    combined = government_results + hnrp_results
 
     seen = set()
     evidence = []
 
     for result in combined:
-
         dedupe_key = (
             result.get("document_id"),
             result.get("page_number"),
@@ -643,63 +775,20 @@ to the user's question.
         if dedupe_key in seen:
             continue
 
-        seen.add(
-            dedupe_key
-        )
+        seen.add(dedupe_key)
 
         evidence.append({
-            "source_type":
-                "knowledge_base_document",
-
-            "source_family":
-                classify_document_family(
-                    result
-                ),
-
-            "document_id":
-                result.get(
-                    "document_id"
-                ),
-
-            "document_title":
-                result.get(
-                    "document_title"
-                ),
-
-            "document_type":
-                result.get(
-                    "document_type"
-                ),
-
-            "organization":
-                result.get(
-                    "organization"
-                ),
-
-            "version":
-                result.get(
-                    "version"
-                ),
-
-            "page":
-                result.get(
-                    "page_number"
-                ),
-
-            "section":
-                result.get(
-                    "section_title"
-                ),
-
-            "similarity":
-                result.get(
-                    "similarity"
-                ),
-
-            "content":
-                result.get(
-                    "content"
-                )
+            "source_type": "knowledge_base_document",
+            "source_family": classify_document_family(result),
+            "document_id": result.get("document_id"),
+            "document_title": result.get("document_title"),
+            "document_type": result.get("document_type"),
+            "organization": result.get("organization"),
+            "version": result.get("version"),
+            "page": result.get("page_number"),
+            "section": result.get("section_title"),
+            "similarity": result.get("similarity"),
+            "content": result.get("content")
         })
 
     return evidence
@@ -792,6 +881,7 @@ def reduce_hapi_humanitarian_evidence(
     )
 
 
+@st.cache_data(ttl=900, show_spinner=False)
 def build_hapi_evidence(
     geography
 ):
@@ -910,6 +1000,7 @@ def get_rows_for_project_ids(
     return rows
 
 
+@st.cache_data(ttl=900, show_spinner=False)
 def research_fongim(
     geography
 ):
@@ -1536,54 +1627,62 @@ EVIDENCE:
 # FOUR-SOURCE RESEARCH
 # ============================================================
 
-def run_four_source_research(
-    question
-):
+def run_four_source_research(question):
 
-    geography = resolve_geography(
-        question
-    )
+    total_started = time.perf_counter()
 
+    geography = resolve_geography(question)
     source_plan = plan_sources(
         question,
         geography
     )
 
-    document_evidence = (
-        build_document_evidence(
-            question
-        )
-    )
-
-
+    document_evidence = []
     hapi_result = {
         "raw_count": 0,
         "evidence": []
     }
-
-    if source_plan["hapi"]:
-
-        hapi_result = (
-            build_hapi_evidence(
-                geography
-            )
-        )
-
-
     fongim_result = {
         "project_count": 0,
         "location_count": 0,
         "evidence": []
     }
 
-    if source_plan["fongim"]:
+    jobs = {}
 
-        fongim_result = (
-            research_fongim(
+    with ThreadPoolExecutor(max_workers=3) as executor:
+
+        if (
+            source_plan["government_docs"]
+            or source_plan["hnrp_docs"]
+        ):
+            jobs["documents"] = executor.submit(
+                build_document_evidence,
+                question,
+                source_plan["government_docs"],
+                source_plan["hnrp_docs"]
+            )
+
+        if source_plan["hapi"]:
+            jobs["hapi"] = executor.submit(
+                build_hapi_evidence,
                 geography
             )
-        )
 
+        if source_plan["fongim"]:
+            jobs["fongim"] = executor.submit(
+                research_fongim,
+                geography
+            )
+
+        if "documents" in jobs:
+            document_evidence = jobs["documents"].result()
+
+        if "hapi" in jobs:
+            hapi_result = jobs["hapi"].result()
+
+        if "fongim" in jobs:
+            fongim_result = jobs["fongim"].result()
 
     ledger = build_unified_evidence(
         document_evidence,
@@ -1591,44 +1690,24 @@ def run_four_source_research(
         fongim_result["evidence"]
     )
 
-
-    family_counts = defaultdict(
-        int
-    )
+    family_counts = defaultdict(int)
 
     for item in ledger:
-
         family_counts[
-            item.get(
-                "source_family"
-            )
+            item.get("source_family")
         ] += 1
 
-
     return {
-        "geography":
-            geography,
-
-        "source_plan":
-            source_plan,
-
-        "ledger":
-            ledger,
-
-        "family_counts":
-            dict(
-                family_counts
-            ),
-
-        "hapi_raw_count":
-            hapi_result[
-                "raw_count"
-            ],
-
-        "fongim_project_count":
-            fongim_result[
-                "project_count"
-            ]
+        "geography": geography,
+        "source_plan": source_plan,
+        "ledger": ledger,
+        "family_counts": dict(family_counts),
+        "hapi_raw_count": hapi_result["raw_count"],
+        "fongim_project_count": fongim_result["project_count"],
+        "research_seconds": round(
+            time.perf_counter() - total_started,
+            2
+        )
     }
 
 
@@ -1640,6 +1719,8 @@ def generate_grounded_answer(
     question,
     model="gpt-5-mini"
 ):
+
+    answer_started = time.perf_counter()
 
     research = (
         run_four_source_research(
@@ -1812,13 +1893,70 @@ Produce an evidence-grounded analytical answer.
         "fongim_project_count":
             research[
                 "fongim_project_count"
-            ]
+            ],
+
+        "research_seconds":
+            research.get(
+                "research_seconds"
+            ),
+
+        "total_seconds":
+            round(
+                time.perf_counter()
+                - answer_started,
+                2
+            )
     }
 
 
 # ============================================================
 # CONVERSATIONAL CONTEXT
 # ============================================================
+
+def likely_context_dependent_followup(
+    question,
+    messages
+):
+
+    if not messages:
+        return False
+
+    q = normalize_text(question).strip()
+
+    if not q:
+        return False
+
+    markers = [
+        "what about ",
+        "how about ",
+        "and ",
+        "but ",
+        "compare that",
+        "compare this",
+        "compare it",
+        "same for ",
+        "same question",
+        "that ",
+        "this ",
+        "those ",
+        "these ",
+        "them ",
+        "it ",
+        "why is that",
+        "why does that",
+        "what does that",
+        "and there",
+        "and in "
+    ]
+
+    if any(
+        q.startswith(marker)
+        for marker in markers
+    ):
+        return True
+
+    return len(q.split()) <= 5
+
 
 def resolve_conversational_question(
     question,
@@ -2330,52 +2468,90 @@ if current_prompt:
     if current_prompt:
 
         prior_messages = list(
-            st.session_state["kh_messages"]
+            st.session_state[
+                "kh_messages"
+            ]
         )
 
-        standalone_question = resolve_conversational_question(
-            current_prompt,
-            prior_messages
-        )
-
-        st.session_state["kh_messages"].append(
+        st.session_state[
+            "kh_messages"
+        ].append(
             {
                 "role": "user",
                 "content": current_prompt,
-                "standalone_question": standalone_question
+                "standalone_question": current_prompt
             }
         )
 
-        with st.spinner(
-            "Retrieving and analysing evidence..."
+        if is_source_inventory_question(
+            current_prompt
         ):
 
-            try:
+            st.session_state[
+                "kh_messages"
+            ].append(
+                {
+                    "role": "assistant",
+                    "content": source_inventory_answer(),
+                    "result": None
+                }
+            )
 
-                result = generate_grounded_answer(
-                    standalone_question
+        else:
+
+            standalone_question = current_prompt
+
+            if likely_context_dependent_followup(
+                current_prompt,
+                prior_messages
+            ):
+                standalone_question = (
+                    resolve_conversational_question(
+                        current_prompt,
+                        prior_messages
+                    )
                 )
 
-                st.session_state["kh_messages"].append(
-                    {
-                        "role": "assistant",
-                        "content": result["answer"],
-                        "result": result
-                    }
-                )
+            st.session_state[
+                "kh_messages"
+            ][-1][
+                "standalone_question"
+            ] = standalone_question
 
-            except Exception as exc:
+            with st.spinner(
+                "Retrieving and analysing evidence..."
+            ):
 
-                st.session_state["kh_messages"].append(
-                    {
-                        "role": "assistant",
-                        "content": (
-                            "I could not complete this analysis. "
-                            f"Knowledge Hub error: {exc}"
-                        ),
-                        "result": None
-                    }
-                )
+                try:
+
+                    result = generate_grounded_answer(
+                        standalone_question
+                    )
+
+                    st.session_state[
+                        "kh_messages"
+                    ].append(
+                        {
+                            "role": "assistant",
+                            "content": result["answer"],
+                            "result": result
+                        }
+                    )
+
+                except Exception as exc:
+
+                    st.session_state[
+                        "kh_messages"
+                    ].append(
+                        {
+                            "role": "assistant",
+                            "content": (
+                                "I could not complete this analysis. "
+                                f"Knowledge Hub error: {exc}"
+                            ),
+                            "result": None
+                        }
+                    )
 
 
 for message in st.session_state["kh_messages"]:
@@ -2408,6 +2584,14 @@ for message in st.session_state["kh_messages"]:
 
                 with st.expander("Sources used"):
                     render_source_summary(result)
+
+                    if result.get("total_seconds") is not None:
+                        st.caption(
+                            "Response time: "
+                            f"{result['total_seconds']:.1f}s "
+                            "· source research: "
+                            f"{result.get('research_seconds', 0):.1f}s"
+                        )
 
                 render_evidence_inspector(result)
 
