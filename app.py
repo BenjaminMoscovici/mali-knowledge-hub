@@ -803,14 +803,33 @@ def build_document_evidence(
     hnrp_count=8
 ):
 
+    function_started = time.perf_counter()
+
     document_groups = get_document_groups()
 
     government_document_ids = document_groups["government"]
     hnrp_document_ids = document_groups["hnrp"]
 
+    trace = {
+        "government_docs": {
+            "requested": bool(use_government),
+            "status": "NOT_REQUESTED",
+            "seconds": 0.0,
+            "records": 0
+        },
+        "hnrp_docs": {
+            "requested": bool(use_hnrp),
+            "status": "NOT_REQUESTED",
+            "seconds": 0.0,
+            "records": 0
+        }
+    }
+
     def retrieve_government():
         if not use_government or not government_document_ids:
-            return []
+            return [], 0.0
+
+        started = time.perf_counter()
 
         government_query = f"""
 {question}
@@ -824,15 +843,19 @@ Focus on the government/development evidence most relevant to the
 user's question.
 """
 
-        return search_knowledge_base(
+        results = search_knowledge_base(
             government_query,
             match_count=government_count,
             filter_document_ids=government_document_ids
         )
 
+        return results, time.perf_counter() - started
+
     def retrieve_hnrp():
         if not use_hnrp or not hnrp_document_ids:
-            return []
+            return [], 0.0
+
+        started = time.perf_counter()
 
         hnrp_query = f"""
 {question}
@@ -845,11 +868,13 @@ Focus on the humanitarian planning evidence most relevant to the
 user's question.
 """
 
-        return search_knowledge_base(
+        results = search_knowledge_base(
             hnrp_query,
             match_count=hnrp_count,
             filter_document_ids=hnrp_document_ids
         )
+
+        return results, time.perf_counter() - started
 
     if use_government and use_hnrp:
         with ThreadPoolExecutor(max_workers=2) as executor:
@@ -859,11 +884,41 @@ user's question.
             hnrp_future = executor.submit(
                 retrieve_hnrp
             )
-            government_results = government_future.result()
-            hnrp_results = hnrp_future.result()
+            government_results, government_seconds = (
+                government_future.result()
+            )
+            hnrp_results, hnrp_seconds = (
+                hnrp_future.result()
+            )
     else:
-        government_results = retrieve_government()
-        hnrp_results = retrieve_hnrp()
+        government_results, government_seconds = (
+            retrieve_government()
+        )
+        hnrp_results, hnrp_seconds = (
+            retrieve_hnrp()
+        )
+
+    if use_government:
+        trace["government_docs"].update({
+            "status": (
+                "SUCCESS_WITH_RESULTS"
+                if government_results
+                else "SUCCESS_ZERO_RESULTS"
+            ),
+            "seconds": round(government_seconds, 3),
+            "records": len(government_results)
+        })
+
+    if use_hnrp:
+        trace["hnrp_docs"].update({
+            "status": (
+                "SUCCESS_WITH_RESULTS"
+                if hnrp_results
+                else "SUCCESS_ZERO_RESULTS"
+            ),
+            "seconds": round(hnrp_seconds, 3),
+            "records": len(hnrp_results)
+        })
 
     combined = government_results + hnrp_results
 
@@ -897,7 +952,15 @@ user's question.
             "content": result.get("content")
         })
 
-    return evidence
+    trace["total_seconds"] = round(
+        time.perf_counter() - function_started,
+        3
+    )
+
+    return {
+        "evidence": evidence,
+        "trace": trace
+    }
 
 
 # ============================================================
@@ -1737,24 +1800,89 @@ def run_four_source_research(question):
 
     total_started = time.perf_counter()
 
+    geo_started = time.perf_counter()
     geography = resolve_geography(question)
+    geography_seconds = time.perf_counter() - geo_started
+
+    routing_started = time.perf_counter()
     source_plan = plan_sources(
         question,
         geography
     )
+    routing_seconds = time.perf_counter() - routing_started
 
-    document_evidence = []
+    document_result = {
+        "evidence": [],
+        "trace": {
+            "government_docs": {
+                "requested": bool(source_plan["government_docs"]),
+                "status": (
+                    "NOT_REQUESTED"
+                    if not source_plan["government_docs"]
+                    else "SUCCESS_ZERO_RESULTS"
+                ),
+                "seconds": 0.0,
+                "records": 0
+            },
+            "hnrp_docs": {
+                "requested": bool(source_plan["hnrp_docs"]),
+                "status": (
+                    "NOT_REQUESTED"
+                    if not source_plan["hnrp_docs"]
+                    else "SUCCESS_ZERO_RESULTS"
+                ),
+                "seconds": 0.0,
+                "records": 0
+            },
+            "total_seconds": 0.0
+        }
+    }
+
     hapi_result = {
         "raw_count": 0,
         "evidence": []
     }
+
     fongim_result = {
         "project_count": 0,
         "location_count": 0,
         "evidence": []
     }
 
+    source_trace = {
+        "hapi": {
+            "requested": bool(source_plan["hapi"]),
+            "status": (
+                "NOT_REQUESTED"
+                if not source_plan["hapi"]
+                else "SUCCESS_ZERO_RESULTS"
+            ),
+            "seconds": 0.0,
+            "records": 0
+        },
+        "fongim": {
+            "requested": bool(source_plan["fongim"]),
+            "status": (
+                "NOT_REQUESTED"
+                if not source_plan["fongim"]
+                else "SUCCESS_ZERO_RESULTS"
+            ),
+            "seconds": 0.0,
+            "records": 0
+        }
+    }
+
     jobs = {}
+
+    def timed_hapi():
+        started = time.perf_counter()
+        value = build_hapi_evidence(geography)
+        return value, time.perf_counter() - started
+
+    def timed_fongim():
+        started = time.perf_counter()
+        value = research_fongim(geography)
+        return value, time.perf_counter() - started
 
     with ThreadPoolExecutor(max_workers=3) as executor:
 
@@ -1771,27 +1899,48 @@ def run_four_source_research(question):
 
         if source_plan["hapi"]:
             jobs["hapi"] = executor.submit(
-                build_hapi_evidence,
-                geography
+                timed_hapi
             )
 
         if source_plan["fongim"]:
             jobs["fongim"] = executor.submit(
-                research_fongim,
-                geography
+                timed_fongim
             )
 
         if "documents" in jobs:
-            document_evidence = jobs["documents"].result()
+            document_result = jobs["documents"].result()
 
         if "hapi" in jobs:
-            hapi_result = jobs["hapi"].result()
+            hapi_result, hapi_seconds = jobs["hapi"].result()
+            source_trace["hapi"].update({
+                "status": (
+                    "SUCCESS_WITH_RESULTS"
+                    if hapi_result.get("evidence")
+                    else "SUCCESS_ZERO_RESULTS"
+                ),
+                "seconds": round(hapi_seconds, 3),
+                "records": int(hapi_result.get("raw_count", 0))
+            })
 
         if "fongim" in jobs:
-            fongim_result = jobs["fongim"].result()
+            fongim_result, fongim_seconds = jobs["fongim"].result()
+            source_trace["fongim"].update({
+                "status": (
+                    "SUCCESS_WITH_RESULTS"
+                    if fongim_result.get("evidence")
+                    else "SUCCESS_ZERO_RESULTS"
+                ),
+                "seconds": round(fongim_seconds, 3),
+                "records": int(fongim_result.get("project_count", 0)),
+                "location_records": int(
+                    fongim_result.get("location_count", 0)
+                )
+            })
+
+    reduction_started = time.perf_counter()
 
     ledger = build_unified_evidence(
-        document_evidence,
+        document_result["evidence"],
         hapi_result["evidence"],
         fongim_result["evidence"]
     )
@@ -1803,6 +1952,40 @@ def run_four_source_research(question):
             item.get("source_family")
         ] += 1
 
+    evidence_reduction_seconds = (
+        time.perf_counter() - reduction_started
+    )
+
+    execution_trace = {
+        "resolved_question": question,
+        "geography": {
+            "resolved": geography,
+            "seconds": round(geography_seconds, 3)
+        },
+        "routing": {
+            "source_plan": source_plan,
+            "seconds": round(routing_seconds, 3)
+        },
+        "sources": {
+            "government_docs": document_result["trace"][
+                "government_docs"
+            ],
+            "hnrp_docs": document_result["trace"][
+                "hnrp_docs"
+            ],
+            "hapi": source_trace["hapi"],
+            "fongim": source_trace["fongim"]
+        },
+        "document_bundle_seconds": document_result["trace"].get(
+            "total_seconds",
+            0.0
+        ),
+        "evidence_reduction_seconds": round(
+            evidence_reduction_seconds,
+            3
+        )
+    }
+
     return {
         "geography": geography,
         "source_plan": source_plan,
@@ -1813,7 +1996,8 @@ def run_four_source_research(question):
         "research_seconds": round(
             time.perf_counter() - total_started,
             2
-        )
+        ),
+        "execution_trace": execution_trace
     }
 
 
@@ -1958,6 +2142,8 @@ Produce an evidence-grounded analytical answer.
 """
 
 
+    synthesis_started = time.perf_counter()
+
     response = (
         openai_client
         .responses
@@ -2004,6 +2190,19 @@ Produce an evidence-grounded analytical answer.
         "research_seconds":
             research.get(
                 "research_seconds"
+            ),
+
+        "synthesis_seconds":
+            round(
+                time.perf_counter()
+                - synthesis_started,
+                2
+            ),
+
+        "execution_trace":
+            research.get(
+                "execution_trace",
+                {}
             ),
 
         "total_seconds":
@@ -2347,6 +2546,170 @@ if "kh_messages" not in st.session_state:
 
 def reset_conversation():
     st.session_state["kh_messages"] = []
+
+
+def render_execution_trace(result):
+
+    trace = result.get("execution_trace") or {}
+
+    if not trace:
+        return
+
+    with st.expander("🧪 Retrieval trace"):
+
+        geography_trace = trace.get("geography", {})
+        routing_trace = trace.get("routing", {})
+        sources = trace.get("sources", {})
+
+        st.markdown("**Resolved question**")
+        st.code(
+            trace.get("resolved_question", ""),
+            language=None
+        )
+
+        resolved_geo = geography_trace.get("resolved", {})
+
+        st.markdown("**Resolved geography**")
+        st.json(resolved_geo)
+
+        st.markdown("**Source plan**")
+        st.json(
+            routing_trace.get("source_plan", {})
+        )
+
+        st.markdown("**Source execution**")
+
+        source_rows = []
+
+        labels = {
+            "government_docs": "Government documents",
+            "hnrp_docs": "HNRP",
+            "hapi": "OCHA / HAPI",
+            "fongim": "FONGIM"
+        }
+
+        for key in [
+            "government_docs",
+            "hnrp_docs",
+            "hapi",
+            "fongim"
+        ]:
+            item = sources.get(key, {})
+
+            source_rows.append({
+                "Source": labels[key],
+                "Status": item.get(
+                    "status",
+                    "UNKNOWN"
+                ),
+                "Records": item.get(
+                    "records",
+                    0
+                ),
+                "Seconds": item.get(
+                    "seconds",
+                    0.0
+                )
+            })
+
+        st.dataframe(
+            source_rows,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.markdown("**Pipeline timing**")
+
+        total_seconds = result.get("total_seconds", 0.0)
+        research_seconds = result.get("research_seconds", 0.0)
+        synthesis_seconds = result.get("synthesis_seconds", 0.0)
+
+        timing_rows = [
+            {
+                "Stage": "Geography resolution",
+                "Seconds": geography_trace.get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "Source routing",
+                "Seconds": routing_trace.get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "Government retrieval",
+                "Seconds": sources.get(
+                    "government_docs",
+                    {}
+                ).get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "HNRP retrieval",
+                "Seconds": sources.get(
+                    "hnrp_docs",
+                    {}
+                ).get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "HAPI",
+                "Seconds": sources.get(
+                    "hapi",
+                    {}
+                ).get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "FONGIM",
+                "Seconds": sources.get(
+                    "fongim",
+                    {}
+                ).get(
+                    "seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "Evidence normalization",
+                "Seconds": trace.get(
+                    "evidence_reduction_seconds",
+                    0.0
+                )
+            },
+            {
+                "Stage": "Total research wall time",
+                "Seconds": research_seconds
+            },
+            {
+                "Stage": "Final synthesis",
+                "Seconds": synthesis_seconds
+            },
+            {
+                "Stage": "Total response",
+                "Seconds": total_seconds
+            }
+        ]
+
+        st.dataframe(
+            timing_rows,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        st.caption(
+            "Source calls execute in parallel where possible, so "
+            "individual source times do not sum to research wall time."
+        )
 
 
 def render_source_summary(result):
@@ -2699,6 +3062,7 @@ for message in st.session_state["kh_messages"]:
                             f"{result.get('research_seconds', 0):.1f}s"
                         )
 
+                render_execution_trace(result)
                 render_evidence_inspector(result)
 
 
@@ -2739,10 +3103,10 @@ with st.expander(
     with step1:
         st.markdown(
             """
-**1 · Understand**  
+**1 · Understand**
 The Hub identifies the geography, topic and types of evidence needed.
 
-**2 · Retrieve**  
+**2 · Retrieve**
 It searches the document corpus and, where relevant, queries live OCHA data and structured FONGIM records.
 """
         )
@@ -2750,10 +3114,10 @@ It searches the document corpus and, where relevant, queries live OCHA data and 
     with step2:
         st.markdown(
             """
-**3 · Select**  
+**3 · Select**
 Only relevant passages and structured records are passed into the analysis. The AI does not answer from general knowledge.
 
-**4 · Preserve**  
+**4 · Preserve**
 Geographic levels, reporting periods, source categories and source limitations are retained instead of being silently merged.
 """
         )
@@ -2761,10 +3125,10 @@ Geographic levels, reporting periods, source categories and source limitations a
     with step3:
         st.markdown(
             """
-**5 · Analyse**  
+**5 · Analyse**
 The AI compares evidence across sources to identify documented alignments, gaps and tensions.
 
-**6 · Respond**  
+**6 · Respond**
 The answer is generated with evidence references, and the underlying evidence items remain inspectable.
 """
         )
