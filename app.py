@@ -620,74 +620,178 @@ CROSS_SOURCE_KEYWORDS = [
 ]
 
 
-def plan_sources(question, geography):
+PLANNER_SOURCE_ENUM = [
+    "GOVERNMENT_DOCS",
+    "HNRP",
+    "HAPI",
+    "FONGIM"
+]
 
-    use_government = contains_any_keyword(
-        question,
-        GOVERNMENT_KEYWORDS
+
+def plan_sources_semantically(question, geography=None):
+    """
+    Small structured planner.
+
+    Its job is ONLY to identify information needs and source families.
+    It must not answer the question, infer facts, or reason about
+    geographic relationships.
+    """
+
+    started = time.perf_counter()
+
+    system_prompt = """
+You are the source planner for the Mali Knowledge Hub.
+
+Your ONLY task is to decide which connected source families must be
+queried to answer the user's question.
+
+CONNECTED SOURCE FAMILIES:
+
+GOVERNMENT_DOCS
+- Mali government strategy, policy, planning and structural priorities
+- Vision Mali 2063
+- SNEDD 2024-2033
+- Projets Structurants Prioritaires
+- Phasage des Projets Structurants Prioritaires
+
+HNRP
+- Mali humanitarian needs and response planning document
+- humanitarian priorities, response objectives, modalities and planning
+
+HAPI
+- current Knowledge Hub connector for structured humanitarian-needs data
+- use for quantitative / structured humanitarian needs
+
+FONGIM
+- structured operational project data
+- organizations / NGOs / actors
+- projects and interventions
+- sectors
+- project locations
+- who is working where
+- existing activities / operational presence
+
+RULES:
+1. Select every source family materially needed to answer the question.
+2. Do NOT select a source merely because it might be interesting.
+3. A question can require multiple source families.
+4. "Who is working", "who is active", actors, NGOs, organizations,
+   interventions, projects, activities, operational presence or coverage
+   require FONGIM.
+5. Humanitarian needs may require HNRP and/or HAPI:
+   - HNRP for narrative priorities and response planning.
+   - HAPI for structured humanitarian-needs figures.
+6. Government priorities, policies, strategies, structural causes or
+   planned structural responses require GOVERNMENT_DOCS.
+7. Do not claim that a source contains a particular fact.
+8. Do not reason about parent/child geography. Geography resolution is
+   handled separately by deterministic code.
+9. Do not answer the user's substantive question.
+10. Return JSON only, matching the requested schema.
+"""
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "intents": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "topic": {"type": "string"},
+                        "source_families": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": PLANNER_SOURCE_ENUM
+                            }
+                        }
+                    },
+                    "required": [
+                        "topic",
+                        "source_families"
+                    ],
+                    "additionalProperties": False
+                }
+            },
+            "geo_entities": {
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "is_meta_question": {
+                "type": "boolean"
+            }
+        },
+        "required": [
+            "intents",
+            "geo_entities",
+            "is_meta_question"
+        ],
+        "additionalProperties": False
+    }
+
+    response = openai_client.responses.create(
+        model="gpt-5-mini",
+        input=[
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": question
+            }
+        ],
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "mali_source_plan",
+                "schema": schema,
+                "strict": True
+            }
+        }
     )
 
-    use_humanitarian = contains_any_keyword(
-        question,
-        HUMANITARIAN_KEYWORDS
-    )
+    raw = response.output_text
+    plan = json.loads(raw)
 
-    use_fongim = contains_any_keyword(
-        question,
-        FONGIM_KEYWORDS
-    )
+    selected = set()
 
-    cross_source = contains_any_keyword(
-        question,
-        CROSS_SOURCE_KEYWORDS
-    )
+    for intent in plan.get("intents", []):
+        for source in intent.get("source_families", []):
+            if source in PLANNER_SOURCE_ENUM:
+                selected.add(source)
 
-    if cross_source:
-        return {
+    source_plan = {
+        "government_docs": "GOVERNMENT_DOCS" in selected,
+        "hnrp_docs": "HNRP" in selected,
+        "hapi": "HAPI" in selected,
+        "fongim": "FONGIM" in selected
+    }
+
+    # Safe fallback: never allow a malformed/empty substantive plan
+    # to silently suppress all evidence retrieval.
+    if (
+        not plan.get("is_meta_question", False)
+        and not any(source_plan.values())
+    ):
+        source_plan = {
             "government_docs": True,
             "hnrp_docs": True,
-            "hapi": True,
-            "fongim": True
-        }
-
-    if use_fongim and not use_government and not use_humanitarian:
-        return {
-            "government_docs": False,
-            "hnrp_docs": False,
-            "hapi": False,
-            "fongim": True
-        }
-
-    if use_government and not use_humanitarian and not use_fongim:
-        return {
-            "government_docs": True,
-            "hnrp_docs": False,
             "hapi": False,
             "fongim": False
-        }
-
-    if use_humanitarian and not use_government and not use_fongim:
-        return {
-            "government_docs": False,
-            "hnrp_docs": True,
-            "hapi": True,
-            "fongim": False
-        }
-
-    if use_government or use_humanitarian or use_fongim:
-        return {
-            "government_docs": use_government,
-            "hnrp_docs": use_humanitarian,
-            "hapi": use_humanitarian,
-            "fongim": use_fongim
         }
 
     return {
-        "government_docs": True,
-        "hnrp_docs": True,
-        "hapi": False,
-        "fongim": False
+        "source_plan": source_plan,
+        "planner_output": plan,
+        "seconds": round(
+            time.perf_counter() - started,
+            3
+        )
     }
+
+
 
 
 # ============================================================
@@ -1804,12 +1908,13 @@ def run_four_source_research(question):
     geography = resolve_geography(question)
     geography_seconds = time.perf_counter() - geo_started
 
-    routing_started = time.perf_counter()
-    source_plan = plan_sources(
+    planner_result = plan_sources_semantically(
         question,
         geography
     )
-    routing_seconds = time.perf_counter() - routing_started
+
+    source_plan = planner_result["source_plan"]
+    routing_seconds = planner_result["seconds"]
 
     document_result = {
         "evidence": [],
@@ -1964,7 +2069,11 @@ def run_four_source_research(question):
         },
         "routing": {
             "source_plan": source_plan,
-            "seconds": round(routing_seconds, 3)
+            "planner_output": planner_result.get(
+                "planner_output",
+                {}
+            ),
+            "seconds": routing_seconds
         },
         "sources": {
             "government_docs": document_result["trace"][
@@ -2576,6 +2685,15 @@ def render_execution_trace(result):
         st.json(
             routing_trace.get("source_plan", {})
         )
+
+        planner_output = routing_trace.get(
+            "planner_output",
+            {}
+        )
+
+        if planner_output:
+            st.markdown("**Structured planner output**")
+            st.json(planner_output)
 
         st.markdown("**Source execution**")
 
