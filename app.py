@@ -2611,6 +2611,33 @@ st.markdown(
         border-color: #1678c6 !important;
     }
 
+    .kh-topnav {
+        margin: 0 0 1.15rem 0;
+        padding: 0.4rem;
+        border: 1px solid #dce9f6;
+        border-radius: 15px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 4px 16px rgba(26, 79, 126, 0.045);
+    }
+
+    [data-testid="stChatInput"] {
+        max-width: 1180px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    [data-testid="stChatInput"] > div {
+        border: 1.5px solid #8fc4ec !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        box-shadow: 0 5px 18px rgba(22, 120, 198, 0.11) !important;
+    }
+
+    [data-testid="stChatInput"] > div:focus-within {
+        border-color: #1678c6 !important;
+        box-shadow: 0 0 0 3px rgba(22,120,198,.10), 0 6px 20px rgba(22,120,198,.13) !important;
+    }
+
     @media (max-width: 760px) {
         .block-container {
             padding-top: 1.6rem;
@@ -2644,6 +2671,9 @@ st.markdown(
 
 if "kh_messages" not in st.session_state:
     st.session_state["kh_messages"] = []
+
+if "kh_page" not in st.session_state:
+    st.session_state["kh_page"] = "Knowledge Hub"
 
 
 def reset_conversation():
@@ -2910,135 +2940,28 @@ def render_evidence_inspector(result):
                 st.write(item.get("content"))
 
 
-control_left, control_right = st.columns([5, 1])
+st.markdown('<div class="kh-topnav">', unsafe_allow_html=True)
+nav1, nav2, nav3 = st.columns([1.05, 1, 1.15], gap="small")
 
-with control_right:
-    if st.button(
-        "↻ New chat",
-        use_container_width=True
-    ):
-        reset_conversation()
+with nav1:
+    if st.button("Knowledge Hub", type="primary" if st.session_state["kh_page"] == "Knowledge Hub" else "secondary", use_container_width=True, key="nav_hub"):
+        st.session_state["kh_page"] = "Knowledge Hub"
         st.rerun()
 
+with nav2:
+    if st.button("How it works", type="primary" if st.session_state["kh_page"] == "How it works" else "secondary", use_container_width=True, key="nav_how"):
+        st.session_state["kh_page"] = "How it works"
+        st.rerun()
 
-example_prompt = None
-typed_prompt = None
+with nav3:
+    if st.button("Available sources", type="primary" if st.session_state["kh_page"] == "Available sources" else "secondary", use_container_width=True, key="nav_sources"):
+        st.session_state["kh_page"] = "Available sources"
+        st.rerun()
 
-if not st.session_state["kh_messages"]:
+st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown(
-        '<div class="kh-search-label">Ask the Knowledge Hub</div>',
-        unsafe_allow_html=True
-    )
-
-    landing_question = st.text_area(
-        "Question",
-        key="kh_landing_question",
-        placeholder=(
-            "Ask a question about Mali — search, compare evidence, "
-            "or analyse priorities, needs and interventions..."
-        ),
-        label_visibility="collapsed"
-    )
-
-    if st.button(
-        "Analyse evidence  →",
-        type="primary",
-        use_container_width=True,
-        key="kh_landing_submit"
-    ):
-        typed_prompt = landing_question
-
-    st.markdown(
-        '<div class="kh-examples-label">Or try one of these example questions:</div>',
-        unsafe_allow_html=True
-    )
-
-    example_col1, example_col2, example_col3 = st.columns(
-        3,
-        gap="medium"
-    )
-
-    with example_col1:
-        st.markdown(
-            """
-<div class="kh-example-card">
-    <div class="kh-example-kicker">🔎 SEARCH</div>
-    <div class="kh-example-text">
-        What are the Government's priorities for local development
-        in Kayes?
-    </div>
-</div>
-""",
-            unsafe_allow_html=True
-        )
-
-        if st.button(
-            "Ask this →",
-            key="example_search",
-            use_container_width=True
-        ):
-            example_prompt = (
-                "What are the Government's priorities for local "
-                "development in Kayes?"
-            )
-
-    with example_col2:
-        st.markdown(
-            """
-<div class="kh-example-card">
-    <div class="kh-example-kicker">↔ COMPARE</div>
-    <div class="kh-example-text">
-        In Mopti, how do humanitarian needs compare with current
-        NGO interventions?
-    </div>
-</div>
-""",
-            unsafe_allow_html=True
-        )
-
-        if st.button(
-            "Ask this →",
-            key="example_compare",
-            use_container_width=True
-        ):
-            example_prompt = (
-                "In Mopti, how do humanitarian needs compare with "
-                "current NGO interventions?"
-            )
-
-    with example_col3:
-        st.markdown(
-            """
-<div class="kh-example-card">
-    <div class="kh-example-kicker">💡 ANALYSE &amp; PLAN</div>
-    <div class="kh-example-text">
-        Where are the main gaps and opportunities for stronger
-        Humanitarian-Development-Peace coordination in Gao?
-    </div>
-</div>
-""",
-            unsafe_allow_html=True
-        )
-
-        if st.button(
-            "Ask this →",
-            key="example_plan",
-            use_container_width=True
-        ):
-            example_prompt = (
-                "Where are the main gaps and opportunities for stronger "
-                "Humanitarian-Development-Peace coordination in Gao?"
-            )
-
-    st.markdown(
-        '<div class="kh-section-intro">Explore the platform and the evidence behind it.</div>',
-        unsafe_allow_html=True
-    )
-
-    with st.expander(
-        "⚙️  How does the Knowledge Hub work?"
-    ):
+if st.session_state["kh_page"] == "How it works":
+    with st.container(border=False):
 
         st.markdown(
             '<div class="kh-how-copy">From your question to an evidence-based answer — in 6 steps</div>',
@@ -3106,10 +3029,8 @@ if not st.session_state["kh_messages"]:
             "Core rule: Reason across evidence. Do not reason beyond evidence."
         )
 
-
-    with st.expander(
-        "🗄️  Already Available Sources"
-    ):
+elif st.session_state["kh_page"] == "Available sources":
+    with st.container(border=False):
 
         st.caption(
             "Explore the documents and structured data currently integrated in the Knowledge Hub."
@@ -3205,168 +3126,283 @@ if not st.session_state["kh_messages"]:
             )
 
 else:
+    control_left, control_right = st.columns([5, 1])
+    with control_right:
+        if st.button("↻ New chat", use_container_width=True):
+            reset_conversation()
+            st.rerun()
 
-    for message in st.session_state["kh_messages"]:
+    example_prompt = None
+    typed_prompt = None
 
-        if message.get("role") == "user":
+    if not st.session_state["kh_messages"]:
 
-            with st.chat_message("user"):
-                st.markdown(
-                    message.get("content", "")
+        st.markdown(
+            '<div class="kh-search-label">Ask the Knowledge Hub</div>',
+            unsafe_allow_html=True
+        )
+
+        landing_question = st.text_area(
+            "Question",
+            key="kh_landing_question",
+            placeholder=(
+                "Ask a question about Mali — search, compare evidence, "
+                "or analyse priorities, needs and interventions..."
+            ),
+            label_visibility="collapsed"
+        )
+
+        if st.button(
+            "Analyse evidence  →",
+            type="primary",
+            use_container_width=True,
+            key="kh_landing_submit"
+        ):
+            typed_prompt = landing_question
+
+        st.markdown(
+            '<div class="kh-examples-label">Or try one of these example questions:</div>',
+            unsafe_allow_html=True
+        )
+
+        example_col1, example_col2, example_col3 = st.columns(
+            3,
+            gap="medium"
+        )
+
+        with example_col1:
+            st.markdown(
+                """
+    <div class="kh-example-card">
+        <div class="kh-example-kicker">🔎 SEARCH</div>
+        <div class="kh-example-text">
+            What are the Government's priorities for local development
+            in Kayes?
+        </div>
+    </div>
+    """,
+                unsafe_allow_html=True
+            )
+
+            if st.button(
+                "Ask this →",
+                key="example_search",
+                use_container_width=True
+            ):
+                example_prompt = (
+                    "What are the Government's priorities for local "
+                    "development in Kayes?"
                 )
 
-        elif message.get("role") == "assistant":
+        with example_col2:
+            st.markdown(
+                """
+    <div class="kh-example-card">
+        <div class="kh-example-kicker">↔ COMPARE</div>
+        <div class="kh-example-text">
+            In Mopti, how do humanitarian needs compare with current
+            NGO interventions?
+        </div>
+    </div>
+    """,
+                unsafe_allow_html=True
+            )
 
-            with st.chat_message("assistant"):
-
-                st.markdown(
-                    message.get("content", "")
+            if st.button(
+                "Ask this →",
+                key="example_compare",
+                use_container_width=True
+            ):
+                example_prompt = (
+                    "In Mopti, how do humanitarian needs compare with "
+                    "current NGO interventions?"
                 )
 
-                result = message.get("result")
+        with example_col3:
+            st.markdown(
+                """
+    <div class="kh-example-card">
+        <div class="kh-example-kicker">💡 ANALYSE &amp; PLAN</div>
+        <div class="kh-example-text">
+            Where are the main gaps and opportunities for stronger
+            Humanitarian-Development-Peace coordination in Gao?
+        </div>
+    </div>
+    """,
+                unsafe_allow_html=True
+            )
 
-                if result:
+            if st.button(
+                "Ask this →",
+                key="example_plan",
+                use_container_width=True
+            ):
+                example_prompt = (
+                    "Where are the main gaps and opportunities for stronger "
+                    "Humanitarian-Development-Peace coordination in Gao?"
+                )
+    else:
 
-                    geography = result.get("geography", {})
+        for message in st.session_state["kh_messages"]:
 
-                    if geography.get("assumption"):
-                        st.info(
-                            geography["assumption"]
-                        )
+            if message.get("role") == "user":
 
-                    with st.expander("Sources used"):
-                        render_source_summary(result)
+                with st.chat_message("user"):
+                    st.markdown(
+                        message.get("content", "")
+                    )
 
-                        if result.get("total_seconds") is not None:
-                            st.caption(
-                                "Response time: "
-                                f"{result['total_seconds']:.1f}s "
-                                "· source research: "
-                                f"{result.get('research_seconds', 0):.1f}s"
+            elif message.get("role") == "assistant":
+
+                with st.chat_message("assistant"):
+
+                    st.markdown(
+                        message.get("content", "")
+                    )
+
+                    result = message.get("result")
+
+                    if result:
+
+                        geography = result.get("geography", {})
+
+                        if geography.get("assumption"):
+                            st.info(
+                                geography["assumption"]
                             )
 
-                    render_execution_trace(result)
-                    render_evidence_inspector(result)
+                        with st.expander("Sources used"):
+                            render_source_summary(result)
 
-    typed_prompt = st.chat_input(
-        "Ask a follow-up question..."
-    )
+                            if result.get("total_seconds") is not None:
+                                st.caption(
+                                    "Response time: "
+                                    f"{result['total_seconds']:.1f}s "
+                                    "· source research: "
+                                    f"{result.get('research_seconds', 0):.1f}s"
+                                )
 
+                        render_execution_trace(result)
+                        render_evidence_inspector(result)
 
-current_prompt = typed_prompt or example_prompt
+        typed_prompt = st.chat_input(
+            "Ask a follow-up question..."
+        )
 
+    current_prompt = typed_prompt or example_prompt
 
-if current_prompt:
-
-    current_prompt = current_prompt.strip()
 
     if current_prompt:
 
-        prior_messages = list(
-            st.session_state[
-                "kh_messages"
-            ]
-        )
+        current_prompt = current_prompt.strip()
 
-        st.session_state[
-            "kh_messages"
-        ].append(
-            {
-                "role": "user",
-                "content": current_prompt,
-                "standalone_question": current_prompt
-            }
-        )
+        if current_prompt:
 
-        if is_source_inventory_question(
-            current_prompt
-        ):
+            prior_messages = list(
+                st.session_state[
+                    "kh_messages"
+                ]
+            )
 
             st.session_state[
                 "kh_messages"
             ].append(
                 {
-                    "role": "assistant",
-                    "content": source_inventory_answer(),
-                    "result": None
+                    "role": "user",
+                    "content": current_prompt,
+                    "standalone_question": current_prompt
                 }
             )
 
-        else:
-
-            standalone_question = current_prompt
-
-            if likely_context_dependent_followup(
-                current_prompt,
-                prior_messages
+            if is_source_inventory_question(
+                current_prompt
             ):
-                standalone_question = (
-                    resolve_conversational_question(
-                        current_prompt,
-                        prior_messages
-                    )
+
+                st.session_state[
+                    "kh_messages"
+                ].append(
+                    {
+                        "role": "assistant",
+                        "content": source_inventory_answer(),
+                        "result": None
+                    }
                 )
 
-            st.session_state[
-                "kh_messages"
-            ][-1][
-                "standalone_question"
-            ] = standalone_question
+            else:
 
-            with st.chat_message("user"):
-                st.markdown(current_prompt)
+                standalone_question = current_prompt
 
-            with st.chat_message("assistant"):
-                with st.status(
-                    "Searching and analysing evidence...",
-                    expanded=True
-                ) as search_status:
-
-                    st.write("Planning research and selecting sources...")
-                    st.write("Retrieving documents and structured data...")
-                    st.write("Cross-checking evidence and preparing the answer...")
-
-                    try:
-
-                        result = generate_grounded_answer(
-                            standalone_question
+                if likely_context_dependent_followup(
+                    current_prompt,
+                    prior_messages
+                ):
+                    standalone_question = (
+                        resolve_conversational_question(
+                            current_prompt,
+                            prior_messages
                         )
+                    )
 
-                        st.session_state[
-                            "kh_messages"
-                        ].append(
-                            {
-                                "role": "assistant",
-                                "content": result["answer"],
-                                "result": result
-                            }
-                        )
+                st.session_state[
+                    "kh_messages"
+                ][-1][
+                    "standalone_question"
+                ] = standalone_question
 
-                        search_status.update(
-                            label="Analysis complete",
-                            state="complete",
-                            expanded=False
-                        )
+                with st.chat_message("user"):
+                    st.markdown(current_prompt)
 
-                    except Exception as exc:
+                with st.chat_message("assistant"):
+                    with st.status(
+                        "Searching and analysing evidence...",
+                        expanded=True
+                    ) as search_status:
 
-                        search_status.update(
-                            label="Analysis failed",
-                            state="error",
-                            expanded=True
-                        )
+                        st.write("Planning research and selecting sources...")
+                        st.write("Retrieving documents and structured data...")
+                        st.write("Cross-checking evidence and preparing the answer...")
 
-                        st.session_state[
-                            "kh_messages"
-                        ].append(
-                            {
-                                "role": "assistant",
-                                "content": (
-                                    "I could not complete this analysis. "
-                                    f"Knowledge Hub error: {exc}"
-                                ),
-                                "result": None
-                            }
-                        )
+                        try:
 
-        st.rerun()
+                            result = generate_grounded_answer(
+                                standalone_question
+                            )
+
+                            st.session_state[
+                                "kh_messages"
+                            ].append(
+                                {
+                                    "role": "assistant",
+                                    "content": result["answer"],
+                                    "result": result
+                                }
+                            )
+
+                            search_status.update(
+                                label="Analysis complete",
+                                state="complete",
+                                expanded=False
+                            )
+
+                        except Exception as exc:
+
+                            search_status.update(
+                                label="Analysis failed",
+                                state="error",
+                                expanded=True
+                            )
+
+                            st.session_state[
+                                "kh_messages"
+                            ].append(
+                                {
+                                    "role": "assistant",
+                                    "content": (
+                                        "I could not complete this analysis. "
+                                        f"Knowledge Hub error: {exc}"
+                                    ),
+                                    "result": None
+                                }
+                            )
+
+            st.rerun()
