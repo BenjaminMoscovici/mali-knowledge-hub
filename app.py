@@ -2119,7 +2119,7 @@ def run_four_source_research(question):
 
 def generate_grounded_answer(
     question,
-    model="gpt-5-mini"
+    model="gpt-5.6-luna"
 ):
 
     answer_started = time.perf_counter()
@@ -2250,6 +2250,7 @@ Produce a concise evidence-grounded analytical answer.
         .responses
         .create(
             model=model,
+            reasoning={"effort": "none"},
             max_output_tokens=1800,
             instructions=system_prompt,
             input=user_prompt
