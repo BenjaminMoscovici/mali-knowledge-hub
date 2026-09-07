@@ -3033,6 +3033,48 @@ if not st.session_state["kh_messages"]:
 
 else:
 
+    for message in st.session_state["kh_messages"]:
+
+        if message.get("role") == "user":
+
+            with st.chat_message("user"):
+                st.markdown(
+                    message.get("content", "")
+                )
+
+        elif message.get("role") == "assistant":
+
+            with st.chat_message("assistant"):
+
+                st.markdown(
+                    message.get("content", "")
+                )
+
+                result = message.get("result")
+
+                if result:
+
+                    geography = result.get("geography", {})
+
+                    if geography.get("assumption"):
+                        st.info(
+                            geography["assumption"]
+                        )
+
+                    with st.expander("Sources used"):
+                        render_source_summary(result)
+
+                        if result.get("total_seconds") is not None:
+                            st.caption(
+                                "Response time: "
+                                f"{result['total_seconds']:.1f}s "
+                                "· source research: "
+                                f"{result.get('research_seconds', 0):.1f}s"
+                            )
+
+                    render_execution_trace(result)
+                    render_evidence_inspector(result)
+
     typed_prompt = st.chat_input(
         "Ask a follow-up question..."
     )
@@ -3133,48 +3175,7 @@ if current_prompt:
                         }
                     )
 
-
-for message in st.session_state["kh_messages"]:
-
-    if message.get("role") == "user":
-
-        with st.chat_message("user"):
-            st.markdown(
-                message.get("content", "")
-            )
-
-    elif message.get("role") == "assistant":
-
-        with st.chat_message("assistant"):
-
-            st.markdown(
-                message.get("content", "")
-            )
-
-            result = message.get("result")
-
-            if result:
-
-                geography = result.get("geography", {})
-
-                if geography.get("assumption"):
-                    st.info(
-                        geography["assumption"]
-                    )
-
-                with st.expander("Sources used"):
-                    render_source_summary(result)
-
-                    if result.get("total_seconds") is not None:
-                        st.caption(
-                            "Response time: "
-                            f"{result['total_seconds']:.1f}s "
-                            "· source research: "
-                            f"{result.get('research_seconds', 0):.1f}s"
-                        )
-
-                render_execution_trace(result)
-                render_evidence_inspector(result)
+        st.rerun()
 
 
 st.markdown(
