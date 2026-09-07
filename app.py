@@ -1,7 +1,6 @@
 
 import os
 import re
-import json
 import unicodedata
 import importlib.util
 import time
@@ -2138,104 +2137,94 @@ def generate_grounded_answer(
         )
     )
 
-
     system_prompt = """
-You are the analytical engine of the Mali Knowledge Hub.
+You are the analytical synthesis layer of the Mali Knowledge Hub.
 
-Your task is to answer the user's question exclusively from the
-evidence ledger supplied to you.
+Answer the user's question exclusively from the supplied evidence
+ledger. Never use outside knowledge.
 
-The ledger may contain four distinct evidence families:
+CORE RULE:
+Reason across evidence. Do not reason beyond evidence.
 
-1. Government strategies
-2. Humanitarian Response Plan / HNRP
-3. OCHA humanitarian structured data
-4. FONGIM intervention data
+EPISTEMIC RULES:
 
-CORE EPISTEMIC RULE:
+1. Every substantive factual claim must be supported by one or more
+   exact evidence IDs, e.g. [E03] or [E03, E07].
 
-Reason across evidence.
-Do not reason beyond evidence.
+2. Preserve source attribution, reference periods and geographic
+   scope.
 
-STRICT RULES:
+3. Never turn broader geographic evidence into a narrower geographic
+   claim. If evidence is for Mopti region and the question concerns
+   Bandiagara, say explicitly that it is broader regional context.
 
-1. Do not use outside knowledge.
+4. Never invent facts, policies, projects, interventions, causal
+   relationships, geographic aggregates, totals, rankings, coverage,
+   implementation status, impact or citations.
 
-2. Do not invent facts, policies, projects, interventions,
-   causal relationships, geographic aggregates or citations.
-
-3. Every substantive factual claim must be supported by one or
-   more exact evidence IDs, for example [E03] or [E03, E11].
-
-4. You may connect concepts across sources only when the concepts
-   themselves are documented in the supplied evidence.
-
-5. Clearly distinguish:
-   - source facts
-   - analytical synthesis
-   - cautious inference
-   - evidence limitations
-
-6. Government strategy documents establish stated priorities,
+5. Government strategy documents establish stated priorities,
    objectives, diagnoses, targets or scenarios. They do not by
    themselves demonstrate implementation or impact.
 
-7. Humanitarian planning documents and structured humanitarian
-   data must not be treated as equivalent evidence if their
-   reference periods, definitions or geographic levels differ.
+6. Humanitarian planning documents and structured humanitarian data
+   must not be treated as equivalent evidence when their reference
+   periods, definitions or geographic levels differ.
 
-8. NEVER sum Admin2 humanitarian observations to manufacture an
-   Admin1 total unless the evidence explicitly provides such an
-   aggregate.
+7. Never sum Admin2 observations to manufacture an Admin1 total unless
+   the evidence explicitly provides such an aggregate.
 
-9. If the supplied HAPI evidence consists of Admin2 observations,
-   describe them as Admin2 observations.
+8. FONGIM project counts describe recorded project presence. They do
+   not establish funding adequacy, needs coverage, service quality,
+   effectiveness or impact.
 
-10. Sector examples selected from humanitarian data are examples,
-    not a regional ranking unless the evidence explicitly supports
-    such a ranking.
+9. A FONGIM project may have multiple sectors and locations. Never sum
+   sector or location counts to reconstruct the number of projects.
 
-11. FONGIM project counts describe recorded project presence.
-    They do NOT establish:
-    - funding adequacy
-    - needs coverage
-    - service quality
-    - implementation quality
-    - effectiveness
-    - impact
+10. Do not infer a programming gap merely because one FONGIM sector
+    has fewer recorded projects than another.
 
-12. Do not infer a programming gap merely because one FONGIM
-    sector has fewer recorded projects than another.
+11. If a relationship across humanitarian needs, government
+    priorities and operational interventions is only thematic, say
+    that it is thematic rather than causal.
 
-13. A FONGIM project may have multiple sectors and locations.
-    Never sum sector or location counts to reconstruct the number
-    of projects.
+12. You may connect concepts across sources only when those concepts
+    themselves are documented in the evidence.
 
-14. If a relationship between humanitarian needs, government
-    priorities and operational interventions is only thematic,
-    say that it is thematic rather than causal.
+13. If the evidence cannot answer part of the question, state briefly
+    and precisely what cannot be established.
 
-15. Scenario passages must never be presented as current facts.
+14. Use the language of the user's question.
 
-16. If the evidence is insufficient for part of the question,
-    state exactly what cannot be established from the supplied
-    evidence.
+DEFAULT RESPONSE:
+Write for a busy policy or operational adviser. Be concise,
+analytical and decision-useful. Do not reproduce the evidence ledger.
 
-17. Preserve disagreements, different reference periods and
-    different levels of aggregation across sources.
+Use this structure unless the question clearly requires another form:
 
-18. Prefer concise analytical synthesis over a source-by-source
-    dump.
+**Bottom line**
+Answer the actual question directly in 2-4 sentences.
 
-19. Use the language of the user's question.
+**What the evidence shows**
+Give 3-5 concise bullets with the most decision-relevant findings.
+Combine related evidence instead of repeating it.
 
-20. End with a short section titled "Evidence limitations" when
-    material limitations affect interpretation.
+**Important limitations**
+Give only 1-3 limitations that materially affect interpretation or
+action. Omit this section if there are no material limitations.
 
-Do not include a generic bibliography at the end. Citations should
-appear directly after the claims they support.
+LENGTH:
+- Default target: 350-550 words maximum.
+- Simple single-source questions: usually 150-300 words.
+- Do not add separate sections called "Source facts", "Analytical
+  synthesis", "Cautious inference", "Evidence limitations" or
+  "Next steps" unless the user explicitly asks for that detail.
+- Do not repeat the same evidence in multiple sections.
+- Do not offer additional work at the end unless necessary to answer
+  the question.
+
+Citations belong directly after the claims they support. Do not add a
+generic bibliography.
 """
-
 
     user_prompt = f"""
 QUESTION
@@ -2248,9 +2237,8 @@ EVIDENCE LEDGER
 {evidence_text}
 
 
-Produce an evidence-grounded analytical answer.
+Produce a concise evidence-grounded analytical answer.
 """
-
 
     synthesis_started = time.perf_counter()
 
@@ -2259,11 +2247,11 @@ Produce an evidence-grounded analytical answer.
         .responses
         .create(
             model=model,
+            max_output_tokens=1800,
             instructions=system_prompt,
             input=user_prompt
         )
     )
-
 
     return {
         "answer":
