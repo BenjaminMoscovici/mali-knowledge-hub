@@ -1076,33 +1076,176 @@ user's question.
 
 def reduce_hapi_humanitarian_evidence(
     evidence_items,
-    max_sector_examples=6
+    max_sector_examples=8
 ):
+    """
+    Reduce HAPI humanitarian-needs records while preserving
+    geography, denominator and analytical scope.
+
+    Principles:
+    1. Use aggregate population_category='total' whenever available.
+    2. Never sum Admin2 observations into an Admin1 total.
+    3. Prefer true Admin1 observations for region-level analysis.
+    4. If only Admin2 observations exist, preserve complete
+       intersectoral coverage and use sector figures only as
+       locality-specific observations.
+    5. Never present the largest Admin2 sector observation as a
+       region-wide sector ranking.
+    """
 
     if not evidence_items:
         return []
+
+    # --------------------------------------------------------
+    # 1. KEEP AGGREGATE POPULATION RECORDS
+    # --------------------------------------------------------
 
     total_rows = [
         item
         for item in evidence_items
         if normalize_text(
-            item.get(
-                "population_category"
-            )
+            item.get("population_category")
         ) == "total"
     ]
 
+    # Conservative fallback:
+    # do not attempt analytical ranking from demographic slices.
     if not total_rows:
-        return evidence_items[:30]
+        fallback = []
+
+        for item in evidence_items[:30]:
+            fallback.append({
+                **item,
+                "passage": (
+                    str(item.get("passage") or "")
+                    + " NOTE: No population_category='total' "
+                    "record was available in this result set. "
+                    "This record is a population subgroup and "
+                    "must not be interpreted as the total number "
+                    "of people in need."
+                )
+            })
+
+        return fallback
+
+
+    # --------------------------------------------------------
+    # 2. IDENTIFY GEOGRAPHIC STRUCTURE
+    # --------------------------------------------------------
+
+    admin1_rows = [
+        item
+        for item in total_rows
+        if item.get("admin_level") == 1
+    ]
+
+    admin2_rows = [
+        item
+        for item in total_rows
+        if item.get("admin_level") == 2
+    ]
+
+
+    # --------------------------------------------------------
+    # 3. IF TRUE ADMIN1 DATA EXIST, USE THEM
+    # --------------------------------------------------------
+
+    if admin1_rows:
+
+        intersectoral = [
+            item
+            for item in admin1_rows
+            if normalize_text(
+                item.get("sector_name")
+            ) == "intersectoral"
+        ]
+
+        sector_rows = [
+            item
+            for item in admin1_rows
+            if normalize_text(
+                item.get("sector_name")
+            ) != "intersectoral"
+        ]
+
+        # One aggregate observation per sector.
+        # If duplicates exist, keep the largest documented value
+        # but preserve the original geography and period.
+        best_by_sector = {}
+
+        for item in sector_rows:
+
+            sector = (
+                item.get("sector_name")
+                or "Unspecified sector"
+            )
+
+            current = best_by_sector.get(
+                sector
+            )
+
+            if (
+                current is None
+                or (
+                    item.get("value") or 0
+                ) > (
+                    current.get("value") or 0
+                )
+            ):
+                best_by_sector[
+                    sector
+                ] = item
+
+        ranked_sector_rows = sorted(
+            best_by_sector.values(),
+            key=lambda x:
+                x.get("value") or 0,
+            reverse=True
+        )
+
+        selected = (
+            intersectoral
+            + ranked_sector_rows[
+                :max_sector_examples
+            ]
+        )
+
+        result = []
+
+        for item in selected:
+
+            result.append({
+                **item,
+                "passage": (
+                    str(item.get("passage") or "")
+                    + " This is an Admin1-level aggregate "
+                    "observation for the stated geography and "
+                    "reference period."
+                )
+            })
+
+        return result
+
+
+    # --------------------------------------------------------
+    # 4. OTHERWISE PRESERVE ADMIN2 STRUCTURE
+    # --------------------------------------------------------
+
+    working_rows = (
+        admin2_rows
+        if admin2_rows
+        else total_rows
+    )
 
     intersectoral = [
         item
-        for item in total_rows
-        if item.get(
-            "sector_name"
-        ) == "Intersectoral"
+        for item in working_rows
+        if normalize_text(
+            item.get("sector_name")
+        ) == "intersectoral"
     ]
 
+    # Keep all intersectoral locality totals.
     intersectoral = sorted(
         intersectoral,
         key=lambda x: (
@@ -1111,52 +1254,97 @@ def reduce_hapi_humanitarian_evidence(
         )
     )
 
+    intersectoral_with_scope = []
+
+    for item in intersectoral:
+
+        intersectoral_with_scope.append({
+            **item,
+            "passage": (
+                str(item.get("passage") or "")
+                + " This is an Admin2/locality observation. "
+                "It must not be summed with other Admin2 "
+                "observations to manufacture an Admin1 total."
+            )
+        })
+
+
+    # --------------------------------------------------------
+    # 5. SECTOR OBSERVATIONS
+    # --------------------------------------------------------
+
     sector_rows = [
         item
-        for item in total_rows
-        if item.get(
-            "sector_name"
-        ) != "Intersectoral"
+        for item in working_rows
+        if normalize_text(
+            item.get("sector_name")
+        ) != "intersectoral"
     ]
 
-    sector_rows = sorted(
-        sector_rows,
-        key=lambda x:
-            x.get("value") or 0,
-        reverse=True
-    )
-
-    sector_examples = []
-    used_sectors = set()
+    # For each sector, retain the largest documented locality
+    # observation purely as an illustrative severity signal.
+    # This is NOT a regional sector total.
+    best_by_sector = {}
 
     for item in sector_rows:
 
-        sector = item.get(
-            "sector_name"
+        sector = (
+            item.get("sector_name")
+            or "Unspecified sector"
         )
 
-        if sector not in used_sectors:
-
-            sector_examples.append(
-                item
-            )
-
-            used_sectors.add(
-                sector
-            )
+        current = best_by_sector.get(
+            sector
+        )
 
         if (
-            len(sector_examples)
-            >= max_sector_examples
+            current is None
+            or (
+                item.get("value") or 0
+            ) > (
+                current.get("value") or 0
+            )
         ):
-            break
+            best_by_sector[
+                sector
+            ] = item
+
+
+    sector_examples = sorted(
+        best_by_sector.values(),
+        key=lambda x:
+            x.get("value") or 0,
+        reverse=True
+    )[:max_sector_examples]
+
+
+    sector_examples_with_scope = []
+
+    for item in sector_examples:
+
+        sector_examples_with_scope.append({
+            **item,
+            "passage": (
+                str(item.get("passage") or "")
+                + " This is the largest recorded Admin2 "
+                "observation for this sector within the returned "
+                "result set. It is NOT an Admin1 total and must "
+                "not be interpreted as a region-wide sector "
+                "caseload or as proof that this sector is the "
+                "region's most severe need."
+            )
+        })
+
+
+    # --------------------------------------------------------
+    # 6. COMBINE
+    # --------------------------------------------------------
 
     return (
-        intersectoral
-        + sector_examples
+        intersectoral_with_scope
+        + sector_examples_with_scope
     )
-
-
+    
 @st.cache_data(ttl=900, show_spinner=False)
 def build_hapi_evidence(
     geography
