@@ -1817,12 +1817,86 @@ Produce an evidence-grounded analytical answer.
 
 
 # ============================================================
-# USER INTERFACE
+# CONVERSATIONAL CONTEXT
 # ============================================================
 
-# ------------------------------------------------------------
-# LANDING / SEARCH EXPERIENCE
-# ------------------------------------------------------------
+def resolve_conversational_question(
+    question,
+    messages,
+    model="gpt-5-mini"
+):
+    """Convert a follow-up into a standalone research question."""
+
+    prior_user_turns = []
+
+    for message in messages:
+        if message.get("role") != "user":
+            continue
+
+        standalone = (
+            message.get("standalone_question")
+            or message.get("content")
+        )
+
+        if standalone:
+            prior_user_turns.append(standalone)
+
+    if not prior_user_turns:
+        return question.strip()
+
+    context_text = "\n".join(
+        f"{i + 1}. {item}"
+        for i, item in enumerate(prior_user_turns[-6:])
+    )
+
+    instructions = """
+You rewrite conversational follow-up questions for an evidence-grounded
+research system.
+
+Use the previous USER questions only to resolve conversational references.
+
+Return ONE standalone research question that preserves the user's intent.
+
+Rules:
+1. Do not answer the question.
+2. Do not add facts, assumptions, entities or claims except what is
+   strictly necessary to resolve the reference.
+3. Do not use outside knowledge.
+4. Previous assistant answers are not evidence and must not be used.
+5. If the new question is already standalone, return it essentially unchanged.
+6. Use the language of the new question.
+7. Return only the rewritten question.
+"""
+
+    input_text = f"""
+PREVIOUS USER QUESTIONS
+
+{context_text}
+
+NEW USER QUESTION
+
+{question}
+"""
+
+    response = (
+        openai_client
+        .responses
+        .create(
+            model=model,
+            instructions=instructions,
+            input=input_text
+        )
+    )
+
+    return (
+        response.output_text
+        or question
+    ).strip()
+
+
+# ============================================================
+# USER INTERFACE
+# ============================================================
 
 st.markdown(
     """
@@ -1830,7 +1904,7 @@ st.markdown(
     .block-container {
         max-width: 1180px;
         padding-top: 5.2rem;
-        padding-bottom: 4rem;
+        padding-bottom: 7rem;
     }
 
     .kh-title {
@@ -1846,7 +1920,7 @@ st.markdown(
         font-size: 1.08rem;
         line-height: 1.55;
         color: #53657a;
-        margin-bottom: 1.8rem;
+        margin-bottom: 1.1rem;
         max-width: 980px;
     }
 
@@ -1854,40 +1928,8 @@ st.markdown(
         font-size: 0.92rem;
         font-weight: 700;
         color: #334a63;
-        margin-top: 0.55rem;
-        margin-bottom: -0.25rem;
-    }
-
-    div[data-testid="stTextArea"] textarea {
-        border-radius: 14px;
-        border: 1px solid #bfd8ef;
-        background: #ffffff;
-        font-size: 1rem;
-        min-height: 112px;
-        box-shadow: 0 3px 14px rgba(32, 100, 160, 0.06);
-    }
-
-    div[data-testid="stTextArea"] textarea:focus {
-        border-color: #2f8fd5;
-        box-shadow: 0 0 0 1px #2f8fd5;
-    }
-
-    div[data-testid="stButton"] > button {
-        border-radius: 12px;
-        font-weight: 650;
-    }
-
-    button[kind="primary"] {
-        background: #2489d8 !important;
-        border-color: #2489d8 !important;
-        color: white !important;
-        min-height: 3.05rem;
-        font-size: 1rem;
-    }
-
-    button[kind="primary"]:hover {
-        background: #1678c6 !important;
-        border-color: #1678c6 !important;
+        margin-top: 0.75rem;
+        margin-bottom: 0.2rem;
     }
 
     .kh-example-card {
@@ -1922,8 +1964,13 @@ st.markdown(
         margin-bottom: 0.3rem;
     }
 
-    .kh-section-spacer {
-        height: 0.9rem;
+    div[data-testid="stChatMessage"] {
+        border-radius: 16px;
+        padding: 0.15rem 0.25rem;
+    }
+
+    div[data-testid="stChatInput"] textarea {
+        font-size: 1rem;
     }
 </style>
 
@@ -1937,45 +1984,129 @@ Development and Peace stakeholders in Mali
 )
 
 
-if "knowledge_hub_question" not in st.session_state:
-    st.session_state["knowledge_hub_question"] = ""
+if "kh_messages" not in st.session_state:
+    st.session_state["kh_messages"] = []
 
 
-def set_example_question(example_question):
-    st.session_state["knowledge_hub_question"] = example_question
+def reset_conversation():
+    st.session_state["kh_messages"] = []
 
 
-question = st.text_area(
-    "Question",
-    key="knowledge_hub_question",
-    label_visibility="collapsed",
-    placeholder="Type your question here...",
-    height=112
-)
+def render_source_summary(result):
+
+    family_counts = result.get("family_counts", {})
+
+    source_labels = [
+        "Government strategies",
+        "Humanitarian Response Plan / HNRP",
+        "OCHA humanitarian data",
+        "FONGIM intervention data"
+    ]
+
+    used = []
+
+    for family in source_labels:
+        count = family_counts.get(family, 0)
+
+        if count:
+            used.append(f"**{family}** · {count}")
+
+    if used:
+        st.markdown(" · ".join(used))
+
+    if result.get("hapi_raw_count"):
+        st.caption(
+            "OCHA: "
+            f"{result['hapi_raw_count']} source records reduced to the "
+            "relevant evidence set while preserving the documented "
+            "geographic structure."
+        )
+
+    if result.get("fongim_project_count"):
+        st.caption(
+            "FONGIM: "
+            f"{result['fongim_project_count']} unique projects matched "
+            "the selected geographic scope. Project presence does not "
+            "by itself establish coverage or impact."
+        )
 
 
-ask = st.button(
-    "Analyse evidence",
-    type="primary",
-    use_container_width=True
-)
+def render_evidence_inspector(result):
+
+    with st.expander("Inspect evidence"):
+
+        for item in result.get("evidence", []):
+
+            page = (
+                f" · p. {item['page']}"
+                if item.get("page") is not None
+                else ""
+            )
+
+            label = (
+                f"{item['evidence_id']} — "
+                f"{item.get('source_family')}"
+                f"{page}"
+            )
+
+            with st.expander(label):
+
+                if item.get("document_title"):
+                    st.markdown(
+                        "**Source:** "
+                        f"{item['document_title']}"
+                    )
+
+                if item.get("organization"):
+                    st.markdown(
+                        "**Organization:** "
+                        f"{item['organization']}"
+                    )
+
+                if item.get("section"):
+                    st.markdown(
+                        "**Section / dimension:** "
+                        f"{item['section']}"
+                    )
+
+                if item.get("version"):
+                    st.markdown(
+                        "**Version:** "
+                        f"{item['version']}"
+                    )
+
+                st.markdown("**Evidence:**")
+                st.write(item.get("content"))
 
 
-st.markdown(
-    '<div class="kh-examples-label">Try one of these example questions:</div>',
-    unsafe_allow_html=True
-)
+control_left, control_right = st.columns([5, 1])
+
+with control_right:
+    if st.button(
+        "↻ New chat",
+        use_container_width=True
+    ):
+        reset_conversation()
+        st.rerun()
 
 
-example_col1, example_col2, example_col3 = st.columns(
-    3,
-    gap="medium"
-)
+example_prompt = None
 
+if not st.session_state["kh_messages"]:
 
-with example_col1:
     st.markdown(
-        """
+        '<div class="kh-examples-label">Try one of these example questions:</div>',
+        unsafe_allow_html=True
+    )
+
+    example_col1, example_col2, example_col3 = st.columns(
+        3,
+        gap="medium"
+    )
+
+    with example_col1:
+        st.markdown(
+            """
 <div class="kh-example-card">
     <div class="kh-example-kicker">🔎 SEARCH</div>
     <div class="kh-example-text">
@@ -1984,24 +2115,22 @@ with example_col1:
     </div>
 </div>
 """,
-        unsafe_allow_html=True
-    )
-
-    st.button(
-        "Use this question →",
-        key="example_search",
-        use_container_width=True,
-        on_click=set_example_question,
-        args=(
-            "What are the Government's priorities for local "
-            "development in Kayes?",
+            unsafe_allow_html=True
         )
-    )
 
+        if st.button(
+            "Ask this →",
+            key="example_search",
+            use_container_width=True
+        ):
+            example_prompt = (
+                "What are the Government's priorities for local "
+                "development in Kayes?"
+            )
 
-with example_col2:
-    st.markdown(
-        """
+    with example_col2:
+        st.markdown(
+            """
 <div class="kh-example-card">
     <div class="kh-example-kicker">↔ COMPARE</div>
     <div class="kh-example-text">
@@ -2010,24 +2139,22 @@ with example_col2:
     </div>
 </div>
 """,
-        unsafe_allow_html=True
-    )
-
-    st.button(
-        "Use this question →",
-        key="example_compare",
-        use_container_width=True,
-        on_click=set_example_question,
-        args=(
-            "In Mopti, how do humanitarian needs compare with "
-            "current NGO interventions?",
+            unsafe_allow_html=True
         )
-    )
 
+        if st.button(
+            "Ask this →",
+            key="example_compare",
+            use_container_width=True
+        ):
+            example_prompt = (
+                "In Mopti, how do humanitarian needs compare with "
+                "current NGO interventions?"
+            )
 
-with example_col3:
-    st.markdown(
-        """
+    with example_col3:
+        st.markdown(
+            """
 <div class="kh-example-card">
     <div class="kh-example-kicker">💡 ANALYSE &amp; PLAN</div>
     <div class="kh-example-text">
@@ -2036,30 +2163,120 @@ with example_col3:
     </div>
 </div>
 """,
-        unsafe_allow_html=True
-    )
-
-    st.button(
-        "Use this question →",
-        key="example_plan",
-        use_container_width=True,
-        on_click=set_example_question,
-        args=(
-            "Where are the main gaps and opportunities for stronger "
-            "Humanitarian-Development-Peace coordination in Gao?",
+            unsafe_allow_html=True
         )
-    )
+
+        if st.button(
+            "Ask this →",
+            key="example_plan",
+            use_container_width=True
+        ):
+            example_prompt = (
+                "Where are the main gaps and opportunities for stronger "
+                "Humanitarian-Development-Peace coordination in Gao?"
+            )
+
+
+typed_prompt = st.chat_input(
+    "Ask a question about Mali..."
+)
+
+current_prompt = typed_prompt or example_prompt
+
+
+if current_prompt:
+
+    current_prompt = current_prompt.strip()
+
+    if current_prompt:
+
+        prior_messages = list(
+            st.session_state["kh_messages"]
+        )
+
+        standalone_question = resolve_conversational_question(
+            current_prompt,
+            prior_messages
+        )
+
+        st.session_state["kh_messages"].append(
+            {
+                "role": "user",
+                "content": current_prompt,
+                "standalone_question": standalone_question
+            }
+        )
+
+        with st.spinner(
+            "Retrieving and analysing evidence..."
+        ):
+
+            try:
+
+                result = generate_grounded_answer(
+                    standalone_question
+                )
+
+                st.session_state["kh_messages"].append(
+                    {
+                        "role": "assistant",
+                        "content": result["answer"],
+                        "result": result
+                    }
+                )
+
+            except Exception as exc:
+
+                st.session_state["kh_messages"].append(
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "I could not complete this analysis. "
+                            f"Knowledge Hub error: {exc}"
+                        ),
+                        "result": None
+                    }
+                )
+
+
+for message in st.session_state["kh_messages"]:
+
+    if message.get("role") == "user":
+
+        with st.chat_message("user"):
+            st.markdown(
+                message.get("content", "")
+            )
+
+    elif message.get("role") == "assistant":
+
+        with st.chat_message("assistant"):
+
+            st.markdown(
+                message.get("content", "")
+            )
+
+            result = message.get("result")
+
+            if result:
+
+                geography = result.get("geography", {})
+
+                if geography.get("assumption"):
+                    st.info(
+                        geography["assumption"]
+                    )
+
+                with st.expander("Sources used"):
+                    render_source_summary(result)
+
+                render_evidence_inspector(result)
 
 
 st.markdown(
-    '<div class="kh-section-spacer"></div>',
+    "<div style='height:0.7rem'></div>",
     unsafe_allow_html=True
 )
-
-
-# ------------------------------------------------------------
-# HOW THE HUB WORKS — COLLAPSIBLE
-# ------------------------------------------------------------
 
 with st.expander(
     "⚙️  How does the Knowledge Hub work?"
@@ -2088,10 +2305,7 @@ with st.expander(
         unsafe_allow_html=True
     )
 
-    step1, step2, step3 = st.columns(
-        3,
-        gap="medium"
-    )
+    step1, step2, step3 = st.columns(3, gap="medium")
 
     with step1:
         st.markdown(
@@ -2135,10 +2349,6 @@ The answer is generated with evidence references, and the underlying evidence it
     )
 
 
-# ------------------------------------------------------------
-# ALREADY AVAILABLE SOURCES — COLLAPSIBLE
-# ------------------------------------------------------------
-
 with st.expander(
     "🗄️  Already Available Sources"
 ):
@@ -2147,10 +2357,7 @@ with st.expander(
         "Explore the documents and structured data currently integrated in the Knowledge Hub."
     )
 
-    source_col1, source_col2 = st.columns(
-        2,
-        gap="large"
-    )
+    source_col1, source_col2 = st.columns(2, gap="large")
 
     with source_col1:
 
@@ -2240,212 +2447,4 @@ with st.expander(
         )
 
 
-st.divider()
-
-
-# ------------------------------------------------------------
-# ANSWER
-# ------------------------------------------------------------
-
-if ask and question.strip():
-
-    with st.spinner(
-        "Retrieving and analysing evidence..."
-    ):
-
-        try:
-
-            result = (
-                generate_grounded_answer(
-                    question.strip()
-                )
-            )
-
-
-            geography = result[
-                "geography"
-            ]
-
-
-            if geography.get(
-                "assumption"
-            ):
-
-                st.info(
-                    geography[
-                        "assumption"
-                    ]
-                )
-
-
-            st.subheader(
-                "Analysis"
-            )
-
-            st.markdown(
-                result[
-                    "answer"
-                ]
-            )
-
-
-            st.divider()
-
-
-            # ------------------------------------------------
-            # SOURCES USED
-            # ------------------------------------------------
-
-            st.subheader(
-                "Sources used for this analysis"
-            )
-
-
-            family_counts = result[
-                "family_counts"
-            ]
-
-
-            source_labels = [
-                "Government strategies",
-                "Humanitarian Response Plan / HNRP",
-                "OCHA humanitarian data",
-                "FONGIM intervention data"
-            ]
-
-
-            for family in source_labels:
-
-                count = family_counts.get(
-                    family,
-                    0
-                )
-
-                if count:
-
-                    st.markdown(
-                        f"**✓ {family}** "
-                        f"— {count} evidence items"
-                    )
-
-
-            if result[
-                "hapi_raw_count"
-            ]:
-
-                st.caption(
-                    "OCHA structured data were reduced from "
-                    f"{result['hapi_raw_count']} source records "
-                    "to a smaller evidence set while preserving "
-                    "the documented geographic structure."
-                )
-
-
-            if result[
-                "fongim_project_count"
-            ]:
-
-                st.caption(
-                    "FONGIM analysis covered "
-                    f"{result['fongim_project_count']} unique "
-                    "projects matching the selected geographic scope."
-                )
-
-
-            # ------------------------------------------------
-            # EVIDENCE LEDGER
-            # ------------------------------------------------
-
-            with st.expander(
-                "Inspect evidence"
-            ):
-
-                for item in result[
-                    "evidence"
-                ]:
-
-                    page = (
-                        f" · p. {item['page']}"
-                        if item.get(
-                            "page"
-                        ) is not None
-                        else ""
-                    )
-
-
-                    label = (
-                        f"{item['evidence_id']} — "
-                        f"{item.get('source_family')}"
-                        f"{page}"
-                    )
-
-
-                    with st.expander(
-                        label
-                    ):
-
-                        if item.get(
-                            "document_title"
-                        ):
-
-                            st.markdown(
-                                "**Source:** "
-                                f"{item['document_title']}"
-                            )
-
-
-                        if item.get(
-                            "organization"
-                        ):
-
-                            st.markdown(
-                                "**Organization:** "
-                                f"{item['organization']}"
-                            )
-
-
-                        if item.get(
-                            "section"
-                        ):
-
-                            st.markdown(
-                                "**Section / dimension:** "
-                                f"{item['section']}"
-                            )
-
-
-                        if item.get(
-                            "version"
-                        ):
-
-                            st.markdown(
-                                "**Version:** "
-                                f"{item['version']}"
-                            )
-
-
-                        st.markdown(
-                            "**Evidence:**"
-                        )
-
-
-                        st.write(
-                            item.get(
-                                "content"
-                            )
-                        )
-
-
-        except Exception as exc:
-
-            st.error(
-                f"Knowledge Hub error: {exc}"
-            )
-
-
-elif ask:
-
-    st.warning(
-        "Please enter a question."
-    )
 
