@@ -1903,51 +1903,87 @@ st.markdown(
 <style>
     .block-container {
         max-width: 1180px;
-        padding-top: 5.2rem;
+        padding-top: 3.1rem;
         padding-bottom: 7rem;
     }
 
+    .kh-hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #dce9f6;
+        border-radius: 22px;
+        padding: 2.45rem 2.6rem 2.15rem 2.6rem;
+        margin-bottom: 1.05rem;
+        background:
+            radial-gradient(circle at 88% 18%, rgba(74, 163, 232, 0.18), transparent 27%),
+            linear-gradient(135deg, #f8fbff 0%, #ffffff 58%, #eef7ff 100%);
+        box-shadow: 0 8px 30px rgba(20, 63, 103, 0.06);
+    }
+
+    .kh-hero::after {
+        content: "";
+        position: absolute;
+        width: 290px;
+        height: 290px;
+        border-radius: 50%;
+        right: -95px;
+        top: -125px;
+        background: rgba(42, 137, 216, 0.055);
+        pointer-events: none;
+    }
+
     .kh-title {
-        font-size: 3.05rem;
-        line-height: 1.05;
+        position: relative;
+        z-index: 1;
+        font-size: 3.28rem;
+        line-height: 1.02;
         font-weight: 800;
-        letter-spacing: -0.035em;
-        margin: 0 0 0.45rem 0;
+        letter-spacing: -0.04em;
+        margin: 0 0 0.58rem 0;
         color: #0b2b55;
     }
 
     .kh-subtitle {
-        font-size: 1.08rem;
+        position: relative;
+        z-index: 1;
+        font-size: 1.12rem;
         line-height: 1.55;
-        color: #53657a;
-        margin-bottom: 1.1rem;
-        max-width: 980px;
+        color: #4b637b;
+        margin: 0;
+        max-width: 880px;
+    }
+
+    .kh-search-label {
+        font-size: 0.93rem;
+        font-weight: 780;
+        color: #284662;
+        margin: 0.65rem 0 0.38rem 0;
     }
 
     .kh-examples-label {
         font-size: 0.92rem;
-        font-weight: 700;
+        font-weight: 760;
         color: #334a63;
-        margin-top: 0.75rem;
-        margin-bottom: 0.2rem;
+        margin-top: 1.15rem;
+        margin-bottom: 0.35rem;
     }
 
     .kh-example-card {
         border: 1px solid #d9e6f2;
-        border-radius: 14px;
-        padding: 1rem 1rem 0.9rem 1rem;
-        min-height: 128px;
-        background: #fbfdff;
-        box-shadow: 0 2px 10px rgba(26, 79, 126, 0.045);
+        border-radius: 15px;
+        padding: 1rem 1rem 0.95rem 1rem;
+        min-height: 132px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 4px 16px rgba(26, 79, 126, 0.045);
         margin-bottom: 0.45rem;
     }
 
     .kh-example-kicker {
-        font-size: 0.82rem;
-        font-weight: 800;
-        letter-spacing: 0.025em;
+        font-size: 0.8rem;
+        font-weight: 850;
+        letter-spacing: 0.04em;
         color: #237dc4;
-        margin-bottom: 0.45rem;
+        margin-bottom: 0.48rem;
     }
 
     .kh-example-text {
@@ -1960,8 +1996,51 @@ st.markdown(
     .kh-how-copy {
         color: #6b7b8d;
         font-size: 0.92rem;
-        margin-top: -0.2rem;
-        margin-bottom: 0.3rem;
+        margin-top: -0.1rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .kh-section-intro {
+        margin: 1.45rem 0 0.45rem 0;
+        color: #466078;
+        font-size: 0.9rem;
+        font-weight: 680;
+    }
+
+    div[data-testid="stTextArea"] textarea {
+        min-height: 92px !important;
+        border-radius: 16px !important;
+        border: 1.5px solid #bddaf1 !important;
+        background: #ffffff !important;
+        font-size: 1.05rem !important;
+        line-height: 1.45 !important;
+        padding: 1rem 1.05rem !important;
+        box-shadow: 0 4px 18px rgba(36, 137, 216, 0.06);
+    }
+
+    div[data-testid="stTextArea"] textarea:focus {
+        border-color: #2489d8 !important;
+        box-shadow: 0 0 0 3px rgba(36, 137, 216, 0.10) !important;
+    }
+
+    div[data-testid="stExpander"] {
+        border: 1px solid #cfdfef !important;
+        border-radius: 16px !important;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+        box-shadow: 0 5px 18px rgba(20, 63, 103, 0.045);
+        margin-bottom: 0.8rem;
+        overflow: hidden;
+    }
+
+    div[data-testid="stExpander"] details > summary {
+        min-height: 68px;
+        padding: 0.75rem 1rem !important;
+    }
+
+    div[data-testid="stExpander"] details > summary p {
+        font-size: 1.08rem !important;
+        font-weight: 780 !important;
+        color: #12365d !important;
     }
 
     div[data-testid="stChatMessage"] {
@@ -1972,12 +2051,46 @@ st.markdown(
     div[data-testid="stChatInput"] textarea {
         font-size: 1rem;
     }
+
+    button[kind="primary"] {
+        background: #2489d8 !important;
+        border-color: #2489d8 !important;
+        color: white !important;
+        border-radius: 12px;
+        font-weight: 700;
+        min-height: 46px;
+    }
+
+    button[kind="primary"]:hover {
+        background: #1678c6 !important;
+        border-color: #1678c6 !important;
+    }
+
+    @media (max-width: 760px) {
+        .block-container {
+            padding-top: 1.6rem;
+        }
+
+        .kh-hero {
+            padding: 1.55rem 1.3rem 1.4rem 1.3rem;
+        }
+
+        .kh-title {
+            font-size: 2.35rem;
+        }
+
+        .kh-subtitle {
+            font-size: 1rem;
+        }
+    }
 </style>
 
-<div class="kh-title">Mali Knowledge Hub</div>
-<div class="kh-subtitle">
-AI-powered knowledge and analysis platform for Humanitarian,
-Development and Peace stakeholders in Mali
+<div class="kh-hero">
+    <div class="kh-title">Mali Knowledge Hub</div>
+    <div class="kh-subtitle">
+        AI-powered knowledge and analysis platform for Humanitarian,
+        Development and Peace stakeholders in Mali
+    </div>
 </div>
 """,
     unsafe_allow_html=True
@@ -2091,11 +2204,35 @@ with control_right:
 
 
 example_prompt = None
+typed_prompt = None
 
 if not st.session_state["kh_messages"]:
 
     st.markdown(
-        '<div class="kh-examples-label">Try one of these example questions:</div>',
+        '<div class="kh-search-label">Ask the Knowledge Hub</div>',
+        unsafe_allow_html=True
+    )
+
+    landing_question = st.text_area(
+        "Question",
+        key="kh_landing_question",
+        placeholder=(
+            "Ask a question about Mali — search, compare evidence, "
+            "or analyse priorities, needs and interventions..."
+        ),
+        label_visibility="collapsed"
+    )
+
+    if st.button(
+        "Analyse evidence  →",
+        type="primary",
+        use_container_width=True,
+        key="kh_landing_submit"
+    ):
+        typed_prompt = landing_question
+
+    st.markdown(
+        '<div class="kh-examples-label">Or try one of these example questions:</div>',
         unsafe_allow_html=True
     )
 
@@ -2176,10 +2313,12 @@ if not st.session_state["kh_messages"]:
                 "Humanitarian-Development-Peace coordination in Gao?"
             )
 
+else:
 
-typed_prompt = st.chat_input(
-    "Ask a question about Mali..."
-)
+    typed_prompt = st.chat_input(
+        "Ask a follow-up question..."
+    )
+
 
 current_prompt = typed_prompt or example_prompt
 
@@ -2274,7 +2413,7 @@ for message in st.session_state["kh_messages"]:
 
 
 st.markdown(
-    "<div style='height:0.7rem'></div>",
+    '<div class="kh-section-intro">Explore the platform and the evidence behind it.</div>',
     unsafe_allow_html=True
 )
 
