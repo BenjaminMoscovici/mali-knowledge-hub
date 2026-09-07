@@ -732,7 +732,9 @@ RULES:
     }
 
     response = openai_client.responses.create(
-        model="gpt-5-mini",
+        model="gpt-5.6-luna",
+        reasoning={"effort": "none"},
+        max_output_tokens=500,
         input=[
             {
                 "role": "system",
