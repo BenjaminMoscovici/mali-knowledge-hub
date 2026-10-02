@@ -1,206 +1,111 @@
-# MKH source integration: first implementation stage
+# Mali Knowledge Hub source integration — 2 October 2026
 
-Status: implemented and validated locally on 2 October 2026. No schema or source
-release from this stage has been deployed. This is not programme acceptance.
+## Authorized systems
 
-## Boundaries and checkpoints
+Repository `BenjaminMoscovici/mali-knowledge-hub`, branch `v4-frontend-rewrite`.
+V4 test: https://mali-knowledge-hub-v4-test.onrender.com/
+Render service `srv-davpdjugekts73ev4v3g`; GIZ Supabase `hofoubbmepacdljeablj`.
+The original public MKH service and all unrelated projects remain untouched.
 
-Target only `TheGlobalAnalyst/mali-knowledge-hub`, GIZ Supabase project
-`hofoubbmepacdljeablj`, and the known MKH Render services. The shared GitHub
-account name does not authorise work on other projects.
+Rollback: deployed foundation milestone `74611e513046efbb2370f1b68344707ad382462a`.
+The local equivalent is tagged `rollback-local-wave1` at `811ba7e`.
+Operational wave deployed `52071d2e9e0f7af780e89f9740af14e3a29b2ff6`;
+source-link UI deployed `dc0777d466736f3c294bb4703f96d7029c1db103`.
+Applied migrations are additive source infrastructure. Existing data remain.
 
-Local rollback tag `source-integration-baseline-20261002` points to `0371761`.
-It is a code checkpoint, not a live database backup. The original public
-service still runs `8b794a3d928a3c2d265d83cafdf7e55ab5a8ceb8` on
-`v4-development`. The separate light frontend test runs
-`efee74d2e0dfc28e73a0383db98bf6bde462109b` on `v4-light-frontend`.
-Both were inspected in Render in this run.
+## Actually integrated and exposed: operational wave
 
-GitHub read/publish attempts return HTTP 403, `Sorry. Your account was suspended`.
-The Supabase connector denies inspection of the correct project's tables.
-Do not retry either in a loop, alter credentials, evade suspension, or migrate
-an unaudited schema. Reconnect authorised Supabase access first. GitHub account
-repair remains a separate user action before publishing code.
+| Source | Records | Reference coverage | Retrieval |
+|---|---:|---|---|
+| OCHA Mali 3W Q1 2026 | 5,413 | Source regions/cercles/communes, January–March 2026 | 2 October 2026 |
+| IOM DTM Round 83 | 467 | Public commune aggregates, September 2025 | 2 October 2026 |
 
-## Audit findings
+DTM categories: 227 internally displaced, 126 returned-IDP, 114 repatriated-person rows.
+Village/site fields are excluded. Stocks are distinct from movement flows.
+OCHA activity, project title, start/end date, targeted and reached fields are
+blank: this release establishes presence only, never active/completed delivery.
+Actor full-name/acronym pairs are labels, not resolved global identities.
 
-The active shared engine reads documents/chunks through the accepted retrieval
-path and FONGIM tables through project IDs, sectors, locations and organisations.
-Its geography registry is based on source labels rather than official releases.
-HAPI needs are fetched live with a 900-second process cache; metadata cache
-entries were previously unbounded in time. FONGIM extraction validates keys
-and relationships, but its seven-table sync remains nontransactional.
+Region/cercle matching requires agreement of P-code, name and parent. Commune
+labels remain source-only until approved crosswalks exist. Issue occurrences:
+5,661 commune-label-only; 305 code/name/parent conflicts; 48 unavailable codes.
+There are 171 crosswalk proposals in the prior foundation, none approved.
+FONGIM, CH and some DTM hierarchies use older region boundaries; the word
+Mopti does not imply identical scope across source releases. No coverage ratio.
 
-`ingest.py` is the older document/chunk CLI. `ingestion.py`, the worker and
-Administration provide the V3 queue and atomic document publication. No old
-path is deleted or silently promoted. Existing private conversation tables and
-owner RLS are preserved. No conversation contents or server secret values
-were inspected for this stage.
+Database audit after this wave: population observations 41,751; geo units
+14,099; source records 5,880; private source table RLS enabled; no anon or
+authenticated SELECT; three indexes including PK; eight constraints before
+food-security extension. Existing operational paths remain compatible.
 
-Current live corpus counts, table constraints, FONGIM successful-run counts and
-freshness, and database rollback/export remain unverified because live schema
-access is blocked. `migrations/audit_source_foundation.sql` is a read-only
-inventory for the correct project; its optional data queries must only run
-after the inventory confirms relation and column names.
+## Real joined user test
 
-## New components and schema
+Question: In Mopti region, what needs and displaced populations are documented,
+which actors/sectors are recorded by OCHA 3W and FONGIM, and what can we conclude
+about delivery or coverage?
 
-`source_fetch.py` keeps immutable hash-addressed originals, checks HTTPS and a
-reviewed host allowlist, follows only allowed redirects, bounds size/time and
-transient retries, and preserves a good original when retrieval is malformed.
-It records upstream ETag/Last-Modified separately from retrieval and check time.
+Live guest answer used 49 evidence items from needs documents/HAPI, FONGIM,
+COD/HPC, OCHA 3W and DTM. It correctly distinguished:
 
-`source_imports.py` replays official COD GeoJSON and INSTAT PDF tables without
-network dependencies. It preserves source P-codes, geometries, source names,
-languages, parent relationships, boundary version and validity dates. Internal
-UUIDs are not presented as government identifiers. INSTAT's register contains
-no geographic code column in these tables. Bamako's district and arrondissement
-types remain visible. No legal boundary-start date is inferred from a year.
+- HAPI 2025 selected Admin2/locality needs from region totals;
+- OCHA Q1 2026 source-labelled Mopti: 301 rows, 40 actor labels;
+- FONGIM: 257 unique projects, 622 locations, last sync 28 August 2026;
+- DTM September 2025: Mopti commune 13,582 IDPs, Socoura 13,002 IDPs;
+  returned-IDP and repatriated categories separate, Haire geography conflict;
+- presence versus delivery/reach; no defensible coverage ratio or evidence of
+  absence when source records are missing.
 
-`source_foundation.py` is an offline SQLite validation/acceptance store. It is
-not a new production database or a replacement for Supabase. It atomically
-publishes validated releases, retains previous releases, logs failures, refuses
-empty or unexpectedly shrinking replacements, and makes reruns idempotent.
-Replaying an old release does not reactivate it. A review reason is recorded
-when a genuine scope change permits shrinkage.
+Direct evidence: source counts/labels, needs observations, stock estimates.
+Synthesis: needs and recorded actors share thematic topics/place labels.
+Not established: identical geography boundaries, actual delivery, current
+October displacement, needs met, effectiveness, population coverage.
 
-The draft PostgreSQL migration, generated by Supabase CLI 2.119.0, creates:
+Source citations open original HTTPS files and show exact worksheet rows.
+Guest answer restored on browser reload. Authenticated Hub research is not
+live-verified: logged-in GitHub/Supabase sessions do not constitute Hub login.
+Conversation ownership/persistence regression tests remain passing.
 
-| Table | Purpose |
-|---|---|
-| `mkh_sources` | Source provider, title and primary URL |
-| `mkh_datasets` | Dataset identity, refresh policy and publication pointer |
-| `mkh_ingestion_runs` | Success, failure and no-op audit history |
-| `mkh_source_releases` | Immutable hash/version, licence, access, dates and transform |
-| `mkh_geo_units` | Release-specific hierarchy, administrative type and geometry |
-| `mkh_geo_names` | Official and source alternative names, language and lookup key |
-| `mkh_geo_identifiers` | Namespaced source identifiers, including OCHA P-codes |
-| `mkh_evidence_spans` | Exact table-row passage and page/line locator |
-| `mkh_population_observations` | Sex-specific population, period, methodology and precision |
-| `mkh_humanitarian_observations` | Separate need/target/reach/population categories |
-| `mkh_document_pages` | Immutable page text for document-only releases |
-| `mkh_geo_crosswalks` | Append-only proposals/decisions, confidence and supersession |
-| `mkh_geo_unresolved` | Traceable original unit, raw label and candidate queue |
+## Food-security/financing wave: staged and validated
 
-These are domain tables, not one enormous generic record collection. Plan,
-intervention, funding and learning models will be added after the live audit.
-RLS is enabled on all new exposed-schema tables; public/anonymous/authenticated
-access is revoked. No client secret key, public privileged RPC, or permissive
-policy is introduced. The freshness view uses `security_invoker=true`.
-Service-role access is limited to backend reads/inserts, plus dataset/run updates.
+113 CH observations (112 area rows plus one national factual-table extraction),
+49 FTS plan/year records. Latest Mali workbook exercise is late 2025, despite
+March 2026 filename. It has 56 current and 56 projected analysis areas.
+CILSS July 2026 bulletin explicitly carries Mali's October/November 2025
+projection forward: it is not a fresh 2026 assessment. Phase-5 printed dash
+stays missing. CH is not relabelled IPC. FTS national figures are requirements
+and total reported funding, not reached persons or solely disbursements.
 
-`source_export.py` produces a transactional initial PostgreSQL load. It validates
-foreign keys, checks publication predecessors, locks publication pointers,
-inserts complete releases, and moves pointers at the end. Replaying the same
-release is allowed; replacing a different active release aborts for separate
-review. The export and migration have NOT been executed in PostgreSQL. They
-need live namespace/privilege/advisor checks and real PostgreSQL acceptance.
+Migration `20261002154155_food_security_financing_wave.sql` applied successfully
+after inspecting the correct table and existing constraints. It preserves
+presence/displacement checks, foreign keys, RLS and permissions and adds CH
+and funding semantic checks. Runtime publication/answer verification pending.
 
-## Retrieved and stored sources
+Validation at this checkpoint: 79 tests and two subtests pass (`pytest -q v3`).
 
-COD v03: one country, 20 Admin1 units and 160 cercles, with advertised counts,
-parent integrity, P-codes and geometries checked. Its validity field is
-4 September 2025. COD does not supply communes/localities in this package.
+## Source failure protocol and next wave
 
-INSTAT locality register: edition 2023, published January 2026; 538 PDF pages,
-one country, 20 Admin1 units, 159 cercles, 815 communes, seven Bamako
-arrondissements, and 12,915 extracted locality rows. It yields 41,751 sex/total
-population observations. These are 2023 DNP projections based on RGPH5 2022,
-not enumerated 2022 counts or current population. Rounding is retained.
+REACH/MSNA: public metadata verified; direct bulletin/methodology downloads
+return 403 and published reuse terms require review. No REACH ingestion is
+claimed. Registry status `licence_review_required`. No public HDX Mali MSNA
+aggregate package was found in the limited alternate retrieval attempt.
+Request authorized aggregate releases/methodology and reuse permission;
+retain sampling dates, representative geography and inaccessible-area limits.
 
-The published national count is 12,917 localities. Parsed regional rows differ
-by one in Kayes (1,001 vs 1,002 reported) and Dioïla (362 vs 363). Both a
-PyMuPDF layout extraction and a separate pdftotext extraction were examined.
-The discrepancies remain unresolved; completeness is not asserted. A repeated
-KEL-INKABAR label on PDF page 309 retains separate original locators and remains
-ambiguous. No missing rows are manufactured or duplicate names silently merged.
+World Bank: current v3 API acquired (215 exact-Mali projects, regional projects
+excluded); older v2 response rejected as stale. Some v3 Active projects have
+past closing dates and must be flagged, not treated as confirmed ongoing.
+IATI: HDX country export acquired. World Bank publisher 44000 subset has
+136 sector rows / 36 activities; financial values repeat per sector and
+must not be summed. Location export has country/coordinate contradictions;
+those coordinates will not be published. Wider publisher licences need review.
+IEG P144442: accessible historical project review. Only small factual,
+paraphrased findings with page citations may be exposed; the complete PDF/full
+text is not redistributed under an assumed open-data licence.
 
-INSTAT global report: the cover says **preliminary**, November 2023. All 56
-pages are stored as document evidence. No definitive/current structured census
-denominators are claimed from this report.
+## Acceptance states
 
-OCHA Global HPC HNO 2026: a public upstream file used by HAPI. Its Mali row
-contains country-only GHO estimates: population 25.2m, needs 5.1m, targets 3.8m.
-Reached and affected are blank and remain not reported. Three separate measures
-are stored with the original CSV line 54 and resource UUID. No national figures
-are allocated to subnational units. This does not complete HAPI snapshot storage.
-
-There are 171 COD–INSTAT name/parent crosswalk proposals and ten unresolved
-COD units. Zero crosswalks are approved. Same spelling and parent labels are
-insufficient to establish equivalent boundaries.
-
-COD/HPC licences are recorded from official HDX metadata as CC BY-IGO. INSTAT's
-official open-data licence explicitly covers its tables, reports and derived
-products with source/derived-product attribution. The original licence and
-required attribution are preserved in the source package.
-
-SNEDD 2024–2033 was retrieved from the Ministry's official website (95 pages,
-December 2024 cover). It is not yet imported or publicly republished; reuse
-notes and existing corpus duplication need review. DGCT's catalogue lists
-current 2024–2028 communal plans, including Kewa, but the attempted download
-returned HTML rather than a verified PDF. It remains metadata-only. The World
-Bank API returned five Mali projects and advertised 159 results; the sample is
-saved, not a completed paginated project inventory.
-
-## Existing connector protection
-
-HAPI now has bounded pagination in the local shared runtime. It rejects missing
-data lists, other-country rows, repeated pages/ignored offsets, and a nonempty
-completion probe beyond the record cap. It does not label a truncated response
-as complete. Latest-period selection still occurs after complete retrieval.
-
-FONGIM now checks candidate counts against the last successful sync before
-parent/child writes. Required empty datasets and an unexplained decrease below
-75% of a previous count are refused. Guard failure enters the existing sync
-failure path. This protection does not make all seven writes atomic; that
-remains the next snapshot-publication change after database inspection.
-
-## Reproduction and verification
-
-Run from the repository root with existing dependencies installed:
-
-```sh
-python v3/source_imports.py --source-dir SOURCE_DIR --database STAGE_DB --manifest MANIFEST_JSON
-python v3/source_acceptance.py --database STAGE_DB --output ACCEPTANCE_JSON
-python v3/source_export.py --database STAGE_DB --output LOAD_SQL
-PYTHONPATH=v3 python -m unittest discover -s v3 -p 'test_*.py' -q
-```
-
-Required source basenames: `mli_admin_boundaries.geojson.zip`,
-`hdx_cod_metadata.json`, `instat_localities_2023.pdf`,
-`instat_rgph5_global_2022.pdf`; optional `hpc_hno_2026.csv` and
-`hpc_metadata.json`. The imports use existing PyMuPDF; no new runtime dependency
-is required. The parser refuses a changed INSTAT page count/methodology rather
-than guessing an edition. Use a fresh staging database when the draft schema
-changes; no published local-schema migration compatibility is claimed yet.
-
-43 baseline tests passed before edits. The expanded safety/regression suite
-passes, and ten real-file retrieval acceptance cases distinguish region,
-cercle and commune, retain citations/reference periods, refuse homonyms and
-national downscaling, distinguish needs/targets/reached, and prevent proposed
-crosswalks from enabling joins. Package replay returns no-op without duplicate
-records or changed active releases. Foreign-key checks return no violations.
-
-These are local stored-source tests, not deployed LLM acceptance. Full A/B/C
-cross-source pilot analyses, actual two-account privacy acceptance, mobile UI
-acceptance, PostgreSQL execution, live source citations and public deployment
-remain pending. The existing public app and design still load.
-
-## Next authorised stage
-
-1. Restore Supabase access to `hofoubbmepacdljeablj`; inspect schema and advisors,
-   export a real rollback baseline, and validate the draft migration and load.
-2. Resolve geography/count issues or explicitly retain limitations; wire new
-   stored evidence into research with visible source/release/page/licence details.
-3. Complete dated HAPI and atomic FONGIM snapshots using existing server config.
-4. Ingest the national plan and strongest verified current PDSEC; add the dated
-   HNRP/DTM/MSNA/CH package, funding sources and small evaluation collection.
-5. Run A needs/priorities/interventions/gaps, B closures/funding/sequencing and
-   C evaluation transferability against the actual pilot. Keep unknown and
-   non-comparable outcomes explicit.
-6. After GitHub account recovery, publish the reviewed change to the isolated
-   V4 test service first and verify affected guest/account/citation/admin flows.
-   Do not merge or replace the original public baseline on unit-test results.
-
-Prepared institutional requests are user-send drafts only. No institution or
-individual has been contacted. Source-specific failures do not stop other work.
+Architecture prepared: yes. Operational source access verified: yes.
+Operational data staged/integrated/exposed: yes. CH/FTS access and staging: yes;
+live publication/answer test pending at this checkpoint. Full programme/user
+acceptance: no. All-source, exact local project/funding joins require further
+geographic/actor reconciliation and richer activity/funding evidence.

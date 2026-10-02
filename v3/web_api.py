@@ -30,6 +30,7 @@ from user_research import (REFERENCE_FIELDS, ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
 from source_wave import publish_snapshot_logged
 from operational_sources import publish_operational_logged
+from analytical_sources import publish_analytical_logged
 
 
 WEB = Path(__file__).with_name("web")
@@ -484,6 +485,7 @@ async def lifespan(app):
     # so a large first load cannot make the health check fail.
     asyncio.create_task(asyncio.to_thread(publish_snapshot_logged))
     asyncio.create_task(asyncio.to_thread(publish_operational_logged))
+    asyncio.create_task(asyncio.to_thread(publish_analytical_logged))
     yield
 
 

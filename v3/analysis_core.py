@@ -32,6 +32,7 @@ from user_research import (ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
 from source_wave import retrieve_source_evidence
 from operational_sources import retrieve_operational_evidence
+from analytical_sources import retrieve_analytical_evidence
 
 from copy import deepcopy
 from functools import wraps
@@ -2524,7 +2525,7 @@ def run_four_source_research(question, document_count=8):
         document_result["evidence"],
         hapi_result["evidence"],
         fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
-        + retrieve_operational_evidence(question)
+        + retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
@@ -2753,6 +2754,14 @@ EPISTEMIC RULES:
     disbursements are different measures. National HPC context cannot
     establish regional need intensity or local coverage. A source update
     timestamp cannot make historical observations current.
+
+22. CH area classification and population phase distribution differ.
+    Late-2025 current periods and June-August 2026 projections are not
+    current October 2026 observations. Never relabel Cadre Harmonise IPC.
+    Preserve source geography vintages; same-name regions can have different
+    boundaries. No unapproved commune crosswalk or population denominator.
+    FTS national funding is reported contributions/commitments/carry-over,
+    not solely disbursements. It cannot be attributed to local projects.
 
 DEFAULT RESPONSE:
 Write for a busy policy or operational adviser. Be concise,

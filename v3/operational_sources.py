@@ -151,13 +151,13 @@ def retrieve_operational_evidence(question, limit=10):
     return evidence[:limit]
 
 
-def publish_operational_snapshot():
+def publish_operational_snapshot(data=None):
     url, key = os.environ.get("SUPABASE_URL", "").rstrip("/"), os.environ.get("SUPABASE_SECRET_KEY", "")
     if not url or not key:
         return {"status": "not_configured"}
-    if not url.startswith("https://hofoubbmepacdljeablj.supabase.co"):
+    if url != "https://hofoubbmepacdljeablj.supabase.co":
         raise RuntimeError("Operational wave target is not the authorized GIZ project")
-    data = package()
+    data = package() if data is None else data
     session = requests.Session()
     session.headers.update({"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json",
                             "Prefer": "resolution=ignore-duplicates,return=minimal"})

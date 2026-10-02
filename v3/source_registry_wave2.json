@@ -14,14 +14,14 @@
     "update_frequency": "quarterly/assessment round",
     "historical_coverage": "2026-01-01 to 2026-03-31 in this release",
     "last_successful_retrieval": "2026-10-02T14:56:16.771943+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Presence records only: activity, project title, start/end dates, targets and reached fields are empty in this release.",
       "Rows may repeat an actor/sector/location; row counts are not unique projects or beneficiaries.",
       "Commune labels/P-codes remain unverified; village fields are excluded."
     ],
     "fallback_source": "provider report/next public HDX release",
-    "next_action": "deploy and verify user answers",
+    "next_action": "maintain provider refresh; approve geography crosswalks; obtain activity/reach layer",
     "responsible_party": "MKH source maintainer",
     "records": 5413,
     "checksum": "0d3f99b1cbcf8f0dbabeac3719e0697e09a6b5e3ccbb388954f0c325709ea238"
@@ -41,7 +41,7 @@
     "update_frequency": "quarterly/assessment round",
     "historical_coverage": "2025-09-01 to 2025-09-30 in this release",
     "last_successful_retrieval": "2026-10-02T15:02:35.052882+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "September 2025 stock assessment, not a current 2026 count or movement flow.",
       "Commune aggregates only; no microdata/sites. Commune joins require approved crosswalks.",
@@ -49,7 +49,7 @@
       "Metadata caveat still refers to Round 81; the ingested file/resource explicitly identifies Round 83."
     ],
     "fallback_source": "provider report/next public HDX release",
-    "next_action": "deploy and verify user answers",
+    "next_action": "maintain provider refresh; approve geography crosswalks; obtain activity/reach layer",
     "responsible_party": "MKH source maintainer",
     "records": 467,
     "checksum": "6bb7abca9f28331dfad4efc99294774b857c64a95184231e5dbb9b9e19eae68d"
