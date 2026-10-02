@@ -58,10 +58,12 @@ def retrieve_eu_evidence(question,limit=20):
         for r in rows[:2]:
             f=r['payload']['facts'];flags=[]
             end=parsed_date(f['end_date_reported']);start=parsed_date(f['start_date_reported'])
+            if end and end<today:flags.append('Historical reported end date: do not describe this record as current activity or current needs alignment; mention its dates and status explicitly')
             if end and end<today and f['status']=='Implementation':flags.append('Implementation status with past reported end: unresolved registry conflict')
             if start and start>today:flags.append('Future reported start: planned/actual type unavailable; not confirmed current delivery')
             results.append(item(r,f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
-                'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only.'))
+                'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only. '
+                'Source sector codes are preserved separately from title-derived thematic relevance; a WASH title does not change a reported governance sector code.'))
     other=[r for r in data if r['source_type'] in ('eu_tei','eu_project_metadata','eib_project')]
     other.sort(key=lambda r:(score(r),r['source_type']!='eib_project'),reverse=True)
     results.extend(item(r,'Selected historical project/initiative, not a complete portfolio or current actor roster.') for r in other)

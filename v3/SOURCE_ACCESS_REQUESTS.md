@@ -80,3 +80,14 @@ implementation/results reports and reuse terms. Three historical Bamako profiles
 are factual subsets, not a complete portfolio. The current Capacity4dev
 Mali-Centre overview has no verified results extracted; please supply final
 research/results products with geographic/sample limitations and reuse terms.
+
+The identified final SIPRI / Point Sud report is *Listen to us! Local perceptions
+of populations in central Mali* (May 2023), based on research in 2019–2022.
+Please provide a smaller accessible original PDF or authorized page extracts,
+including study sites, sampling, exclusions, findings and transferability limits:
+
+- French: https://www.sipri.org/sites/default/files/2023-05/listen_to_us-local_perceptions_of_populations_in_central_mali-compressed.pdf
+- English: https://www.sipri.org/sites/default/files/2023-10/flash_-_rapport_final_-_anglais_-_projet_mali_centre_web-compressed.pdf
+
+Direct download timed out and both files exceed the current web reader size
+limit. Only landing-page metadata has been verified; no findings are integrated.

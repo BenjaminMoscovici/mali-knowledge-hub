@@ -14,15 +14,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2020-01-01 to 2027-12-31",
     "last_successful_retrieval": "2026-10-02T16:50:04.876727+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Original historical programme must be read alongside current EU overview and MTR. PDF has 140 pages; selected facts only."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 3,
-    "checksum": "971c69e5080c53df93ed5348dbd3630dd07a14c2f1fdff24b428989fda6efbd4"
+    "checksum": "971c69e5080c53df93ed5348dbd3630dd07a14c2f1fdff24b428989fda6efbd4",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "European Commission DG INTPA",
@@ -39,15 +40,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2021-01-01 to 2027-12-31",
     "last_successful_retrieval": "2026-10-02T16:49:09.385167+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Snapshot not verified publication date. Historical commitments and current programming intent are distinct."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 3,
-    "checksum": "5504a7365558e0c76a19528e07d334a806ccc3522d3f74dd787cc78038306303"
+    "checksum": "5504a7365558e0c76a19528e07d334a806ccc3522d3f74dd787cc78038306303",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "DG INTPA Team Europe Tracker",
@@ -64,15 +66,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2022-01-01 to 2022-01-31",
     "last_successful_retrieval": "2026-10-02T16:50:08.719767+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Historical initiative proposal; no confirmed budgets, delivery or reach."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "1f89a2e0ea073b7e4e1c292922b80730bc997c1cabab7060d59a3c6dc9877ca6"
+    "checksum": "1f89a2e0ea073b7e4e1c292922b80730bc997c1cabab7060d59a3c6dc9877ca6",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "DG INTPA Team Europe Tracker",
@@ -89,15 +92,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2022-01-01 to 2022-01-31",
     "last_successful_retrieval": "2026-10-02T16:50:08.655714+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Historical initiative proposal, not a current actor roster or verified project."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "d775f06c1a554e0518e090094b583c7c3b238af36cc8b5892a480fb3cadb7d46"
+    "checksum": "d775f06c1a554e0518e090094b583c7c3b238af36cc8b5892a480fb3cadb7d46",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "SIPRI / Point Sud via Capacity4dev",
@@ -114,15 +118,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2018-08-01 to 2023-12-31",
     "last_successful_retrieval": "2026-10-02T16:59:07.963647+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "One historical project only, platform-maintained status; budget not disbursement; no impact attributed."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "a690a0ec654531828ecb96cd428cca71692c99039bca822db88da9d71b537ad9"
+    "checksum": "a690a0ec654531828ecb96cd428cca71692c99039bca822db88da9d71b537ad9",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "European Investment Bank",
@@ -139,15 +144,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2013-12-16 to 2013-12-16",
     "last_successful_retrieval": "2026-10-02T16:56:19.815488+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Selected three historical project profiles, not full Mali portfolio. No closing, disbursement, current delivery or verified results. Amount retains proposed approximate label even though profile status is Signed."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "ff3887271c2227d5d15f114bad4e06b3ddecf1aeda5ca0d993c5c60d37658561"
+    "checksum": "ff3887271c2227d5d15f114bad4e06b3ddecf1aeda5ca0d993c5c60d37658561",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "European Investment Bank",
@@ -164,15 +170,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2017-06-08 to 2017-06-08",
     "last_successful_retrieval": "2026-10-02T16:56:19.951083+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Selected three historical project profiles, not full Mali portfolio. No closing, disbursement, current delivery or verified results. Amount retains proposed approximate label even though profile status is Signed."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "6422881f7a0a1e8c503c61792ad0ec1d2f689c372f5a4f00921b00a27b01204d"
+    "checksum": "6422881f7a0a1e8c503c61792ad0ec1d2f689c372f5a4f00921b00a27b01204d",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "European Investment Bank",
@@ -189,15 +196,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2020-12-22 to 2020-12-22",
     "last_successful_retrieval": "2026-10-02T16:56:19.939636+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Selected three historical project profiles, not full Mali portfolio. No closing, disbursement, current delivery or verified results. Amount retains proposed approximate label even though profile status is Signed."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 1,
-    "checksum": "6fb7d601ce3368fa7bcf10c48c923f08d80293880d92ee0d278062cf8021f296"
+    "checksum": "6fb7d601ce3368fa7bcf10c48c923f08d80293880d92ee0d278062cf8021f296",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "European Commission DG ECHO",
@@ -214,15 +222,16 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2026-01-01 to 2026-12-31",
     "last_successful_retrieval": "2026-10-02T16:50:18.117626+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Mali allocation 32m EUR is indicative. Whole HIP 276m EUR covers region. Partner lists for funding cycles are eligible/existing partners, not verified grants. No HIP project-level delivery/results."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 4,
-    "checksum": "d81edbb4ef7987f0f21b68c71abc2df96a4f8bdf9f62451c43ac2e1a34411141"
+    "checksum": "d81edbb4ef7987f0f21b68c71abc2df96a4f8bdf9f62451c43ac2e1a34411141",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   },
   {
     "provider": "DG INTPA / DG ECHO through IATI HDX export",
@@ -239,16 +248,17 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2026-10-02 to 2026-10-02",
     "last_successful_retrieval": "2026-10-02T15:25:03.115152+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "134 INTPA + 172 ECHO exact-country activities, identifier deduplication. 37 ECHO multi-country allocations excluded.",
       "Publisher XML routes currently time out; successful same-day HDX retrieval used. Subsequent refresh timeout did not alter retrieval date.",
       "No financial analysis from unverified CSV totals or date-type conversion. No implementer/partner or linked-document reconstruction."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "publish to GIZ database and verify live cited EU questions",
+    "next_action": "Refresh on provider releases; obtain original XML/action/implementation documents and approved geographic crosswalks; retain stage and scope safeguards",
     "responsible_party": "MKH source maintainer",
     "records": 306,
-    "checksum": "6295a6d4d9c577fd6e405a018833a0049f524d8fa213ea542509609ae07abb1d"
+    "checksum": "6295a6d4d9c577fd6e405a018833a0049f524d8fa213ea542509609ae07abb1d",
+    "live_acceptance": "322 total EU records across 10 releases published to GIZ; cited EU priorities and joined Mopti guest questions verified 2026-10-02"
   }
 ]

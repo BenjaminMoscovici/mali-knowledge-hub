@@ -57,3 +57,13 @@ def test_eu_retrieval_is_wired_into_real_research_and_publisher():
     function=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='run_four_source_research')
     assert any(isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='retrieve_eu_evidence' for n in ast.walk(function))
     assert 'asyncio.to_thread(publish_eu_logged)' in Path(__file__).with_name('web_api.py').read_text()
+
+
+def test_historical_health_activity_and_source_sector_remain_explicit():
+    rows=retrieve_eu_evidence('In Mopti compare EU ECHO food security health nutrition activities and national priorities')
+    old=next(r for r in rows if '2017/91029' in r['content'])
+    assert '2018-04-30' in old['content'] and 'Historical reported end date' in old['content']
+    assert 'mention its dates and status explicitly' in old['content']
+    wash=next(r for r in rows if '2023-PC-34274' in r['content'])
+    assert 'Democratic participation and civil society' in wash['content']
+    assert 'does not change a reported governance sector code' in wash['content']
