@@ -1,6 +1,8 @@
 import json
+import pytest
 from operational_sources import package, retrieve_operational_evidence
 from operational_import import GeoMatcher
+from operational_sources import publish_operational_snapshot
 
 
 def test_acquired_release_counts_and_blank_delivery_fields():
@@ -42,3 +44,29 @@ def test_commune_query_does_not_inherit_regional_records():
 
 def test_unrelated_query_is_not_polluted():
     assert retrieve_operational_evidence('What colour is the logo?') == []
+
+
+def test_publication_refuses_other_projects_and_host_prefix_lookalikes(monkeypatch):
+    monkeypatch.setenv('SUPABASE_SECRET_KEY','test-only-key')
+    for url in ('https://unrelated.supabase.co','https://hofoubbmepacdljeablj.supabase.co.attacker.example'):
+        monkeypatch.setenv('SUPABASE_URL',url)
+        with pytest.raises(RuntimeError,match='authorized GIZ'):
+            publish_operational_snapshot({'tables':{},'records':[],'releases':{}})
+
+
+def test_release_count_conflict_never_activates_pointer(monkeypatch):
+    monkeypatch.setenv('SUPABASE_URL','https://hofoubbmepacdljeablj.supabase.co')
+    monkeypatch.setenv('SUPABASE_SECRET_KEY','test-only-key')
+    class Response:
+        headers={'Content-Range':'0-0/1'}
+        def raise_for_status(self): pass
+    class Session:
+        def __init__(self):self.headers={};self.patches=[]
+        def get(self,*args,**kwargs):return Response()
+        def patch(self,*args,**kwargs):self.patches.append(kwargs);return Response()
+    session=Session()
+    monkeypatch.setattr('operational_sources.requests.Session',lambda:session)
+    with pytest.raises(RuntimeError,match='active pointer unchanged'):
+        publish_operational_snapshot({'tables':{},'records':[{'release_id':'test'},{'release_id':'test'}],
+                                      'releases':{'test-dataset':'test'}})
+    assert session.patches==[]

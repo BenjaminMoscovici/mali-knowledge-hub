@@ -2419,7 +2419,7 @@ def run_four_source_research(question, document_count=8):
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
-                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", _fold(question))))
+                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))))
         return value, time.perf_counter() - started
 
     with ThreadPoolExecutor(max_workers=3) as executor:
