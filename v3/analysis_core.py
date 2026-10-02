@@ -30,6 +30,7 @@ from entity_audit import load as load_entity_decisions
 from joins import enrich as enrich_join_evidence, build_join_context, prompt_context
 from user_research import (ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
+from source_wave import retrieve_source_evidence
 
 from copy import deepcopy
 from functools import wraps
@@ -135,6 +136,12 @@ SOURCE_REGISTRY = {
     ],
     "International NGO Activities": [
         "Structured FONGIM project, location, sector and organization data from the synchronized Knowledge Hub operational mirror"
+    ],
+    "Administrative Geography": [
+        "OCHA Common Operational Dataset for Mali administrative levels 0–2, boundary version v03"
+    ],
+    "Official Population": [
+        "INSTAT RGPH5 locality directory with 2023 DNP projections by sex and administrative level"
     ]
 }
 
@@ -2493,7 +2500,7 @@ def run_four_source_research(question, document_count=8):
     ledger = build_unified_evidence(
         document_result["evidence"],
         hapi_result["evidence"],
-        fongim_result["evidence"] + inventory_evidence
+        fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)

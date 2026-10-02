@@ -6,6 +6,7 @@ owner-scoped RLS tables.
 """
 
 import asyncio
+from contextlib import asynccontextmanager
 import json
 import time
 import traceback
@@ -27,6 +28,7 @@ from supabase import create_client
 from language import answer_language
 from user_research import (REFERENCE_FIELDS, ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
+from source_wave import publish_snapshot_logged
 
 
 WEB = Path(__file__).with_name("web")
@@ -475,7 +477,15 @@ routes = [
     Mount("/assets", app=StaticFiles(directory=WEB), name="assets"),
     Route("/", index),
 ]
-app = Starlette(routes=routes)
+@asynccontextmanager
+async def lifespan(app):
+    # Publication is idempotent and runs after the server has bound its port,
+    # so a large first load cannot make the health check fail.
+    asyncio.create_task(asyncio.to_thread(publish_snapshot_logged))
+    yield
+
+
+app = Starlette(routes=routes, lifespan=lifespan)
 
 
 async def security_headers(request, call_next):
