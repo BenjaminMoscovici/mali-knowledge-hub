@@ -1,5 +1,5 @@
--- DRAFT: generated with Supabase CLI 2.119.0. NOT APPLIED.
--- Correct target only: GIZ MKH hofoubbmepacdljeablj. Live audit/advisors and PostgreSQL checks pending.
+-- Applied to authorized GIZ MKH project on 2 October 2026 after namespace/schema audit.
+-- Correct target only: GIZ MKH hofoubbmepacdljeablj. Existing data and RLS preserved.
 -- Additive source stage; existing tables/functions and public UI are untouched.
 -- Fail on namespace collisions; do not disguise an unknown schema with IF NOT EXISTS.
 
