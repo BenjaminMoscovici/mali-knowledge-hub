@@ -14,14 +14,14 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2026-10-02 to 2026-10-02",
     "last_successful_retrieval": "2026-10-02T15:23:39.197089+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "215 exact-Mali profiles; 62 regional/multicountry search hits excluded.",
       "Source status/date conflicts retained. Project-level update dates missing in most profiles; retrieval does not make old fields current.",
       "Financial API fields retained raw until units validated; not disbursements. No commune/cercle locations in selected export."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "refresh on provider update; validate financial units before exposing money fields",
     "responsible_party": "MKH source maintainer",
     "records": 215,
     "checksum": "a6f467459cdd52733b4bcfd829ce6218fa235d26dd44359fb326aed1662d69c7"
@@ -41,14 +41,14 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2026-10-02 to 2026-10-02",
     "last_successful_retrieval": "2026-10-02T15:25:03.115152+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "36 activities from 136 sector rows; exact identifier deduplication; no sector-level financial summation.",
       "Only World Bank publisher 44000, not complete IATI Mali. Other publisher licences unreviewed.",
       "Questionable coordinates and descriptions omitted. Raw financial fields await unit/transaction validation."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "expand publisher coverage only after licence and transaction-semantics review",
     "responsible_party": "MKH source maintainer",
     "records": 36,
     "checksum": "6295a6d4d9c577fd6e405a018833a0049f524d8fa213ea542509609ae07abb1d"
@@ -68,14 +68,14 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2013-12-06 to 2022-12-31",
     "last_successful_retrieval": "2026-10-02T15:26:08.583882+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "One project review and three short findings with exact PDF pages; not an evaluation repository.",
       "No causal attribution, current-project endorsement or unrestricted full-text redistribution.",
       "Recommendations reflect this project experience; transferability requires current-context checks."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "add further high-value evaluations with page citations and transferability limits",
     "responsible_party": "MKH source maintainer",
     "records": 3,
     "checksum": "79f7fbc09bcd39e48e4cc827316f82190bc652e4b962b80b179de3315ecd1686"

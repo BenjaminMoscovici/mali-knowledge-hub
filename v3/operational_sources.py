@@ -65,17 +65,18 @@ def _locator(rows):
 
 def _evidence(rows, scope, content, title):
     first = rows[0]
+    metadata_date = next(r["publication_date"] for r in package()["tables"]["mkh_source_releases"] if r["id"] == first["release_id"])
     return {"source_type": first["source_type"], "source_family": "OCHA Mali 3W operational presence" if first["source_type"] == "operational_presence" else "IOM DTM displacement",
             "document_title": title, "document_type": "public_aggregate_spreadsheet",
             "organization": "OCHA Mali" if first["source_type"] == "operational_presence" else "IOM DTM",
-            "version": first["version"], "publication_date": next(r["publication_date"] for r in package()["tables"]["mkh_source_releases"] if r["id"] == first["release_id"]),
+            "version": first["version"], "publication_date": None,
             "valid_from": first["reference_start"], "valid_until": first["reference_end"],
             "reference_period_start": first["reference_start"], "reference_period_end": first["reference_end"],
             "retrieved_at": first["retrieved_at"], "source_endpoint": first["source_url"],
             "geographic_scope": scope, "page": None, "section": _locator(rows),
             "record_id": first["id"], "release_id": first["release_id"], "locator": _locator(rows),
             "geographic_precision": "source labels; validated COD region/cercle where stated; commune unverified",
-            "content": content}
+            "content": content + f" HDX resource creation date {metadata_date} is file metadata, not a verified original publication or collection date; those dates are unavailable in the ingested workbook."}
 
 
 def retrieve_operational_evidence(question, limit=10):

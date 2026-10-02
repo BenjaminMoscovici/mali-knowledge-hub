@@ -30,6 +30,7 @@ def test_joined_retrieval_preserves_period_category_scope_and_locators():
     assert all(r['source_endpoint'].startswith('https://data.humdata.org/') and r['locator'] and r['release_id'] for r in rows)
     presence = next(r for r in rows if r['source_type'] == 'operational_presence')
     assert presence['reference_period_start'] == '2026-01-01'
+    assert presence['publication_date'] is None and 'HDX resource creation date' in presence['content']
     assert 'PRESENCE ONLY' in presence['content']
     dtm = next(r for r in rows if r['source_type'] == 'displacement_stock')
     assert dtm['reference_period_end'] == '2025-09-30'

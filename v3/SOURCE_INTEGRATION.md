@@ -82,7 +82,40 @@ and funding semantic checks. Live commit `254742a564e15d3e7868d1dfa6288deed837e0
 
 Validation at this checkpoint: 79 tests and two subtests pass (`pytest -q v3`).
 
-## Source failure protocol and next wave
+## Project, aid and learning wave: integrated and exposed
+
+The V4 test Hub now retrieves 215 exact-Mali World Bank project profiles, 36
+World Bank-publisher IATI activities and three page-cited IEG findings. The 36
+IATI identifiers match World Bank profiles exactly. Country/coordinate
+contradictions and unvalidated financial values are retained outside user
+answers. FONGIM ending-date retrieval now identifies records reported as active
+that end in the next 180 days and separately flags active records whose stated
+end date has passed.
+
+The live joined test connected Mopti needs, OCHA presence, FONGIM ending dates,
+World Bank/IATI project records, IEG learning and national FTS funding. It found
+six FONGIM records reported active and ending between 2 October 2026 and
+31 March 2027 and 13 active records with already-passed end dates. It did not
+convert presence into delivery, national funding into Mopti funding, or a
+historical evaluation into proof of current effectiveness.
+
+Live project-wave commit `62eeb3cce52583ba14b920cef66473f109af7ea5`.
+Migration `20261002155402_project_learning_wave.sql` is applied. Supabase now
+contains 6,296 source records: 5,413 operational-presence, 467 displacement,
+113 food-security, 49 funding, 215 development-project, 36 aid-activity and
+three evaluation-finding records.
+
+Final database audit: 41,751 population observations; 14,099 geographic units;
+13 source-table constraints; three indexes; RLS enabled; no anon or
+authenticated direct read; service-role source records remain immutable.
+
+Validation: V3 88 tests and two subtests pass; V2 11 tests pass in the V2 import
+context; `node --check v3/web/app.js` passes. An AST wiring regression test now
+verifies that English and French ending-project questions invoke the correct
+retrieval path. Release-count mismatch tests verify that a partial import cannot
+activate a release pointer.
+
+## Source failure protocol and remaining gaps
 
 REACH/MSNA: public metadata verified; direct bulletin/methodology downloads
 return 403 and published reuse terms require review. No REACH ingestion is
@@ -104,10 +137,12 @@ text is not redistributed under an assumed open-data licence.
 
 ## Acceptance states
 
-Architecture prepared: yes. Operational source access verified: yes.
-Operational data staged/integrated/exposed: yes. CH/FTS access and staging: yes;
-CH/FTS publication and live answer tests passed. WB/IATI/IEG 254 records staged and validated; deployment/live verification pending. Full programme/user
-acceptance: no. All-source, exact local project/funding joins require further
-geographic/actor reconciliation and richer activity/funding evidence.
-
-Project/learning wave staged: 215 exact-Mali WB profiles, 36 WB IATI activities, three IEG findings. All 36 exact project IDs match profiles. FONGIM ending-intent retrieval now selects reported active projects in the next 180 days and flags overdue active dates. Validation: V3 83 tests plus two subtests; V2 11 tests; JavaScript syntax check passes. The combined importlib test invocation failed collection because these version directories use top-level imports; running each version in its proper import context passes.
+Architecture prepared: **yes**. Source accessibility verified: **yes**, with
+blocked sources classified. Data staged: **yes**. Data integrated: **yes** for
+the source families and counts above. Data exposed in user answers: **yes**,
+confirmed through live guest cross-source tests. Full acceptance completed:
+**no**. REACH/MSNA still requires licence/access resolution; the available OCHA
+3W establishes presence rather than activity or reach; exact local
+project/funding joins still require richer source geography and actor identity
+resolution. Authenticated persistence remains covered by regression tests but
+has not been verified with a live Hub user session.
