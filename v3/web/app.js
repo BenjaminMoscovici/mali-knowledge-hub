@@ -218,6 +218,15 @@
         source.retrieved_at && `Retrieved ${String(source.retrieved_at).slice(0,10)}`].filter(Boolean);
       const meta=document.createElement('div'); meta.className='evidence-meta';
       meta.textContent=parts.join(' · '); card.append(meta);
+      if (source.locator || source.section) {
+        const locator=document.createElement('div'); locator.className='evidence-meta';
+        locator.textContent=source.locator || source.section; card.append(locator);
+      }
+      if (source.source_endpoint && /^https?:\/\//i.test(source.source_endpoint)) {
+        const link=document.createElement('a'); link.href=source.source_endpoint;
+        link.target='_blank'; link.rel='noopener noreferrer'; link.textContent='Open original source';
+        card.append(link);
+      }
       const excerpt=source.content || source.source_excerpt;
       if (source.source_excerpt && !source.content) {
         const note=document.createElement('p'); note.className='evidence-meta';
