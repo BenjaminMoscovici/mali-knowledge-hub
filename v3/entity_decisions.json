@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "policy": "Append-only decisions. Supersede a decision by ID; never erase an original source value or decision.",
+  "decisions": []
+}

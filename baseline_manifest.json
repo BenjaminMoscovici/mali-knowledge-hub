@@ -1,0 +1,8 @@
+{
+  "source": "uploaded authoritative v0.3",
+  "files": {
+    "Mali_Knowledge_Hub_v0_3.ipynb": "9092f36c5a97f510aee823999720c3b2a3cba64ee47d2799d8eabbf9812fa94f",
+    "app.py": "9bd72e284fc43ba610178d7ac010450c429207e1582304825565634fea88bc1a",
+    "knowledge_hub_runtime_v0_3.py": "d18cbaf057290b94c420992860884e92b1784409699899b921d1528902e05ac4"
+  }
+}

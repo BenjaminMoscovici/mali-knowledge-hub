@@ -1,0 +1,12 @@
+{
+  "version": "v3-intake-rc1",
+  "frozen_before_live_tuning": true,
+  "acceptance_cases": [
+    {"id": "V3-PDF", "fixture": "machine-readable public PDF", "expected": ["private original stored", "ready status", "page-numbered searchable chunks", "complete embeddings", "proposed metadata and confidence"]},
+    {"id": "V3-OCR", "fixture": "image-only scanned public PDF", "expected": ["OCR used and reported", "ready status", "page-numbered searchable chunks"]},
+    {"id": "V3-BROKEN", "fixture": "malformed or unsupported file", "expected": ["failed status and visible error", "original retained", "zero public chunks"]},
+    {"id": "V3-RETRY", "fixture": "temporary embedding failure", "expected": ["partially processed and excluded", "retry from original", "ready after recovery"]},
+    {"id": "V3-AUTH", "fixture": "public guest and unlisted email", "expected": ["public questions work", "admin corpus/actions inaccessible", "server secret never rendered"]},
+    {"id": "V3-REGRESSION", "fixture": "frozen V1 and V2 benchmark suites", "expected": ["protected grounding, citations, geography within charter tolerance", "V2 joins retained", "cost and latency measured"]}
+  ]
+}

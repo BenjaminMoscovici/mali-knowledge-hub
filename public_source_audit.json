@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-28",
+  "scope": "All five active documents and the two structured source families used by the v0.3 app",
+  "finding": "The five document records are public government or OCHA publications. Four carry public finances.ml PDF source URLs in Supabase metadata. The OCHA 2026 plan has no source_url in the database but is listed on OCHA's public publications site. HAPI is a public OCHA data API; FONGIM is queried from the public interactive-map Power BI model.",
+  "limits": "This is a metadata and source-publication classification. It does not certify byte-for-byte identity between stored chunks and public PDFs, nor inspect every FONGIM field for sensitive content.",
+  "document_count": 5,
+  "government_documents_with_official_source_url": 4,
+  "ocha_publication_url": "https://www.unocha.org/publications/report/mali/mali-besoins-humanitaires-et-plan-de-reponse-2026",
+  "source_families": ["government_documents", "humanitarian_document", "hdx_hapi", "fongim"]
+}

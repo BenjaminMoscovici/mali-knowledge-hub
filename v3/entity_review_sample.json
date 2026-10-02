@@ -1,0 +1,36 @@
+{
+  "provenance": "Hand-labelled from the FONGIM organization names visible in the GIZ Supabase mirror on 2026-09-28; cross-source variants are review scenarios, not assertions that a government report contains them.",
+  "policy": "A conservative unresolved answer is acceptable when names alone do not establish a cross-source identity. False resolved merges are unacceptable.",
+  "canonical_names": [
+    "Agronomes et veterinaires sans frontieres - AVSF",
+    "Véterinaires Sans Frontières Belgique ( VSFB)",
+    "ENGIM - Ente Nazionale Giuseppini del Murialdo",
+    "Muso", "MSF-Espagne", "OXFAM MALI", "NRC",
+    "Save the Children International au Mali", "Action contre la Faim Espagne",
+    "MEDECINS DU MONDE BELGIQUE", "Fondation Cordaid",
+    "Diakonia Mali", "Right To Play", "Solidarité Internationale",
+    "International Medical Corps"
+  ],
+  "cases": [
+    {"raw":"Agronomes et veterinaires sans frontieres - AVSF","source":"FONGIM","expected":"Agronomes et veterinaires sans frontieres - AVSF"},
+    {"raw":"Véterinaires Sans Frontières Belgique ( VSFB)","source":"FONGIM","expected":"Véterinaires Sans Frontières Belgique ( VSFB)"},
+    {"raw":"ENGIM - Ente Nazionale Giuseppini del Murialdo","source":"FONGIM","expected":"ENGIM - Ente Nazionale Giuseppini del Murialdo"},
+    {"raw":"MSF-Espagne","source":"FONGIM","expected":"MSF-Espagne"},
+    {"raw":"OXFAM MALI","source":"FONGIM","expected":"OXFAM MALI"},
+    {"raw":"Save the Children International au Mali","source":"FONGIM","expected":"Save the Children International au Mali"},
+    {"raw":"Action contre la Faim Espagne","source":"FONGIM","expected":"Action contre la Faim Espagne"},
+    {"raw":"Diakonia Mali","source":"FONGIM","expected":"Diakonia Mali"},
+    {"raw":"AVSF","source":"report","expected":"Agronomes et veterinaires sans frontieres - AVSF"},
+    {"raw":"VSFB","source":"report","expected":"Véterinaires Sans Frontières Belgique ( VSFB)"},
+    {"raw":"Oxfam Mali","source":"report","expected":"OXFAM MALI"},
+    {"raw":"Save the Children International au Mali","source":"report","expected":"Save the Children International au Mali"},
+    {"raw":"Action contre la Faim Espagne","source":"report","expected":"Action contre la Faim Espagne"},
+    {"raw":"MSF","source":"report","expected":null},
+    {"raw":"Muso","source":"report","expected":null},
+    {"raw":"NRC","source":"report","expected":null},
+    {"raw":"Vétérinaires Sans Frontières","source":"report","expected":null},
+    {"raw":"Médecins du Monde","source":"report","expected":null},
+    {"raw":"Action contre la Faim","source":"report","expected":null},
+    {"raw":"International Medical","source":"report","expected":null}
+  ]
+}
