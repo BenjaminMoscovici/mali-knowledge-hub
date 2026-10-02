@@ -132,6 +132,7 @@ REFERENCE_FIELDS = (
     "source_endpoint", "resource_hdx_id",
     "retrieved_at", "reference_period_start", "reference_period_end",
     "project_id", "record_id", "geographic_scope",
+    "release_id", "locator", "geographic_precision",
 )
 
 

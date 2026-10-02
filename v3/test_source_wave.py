@@ -18,4 +18,12 @@ def test_cod_evidence_preserves_level_parent_and_identifier():
 
 
 def test_unrelated_question_does_not_add_source_wave_evidence():
-    assert source_wave.retrieve_source_evidence("What are the documented humanitarian needs?") == []
+    assert source_wave.retrieve_source_evidence("What colour is the logo?") == []
+
+
+def test_existing_hpc_snapshot_is_exposed_without_duplicate_ingestion():
+    rows = source_wave.retrieve_source_evidence("Compare needs, targets, reached and funding in 2026")
+    hpc = [r for r in rows if r["source_type"] == "humanitarian_planning_snapshot"]
+    assert len(hpc) == 1
+    assert "5,100,000" in hpc[0]["content"] and "3,800,000" in hpc[0]["content"]
+    assert "no financial requirements" in hpc[0]["content"]

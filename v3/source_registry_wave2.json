@@ -1,0 +1,57 @@
+[
+  {
+    "provider": "OCHA Mali",
+    "source_name": "MALI 3W_Q1_2026",
+    "analytical_use": "actors and sectors present",
+    "authoritative_status": "provider publication on HDX",
+    "access_route": "https://data.humdata.org/dataset/d7ab89e4-bcb2-4127-be3c-5e8cf804ffd3/resource/296ddf39-9b19-4cff-85b4-5c16eaf95281/download/mali-3w_all-3.xlsx",
+    "format": "XLSX",
+    "authentication": "none",
+    "licence": "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)",
+    "sensitivity": "public aggregates; site/village fields excluded",
+    "geographic_granularity": "source region/cercle/commune labels; COD validation region/cercle only",
+    "temporal_granularity": "Q1 2026",
+    "update_frequency": "quarterly/assessment round",
+    "historical_coverage": "2026-01-01 to 2026-03-31 in this release",
+    "last_successful_retrieval": "2026-10-02T14:56:16.771943+00:00",
+    "integration_status": "public_access_confirmed",
+    "limitations": [
+      "Presence records only: activity, project title, start/end dates, targets and reached fields are empty in this release.",
+      "Rows may repeat an actor/sector/location; row counts are not unique projects or beneficiaries.",
+      "Commune labels/P-codes remain unverified; village fields are excluded."
+    ],
+    "fallback_source": "provider report/next public HDX release",
+    "next_action": "deploy and verify user answers",
+    "responsible_party": "MKH source maintainer",
+    "records": 5413,
+    "checksum": "0d3f99b1cbcf8f0dbabeac3719e0697e09a6b5e3ccbb388954f0c325709ea238"
+  },
+  {
+    "provider": "International Organization for Migration (IOM)",
+    "source_name": "DTM Mali Baseline Assessment Round 83",
+    "analytical_use": "displaced/returned/repatriated population stocks",
+    "authoritative_status": "provider publication on HDX",
+    "access_route": "https://data.humdata.org/dataset/ea41f7c7-2ebe-456b-b5eb-e3e0ac8d708b/resource/8f39ee3e-2fe2-49c6-9727-a589112b646c/download/dtm_mali_baseline_assessment_09_2025_round_83_vf.xlsx",
+    "format": "XLSX",
+    "authentication": "none",
+    "licence": "Creative Commons Attribution International (CC BY)",
+    "sensitivity": "public aggregates; site/village fields excluded",
+    "geographic_granularity": "source region/cercle/commune labels; COD validation region/cercle only",
+    "temporal_granularity": "Round 83 September 2025",
+    "update_frequency": "quarterly/assessment round",
+    "historical_coverage": "2025-09-01 to 2025-09-30 in this release",
+    "last_successful_retrieval": "2026-10-02T15:02:35.052882+00:00",
+    "integration_status": "public_access_confirmed",
+    "limitations": [
+      "September 2025 stock assessment, not a current 2026 count or movement flow.",
+      "Commune aggregates only; no microdata/sites. Commune joins require approved crosswalks.",
+      "Sheet RAPATRIES is repatriated persons, distinct from returned IDPs. No return flow or durable-return outcome is established.",
+      "Metadata caveat still refers to Round 81; the ingested file/resource explicitly identifies Round 83."
+    ],
+    "fallback_source": "provider report/next public HDX release",
+    "next_action": "deploy and verify user answers",
+    "responsible_party": "MKH source maintainer",
+    "records": 467,
+    "checksum": "6bb7abca9f28331dfad4efc99294774b857c64a95184231e5dbb9b9e19eae68d"
+  }
+]

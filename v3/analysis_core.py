@@ -31,6 +31,7 @@ from joins import enrich as enrich_join_evidence, build_join_context, prompt_con
 from user_research import (ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
 from source_wave import retrieve_source_evidence
+from operational_sources import retrieve_operational_evidence
 
 from copy import deepcopy
 from functools import wraps
@@ -142,7 +143,10 @@ SOURCE_REGISTRY = {
     ],
     "Official Population": [
         "INSTAT RGPH5 locality directory with 2023 DNP projections by sex and administrative level"
-    ]
+    ],
+    "Operational Presence": ["OCHA Mali 3W Q1 2026; presence and sectors, no delivery/reach fields"],
+    "Displacement": ["IOM DTM Round 83 September 2025; separate IDP/returned-IDP/repatriated stocks"],
+    "National HPC Planning": ["Existing OCHA Global HPC HNO 2026; national population, PIN and targeted observations"]
 }
 
 
@@ -281,7 +285,7 @@ def is_source_inventory_question(question):
 
 def source_inventory_answer():
     return """
-I currently have access to **four source families**:
+I currently retrieve evidence from the following source families:
 
 **1. Government Framework Documents**
 - Vision Mali 2063 — *Mali Kura Ɲɛtaasira ka bɛn san 2063 ma*
@@ -297,6 +301,21 @@ I currently have access to **four source families**:
 
 **4. International NGO Activities**
 - Structured **FONGIM** project data, including projects, locations, sectors and organizations. The app queries the synchronized Knowledge Hub operational mirror of the FONGIM source data.
+
+**5. Administrative geography**
+- OCHA COD v03 regions and cercles, P-codes and parent relationships; INSTAT locality geography. Proposed crosswalks are not approved matches.
+
+**6. Official population**
+- INSTAT RGPH5 documents and sex-disaggregated 2023 DNP population projections, with exact pages. These are historical projections, not current population counts.
+
+**7. OCHA operational presence**
+- Mali 3W Q1 2026: 5,413 source rows, with actors, sectors and source geography. All activity, project dates, targets and reached fields are empty: presence does not demonstrate delivery or coverage.
+
+**8. IOM DTM displacement**
+- Round 83, September 2025: 467 public commune aggregate rows across displaced, returned-IDP and repatriated categories. Stocks are not flows; commune labels remain unverified against the geographic spine.
+
+**9. National HPC planning context**
+- Existing OCHA Global HPC HNO 2026 snapshot: population estimate, People in Need and targeted. This stored layer does not contain requirements, funding, reached figures or regional severity.
 
 The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
 """.strip()
@@ -2208,6 +2227,10 @@ TYPE: {item.get('document_type')}
 VERSION: {item.get('version')}
 PUBLICATION DATE: {item.get('publication_date')}
 VALIDITY: {item.get('valid_from')} to {item.get('valid_until')}
+REFERENCE PERIOD: {item.get('reference_period_start')} to {item.get('reference_period_end')}
+RETRIEVED AT: {item.get('retrieved_at')}
+ORIGINAL SOURCE URL: {item.get('source_endpoint')}
+EXACT LOCATOR: {item.get('locator') or item.get('section')}
 GEOGRAPHIC SCOPE: {item.get('geographic_scope')}
 ADMIN1 / ADMIN2: {item.get('admin1_name')} / {item.get('admin2_name')}
 PAGE: {item.get('page')}
@@ -2501,6 +2524,7 @@ def run_four_source_research(question, document_count=8):
         document_result["evidence"],
         hapi_result["evidence"],
         fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
+        + retrieve_operational_evidence(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
@@ -2712,6 +2736,23 @@ EPISTEMIC RULES:
     document registry has no local plan unless explicitly listed in the
     corpus inventory. Cite its ledger ID for a statement about the Hub's
     indexed documents. Never cite the candidate join audit itself.
+
+19. OCHA 3W presence is not planned/active/completed delivery or reach.
+    Blank activities, end dates, targets and reached values are missing,
+    never zero. Actor labels are not resolved global identities. Missing
+    records do not prove an absence of actors or services. Explicitly state
+    geography matching conflicts and unverified commune labels.
+
+20. DTM stocks are not movement flows. Keep internally displaced,
+    returned IDPs and repatriated persons separate. Do not add rounds,
+    categories or commune rows to create an unsupported regional total.
+    The observation period, publication and retrieval dates differ.
+    Cadre Harmonise and IPC are distinct products; do not relabel them.
+
+21. People in Need, targeted, reached, requirements, commitments and
+    disbursements are different measures. National HPC context cannot
+    establish regional need intensity or local coverage. A source update
+    timestamp cannot make historical observations current.
 
 DEFAULT RESPONSE:
 Write for a busy policy or operational adviser. Be concise,

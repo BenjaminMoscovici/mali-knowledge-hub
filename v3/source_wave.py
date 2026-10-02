@@ -73,7 +73,8 @@ def retrieve_source_evidence(question, limit=8):
     geography_intent = bool(re.search(
         r"\b(region|cercle|commune|arrondissement|localit|administrative|p code|pcode|boundary|boundaries)\b",
         folded))
-    if not (population_intent or geography_intent):
+    hpc_intent = bool(re.search(r"\b(needs|besoins|hpc|hno|hnrp|hrp|target\w*|cible\w*|reached|atteint\w*|funding|financement)\b", folded))
+    if not (population_intent or geography_intent or hpc_intent):
         return []
 
     db = sqlite3.connect(f"file:{snapshot_path()}?mode=ro", uri=True)
@@ -92,6 +93,25 @@ def retrieve_source_evidence(question, limit=8):
             unique[row["unit_id"]] = row
         matched = list(unique.values())[:20]
         evidence = []
+
+        if hpc_intent:
+            observations = _rows(db, """select h.*,s.passage,s.locator,r.source_url,r.retrieved_at,r.publication_date,
+                       r.upstream_version,d.title from mkh_humanitarian_observations h
+                       join mkh_evidence_spans s on s.id=h.span_id
+                       join mkh_source_releases r on r.id=h.release_id
+                       join mkh_datasets d on d.id=r.dataset_id where d.id='mli-hpc-hno-2026'""")
+            if observations:
+                first = observations[0]
+                labels = {'all': 'national population estimate', 'INN': 'People in Need', 'TGT': 'targeted'}
+                evidence.append({"source_type": "humanitarian_planning_snapshot", "source_family": "OCHA Global HPC HNO 2026",
+                    "document_title": first["title"], "document_type": "national_planning_snapshot", "organization": "OCHA",
+                    "version": first["upstream_version"], "publication_date": first["publication_date"],
+                    "retrieved_at": first["retrieved_at"], "reference_period_start": first["reference_start"],
+                    "reference_period_end": first["reference_end"], "geographic_scope": "Mali — national only",
+                    "page": None, "section": first["locator"], "locator": first["locator"],
+                    "source_endpoint": first["source_url"], "record_id": first["id"], "release_id": first["release_id"],
+                    "content": "2026 NATIONAL planning context: " + "; ".join(f"{labels.get(r['population_status'], r['population_status'])}: {r['value']:,} people" for r in observations)
+                    + ". Methodology: GHO Estimates. These are distinct planning measures, not counts reached. This stored layer has no financial requirements, funding, reached figures, sector severity or subnational breakdown; it cannot establish the needs in any selected region/commune. The national population estimate is distinct from INSTAT census/projection releases."})
 
         if population_intent:
             pop_units = [row for row in matched if db.execute(
@@ -133,7 +153,7 @@ def retrieve_source_evidence(question, limit=8):
                 })
 
         if geography_intent:
-            for unit in matched[:limit - len(evidence)]:
+            for unit in matched[:max(0, limit - len(evidence))]:
                 identifiers = _rows(db, "select namespace,identifier from mkh_geo_identifiers where unit_id=?",
                                     (unit["unit_id"],))
                 release = db.execute("""select r.*,d.title dataset_title,s.provider
@@ -232,4 +252,3 @@ def publish_snapshot_logged():
         print("MKH_SOURCE_WAVE " + json.dumps({**result, "seconds": round(time.monotonic() - started, 2)}), flush=True)
     except Exception as exc:
         print("MKH_SOURCE_WAVE " + json.dumps({"status": "failed", "error_type": type(exc).__name__}), flush=True)
-
