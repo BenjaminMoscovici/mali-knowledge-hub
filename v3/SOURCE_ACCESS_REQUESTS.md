@@ -52,3 +52,31 @@ or geographic reviewer should provide an authoritative mapping between older
 version, split/merge relationships, dates and ambiguities. Same-name labels
 must not be approved without parent/boundary evidence. Until then, raw source
 scopes and unresolved conflicts remain visible and coverage ratios are disabled.
+
+## DG INTPA / EU Delegation Mali — original action and IATI files
+
+Draft only; no message sent. Please provide the public original Mali IATI XML
+(XI-IATI-EC_INTPA / ec-intpa-ml, and ECHO Mali records), including last update,
+hierarchy/related activity IDs, organisation roles, country allocations, sector
+codes, planned/actual date types, budgets, transactions with type/currency/value
+date, reversals, linked documents and results. The current HDX fallback preserves
+134 INTPA and 172 exact-country ECHO activity IDs but does not preserve these
+financial or organisation semantics. We cannot label export spend as disbursement.
+
+Please also provide downloadable decisions and action annexes for:
+C(2024)1428 Mali AAP2024; C(2023)5124 support measures2023–2025 Part1;
+C(2021)9864 AAP2021; C(2022)8670 addendum to AAP2016; and
+C(2024)7502 Sub-Saharan Africa mid-term review. Official download links are
+recorded in the registry. Action ZIP downloads returned429; original XML routes
+timed out. Please confirm document version, amendments, approved amounts and
+country scope, current implementation reports and reuse notices. Regional
+allocations will not be attributed entirely to Mali.
+
+For Team Europe, please provide updated country initiative implementation
+sheets and participant lists: public youth/climate proposal pages retain
+January2022 design-stage metadata. For EIB, please provide the Mali open-data
+portfolio, signed finance amounts and currency, disbursement/closing dates,
+implementation/results reports and reuse terms. Three historical Bamako profiles
+are factual subsets, not a complete portfolio. The current Capacity4dev
+Mali-Centre overview has no verified results extracted; please supply final
+research/results products with geographic/sample limitations and reuse terms.

@@ -1,0 +1,73 @@
+"""Cited EU evidence: programming, commitment, signature and status stay distinct."""
+from datetime import datetime,timedelta,timezone
+from functools import lru_cache
+import gzip,json,logging,re
+from pathlib import Path
+from analytical_sources import evidence
+from operational_sources import publish_operational_snapshot
+from project_dates import parsed_date
+from source_wave import _fold
+
+@lru_cache(maxsize=1)
+def package():
+    with gzip.open(Path(__file__).with_name('source_wave5.json.gz'),'rt',encoding='utf-8') as f:return json.load(f)
+
+
+def item(row,extra=''):
+    p=row['payload'];facts={k:v for k,v in p['facts'].items() if k!='financial_raw'}
+    content=(f'EU evidence stage: {p["evidence_stage"]}. Title: {p["title"]}. '+json.dumps(facts,ensure_ascii=False)
+        +'. Source geography: '+json.dumps(p['geography'],ensure_ascii=False)+'. '
+        'Reference period '+row['reference_start']+' to '+row['reference_end']+'. '
+        'For activity records this is a registry retrieval snapshot, not delivery dates; for EIB it is signature date, not project duration. '
+        'Programming intent, approved action, commitment, disbursement, implementation and results are separate stages. '
+        'Amounts from different stages, periods, currencies or scopes must not be added or subtracted into funding/coverage gaps. '
+        +p['limitations']+' '+extra)
+    result=evidence([row],content,p['title'],'; '.join(f'{k}: {v}' for k,v in p['geography'].items()),
+        'source-reported scope only; no approved commune/cercle coverage',data=package())
+    result['source_family']='EU / Team Europe — '+row['source_type']
+    result['valid_from']=result['valid_until']=None
+    return result
+
+
+def retrieve_eu_evidence(question,limit=20):
+    q=_fold(question)
+    if not re.search(r'\b(eu|ue|european union|union europeenne|team europe|equipe europe|intpa|echo|tei|eib|bei|capacity4dev|kabala|t05-eutf)\b',q):return []
+    data=package()['records'];today=datetime.now(timezone.utc).date()
+    ending=bool(re.search(r'\b(ending|end dates?|closing|echeances?|termin\w*|finissent)\b',q))
+    themes=[]
+    for key,pattern in {'food_security':r'food|aliment|faim|hunger|agric','wash':r'wash|water|eau|assain|sanitation',
+        'education':r'educ|ecole|school|learn|appren|vocational|formation','health':r'health|sante',
+        'nutrition':r'nutri','protection':r'protect','employment':r'job|emploi|youth|jeune',
+        'environment':r'climat|environment|environnement|green|vert','energy':r'energ|electric',
+        'governance':r'govern|gouvern|state|etat','displacement':r'displace|deplace|dtm'}.items():
+        if re.search(pattern,q):themes.append(key)
+    wanted_geo=[g for g in ('mopti','gao','tombouctou','segou','bamako','socoura') if g in q]
+    def score(r):
+        p=r['payload'];text=_fold(json.dumps(p,ensure_ascii=False))
+        return sum(t in p['sectors'] for t in themes)*4+sum(g in text for g in wanted_geo)*3+sum(w in text for w in q.split() if len(w)>4)
+    fixed=[r for r in data if r['source_type'] not in ('eu_activity','eib_project','eu_project_metadata','eu_tei')]
+    fixed.sort(key=lambda r:(r['dataset_id']=='mli-eu-current-overview',score(r)),reverse=True)
+    results=[item(r) for r in fixed]
+    for pub in ('XI-IATI-EC_INTPA','XI-IATI-EC_ECHO'):
+        rows=[r for r in data if r['source_type']=='eu_activity' and r['payload']['facts']['publisher_ref']==pub]
+        if ending:
+            rows=[r for r in rows if r['payload']['facts']['status']=='Implementation' and parsed_date(r['payload']['facts']['end_date_reported'])
+                and parsed_date(r['payload']['facts']['end_date_reported'])<=today+timedelta(days=180)]
+            rows.sort(key=lambda r:(parsed_date(r['payload']['facts']['end_date_reported'])<today,r['payload']['facts']['end_date_reported']))
+        else:rows.sort(key=lambda r:(score(r),r['payload']['facts']['status']=='Implementation',r['payload']['facts']['start_date_reported'] or ''),reverse=True)
+        for r in rows[:2]:
+            f=r['payload']['facts'];flags=[]
+            end=parsed_date(f['end_date_reported']);start=parsed_date(f['start_date_reported'])
+            if end and end<today and f['status']=='Implementation':flags.append('Implementation status with past reported end: unresolved registry conflict')
+            if start and start>today:flags.append('Future reported start: planned/actual type unavailable; not confirmed current delivery')
+            results.append(item(r,f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
+                'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only.'))
+    other=[r for r in data if r['source_type'] in ('eu_tei','eu_project_metadata','eib_project')]
+    other.sort(key=lambda r:(score(r),r['source_type']!='eib_project'),reverse=True)
+    results.extend(item(r,'Selected historical project/initiative, not a complete portfolio or current actor roster.') for r in other)
+    return results[:limit]
+
+
+def publish_eu_logged():
+    try:logging.getLogger('mkh.sources').info('eu_wave %s',json.dumps(publish_operational_snapshot(package())))
+    except Exception as error:logging.getLogger('mkh.sources').warning('eu_wave publication_failed error_class=%s',type(error).__name__)

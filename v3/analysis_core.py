@@ -35,6 +35,7 @@ from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
 from project_dates import select_examples
 from project_learning_sources import retrieve_project_learning
+from eu_sources import retrieve_eu_evidence
 
 from copy import deepcopy
 from functools import wraps
@@ -339,6 +340,9 @@ I currently retrieve evidence from the following source families:
 
 **14. Evaluation and learning**
 - A small initial IEG collection: three findings for historical project P144442, pages 9, 11 and 17. Findings cover results, constraints and recommendations with transferability limits; they do not evaluate current actors.
+
+**15. EU / Team Europe**
+- Original joint programming/NDICI annex, current EU overview, two historical TEI proposals, 134 INTPA and 172 ECHO exact-country IATI activities, three historical EIB profiles, one Capacity4dev project and the ECHO HIP 2026 v5 Mali allocation/priorities. Programming, commitments, indicative amounts, signatures and reported status remain distinct. No verified transaction totals, local delivery or current results in this subset. AAP/support-measure downloads and original IATI XML remain unavailable; this is not a complete portfolio.
 
 The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
 """.strip()
@@ -2552,6 +2556,7 @@ def run_four_source_research(question, document_count=8):
         fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
         + retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
         + retrieve_project_learning(question)
+        + retrieve_eu_evidence(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
