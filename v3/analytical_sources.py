@@ -17,9 +17,10 @@ def package():
         return json.load(file)
 
 
-def evidence(rows, content, title, scope, precision):
+def evidence(rows, content, title, scope, precision, data=None):
     first=rows[0]
-    publication=next(r['publication_date'] for r in package()['tables']['mkh_source_releases'] if r['id']==first['release_id'])
+    data=package() if data is None else data
+    publication=next(r['publication_date'] for r in data['tables']['mkh_source_releases'] if r['id']==first['release_id'])
     return {'source_type':first['source_type'], 'source_family':'Cadre Harmonise food security' if first['source_type']=='food_security_classification' else 'OCHA FTS financing',
         'document_title':title,'document_type':'public_aggregate_evidence','organization':first['provider'],
         'version':first['version'],'publication_date':publication,

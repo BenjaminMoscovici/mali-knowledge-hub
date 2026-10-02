@@ -1,0 +1,83 @@
+[
+  {
+    "provider": "World Bank",
+    "source_name": "World Bank Projects and Operations — exact Mali country profiles",
+    "analytical_use": "development_project",
+    "authoritative_status": "original provider / attributed provider export",
+    "access_route": "https://search.worldbank.org/api/v3/projects?format=json&qterm=Mali&rows=500&fl=id,project_name,countryshortname,projectstatusdisplay,status,boardapprovaldate,closingdate,totalamt,curr_total_commitment,borrower,impagency,sector_namecode,sector1,p2a_updated_date,projectdocs",
+    "format": "JSON",
+    "authentication": "none",
+    "licence": "CC BY 4.0 (World Bank open data)",
+    "sensitivity": "public aggregate facts only",
+    "geographic_granularity": "country project profile only",
+    "temporal_granularity": "v3 API snapshot 2026-10-02",
+    "update_frequency": "provider cycle; checked per wave",
+    "historical_coverage": "2026-10-02 to 2026-10-02",
+    "last_successful_retrieval": "2026-10-02T15:23:39.197089+00:00",
+    "integration_status": "public_access_confirmed",
+    "limitations": [
+      "215 exact-Mali profiles; 62 regional/multicountry search hits excluded.",
+      "Source status/date conflicts retained. Project-level update dates missing in most profiles; retrieval does not make old fields current.",
+      "Financial API fields retained raw until units validated; not disbursements. No commune/cercle locations in selected export."
+    ],
+    "fallback_source": "next provider release / linked original report",
+    "next_action": "deploy and verify cited user answers",
+    "responsible_party": "MKH source maintainer",
+    "records": 215,
+    "checksum": "a6f467459cdd52733b4bcfd829ce6218fa235d26dd44359fb326aed1662d69c7"
+  },
+  {
+    "provider": "World Bank / IATI via HDX",
+    "source_name": "Mali IATI — World Bank publisher 44000 activity subset",
+    "analytical_use": "aid_activity",
+    "authoritative_status": "original provider / attributed provider export",
+    "access_route": "https://data.humdata.org/dataset/af3c3d75-0506-424f-ae2e-5849ff427e85/resource/85f28768-f12b-4d68-a5a2-267d1ca34f7b/download/iati-activities-in-mali-no-location-information.csv",
+    "format": "CSV",
+    "authentication": "none",
+    "licence": "World Bank open-data attribution policy; WB factual subset only",
+    "sensitivity": "public aggregate facts only",
+    "geographic_granularity": "country activity only",
+    "temporal_granularity": "HDX export updated 2026-10-02T12:27:47.776977",
+    "update_frequency": "provider cycle; checked per wave",
+    "historical_coverage": "2026-10-02 to 2026-10-02",
+    "last_successful_retrieval": "2026-10-02T15:25:03.115152+00:00",
+    "integration_status": "public_access_confirmed",
+    "limitations": [
+      "36 activities from 136 sector rows; exact identifier deduplication; no sector-level financial summation.",
+      "Only World Bank publisher 44000, not complete IATI Mali. Other publisher licences unreviewed.",
+      "Questionable coordinates and descriptions omitted. Raw financial fields await unit/transaction validation."
+    ],
+    "fallback_source": "next provider release / linked original report",
+    "next_action": "deploy and verify cited user answers",
+    "responsible_party": "MKH source maintainer",
+    "records": 36,
+    "checksum": "6295a6d4d9c577fd6e405a018833a0049f524d8fa213ea542509609ae07abb1d"
+  },
+  {
+    "provider": "World Bank Independent Evaluation Group",
+    "source_name": "IEG P144442 — small historical findings collection",
+    "analytical_use": "evaluation_finding",
+    "authoritative_status": "original provider / attributed provider export",
+    "access_route": "https://documents1.worldbank.org/curated/en/099090624032518175/pdf/P144442-9238b018-2490-4f90-b1e6-f992f61c90ca.pdf",
+    "format": "PDF",
+    "authentication": "none",
+    "licence": "Public factual findings/paraphrases only; full-text reproduction rights not assumed",
+    "sensitivity": "public aggregate facts only",
+    "geographic_granularity": "historical Mali project; Konna/Mopti context only",
+    "temporal_granularity": "ICRR0023565; project 2013–2022; document publication date unverified",
+    "update_frequency": "provider cycle; checked per wave",
+    "historical_coverage": "2013-12-06 to 2022-12-31",
+    "last_successful_retrieval": "2026-10-02T15:26:08.583882+00:00",
+    "integration_status": "public_access_confirmed",
+    "limitations": [
+      "One project review and three short findings with exact PDF pages; not an evaluation repository.",
+      "No causal attribution, current-project endorsement or unrestricted full-text redistribution.",
+      "Recommendations reflect this project experience; transferability requires current-context checks."
+    ],
+    "fallback_source": "next provider release / linked original report",
+    "next_action": "deploy and verify cited user answers",
+    "responsible_party": "MKH source maintainer",
+    "records": 3,
+    "checksum": "79f7fbc09bcd39e48e4cc827316f82190bc652e4b962b80b179de3315ecd1686"
+  }
+]

@@ -65,7 +65,7 @@ Guest answer restored on browser reload. Authenticated Hub research is not
 live-verified: logged-in GitHub/Supabase sessions do not constitute Hub login.
 Conversation ownership/persistence regression tests remain passing.
 
-## Food-security/financing wave: staged and validated
+## Food-security/financing wave: integrated and exposed
 
 113 CH observations (112 area rows plus one national factual-table extraction),
 49 FTS plan/year records. Latest Mali workbook exercise is late 2025, despite
@@ -78,7 +78,7 @@ and total reported funding, not reached persons or solely disbursements.
 Migration `20261002154155_food_security_financing_wave.sql` applied successfully
 after inspecting the correct table and existing constraints. It preserves
 presence/displacement checks, foreign keys, RLS and permissions and adds CH
-and funding semantic checks. Runtime publication/answer verification pending.
+and funding semantic checks. Live commit `254742a564e15d3e7868d1dfa6288deed837e07c`; all 162 records confirmed in Supabase. The real Mopti food-security/presence/funding test passed with exact CH and FTS citations, older geography limitations, projected versus current periods, and no unsupported coverage claim.
 
 Validation at this checkpoint: 79 tests and two subtests pass (`pytest -q v3`).
 
@@ -106,6 +106,8 @@ text is not redistributed under an assumed open-data licence.
 
 Architecture prepared: yes. Operational source access verified: yes.
 Operational data staged/integrated/exposed: yes. CH/FTS access and staging: yes;
-live publication/answer test pending at this checkpoint. Full programme/user
+CH/FTS publication and live answer tests passed. WB/IATI/IEG 254 records staged and validated; deployment/live verification pending. Full programme/user
 acceptance: no. All-source, exact local project/funding joins require further
 geographic/actor reconciliation and richer activity/funding evidence.
+
+Project/learning wave staged: 215 exact-Mali WB profiles, 36 WB IATI activities, three IEG findings. All 36 exact project IDs match profiles. FONGIM ending-intent retrieval now selects reported active projects in the next 180 days and flags overdue active dates. Validation: V3 83 tests plus two subtests; V2 11 tests; JavaScript syntax check passes. The combined importlib test invocation failed collection because these version directories use top-level imports; running each version in its proper import context passes.

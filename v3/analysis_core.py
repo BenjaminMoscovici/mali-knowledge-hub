@@ -33,6 +33,8 @@ from user_research import (ResearchStore, ResearchStoreError,
 from source_wave import retrieve_source_evidence
 from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
+from project_dates import select_examples
+from project_learning_sources import retrieve_project_learning
 
 from copy import deepcopy
 from functools import wraps
@@ -147,7 +149,12 @@ SOURCE_REGISTRY = {
     ],
     "Operational Presence": ["OCHA Mali 3W Q1 2026; presence and sectors, no delivery/reach fields"],
     "Displacement": ["IOM DTM Round 83 September 2025; separate IDP/returned-IDP/repatriated stocks"],
-    "National HPC Planning": ["Existing OCHA Global HPC HNO 2026; national population, PIN and targeted observations"]
+    "National HPC Planning": ["Existing OCHA Global HPC HNO 2026; national population, PIN and targeted observations"],
+    "Cadre Harmonise": ["Late-2025 analysis and June-August 2026 projections; source geography and periods retained"],
+    "Humanitarian Financing": ["OCHA FTS national plan/year requirements and total reported funding"],
+    "Development Projects": ["215 exact-Mali World Bank v3 country profiles; dates/status conflicts retained"],
+    "IATI Activity Subset": ["36 World Bank publisher activities deduplicated from 136 sector rows; exact project-ID links"],
+    "Evaluation and Learning": ["Three short IEG P144442 findings, PDF pages 9/11/17; historical project limitations"]
 }
 
 
@@ -317,6 +324,21 @@ I currently retrieve evidence from the following source families:
 
 **9. National HPC planning context**
 - Existing OCHA Global HPC HNO 2026 snapshot: population estimate, People in Need and targeted. This stored layer does not contain requirements, funding, reached figures or regional severity.
+
+**10. Cadre Harmonise food security**
+- 56 current-period and 56 projected analysis-area records from the late-2025 Mali exercise, plus one CILSS national projection. June-August 2026 projections are not fresh 2026 observations. Geography vintages and unresolved codes remain explicit; no commune estimates.
+
+**11. Humanitarian financing**
+- OCHA FTS national plan/year requirements and reported funding. Contributions, commitments and carry-over are not solely disbursements. This layer cannot assign money to local projects or beneficiaries.
+
+**12. World Bank projects**
+- 215 exact-Mali country profiles from the v3 API. Planned board dates, reported closing dates and status conflicts stay distinct. Country profiles do not prove subnational activity.
+
+**13. IATI activity subset**
+- 36 World Bank publisher 44000 activities deduplicated from 136 sector rows. Exact project IDs connect them to World Bank profiles. Other publishers and questionable coordinates are excluded; raw financial units require further validation.
+
+**14. Evaluation and learning**
+- A small initial IEG collection: three findings for historical project P144442, pages 9, 11 and 17. Findings cover results, constraints and recommendations with transferability limits; they do not evaluate current actors.
 
 The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
 """.strip()
@@ -1550,7 +1572,7 @@ def get_rows_for_project_ids(
 
 @ttl_cached(900)
 def research_fongim(
-    geography
+    geography, ending=False
 ):
 
     location_filters = {
@@ -1870,7 +1892,7 @@ def research_fongim(
             f"These counts describe recorded project presence; "
             f"they do not demonstrate funding adequacy, "
             f"population coverage, implementation quality "
-            f"or impact."
+            f"or impact. Geographic labels and parent relationships are source-reported and can use older boundaries; no approved COD/INSTAT crosswalk is implied by a shared region name."
         )
     })
 
@@ -2088,15 +2110,13 @@ def research_fongim(
         })
 
 
-    project_examples = sorted(
-        [
-            p
-            for p in projects
-            if p.get("project_name")
-        ],
-        key=lambda x:
-            str(x.get("project_name"))
-    )[:8]
+    project_examples, date_summary = select_examples(projects, ending=ending)
+    if date_summary:
+        evidence.append({"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
+            "document_title":"FONGIM reported project end dates", "organization":"FONGIM",
+            "document_type":"structured_operational_data", "geographic_scope":geographic_scope,
+            "section":"Reported-date selection; 180-day window", "page":None,
+            "content":f"FONGIM selected geography {geographic_scope}; reported-date screening: {json.dumps(date_summary)}. No matching ending records does not establish no ending interventions."})
 
     if project_examples:
 
@@ -2161,7 +2181,11 @@ def research_fongim(
                 f"Status: {project.get('status')}; start/end dates: "
                 f"{project.get('start_date')} / {project.get('end_date')}; "
                 f"latest sync: {project.get('last_synced_at')}. "
-                "This is recorded project presence, not verified coverage or impact."
+                f"Source-reported donor field: {project.get('donor')}; "
+                f"funding amount raw field: {project.get('funding_amount_raw')}. "
+                "Raw donor/budget fields are project-reported associations; currencies, financing period and disbursement status are not inferred. "
+                "Reported dates do not prove actual completion. This is recorded project presence, not verified coverage or impact. "
+                "FONGIM geographic labels and parents are source hierarchy, not an approved COD crosswalk; same-name regions can have different boundaries."
             )
         })
 
@@ -2394,7 +2418,8 @@ def run_four_source_research(question, document_count=8):
         # Cache by the actual query scope, not trace-only normalization and
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
-                                 "cercle": geography.get("cercle")})
+                                 "cercle": geography.get("cercle")},
+                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", _fold(question))))
         return value, time.perf_counter() - started
 
     with ThreadPoolExecutor(max_workers=3) as executor:
@@ -2526,6 +2551,7 @@ def run_four_source_research(question, document_count=8):
         hapi_result["evidence"],
         fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
         + retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
+        + retrieve_project_learning(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
@@ -2762,6 +2788,13 @@ EPISTEMIC RULES:
     boundaries. No unapproved commune crosswalk or population denominator.
     FTS national funding is reported contributions/commitments/carry-over,
     not solely disbursements. It cannot be attributed to local projects.
+
+23. Exact World Bank project-ID links to IATI/IEG establish identity only.
+    Country profiles do not prove subnational operational presence. Keep
+    conflicting statuses/dates explicit; future approval dates are planned.
+    Historical IEG findings are not proof of current actor effectiveness,
+    experimental impact or universal recommendations. Money fields with
+    unverified units must not become analytical amounts or disbursements.
 
 DEFAULT RESPONSE:
 Write for a busy policy or operational adviser. Be concise,

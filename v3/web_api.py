@@ -31,6 +31,7 @@ from user_research import (REFERENCE_FIELDS, ResearchStore, ResearchStoreError,
 from source_wave import publish_snapshot_logged
 from operational_sources import publish_operational_logged
 from analytical_sources import publish_analytical_logged
+from project_learning_sources import publish_project_learning_logged
 
 
 WEB = Path(__file__).with_name("web")
@@ -486,6 +487,7 @@ async def lifespan(app):
     asyncio.create_task(asyncio.to_thread(publish_snapshot_logged))
     asyncio.create_task(asyncio.to_thread(publish_operational_logged))
     asyncio.create_task(asyncio.to_thread(publish_analytical_logged))
+    asyncio.create_task(asyncio.to_thread(publish_project_learning_logged))
     yield
 
 

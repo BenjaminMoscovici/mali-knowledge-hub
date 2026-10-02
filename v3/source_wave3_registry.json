@@ -14,14 +14,14 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2025-09-01 to 2026-08-31",
     "last_successful_retrieval": "2026-10-02T15:20:12.101483+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "112 records: 56 current and 56 projected analysis areas; latest Mali exercise in this workbook is late 2025, despite March 2026 filename.",
       "Old P-codes and parent labels may conflict with COD v03; unresolved matches retained; no commune-level estimates.",
       "Population phase estimates have decimal precision; raw publisher numbers retained; population phase is distinct from area phase."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "maintain provider refresh; resolve geography vintages; seek newer Mali CH exercise",
     "responsible_party": "MKH source maintainer",
     "records": 112,
     "checksum": "358f5c1c6f65598a146524148e7bf89cc965e4f9e02381727a66d3d9d6e66524"
@@ -41,13 +41,13 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2026-06-01 to 2026-08-31",
     "last_successful_retrieval": "2026-10-02T15:16:09.324021+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "Only one Mali national factual table; PDF/full text not redistributed.",
       "No Mali current-2026 classification in this bulletin."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "maintain provider refresh; resolve geography vintages; seek newer Mali CH exercise",
     "responsible_party": "MKH source maintainer",
     "records": 1,
     "checksum": "809227af5f1887d941f21cae5cfed03be119390af4c2e950788d93ed72ada023"
@@ -67,14 +67,14 @@
     "update_frequency": "provider cycle; checked per wave",
     "historical_coverage": "2001-01-01 to 2029-12-31",
     "last_successful_retrieval": "2026-10-02T15:24:31.119564+00:00",
-    "integration_status": "public_access_confirmed",
+    "integration_status": "integrated_with_limitations",
     "limitations": [
       "National plan/year aggregates only; no actor, project or sector attribution.",
       "Plan and non-plan funding remain separate; future usage years are not current funding.",
       "Percent funded is publisher-rounded; requirements are not funding. Reported funding is not proof of disbursement or service delivery."
     ],
     "fallback_source": "next provider release / linked original report",
-    "next_action": "deploy and verify cited user answers",
+    "next_action": "maintain provider refresh; resolve geography vintages; seek newer Mali CH exercise",
     "responsible_party": "MKH source maintainer",
     "records": 49,
     "checksum": "461f0d0f67b78961305ff1f7dc9a6e49d0e8c7249a719e08d1abff6936d528b6"
