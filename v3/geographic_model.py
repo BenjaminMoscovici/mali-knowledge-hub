@@ -55,6 +55,7 @@ class GeographyModel:
                     if not parent or parent["release_id"] != u["release_id"]:
                         raise ValueError("Broken or cross-release geographic parent")
                 self.path(u["id"])  # Reject cycles rather than hang on an invalid hierarchy.
+            self.max_name_words = max(len(n.split()) for n in self.names)
         finally:
             db.close()
 
@@ -84,6 +85,7 @@ class GeographyModel:
                        and (not release or self.units[uid]["release_id"] == release)),
                       key=lambda u: (u["release_id"] != self.preferred, u["level"], [p["name"] for p in u["path"]], u["id"]))
 
+    @lru_cache(maxsize=1)
     def summary(self):
         releases = []
         for rid, r in self.releases.items():
@@ -147,8 +149,14 @@ class GeographyModel:
         cod = next(rid for rid, r in self.releases.items() if r["dataset_id"] == "mli-cod-ab")
         ev = [self.evidence(self.preferred), self.evidence(cod, eid="E02")]
         # Longest exact toponym, optionally disambiguated by a named parent and level.
-        names = [n for n in self.names if len(n) > 2 and re.search(r"(?:^| )" + re.escape(n) + r"(?: |$)", q)]
+        words = q.split()
+        # Inspect phrases in the question, rather than compile 13,000 regexes
+        # on every request. Exact normalized aliases still preserve homonyms.
+        names = sorted({" ".join(words[i:i+size]) for i in range(len(words))
+            for size in range(1, min(self.max_name_words, len(words)-i)+1)
+            if " ".join(words[i:i+size]) in self.names and len(" ".join(words[i:i+size])) > 2})
         names = [n for n in names if n not in {"mali", "same", "what", "which", "there", "here", "are", "the", "and", "how", "full", "parent", "path", "name", "region", "cercle", "commune", "locality"}]
+        names = [n for n in names if not any(n != other and (' ' + n + ' ') in (' ' + other + ' ') for other in names)]
         level = None
         children_level = None
         if re.search(r"\b(communes|municipalities)\b", q) and re.search(r"\b(cercle|circle)\b", q):

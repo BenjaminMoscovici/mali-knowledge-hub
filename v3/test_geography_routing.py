@@ -43,6 +43,7 @@ def test_mopti_children_and_cited_paths(model):
     assert model.lookup('Mopti', 'region', cod)[0]['identifiers']
     assert answer['evidence'][0]['page'] >= 194
     assert all(e['source_endpoint'].startswith('https://') for e in answer['evidence'])
+    assert 'OURO MODI (commune)' in model.answer('What is the administrative path for Ouro Modi commune?')['answer']
 
 
 def test_homonyms_are_distinct_not_merged(model):
