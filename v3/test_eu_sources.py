@@ -55,7 +55,8 @@ def test_real_cross_source_retrieval_keeps_mopti_precision_and_periods():
 def test_eu_retrieval_is_wired_into_real_research_and_publisher():
     tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
     function=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='run_four_source_research')
-    assert any(isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='retrieve_eu_evidence' for n in ast.walk(function))
+    assert any(isinstance(n,ast.Name) and n.id=='retrieve_eu_evidence' for n in ast.walk(function))
+    # Runtime invocation and concurrent source isolation are exercised in test_synthesis_context.
     assert 'asyncio.to_thread(publish_eu_logged)' in Path(__file__).with_name('web_api.py').read_text()
 
 

@@ -428,6 +428,9 @@ async def chat(request):
         "context_api_usage": context_usage, "research_api_usage": research_usage,
         "estimated_usd": round((context_usage.get("estimated_usd") or 0)
                                + (research_usage.get("estimated_usd") or 0), 8),
+        "synthesis_context": result.get("execution_trace", {}).get("synthesis_context", {}),
+        "research_seconds": result.get("research_seconds", 0),
+        "synthesis_seconds": result.get("synthesis_seconds", 0),
         "unpriced_calls": (context_usage.get("unpriced_calls") or 0)
                           + (research_usage.get("unpriced_calls") or 0),
     }

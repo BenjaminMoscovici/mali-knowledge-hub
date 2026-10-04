@@ -20,6 +20,14 @@ def explicit_source_plan(question):
         needs = bool(re.search(r"\b(?:needs?|besoins?|coverage|couverture)\b", q))
         return {"government_docs": True, "hnrp_docs": needs,
                 "hapi": needs, "fongim": True}
+    # Explicit joined evidence families have no ambiguous planning decision.
+    # Keep the conservative legacy needs/operational sources as well as the
+    # named packaged families; this shortcut never answers the factual question.
+    needs = bool(re.search(r"\b(?:needs?|besoins?|people in need)\b", q))
+    joined_families = bool(re.search(r"\b(?:3w|dtm|fts|world bank|banque mondiale|iati)\b", q))
+    if needs and joined_families and re.search(r"\b(?:compare|align|alignment|with|avec|comparer|coverage|couverture)\b", q):
+        return {"government_docs": bool(national), "hnrp_docs": True,
+                "hapi": True, "fongim": bool(operational or re.search(r"\b(?:3w|actors|acteurs)\b",q))}
     markers = {
         "government_docs": [r"\bsnedd\b", r"\bmali kura\b", r"\bvision mali 2063\b",
                             r"\bprojets structurants prioritaires\b", r"\bpriority.project portfolio\b"],

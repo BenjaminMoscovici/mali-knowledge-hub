@@ -29,6 +29,9 @@ def item(row,extra=''):
     return result
 
 
+from evidence_cache import snapshot_cached
+
+@snapshot_cached("source_wave5.json.gz")
 def retrieve_eu_evidence(question,limit=20):
     q=_fold(question)
     if not re.search(r'\b(eu|ue|european union|union europeenne|team europe|equipe europe|intpa|echo|tei|eib|bei|capacity4dev|kabala|t05-eutf)\b',q):return []

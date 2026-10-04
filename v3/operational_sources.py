@@ -79,6 +79,9 @@ def _evidence(rows, scope, content, title):
             "content": content + f" HDX resource creation date {metadata_date} is file metadata, not a verified original publication or collection date; those dates are unavailable in the ingested workbook."}
 
 
+from evidence_cache import snapshot_cached
+
+@snapshot_cached("source_wave2.json.gz")
 def retrieve_operational_evidence(question, limit=10):
     folded = _fold(question)
     presence = bool(re.search(r"\b(who|actors?|organisations?|organizations?|acteurs?|presence|present|3w|5w|activities|activites|interventions?|operational|operationnel|coverage|couverture|respond|response|reponse|delivery|projets?|projects?)\b", folded))

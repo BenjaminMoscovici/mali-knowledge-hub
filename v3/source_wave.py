@@ -64,6 +64,9 @@ def _parent_path(db, unit):
     return " > ".join(reversed(names))
 
 
+from evidence_cache import snapshot_cached
+
+@snapshot_cached("source_wave1.sqlite.gz")
 def retrieve_source_evidence(question, limit=8):
     """Return page-cited COD/INSTAT evidence when the question calls for it."""
     folded = _fold(question)
@@ -80,11 +83,20 @@ def retrieve_source_evidence(question, limit=8):
     db = sqlite3.connect(f"file:{snapshot_path()}?mode=ro", uri=True)
     db.row_factory = sqlite3.Row
     try:
-        names = _rows(db, """select n.unit_id,n.name,n.folded_name,n.kind,u.level,u.name canonical_name,
+        # Query exact phrases present in the question, not 14,000 per-name regexes.
+        # The normalized names index preserves compound names and every homonym.
+        words = folded.split()
+        phrases = sorted({" ".join(words[i:i+size]) for i in range(len(words))
+                          for size in range(1, min(12, len(words)-i)+1)
+                          if len(" ".join(words[i:i+size])) > 2})
+        matched = []
+        for start in range(0, len(phrases), 400):
+            batch = phrases[start:start+400]
+            placeholders = ",".join("?" for _ in batch)
+            matched += _rows(db, f"""select n.unit_id,n.name,n.folded_name,n.kind,u.level,u.name canonical_name,
                               u.parent_id,u.release_id,u.boundary_version
-                       from mkh_geo_names n join mkh_geo_units u on u.id=n.unit_id""")
-        matched = [row for row in names if len(row["folded_name"]) > 2 and
-                   re.search(r"(?:^| )" + re.escape(row["folded_name"]) + r"(?: |$)", folded)]
+                       from mkh_geo_names n join mkh_geo_units u on u.id=n.unit_id
+                       where n.folded_name in ({placeholders})""", batch)
         if matched:
             longest = max(len(row["folded_name"]) for row in matched)
             matched = [row for row in matched if len(row["folded_name"]) == longest]

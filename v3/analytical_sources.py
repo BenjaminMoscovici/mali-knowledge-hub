@@ -32,6 +32,9 @@ def evidence(rows, content, title, scope, precision, data=None):
         'geographic_scope':scope,'geographic_precision':precision,'content':content}
 
 
+from evidence_cache import snapshot_cached
+
+@snapshot_cached("source_wave3.json.gz")
 def retrieve_analytical_evidence(question, limit=8):
     folded=_fold(question); results=[]
     food=bool(re.search(r'\b(cadre harmonise|ch|ipc|food\w*|aliment\w*|faim|hunger|needs|besoins|displace\w*|deplace\w*)\b',folded))

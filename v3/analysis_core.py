@@ -36,6 +36,7 @@ from analytical_sources import retrieve_analytical_evidence
 from project_dates import select_examples
 from project_learning_sources import retrieve_project_learning
 from eu_sources import retrieve_eu_evidence
+from synthesis_context import prepare as prepare_synthesis, serialize as serialize_synthesis
 
 from copy import deepcopy
 from functools import wraps
@@ -49,7 +50,7 @@ def ttl_cached(seconds):
         lock = Lock()
         @wraps(fn)
         def cached(*args, **kwargs):
-            key = json.dumps((args, kwargs), sort_keys=True, default=str)
+            key = datetime.now(timezone.utc).date().isoformat() + json.dumps((args, kwargs), sort_keys=True, default=str)
             now = time.monotonic()
             with lock:
                 item = entries.get(key)
@@ -57,7 +58,11 @@ def ttl_cached(seconds):
                     return deepcopy(item[1])
             value = fn(*args, **kwargs)
             with lock:
-                entries[key] = (now + seconds, deepcopy(value))
+                for expired in [k for k,v in entries.items() if v[0] <= now]:
+                    entries.pop(expired, None)
+                if len(entries) >= 128:
+                    entries.pop(next(iter(entries)))
+                entries[key] = (time.monotonic() + seconds, deepcopy(value))
             return value
         return cached
     return decorate
@@ -1614,41 +1619,14 @@ def research_fongim(
             "evidence": []
         }
 
-    projects = get_rows_for_project_ids(
-        "fongim_projects",
-        (
-            "fongim_project_id,"
-            "project_name,"
-            "start_date,"
-            "end_date,"
-            "status,"
-            "project_type,"
-            "beneficiaries,"
-            "donor,"
-            "funding_amount_raw,"
-            "last_synced_at"
-        ),
-        project_ids
-    )
-
-    sectors = get_rows_for_project_ids(
-        "fongim_project_sectors",
-        (
-            "fongim_project_id,"
-            "sector,"
-            "sector_other_raw"
-        ),
-        project_ids
-    )
-
-    project_orgs = get_rows_for_project_ids(
-        "fongim_project_organizations",
-        (
-            "fongim_project_id,"
-            "fongim_organization_id"
-        ),
-        project_ids
-    )
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        projects_job = submit(executor, get_rows_for_project_ids,
+            "fongim_projects", "fongim_project_id,project_name,start_date,end_date,status,project_type,beneficiaries,donor,funding_amount_raw,last_synced_at", project_ids)
+        sectors_job = submit(executor, get_rows_for_project_ids,
+            "fongim_project_sectors", "fongim_project_id,sector,sector_other_raw", project_ids)
+        project_orgs_job = submit(executor, get_rows_for_project_ids,
+            "fongim_project_organizations", "fongim_project_id,fongim_organization_id", project_ids)
+        projects, sectors, project_orgs = (projects_job.result(), sectors_job.result(), project_orgs_job.result())
 
     organization_ids = sorted({
         row.get("fongim_organization_id")
@@ -2426,7 +2404,24 @@ def run_four_source_research(question, document_count=8):
                                 ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))))
         return value, time.perf_counter() - started
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    from geographic_model import canonical_geography_evidence
+    packaged_results = {}
+    packaged_retrievers = {
+        "foundation": retrieve_source_evidence,
+        "operational": retrieve_operational_evidence,
+        "analytical": retrieve_analytical_evidence,
+        "project_learning": retrieve_project_learning,
+        "eu": retrieve_eu_evidence,
+        "geographic_model": canonical_geography_evidence,
+    }
+    def timed_packaged(retriever):
+        started = time.perf_counter()
+        values = retriever(question)
+        return values, time.perf_counter() - started
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        for family, retriever in packaged_retrievers.items():
+            jobs[family] = submit(executor, timed_packaged, retriever)
 
         if (
             source_plan["government_docs"]
@@ -2491,6 +2486,12 @@ def run_four_source_research(question, document_count=8):
                 "methodology_only": True
             })
 
+        for family in packaged_retrievers:
+            values, seconds = jobs[family].result()
+            packaged_results[family] = values
+            source_trace[family] = {"status": "SUCCESS_WITH_RESULTS" if values else "SUCCESS_ZERO_RESULTS",
+                                    "seconds": round(seconds,3), "records": len(values)}
+
     reduction_started = time.perf_counter()
 
     needs_local_inventory = bool(re.search(
@@ -2550,14 +2551,11 @@ def run_four_source_research(question, document_count=8):
                         "that no local plan exists outside the Hub.")
         })
 
-    from geographic_model import canonical_geography_evidence
     ledger = build_unified_evidence(
         document_result["evidence"],
         hapi_result["evidence"],
-        fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
-        + retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
-        + retrieve_project_learning(question)
-        + retrieve_eu_evidence(question) + canonical_geography_evidence(question)
+        fongim_result["evidence"] + inventory_evidence +
+        [item for family in packaged_retrievers for item in packaged_results[family]]
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
@@ -2602,7 +2600,8 @@ def run_four_source_research(question, document_count=8):
                 "hnrp_docs"
             ],
             "hapi": source_trace["hapi"],
-            "fongim": source_trace["fongim"]
+            "fongim": source_trace["fongim"],
+            **{family:source_trace[family] for family in packaged_retrievers}
         },
         "document_bundle_seconds": document_result["trace"].get(
             "total_seconds",
@@ -2673,12 +2672,14 @@ def _generate_grounded_answer(
         "ledger"
     ]
 
-    evidence_text = (
-        evidence_to_prompt(
-            ledger
-        )
-    )
-    joined_text = prompt_context(research["joined"])
+    synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
+    evidence_text = serialize_synthesis(synthesis_ledger)
+    # Only IDs actually supplied to synthesis can be used by its navigation aid.
+    synthesis_joined = build_join_context(synthesis_ledger, research["geography"])
+    synthesis_joined["organization_resolution"] = research["joined"].get("organization_resolution", [])
+    joined_text = prompt_context(synthesis_joined)
+    context_audit["prompt_chars"] = len(evidence_text) + len(joined_text)
+    research["execution_trace"]["synthesis_context"] = context_audit
 
     system_prompt = """
 You are the analytical synthesis layer of the Mali Knowledge Hub.
@@ -2845,7 +2846,7 @@ EVIDENCE LEDGER
 
 {joined_text}
 
-{intersectoral_locality_note(ledger)}
+{intersectoral_locality_note(synthesis_ledger)}
 
 
 Produce a concise evidence-grounded analytical answer.
@@ -2868,9 +2869,13 @@ in a different language; translate faithfully while retaining citations.
         )
     )
 
+    answer, prompt_citation_audit = verify_citations(response.output_text, synthesis_ledger)
+    if not prompt_citation_audit["valid"]:
+        answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."
+    context_audit["citation_audit"] = prompt_citation_audit
+
     return {
-        "answer":
-            response.output_text,
+        "answer": answer,
 
         "evidence":
             ledger,

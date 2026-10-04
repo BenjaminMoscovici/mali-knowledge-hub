@@ -26,6 +26,9 @@ def item(rows,content,title,family):
     return result
 
 
+from evidence_cache import snapshot_cached
+
+@snapshot_cached("source_wave4.json.gz")
 def retrieve_project_learning(question,limit=12):
     folded=_fold(question);results=[]
     learning=bool(re.search(r'\b(learning|lessons?|evaluat\w*|worked|failed|results|constraints|recommend\w*|appris|enseign\w*|reussi\w*|echoue\w*)\b',folded))
