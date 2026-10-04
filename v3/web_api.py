@@ -33,6 +33,8 @@ from operational_sources import publish_operational_logged
 from analytical_sources import publish_analytical_logged
 from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
+from query_router import classify
+from geographic_model import geographic_model
 
 
 WEB = Path(__file__).with_name("web")
@@ -42,6 +44,7 @@ REFRESH_COOKIE = "mkh_refresh"
 MAX_QUESTION = 5000
 MAX_GUEST_CONTEXT = 10
 _analysis_limit = asyncio.Semaphore(8)
+_transform_limit = asyncio.Semaphore(8)
 
 
 def error(message, status=400):
@@ -332,6 +335,9 @@ async def chat(request):
     if mode not in MODES:
         return error("Choose a valid analysis depth.")
     question = question.strip()
+    route_started = time.perf_counter()
+    route = classify(question, mode)
+    routing_seconds = time.perf_counter() - route_started
     user, token, refreshed = await actor(request)
     store = store_for(user, token) if user else None
     cid = thread_id(payload.get("conversation_id")) if payload.get("conversation_id") else None
@@ -353,24 +359,39 @@ async def chat(request):
             return error("This saved conversation could not be loaded.", 503)
     phase = "engine_load"
     context_usage = {}
+    standalone = question
     try:
-        from analysis_core import (generate_grounded_answer, is_source_inventory_question,
+        if route["path"] == "conversational":
+            result = {"answer": route["reply"], "evidence": []}
+        elif route["path"] == "conversation_only":
+            from conversation_transform import restate
+            phase = "conversation_transform"
+            async with _transform_limit:
+                result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+        elif route["path"] == "simple_geography":
+            phase = "structured_geography"
+            result = await asyncio.to_thread(lambda: geographic_model().answer(question, answer_language(question)))
+        else:
+            from analysis_core import (generate_grounded_answer, is_source_inventory_question,
                                    likely_context_dependent_followup, resolve_conversational_question,
                                    source_inventory_answer, openai_client)
-        async with _analysis_limit:
-            standalone = question
-            if likely_context_dependent_followup(question, prior):
-                phase = "context_rewrite"
-                context_token, context_id = openai_client.begin()
-                try:
-                    standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
-                finally:
-                    context_usage = openai_client.finish(context_token, context_id)
-            phase = "research"
-            if is_source_inventory_question(standalone):
-                result = {"answer": source_inventory_answer(), "evidence": [], "family_counts": {}}
-            else:
-                result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
+            async with _analysis_limit:
+                if likely_context_dependent_followup(question, prior):
+                    phase = "context_rewrite"
+                    context_token, context_id = openai_client.begin()
+                    try:
+                        standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
+                    finally:
+                        context_usage = openai_client.finish(context_token, context_id)
+                phase = "research"
+                if classify(standalone, mode)["path"] == "simple_geography":
+                    route = {"path": "simple_geography"}
+                    phase = "structured_geography"
+                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
+                elif is_source_inventory_question(standalone):
+                    result = {"answer": source_inventory_answer(), "evidence": [], "family_counts": {}}
+                else:
+                    result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
                                                  response_language=answer_language(question))
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
@@ -395,21 +416,54 @@ async def chat(request):
         except ResearchStoreError:
             save_error = True
     research_usage = result.get("api_usage") or {}
-    print("MKH_REQUEST_USAGE " + json.dumps({
+    metrics = {
         "request_id": result.get("request_id"), "depth": mode,
-        "server_seconds": round(time.perf_counter() - request_started, 2),
+        "route": route["path"], "routing_seconds": round(routing_seconds, 6),
+        "server_seconds": round(time.perf_counter() - request_started, 4),
+        "model_calls": len([c for c in context_usage.get("calls", []) + research_usage.get("calls", []) if c.get("endpoint") == "responses"]),
+        "embedding_calls": len([c for c in context_usage.get("calls", []) + research_usage.get("calls", []) if c.get("endpoint") == "embeddings"]),
+        "external_research_calls": research_usage.get("external_call_count", 0),
+        "external_call_scope": "Tracked research HTTP calls; model/embedding calls counted separately; account and database I/O excluded",
+        "account_io": bool(user),
         "context_api_usage": context_usage, "research_api_usage": research_usage,
         "estimated_usd": round((context_usage.get("estimated_usd") or 0)
                                + (research_usage.get("estimated_usd") or 0), 8),
         "unpriced_calls": (context_usage.get("unpriced_calls") or 0)
                           + (research_usage.get("unpriced_calls") or 0),
-    }, separators=(",", ":")), flush=True)
+    }
+    print("MKH_REQUEST_USAGE " + json.dumps(metrics, separators=(",", ":")), flush=True)
     response = JSONResponse({"answer": answer, "evidence": public_evidence(result),
                              "standalone_question": standalone, "conversation_id": cid,
                              "position": position, "saved": bool(store and not save_error),
                              "save_error": save_error,
+                             "metrics": metrics,
                              "geography": (result.get("geography") or {}).get("assumption")})
     return with_session(response, refreshed)
+
+
+async def geography(request):
+    """Public aggregate geographic summaries; no credentials or user data."""
+    model = await asyncio.to_thread(geographic_model)
+    name = request.query_params.get("name")
+    level = request.query_params.get("level")
+    release = request.query_params.get("release")
+    if level and level not in {"country", "region", "cercle", "commune", "arrondissement", "locality"}:
+        return error("Unknown administrative level.")
+    if release and release not in model.releases:
+        return error("Unknown geographic release.", 404)
+    if name:
+        if len(name) > 150:
+            return error("Place name is too long.")
+        matches = model.lookup(name, level, release or model.preferred)
+        return JSONResponse({"matches": matches[:50], "total_matches": len(matches), "truncated": len(matches)>50})
+    uid = request.query_params.get("unit_id")
+    if uid:
+        if uid not in model.units:
+            return error("Place not found.", 404)
+        children = [model.describe(c) for c in model.children[uid]]
+        return JSONResponse({"unit": model.describe(uid), "children": children[:200],
+            "total_children": len(children), "truncated": len(children)>200})
+    return JSONResponse(model.summary())
 
 
 async def import_guest(request):
@@ -466,6 +520,7 @@ async def admin(request):
 
 routes = [
     Route("/api/health", health),
+    Route("/api/geography", geography),
     Route("/api/me", me),
     Route("/api/auth/email", email_link, methods=["POST"]),
     Route("/api/auth/session", accept_link, methods=["POST"]),

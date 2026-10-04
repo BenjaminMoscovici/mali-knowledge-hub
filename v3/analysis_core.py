@@ -2550,13 +2550,14 @@ def run_four_source_research(question, document_count=8):
                         "that no local plan exists outside the Hub.")
         })
 
+    from geographic_model import canonical_geography_evidence
     ledger = build_unified_evidence(
         document_result["evidence"],
         hapi_result["evidence"],
         fongim_result["evidence"] + inventory_evidence + retrieve_source_evidence(question)
         + retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
         + retrieve_project_learning(question)
-        + retrieve_eu_evidence(question)
+        + retrieve_eu_evidence(question) + canonical_geography_evidence(question)
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
