@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import re
 import unicodedata
-from synthesis_context import prepare, serialize, extract_spans
+from synthesis_context import prepare, serialize, extract_spans, availability_note
 from citations import verify
 from routing import explicit_source_plan
 
@@ -149,3 +149,14 @@ def test_exhaustive_roster_request_preserves_entire_requested_table():
     ledger=[row(source_type='fongim_structured',section='Organization-sector relationships',content=content)]
     selected,_=prepare(ledger,'List all organisations and their sectors in Mopti')
     assert selected[0]['content']==content
+
+
+def test_ending_example_index_uses_only_supplied_project_ids():
+    items=[row('E41',source_type='fongim_structured',section='Project-ID relationship',
+               content='Project X. Recorded sectors: SAME. start/end dates: 2024-01-01 / 2026-11-30.'),
+           row('E39',source_type='fongim_structured',section='Reported-date selection',content='6 upcoming records.')]
+    note=availability_note(items,'Which interventions are ending in Mopti?')
+    assert '[E41]' in note and '[E39]' not in note
+    assert 'partial list' in note and 'not independent evidence' in note
+    assert availability_note(items,'Compare food-security needs')==''
+    assert availability_note(items[1:],'Which interventions are ending?')==''

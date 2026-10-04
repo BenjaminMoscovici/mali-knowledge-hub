@@ -175,3 +175,22 @@ def serialize(ledger):
         blocks.append(f"[{item['evidence_id']}] SOURCE {sources[key]} " +
             json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + str(item.get('content') or ''))
     return 'Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims.\n'+'\n\n'.join(blocks)
+
+
+def availability_note(ledger, question):
+    """Point to supplied examples without mistaking a bounded set for a full roster."""
+    if not re.search(r'ending|end dates|echeance|termin', fold(question)):
+        return ''
+    ids = [e['evidence_id'] for e in ledger
+           if e.get('source_type') == 'fongim_structured'
+           and e.get('section') == 'Project-ID relationship'
+           and 'start/end dates:' in str(e.get('content') or '')]
+    if not ids:
+        return ''
+    return ('SUPPLIED PROJECT EXAMPLE INDEX (navigation only, not independent evidence): '
+            + ', '.join('['+eid+']' for eid in ids)
+            + '. These items contain individual project names, sectors and reported end dates. '
+            'Answer the request to identify ending interventions with the relevant named examples '
+            'and their reported dates, citing those items. The examples are a partial list; '
+            'the aggregate screening count does not mean individual examples are unavailable. '
+            'Do not infer names or dates for additional records not supplied.')

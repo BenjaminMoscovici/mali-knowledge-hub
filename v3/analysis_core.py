@@ -37,7 +37,7 @@ from analytical_sources import retrieve_analytical_evidence
 from project_dates import select_examples
 from project_learning_sources import retrieve_project_learning
 from eu_sources import retrieve_eu_evidence
-from synthesis_context import prepare as prepare_synthesis, serialize as serialize_synthesis
+from synthesis_context import prepare as prepare_synthesis, serialize as serialize_synthesis, availability_note
 
 from copy import deepcopy
 from functools import wraps
@@ -2851,6 +2851,7 @@ EVIDENCE LEDGER
 
 {intersectoral_locality_note(synthesis_ledger)}
 
+{availability_note(synthesis_ledger, question)}
 
 Produce a concise evidence-grounded analytical answer.
 Write the entire answer in {response_language or answer_language(question)}. The evidence may be
