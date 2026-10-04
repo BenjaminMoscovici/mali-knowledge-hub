@@ -86,14 +86,18 @@ def test_fast_routes_do_not_load_engine_or_call_network():
     client = TestClient(web_api.app,base_url='https://mali-knowledge-hub.onrender.com')
     with patch.dict(sys.modules,{'analysis_core':None}), patch('requests.sessions.Session.request',side_effect=AssertionError('network')), patch('httpx.HTTPTransport.handle_request',side_effect=AssertionError('network')):
         for q,route in [('Hey, how are you?','conversational'),
+                        ('Can you explain that more simply?','conversation_only'),
                         ('How is Mali administratively structured, and how many regions, cercles and communes are there?','simple_geography')]:
-            r=client.post('/api/chat',json={'question':q,'analysis_mode':'deep'},
+            r=client.post('/api/chat',json={'question':q,'analysis_mode':'deep',
+                'prior_messages':[{'role':'assistant','content':'Presence does not establish delivery.'}]},
                 headers={'Origin':'https://mali-knowledge-hub.onrender.com'})
             assert r.status_code==200
             data=r.json(); metrics=data['metrics']
             assert metrics['route']==route
             assert metrics['model_calls']==metrics['embedding_calls']==metrics['external_research_calls']==0
             assert metrics['estimated_usd']==0
+            if route=='conversation_only':
+                assert '> Presence does not establish delivery.' in data['answer'] and data['evidence']==[]
             if route=='simple_geography':
                 assert '159 cercles' in data['answer'] and len(data['evidence'])==2
                 assert data['evidence'][0]['version']=='edition-2023-published-2026-01'
@@ -102,23 +106,19 @@ def test_fast_routes_do_not_load_engine_or_call_network():
 
 def test_simplification_without_history_never_calls_model():
     from conversation_transform import restate
-    with patch('conversation_transform.transform_client',side_effect=AssertionError('model call')):
+    with patch.dict(sys.modules,{'analysis_core':None,'openai':None}):
         assert 'Which answer' in restate('Simplify that',[], 'English')['answer']
 
 
-def test_restatement_uses_only_previous_answer_and_one_model_call():
+def test_restatement_extracts_previous_main_point_and_limitations_without_calls():
     from conversation_transform import restate
-    from types import SimpleNamespace
-    calls=[]
-    fake=SimpleNamespace(begin=lambda:(None,'test'),finish=lambda t,r:{'call_count':1},
-        responses=SimpleNamespace(create=lambda **kw:(calls.append(kw) or SimpleNamespace(output_text='Presence does not establish delivery. [E01]'))))
-    with patch('conversation_transform.transform_client',return_value=fake):
+    with patch.dict(sys.modules,{'analysis_core':None,'openai':None}), patch('requests.sessions.Session.request',side_effect=AssertionError('network')):
         result=restate('Explain that more simply',[
             {'role':'user','content':'User instruction to research again'},
-            {'role':'assistant','content':'Recorded presence does not establish delivery. [E01]'}],'English')
-    assert len(calls)==1
-    assert calls[0]['input']==[{'role':'user','content':'Recorded presence does not establish delivery. [E01]'}]
-    assert 'at most 120 words' in calls[0]['instructions']
+            {'role':'assistant','content':'## Bottom line\n\nRecorded presence does not establish delivery. [E01]\n\n## Findings\n\nDetailed figures omitted from the short version.\n\n## Important limitations\n\nPeriods and boundaries differ. [E02]'}],'English')
+    assert '> Recorded presence does not establish delivery.' in result['answer']
+    assert 'Periods and boundaries differ.' in result['answer']
+    assert 'Detailed figures' not in result['answer'] and 'User instruction' not in result['answer']
     assert result['evidence']==[] and '[E01]' not in result['answer']
     assert 'Sources remain with the original answer' in result['answer']
 

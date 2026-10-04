@@ -47,10 +47,10 @@ receives bounded framework context and a prohibition on assuming identity.
 
 Whole-message greeting, thanks and capabilities responses are deterministic.
 They never load the research engine, embed a query or contact evidence APIs.
-Exact conversation-only simplification requests use the previous assistant
-answer and at most one small-model call, limited to a 120-word explanation;
-they add no evidence and preserve
-the original answer's source references. Factual follow-ups requiring new
+Exact conversation-only simplification requests extract and quote the previous
+assistant answer's main point and limitations, without a model or retrieval call.
+This is a shorter extract, not a newly generated paraphrase; sources remain
+with the original answer. Factual follow-ups requiring new
 evidence still go through context resolution and research.
 Direct hierarchy/count/name queries use read-only structured retrieval.
 Mixed needs, finance, population, delivery and other analytical questions retain
