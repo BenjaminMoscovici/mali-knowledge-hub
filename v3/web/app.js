@@ -266,7 +266,7 @@
     const row=document.createElement('div'); row.className='research-state';
     row.setAttribute('role','status');
     row.innerHTML='<span class="pulse"></span><span></span>';
-    row.lastChild.textContent='Researching sources and preparing your answer…'; el.messages.append(row);
+    row.lastChild.textContent='Preparing your answer…'; el.messages.append(row);
     el['conversation-scroll'].scrollTop=el['conversation-scroll'].scrollHeight;
     return () => row.remove();
   }
@@ -302,11 +302,14 @@
     state.messages.push({role:'user',content:question,analysis_mode:mode});
     renderConversation(); renderThreads(); profile();
     const stop=progress();
+    const requestStarted=performance.now();
     try {
       const data=await send('chat',{question,analysis_mode:mode,
         conversation_id:state.user && !isGuestThread() ? state.selected : null,
         prior_messages:!state.user || isGuestThread() ? prior : undefined});
       stop();
+      if(data.metrics) console.info('MKH_QUERY_METRICS '+JSON.stringify({...data.metrics,
+        client_seconds:Number(((performance.now()-requestStarted)/1000).toFixed(4))}));
       const message={role:'assistant',content:data.answer,evidence:data.evidence || [],
         standalone_question:data.standalone_question,position:data.position,analysis_mode:mode};
       state.messages.push(message);
