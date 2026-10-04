@@ -48,7 +48,8 @@ receives bounded framework context and a prohibition on assuming identity.
 Whole-message greeting, thanks and capabilities responses are deterministic.
 They never load the research engine, embed a query or contact evidence APIs.
 Exact conversation-only simplification requests use the previous assistant
-answer and at most one small-model call; they add no evidence and preserve
+answer and at most one small-model call, limited to a 120-word explanation;
+they add no evidence and preserve
 the original answer's source references. Factual follow-ups requiring new
 evidence still go through context resolution and research.
 Direct hierarchy/count/name queries use read-only structured retrieval.
@@ -64,7 +65,7 @@ Cold service startup and sign-in/history I/O can affect perceived latency.
 
 ## Validation before deployment
 
-115 V3 tests and two subtests pass; 11 V2 tests pass; frontend syntax passes.
+116 V3 tests and two subtests pass; 11 V2 tests pass; frontend syntax passes.
 New acceptance checks cover release counts, every parent chain, Mopti's 12
 communes, Socoura's path, Bamba homonyms, unknown names, citation/version
 provenance, public summary validation, and zero research/network calls for

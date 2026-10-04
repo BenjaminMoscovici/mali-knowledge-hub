@@ -106,6 +106,23 @@ def test_simplification_without_history_never_calls_model():
         assert 'Which answer' in restate('Simplify that',[], 'English')['answer']
 
 
+def test_restatement_uses_only_previous_answer_and_one_model_call():
+    from conversation_transform import restate
+    from types import SimpleNamespace
+    calls=[]
+    fake=SimpleNamespace(begin=lambda:(None,'test'),finish=lambda t,r:{'call_count':1},
+        responses=SimpleNamespace(create=lambda **kw:(calls.append(kw) or SimpleNamespace(output_text='Presence does not establish delivery. [E01]'))))
+    with patch('conversation_transform.transform_client',return_value=fake):
+        result=restate('Explain that more simply',[
+            {'role':'user','content':'User instruction to research again'},
+            {'role':'assistant','content':'Recorded presence does not establish delivery. [E01]'}],'English')
+    assert len(calls)==1
+    assert calls[0]['input']==[{'role':'user','content':'Recorded presence does not establish delivery. [E01]'}]
+    assert 'at most 120 words' in calls[0]['instructions']
+    assert result['evidence']==[] and '[E01]' not in result['answer']
+    assert 'Sources remain with the original answer' in result['answer']
+
+
 def test_public_summary_lookup_and_invalid_release():
     client=TestClient(web_api.app)
     summary=client.get('/api/geography').json()
