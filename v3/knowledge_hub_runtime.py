@@ -5,6 +5,7 @@
 
 import hashlib
 import os
+from provider_reads import execute_read
 import time
 import uuid
 from datetime import datetime, timezone
@@ -102,14 +103,14 @@ def search_knowledge_base(
     # 2. Vector search in Supabase
     # --------------------------------------------------------
 
-    response = supabase.rpc(
+    response = execute_read(supabase.rpc(
         "match_chunks",
         {
             "query_embedding": query_embedding,
             "match_count": match_count,
             "filter_document_ids": filter_document_ids
         }
-    ).execute()
+    ), "search_knowledge_base")
 
     raw_results = response.data or []
 
@@ -145,15 +146,14 @@ def search_knowledge_base(
     if document_ids:
 
         docs_response = (
-            supabase
+            execute_read(supabase
             .table("documents")
             .select(
                 "id,title,organization,publication_date,"
                 "valid_from,valid_until,document_type,"
                 "language,geographic_scope,status,version"
             )
-            .in_("id", document_ids)
-            .execute()
+            .in_("id", document_ids), "search_knowledge_base")
         )
 
         documents_by_id = {

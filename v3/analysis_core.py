@@ -4,6 +4,7 @@ Keep evidence retrieval and citation verification identical during the V4 UI rew
 """
 
 import os
+from provider_reads import execute_read
 import re
 import json
 import unicodedata
@@ -407,12 +408,11 @@ def fetch_all_rows(
             )
 
         response = (
-            query
+            execute_read(query
             .range(
                 start,
                 start + page_size - 1
-            )
-            .execute()
+            ), "fetch_all_rows")
         )
 
         batch = response.data or []
@@ -929,10 +929,9 @@ def get_document_groups():
     """
 
     documents = (
-        supabase
+        execute_read(supabase
         .table("documents")
-        .select("id,title,document_type,organization")
-        .execute()
+        .select("id,title,document_type,organization"), "get_document_groups")
         .data
         or []
     )
@@ -1558,7 +1557,7 @@ def get_rows_for_project_ids(
         ]
 
         response = (
-            supabase
+            execute_read(supabase
             .table(table_name)
             .select(columns)
             .in_(
@@ -1568,8 +1567,7 @@ def get_rows_for_project_ids(
             .eq(
                 "is_present_in_source",
                 True
-            )
-            .execute()
+            ), "get_rows_for_project_ids")
         )
 
         rows.extend(
@@ -1638,7 +1636,7 @@ def research_fongim(
 
     if organization_ids:
         response = (
-            supabase
+            execute_read(supabase
             .table("fongim_organizations")
             .select(
                 "fongim_organization_id,"
@@ -1651,8 +1649,7 @@ def research_fongim(
             .eq(
                 "is_present_in_source",
                 True
-            )
-            .execute()
+            ), "research_fongim")
         )
 
         organizations = response.data or []
@@ -2802,6 +2799,12 @@ EPISTEMIC RULES:
     Historical IEG findings are not proof of current actor effectiveness,
     experimental impact or universal recommendations. Money fields with
     unverified units must not become analytical amounts or disbursements.
+
+24. When a source supplies bounded individual project examples, report those
+    examples and state that the list is incomplete. Do not claim that names,
+    sectors or dates are entirely unavailable when supplied examples contain
+    them. A complete count does not imply that every individual record was
+    supplied. Cite a sync timestamp only to an item containing that timestamp.
 
 DEFAULT RESPONSE:
 Write for a busy policy or operational adviser. Be concise,

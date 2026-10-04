@@ -139,3 +139,20 @@ def test_joined_evidence_keeps_geography_versions_separate():
     assert len(evidence)==1
     assert 'not an approved identity crosswalk' in evidence[0]['content']
     assert '159' in evidence[0]['content'] and '815' in evidence[0]['content']
+
+
+def test_cold_geographic_initialization_is_shared_across_workers(monkeypatch):
+    import geographic_model as module
+    from functools import lru_cache
+    from concurrent.futures import ThreadPoolExecutor
+    import time
+    calls=[]
+    shared=object()
+    @lru_cache(maxsize=1)
+    def load():
+        calls.append(True);time.sleep(0.02);return shared
+    monkeypatch.setattr(module,'_load_geographic_model',load)
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results=list(pool.map(lambda _:module.geographic_model(),range(6)))
+    assert all(r is shared for r in results)
+    assert len(calls)==1

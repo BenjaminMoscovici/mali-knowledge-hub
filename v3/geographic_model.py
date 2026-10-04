@@ -9,6 +9,7 @@ from functools import lru_cache
 import json
 import re
 import sqlite3
+from threading import Lock
 
 from source_wave import _fold, snapshot_path
 
@@ -222,8 +223,17 @@ class GeographyModel:
 
 
 @lru_cache(maxsize=1)
-def geographic_model():
+def _load_geographic_model():
     return GeographyModel(snapshot_path())
+
+
+_model_lock = Lock()
+
+def geographic_model():
+    # lru_cache alone can execute its cold initializer concurrently. Share one
+    # hierarchy load across chat and packaged-evidence workers on small hosts.
+    with _model_lock:
+        return _load_geographic_model()
 
 
 def simple_geography_question(question):
