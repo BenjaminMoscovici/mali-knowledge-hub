@@ -64,11 +64,13 @@ Cold service startup and sign-in/history I/O can affect perceived latency.
 
 ## Validation before deployment
 
-114 V3 tests and two subtests pass; 11 V2 tests pass; frontend syntax passes.
+115 V3 tests and two subtests pass; 11 V2 tests pass; frontend syntax passes.
 New acceptance checks cover release counts, every parent chain, Mopti's 12
 communes, Socoura's path, Bamba homonyms, unknown names, citation/version
 provenance, public summary validation, and zero research/network calls for
 trivial and direct geography requests. Existing account-ownership tests pass.
+The public summary exposes the unresolved-place and proposed-crosswalk queues;
+an unresolved-place chat question lists source names, levels, parents and reasons.
 Live acceptance and timings are recorded after deployment, separately from
 these local checks. Full programme acceptance still requires the previously
 documented authenticated-account journey and source-access work.

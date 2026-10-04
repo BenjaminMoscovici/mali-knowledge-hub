@@ -21,6 +21,8 @@ def test_release_counts_and_parent_integrity(model):
     cod = next(r for r in summary['releases'] if r['dataset_id']=='mli-cod-ab')
     assert cod['counts']['cercle']==160 and cod['counts']['region']==19
     assert summary['crosswalk_status_counts']=={'proposed':171}
+    assert len(summary['unresolved_places'])==10
+    assert len(summary['proposed_crosswalks'])==171
     for u in model.units.values():
         path = model.path(u['id'])
         assert path[-1]['id']==u['id']
@@ -55,6 +57,12 @@ def test_homonyms_are_distinct_not_merged(model):
 def test_unknown_place_does_not_return_national_count(model):
     assert 'No exact match' in model.answer('What is the hierarchy of Unknownville commune?')['answer']
     assert '815 communes' not in model.answer('What is the hierarchy of Unknownville commune?')['answer']
+
+
+def test_unresolved_places_can_be_inspected(model):
+    result=model.answer('Which geographic places remain unresolved between versions?')
+    assert 'Baraoueli' in result['answer'] and 'no_name_parent_match' in result['answer']
+    assert 'Baraoueli' in result['evidence'][1]['content']
 
 
 @pytest.mark.parametrize('question,path',[

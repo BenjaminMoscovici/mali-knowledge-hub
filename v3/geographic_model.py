@@ -102,6 +102,8 @@ class GeographyModel:
         return {"preferred_release_id": self.preferred, "releases": releases,
             "crosswalk_status_counts": dict(Counter(r["status"] for r in self.crosswalks)),
             "unresolved_count": len(self.unresolved),
+            "unresolved_places": self.unresolved,
+            "proposed_crosswalks": self.crosswalks,
             "limitations": ["The preferred hierarchy is the INSTAT 2023 framework published January 2026, not a claim that no later legal change exists.",
                 "COD v03 has an extra Bamako admin2 representation; it is not an extra cercle in the INSTAT hierarchy.",
                 "Only seven Bamako arrondissements are enumerated in the INSTAT directory; this is not a national arrondissement count.",
@@ -125,7 +127,8 @@ class GeographyModel:
             "content": json.dumps({"release": r["upstream_version"],
                 "enumerated_counts": dict(Counter(u['unit_type'] for u in self.units.values() if u['release_id'] == rid)),
                 "records": [self.describe(uid) for uid in ids],
-                "calculation": "Counts and child lists are computed from the enumerated source records; page 6/7 describes the INSTAT framework, not a printed national count table."}, ensure_ascii=False)}
+                "unresolved_matches": self.unresolved if rid != self.preferred else [],
+                "calculation": "Counts, child lists and unresolved cross-release matches are computed from the stored source records. INSTAT pages 6/7 describe the framework, not a printed national count table."}, ensure_ascii=False)}
 
     def answer(self, question, language="English"):
         q = _fold(question)
@@ -204,6 +207,8 @@ class GeographyModel:
         if re.search(r"\b(conflicts?|unresolved|disputed|conflits?|non resolus|versions?|historical|historique|aliases|alternative)\b", q):
             answer += (f"\n\n{summary['crosswalk_status_counts'].get('proposed',0)} proposed crosswalks; {summary['unresolved_count']} unresolved matches in the foundation. "
                 "Alternative spellings are stored separately from canonical names; they are not automatically historical renamings. Historical releases remain separate. [E01, E02]")
+            if re.search(r"\b(conflicts?|unresolved|disputed|conflits?|non resolus)\b", q):
+                answer += "\n\n" + "\n".join("- " + r['raw_name'] + " (" + r['level'] + "; source parent: " + str(r['parent_name']) + "): " + r['reason'] + ". [E02]" for r in self.unresolved)
         return {"answer": answer, "evidence": ev, "family_counts": {"geographic_model": len(ev)},
                 "geography_summary": summary, "geography": {"assumption": "INSTAT 2023 framework; January 2026 edition"}}
 
