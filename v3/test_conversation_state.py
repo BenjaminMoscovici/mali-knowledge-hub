@@ -113,3 +113,28 @@ def test_french_evidence_limits_do_not_become_platform_source_inventory():
     assert not resolved['needs_model'] and resolved['language']=='French'
     for question in ['What are your sources?', 'Quelles sont vos sources ?', 'Welche Quellen hast du?']:
         assert inventory(question)
+
+
+def test_subset_reference_carries_identifiers_without_previous_status_claims():
+    from conversation_state import referenced_fongim_ids
+    prior=[{'role':'user','content':'Give examples of FONGIM projects in Mopti.'},
+           {'role':'assistant','standalone_question':'Give examples of FONGIM projects in Mopti.',
+            'content':'KELEN-YA (ID 461), AGRO Ecologie (ID 715). Both active since 2099. [E07]'}]
+    result=resolve('Which of those are still active?',prior)
+    question=result['standalone_question']
+    assert referenced_fongim_ids(question)==(461,715)
+    assert '2099' not in question and 'Both active' not in question
+    assert 'recheck' in question and not result['needs_model']
+    # A new substantive topic cannot reuse the previous list.
+    prior.append({'role':'user','content':'Which organisations are present in Gao in OCHA 3W?'})
+    assert not resolve('Which of those are still active?',prior)['state'].get('mentioned_project_ids')
+    assert resolve('Which of those are still active?',history('Give FONGIM projects in Mopti.'))['clarification_required']
+
+
+def test_administrative_false_premise_does_not_change_referent():
+    result=resolve('So all 999 of them are EU-funded?',history('How many cercles are in Mali?'))
+    assert 'administrative cercles' in result['standalone_question']
+    assert 'not intervention projects' in result['standalone_question']
+    assert 'without assuming either is true' in result['standalone_question']
+    from conversation_state import places
+    assert 'all' in places('What is the parent hierarchy of All locality?')

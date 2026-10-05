@@ -12,6 +12,12 @@ SOCIAL = r'^(?:(?:hello|hi|hey|bonjour|salut|bonsoir)(?: there)?|thanks(?: a lot
 PLACE_STOP = {'mali','same','what','which','there','here','are','the','and','how','full','parent','path','name','region','cercle','commune','locality','men','women'}
 
 
+def referenced_fongim_ids(question):
+    """Bounded exact lookup scope; neither these IDs nor history are evidence."""
+    match=re.search(r'FONGIM referenced project IDs:\s*(\d{1,10}(?:,\d{1,10}){0,19})(?:\.|$)',question)
+    return tuple(dict.fromkeys(int(x) for x in match.group(1).split(','))) if match else ()
+
+
 def places(question):
     from geographic_model import geographic_model
     model=geographic_model()
@@ -20,6 +26,9 @@ def places(question):
            for n in range(1,min(model.max_name_words,len(words)-i)+1)
            if " ".join(words[i:i+n]) in model.names and " ".join(words[i:i+n]) not in PLACE_STOP}
     names={n for n in names if len(n)>2 and not any(n!=other and (' '+n+' ') in (' '+other+' ') for other in names)}
+    # The registered place "All" is not the quantifier in "all 999 of them".
+    if re.search(r'\ball\s+(?:\d+|of|the|those|these|them)\b',_fold(question)):
+        names.discard('all')
     return sorted(names) or (['Mali'] if re.search(r'\bmali\b',_fold(question)) else [])
 
 
@@ -65,13 +74,17 @@ def state_from_history(messages):
         # Its standalone_question is the question already resolved by this API.
         question=message.get('standalone_question')
         if not question and message.get('role')=='user':question=message.get('content')
-        if not isinstance(question,str) or not question.strip() or re.match(SOCIAL,_fold(question)):
-            continue
-        candidate=describe(question)
-        # Ignore an unresolved ellipse if the adjacent answer has the resolved
-        # question. Substantive standalone topic changes replace all old slots.
-        if candidate['topic']!='other' or not state:
-            state=candidate
+        if isinstance(question,str) and question.strip() and not re.match(SOCIAL,_fold(question)):
+            candidate=describe(question)
+            # Substantive standalone topic changes replace all old slots.
+            if candidate['topic']!='other' or not state:
+                state=candidate
+        # Identifiers in the previous displayed list delimit "which of those".
+        # They are lookup keys, never evidence for status, dates or funding.
+        if message.get('role')=='assistant' and state.get('topic')=='projects':
+            text=str(message.get('content') or '')[:6000]
+            ids=re.findall(r'\b(?:project\s+ID|ID)\s*[:#]?\s*(\d{1,10})\b',text,re.I)
+            state['mentioned_project_ids']=list(dict.fromkeys(int(x) for x in ids))[:20]
     return state
 
 
@@ -166,9 +179,16 @@ def resolve(question,messages):
     elif deictic:
         rewritten=re.sub(r'\b(there|here|that area|this area)\b',state['geography'][0]+' '+(state.get('administrative_level') or 'region'),question,flags=re.I)
     elif pronoun and state.get('topic')=='administrative_count' and re.search(r'\b\d+\b',q):
-        rewritten='Verify the numerical premise and funding claim, without assuming either is true: '+question+' Context: '+base
+        referents=', '.join(state['metrics'])
+        rewritten=('Verify the numerical premise and funding claim, without assuming either is true: '+question+
+                   ' Context: '+base+'. The referents are administrative '+referents+
+                   ', not intervention projects. Verify their count against the geographic registry; do not change the referent to projects.')
     elif pronoun and (len(state.get('entities',[]))==1 or state.get('topic')=='projects'):
         rewritten=question+' Research subject: '+base
+        if state.get('topic')=='projects' and re.search(r'\b(those|them|lesquels|lesquelles)\b',q):
+            ids=state.get('mentioned_project_ids',[])
+            if not ids:return ask('entity')
+            rewritten+='; FONGIM referenced project IDs: '+','.join(map(str,ids))+'. Restrict the answer to these previously mentioned identifiers; recheck every status/date in the underlying evidence.'
     if rewritten and rewritten!=question:
         result.update(standalone_question=rewritten,method='structured_context',state=describe(rewritten))
         result['state']['language']=language

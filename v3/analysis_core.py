@@ -35,6 +35,7 @@ from source_wave import retrieve_source_evidence
 from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
 from project_dates import select_examples
+from conversation_state import referenced_fongim_ids
 from project_learning_sources import retrieve_project_learning
 from eu_sources import retrieve_eu_evidence
 from synthesis_context import prepare as prepare_synthesis, serialize as serialize_synthesis, availability_note
@@ -1577,7 +1578,7 @@ def get_rows_for_project_ids(
 
 @ttl_cached(900)
 def research_fongim(
-    geography, ending=False
+    geography, ending=False, referenced_ids=()
 ):
 
     location_filters = {
@@ -1607,12 +1608,19 @@ def research_fongim(
         for row in locations
         if row.get("fongim_project_id") is not None
     })
+    if referenced_ids:
+        project_ids = [pid for pid in project_ids if pid in referenced_ids]
+        locations = [row for row in locations if row.get('fongim_project_id') in project_ids]
 
     if not project_ids:
         return {
             "project_count": 0,
             "location_count": 0,
-            "evidence": []
+            "evidence": ([{"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
+                "document_title":"FONGIM referenced-project lookup", "section":"Bounded identifier lookup",
+                "content":json.dumps({"requested_project_ids":list(referenced_ids), "matching_current_location_records":0,
+                    "limitation":"No matching current mirror location rows in the requested scope; this does not establish inactivity or completion."})}]
+                if referenced_ids else [])
         }
 
     with ThreadPoolExecutor(max_workers=3) as executor:
@@ -1833,6 +1841,8 @@ def research_fongim(
         if scope_parts
         else "Mali"
     )
+    if referenced_ids:
+        geographic_scope += '; restricted previously mentioned project IDs: '+','.join(map(str,referenced_ids))
 
     latest_sync = max(
         [
@@ -1849,6 +1859,15 @@ def research_fongim(
     # --------------------------------------------------------
 
     evidence = []
+
+    if referenced_ids:
+        evidence.append({"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
+            "document_title":"FONGIM referenced-project lookup", "section":"Bounded identifier lookup",
+            "geographic_scope":geographic_scope,
+            "content":json.dumps({"requested_project_ids":list(referenced_ids),
+                "matched_project_ids":project_ids,
+                "unmatched_project_ids":[pid for pid in referenced_ids if pid not in project_ids],
+                "limitation":"Only the referenced subset is counted. Unmatched current mirror rows do not establish inactivity or completion."})})
 
     evidence.append({
         "source_type": "fongim_structured",
@@ -2088,6 +2107,10 @@ def research_fongim(
 
 
     project_examples, date_summary = select_examples(projects, ending=ending)
+    if referenced_ids:
+        # Include closed as well as ongoing records so the answer can resolve
+        # the entire prior subset. Reapply current evidence, never prior status.
+        project_examples = sorted(projects, key=lambda p: p['fongim_project_id'])
     if date_summary:
         evidence.append({"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
             "document_title":"FONGIM reported project end dates", "organization":"FONGIM",
@@ -2137,7 +2160,7 @@ def research_fongim(
                 (row.get("region") or "?", row.get("cercle") or "?",
                  row.get("commune_raw") or "")
             )
-    selected = project_examples[:5]
+    selected = project_examples if referenced_ids else project_examples[:5]
     for project in selected:
         pid = project["fongim_project_id"]
         place = sorted(locations_by_project.get(pid, []))[:4]
@@ -2396,7 +2419,8 @@ def run_four_source_research(question, document_count=8):
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
-                                ending=bool(re.search(r"\b(ending|end dates?|past end|still active|closing|close|expire|expiration|echeances?|dates? de fin|termin\w*|finissent|finissant)\b", normalize_text(question))))
+                                ending=bool(re.search(r"\b(ending|end dates?|past end|still active|closing|close|expire|expiration|echeances?|dates? de fin|termin\w*|finissent|finissant)\b", normalize_text(question))),
+                                referenced_ids=referenced_fongim_ids(question))
         return value, time.perf_counter() - started
 
     from geographic_model import canonical_geography_evidence
