@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from supabase import create_client
 from openai import OpenAI
 from metering import MeteredOpenAI, submit, PHASE
-from routing import explicit_source_plan
+from routing import explicit_source_plan, packaged_source_names
 from citations import verify as verify_citations
 from money_integrity import validate as validate_money
 from depth import get_mode
@@ -931,7 +931,8 @@ def get_document_groups():
     documents = (
         execute_read(supabase
         .table("documents")
-        .select("id,title,document_type,organization"), "get_document_groups")
+        .select("id,title,organization,publication_date,valid_from,valid_until,"
+                "document_type,language,geographic_scope,status,version"), "get_document_groups")
         .data
         or []
     )
@@ -1027,14 +1028,15 @@ user's question.
             with ThreadPoolExecutor(max_workers=len(government_targets)) as executor:
                 futures = [submit(executor, search_knowledge_base,
                                   f"{question}\nFocus on: {title}",
-                                  per_document_count, [document_id])
+                                  per_document_count, [document_id], None, document_groups['documents'])
                            for document_id, title in government_targets]
                 results = [chunk for future in futures for chunk in future.result()]
         else:
             results = search_knowledge_base(
                 government_query,
                 match_count=government_count,
-                filter_document_ids=government_document_ids
+                filter_document_ids=government_document_ids,
+                document_metadata=document_groups['documents']
             )
 
         return results, time.perf_counter() - started
@@ -1061,14 +1063,15 @@ user's question.
             with ThreadPoolExecutor(max_workers=len(humanitarian_targets)) as executor:
                 futures = [submit(executor, search_knowledge_base,
                                   f"{question}\nFocus on: {title}",
-                                  per_document_count, [document_id])
+                                  per_document_count, [document_id], None, document_groups['documents'])
                            for document_id, title in humanitarian_targets]
                 results = [chunk for future in futures for chunk in future.result()]
         else:
             results = search_knowledge_base(
                 hnrp_query,
                 match_count=hnrp_count,
-                filter_document_ids=hnrp_document_ids
+                filter_document_ids=hnrp_document_ids,
+                document_metadata=document_groups['documents']
             )
 
         return results, time.perf_counter() - started
@@ -2434,6 +2437,13 @@ def run_four_source_research(question, document_count=8):
         "eu": retrieve_eu_evidence,
         "geographic_model": canonical_geography_evidence,
     }
+    requested_packaged = packaged_source_names(
+        question, source_plan, planner_result.get('planner_output'))
+    for family in list(packaged_retrievers):
+        if family not in requested_packaged:
+            packaged_retrievers.pop(family)
+            source_trace[family] = {'requested': False, 'status': 'NOT_REQUESTED',
+                                    'seconds': 0.0, 'records': 0}
     def timed_packaged(retriever):
         started = time.perf_counter()
         values = retriever(question)
@@ -2712,6 +2722,9 @@ GROUNDING AND CITATIONS
   Never invent facts, projects, policy, totals, counts, rankings, status, causal
   links, coverage, outcomes or citations. A correct list does not support an
   unstated count. State precisely which requested parts cannot be established.
+- Before denying information, check every supplied item, table and example.
+  Missing fields in one item do not establish absence across the source.
+  Omitted pages/spans are unassessed, not proof of missing source information.
 - The join audit is navigation, not evidence. Cite underlying ledger IDs from
   each family. Distinguish direct FACT, cross-source SYNTHESIS and tentative
   INFERENCE wherever a conclusion could otherwise be mistaken for a source fact.

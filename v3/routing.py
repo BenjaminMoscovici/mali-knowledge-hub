@@ -79,3 +79,20 @@ def explicit_source_plan(question):
     if selected["fongim"] and re.search(r"\b(?:humanitarian needs|besoins humanitaires|national priorit|priorites nationales)\b", q):
         return None
     return selected
+
+
+def packaged_source_names(question, source_plan, planner_output=None):
+    names = {'foundation', 'operational', 'analytical', 'project_learning',
+             'eu', 'geographic_model'}
+    government_only = source_plan == {
+        'government_docs': True, 'hnrp_docs': False, 'hapi': False, 'fongim': False}
+    explicit = (planner_output or {}).get('method') == 'explicit_source_rules'
+    other_family = re.search(
+        r'\b(?:3w|dtm|iom|ocha|fts|hpc|hdx|hapi|iati|ieg|world bank|banque mondiale|'
+        r'cadre harmonis\w*|echo|eu|ue|european|europeenne?|unicef|fongim)\b',
+        _normal(question))
+    if government_only and explicit and not other_family:
+        # Generic "projects" in a named government strategy do not request
+        # World Bank country profiles or unrelated national FTS records.
+        names -= {'operational', 'analytical', 'project_learning', 'eu'}
+    return names

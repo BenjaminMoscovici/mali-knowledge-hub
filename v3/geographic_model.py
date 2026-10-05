@@ -129,10 +129,40 @@ class GeographyModel:
             "geographic_scope": "Mali — release-specific hierarchy",
             "content": json.dumps({"release": r["upstream_version"],
                 "enumerated_counts": dict(Counter(u['unit_type'] for u in self.units.values() if u['release_id'] == rid)),
+                "hierarchy_basis": self.hierarchy_basis(rid),
                 "query_scope_counts": list(computed_counts),
                 "records": [self.describe(uid) for uid in ids],
                 "unresolved_matches": self.unresolved if rid != self.preferred else [],
                 "calculation": "Counts, child lists and unresolved cross-release matches are computed from the stored source records. INSTAT pages 6/7 describe the framework, not a printed national count table."}, ensure_ascii=False)}
+
+    @lru_cache(maxsize=4)
+    def hierarchy_basis(self, rid):
+        # Put the actual basis for the deterministic caveats beside the counts.
+        # Typed regions exclude Bamako, while COD's raw admin1 level includes it.
+        # No boundary equivalence or legal validity is inferred by this summary.
+        units = [u for u in self.units.values() if u['release_id'] == rid]
+        raw_levels = Counter(u['level'] for u in units)
+        paths = Counter()
+        arrondissement_parents = Counter()
+        for u in units:
+            if u['level'] == 'locality':
+                paths[tuple(p['unit_type'] for p in self.path(u['id']))] += 1
+            if u['level'] == 'arrondissement':
+                parent = self.units[u['parent_id']]
+                arrondissement_parents[(parent['unit_type'], parent['name'])] += 1
+        source_levels = ({'admin0': raw_levels['country'], 'admin1': raw_levels['region'],
+                          'admin2': raw_levels['cercle']}
+                         if self.releases[rid]['dataset_id'] == 'mli-cod-ab' else None)
+        return {'basis': 'Computed from stored records and parent IDs within this release only',
+                'source_admin_level_counts': source_levels,
+                'locality_path_counts': [{'path': list(path), 'locality_records': count}
+                                        for path, count in sorted(paths.items())],
+                'arrondissement_parent_counts': [{'parent_type': kind, 'parent_name': name,
+                                                  'arrondissement_records': count}
+                                                 for (kind, name), count in sorted(arrondissement_parents.items())],
+                'publication_month': json.loads(self.releases[rid]['quality_json']).get('publication_month'),
+                'crosswalk_status_counts': dict(Counter(c['status'] for c in self.crosswalks)),
+                'crosswalk_scope': 'All stored cross-release proposals; not approved identities'}
 
     def answer(self, question, language="English"):
         q = _fold(question)

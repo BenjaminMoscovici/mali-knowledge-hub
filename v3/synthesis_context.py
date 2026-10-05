@@ -27,6 +27,8 @@ def terms(question):
         (r'health|sante', {'health', 'sante'}),
         (r'water|wash|eau|sanitation', {'wash', 'eau', 'assainissement'}),
         (r'ending|end dates|echeance', {'end', 'ending', 'echeance'}),
+        (r'phasage|phasing|decennie|decade', {'phase', 'phasage', 'phasing',
+            'decennie', 'decade', 'composante', 'component', 'cout', 'cost', 'budget'}),
     ]:
         if re.search(pattern, text):
             words |= extra

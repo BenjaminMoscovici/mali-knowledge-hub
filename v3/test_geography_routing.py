@@ -29,6 +29,19 @@ def test_release_counts_and_parent_integrity(model):
         assert all(model.units[p['id']]['release_id']==u['release_id'] for p in path)
 
 
+def test_caveat_evidence_exposes_source_levels_and_actual_parent_paths(model):
+    import json
+    cod = next(rid for rid,r in model.releases.items() if r['dataset_id']=='mli-cod-ab')
+    evidence = json.loads(model.evidence(cod)['content'])
+    assert evidence['enumerated_counts']['region'] == 19
+    assert evidence['hierarchy_basis']['source_admin_level_counts'] == {
+        'admin0':1,'admin1':20,'admin2':160}
+    preferred = json.loads(model.evidence(model.preferred)['content'])['hierarchy_basis']
+    assert {'parent_type':'district','parent_name':'BAMAKO','arrondissement_records':7} in preferred['arrondissement_parent_counts']
+    assert ['country','district','arrondissement','locality'] in [p['path'] for p in preferred['locality_path_counts']]
+    assert sum(p['locality_records'] for p in preferred['locality_path_counts']) == 12915
+
+
 def test_mopti_children_and_cited_paths(model):
     answer = model.answer('Which communes belong to Mopti cercle?')
     assert '12 recorded commune(s)' in answer['answer']

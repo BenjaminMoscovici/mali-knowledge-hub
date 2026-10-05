@@ -7,7 +7,7 @@ import re
 import unicodedata
 from synthesis_context import prepare, serialize, extract_spans, availability_note
 from citations import verify
-from routing import explicit_source_plan
+from routing import explicit_source_plan, packaged_source_names
 
 
 def row(eid='E01', **extra):
@@ -102,6 +102,29 @@ def test_bounded_packaged_queries_skip_unrelated_live_retrieval():
     assert explicit_source_plan('Compare DTM with HNRP humanitarian needs') != empty
 
 
+def test_named_government_summary_does_not_request_unrelated_bank_profiles():
+    question = 'Que prévoit le document de phasage pour les Projets Structurants Prioritaires ?'
+    plan = explicit_source_plan(question)
+    direct = {'method':'explicit_source_rules'}
+    families = packaged_source_names(question, plan, direct)
+    assert families == {'foundation', 'geographic_model'}
+    assert 'geographic_model' in families
+    assert 'project_learning' in packaged_source_names('Compare SNEDD with World Bank projects', plan, direct)
+    assert 'analytical' in packaged_source_names('Compare SNEDD with FTS funding', plan, direct)
+    assert 'operational' in packaged_source_names('Compare SNEDD with OCHA presence', plan, direct)
+    assert 'project_learning' in packaged_source_names(question, plan, {'method':'model'})
+
+
+def test_phasing_selection_keeps_period_and_component_budget_table():
+    rows = [row(f'E{i:02d}',source_type='knowledge_base_document',document_id='phasing',
+                content='Projets Structurants Prioritaires, document de phasage.') for i in range(1,8)]
+    rows.append(row('E08',source_type='knowledge_base_document',document_id='phasing',
+                    page=35,content='Décennie 2024–2033. Composante irrigation. Coût: XOF 42 milliards.'))
+    selected,_ = prepare(rows,'Que prévoit le document de phasage pour les Projets Structurants Prioritaires ?')
+    assert 'E08' in {e['evidence_id'] for e in selected}
+    assert next(e for e in selected if e['evidence_id']=='E08')['content']==rows[-1]['content']
+
+
 def test_packaged_cache_copy_isolation_bound_and_expiry(tmp_path,monkeypatch):
     import evidence_cache
     path=tmp_path/'snapshot';path.write_text('release')
@@ -139,6 +162,7 @@ def test_actual_research_runs_independent_families_concurrently_and_preserves_ci
     ns={'re':re,'time':time,'unicodedata':unicodedata,'defaultdict':defaultdict,
         'ThreadPoolExecutor':ThreadPoolExecutor,'submit':submit,
         'plan_sources_semantically':lambda q:{'source_plan':{'government_docs':False,'hnrp_docs':False,'hapi':False,'fongim':False},'seconds':0},
+        'packaged_source_names':packaged_source_names,
         'enrich_join_evidence':lambda ledger:None,
         'build_join_context':lambda *args:{},'load_entity_decisions':lambda:({},[]),
         'OrganizationResolver':lambda *args:None}
