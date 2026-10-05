@@ -8,7 +8,8 @@ def inputs():
         c={'run_manifest':{'hub_commit':commit,'completed_at':'2026-10-05','benchmark_manifest_sha256':'fixed','suite_hash':'fixed','measurement_protocol':'paired'},
            'attempt_configuration_hash':'fixed','evaluator_configuration':{'version':'fixed'},
            'composition':{'unique_cases':1,'expected_unique_cases':1,'attempts':1},'availability':{'failures':0},'judged_attempts':1,
-           'release_prerequisites':{'calibration_samples_exported':True},'findings':[]}
+           'release_prerequisites':{'calibration_samples_exported':True},'findings':[],
+           'analytical_dimensions':{'decision_usefulness':{'mean':5},'question_answering':{'mean':5}}}
         for name,path in PROTECTED.items():
             d=c
             for key in path[:-1]:d=d.setdefault(key,{})
@@ -67,3 +68,10 @@ def test_predeploy_and_live_acceptance_are_separate():
     assert qualify(*inputs(),privacy=privacy,live=live)['release_accepted']
     live['hub_commit']='other'
     assert not qualify(*inputs(),privacy=privacy,live=live)['release_accepted']
+
+
+def test_lower_usefulness_cannot_be_averaged_away_by_protected_quality_gains():
+    args=inputs();args[1]['frozen']['analytical_dimensions']['decision_usefulness']['mean']=4.99
+    q=qualify(*args)
+    assert not q['quality_and_performance_pass']
+    assert 'frozen: decision_usefulness unknown or regressed' in q['quality_and_performance_reasons']
