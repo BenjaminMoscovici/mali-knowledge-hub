@@ -278,6 +278,9 @@ def png(series, output):
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
     except ImportError:
+        # A previous milestone's PNG must never survive beside new scores.
+        # The SVG remains authoritative when plotting is unavailable.
+        (Path(output) / 'capability_radar.png').unlink(missing_ok=True)
         return
     angles = [i * math.pi / 4 for i in range(8)]
     figure, ax = plt.subplots(figsize=(10, 8.7), subplot_kw={'projection': 'polar'})
@@ -294,7 +297,8 @@ def png(series, output):
         ax.plot(angles+[angles[0]], values+[values[0]], marker='o', linewidth=2.2, color=colors[i%len(colors)], label=s['label'])
         if all(s['scores'][a] is not None for a in AXES):
             ax.fill(angles,values,color=colors[i%len(colors)],alpha=.06)
-    ax.legend(loc='lower center',bbox_to_anchor=(.5,-.22),frameon=False,ncol=2)
+    if drawn:
+        ax.legend(loc='lower center',bbox_to_anchor=(.5,-.22),frameon=False,ncol=2)
     figure.suptitle('MKH capability radar',fontsize=21,color='#143b46',fontweight='bold',y=.98)
     figure.text(.5,.936,'Measured capabilities · 0–100 · provisional judge scores · gates remain separate',ha='center',fontsize=11,color='#586e75')
     missing='; '.join(s['label']+': '+', '.join(a for a,v in s['scores'].items() if v is None) for s in drawn if any(v is None for v in s['scores'].values()))
