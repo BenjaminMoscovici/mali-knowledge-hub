@@ -135,6 +135,12 @@ def export_aggregates(directory, card):
         for (case, kind), count in sorted(findings.items(), key=lambda row: (-row[1], row[0]))]
     exported['private_full_scorecard_sha256'] = digest(card)
     exported['aggregate_export_method'] = 'service-computed-v1; original attempts and judgments retained privately'
+    from .professional_capability import professional_inputs
+    professional = professional_inputs(card, directory, measured)
+    professional['coverage']['scorecard_sha256'] = digest(exported)
+    for criterion in professional['coverage'].get('criteria', {}).values():
+        criterion.pop('witnesses', None)
+    measured['professional_capability'] = professional
     result = {'scorecard': exported, 'radar_inputs': {'formula_version': VERSION,
         'scorecard_sha256': digest(exported), 'input_metrics': measured}}
     write_json(Path(directory) / 'exports/aggregate.json', result)

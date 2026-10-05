@@ -3,7 +3,7 @@ import argparse,json,math,statistics
 from collections import Counter,defaultdict
 from pathlib import Path
 from .common import digest,load_cases,write_json,now
-from .validators import validate
+from .validators import validate, VERSION as VALIDATOR_VERSION
 from .telemetry import enriched
 from .adjudication import claims_with_coverage,VERSION as ADJUDICATION_VERSION
 
@@ -79,6 +79,7 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
   'citation_entailment':{'value':sum(c['citation_supported'] for c in cited_claims)/len(cited_claims) if cited_claims else None,'assessed_cited_claims':len(cited_claims)},
   'claim_assessment_coverage':{'value':len(assessed)/len(claims) if claims else None,'all_material_claims':len(claims)},
   'evaluator_configuration':{'models':sorted({j['receipt']['returned_model'] for _,j in judges}),
+   'deterministic_validator_version':VALIDATOR_VERSION,
    'coverage_adjudication_version':ADJUDICATION_VERSION,
    'prompt_hashes':sorted({j['receipt']['prompt_hash'] for _,j in judges}),
    'schema_hashes':sorted({j['receipt']['schema_hash'] for _,j in judges})},
@@ -101,7 +102,8 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
  generate(out,label=label,live=live_run,conversation=conversation)
  return result
 
-PROTECTED={'citation_validity':('deterministic_metrics','citation_validity','value'),
+PROTECTED={'currency_preservation':('deterministic_metrics','currency_preservation','value'),
+ 'citation_validity':('deterministic_metrics','citation_validity','value'),
  'geography':('analytical_dimensions','geographic_discipline','acceptable_fraction'),
  'evidence_gap':('analytical_dimensions','evidence_gap_handling','acceptable_fraction'),
  'grounding':('unsupported_claim_rate','value'),'citation_entailment':('citation_entailment','value'),

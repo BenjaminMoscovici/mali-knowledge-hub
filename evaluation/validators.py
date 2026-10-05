@@ -11,6 +11,9 @@ from .common import ROOT
 
 sys.path.insert(0,str(ROOT/'v3'))
 from citations import verify as verify_citations
+from money_integrity import validate as validate_money
+
+VERSION = 'deterministic-validators-2.0'
 
 @lru_cache(maxsize=1)
 def snapshot_path():
@@ -75,6 +78,11 @@ def validate(case,record,chunk_index=None):
  result.append(check('unique_eids','citation_validity','pass' if len(set(ids))==len(ids) else 'fail','Evidence IDs must be unique'))
  omitted=set(m.get('synthesis_context',{}).get('omitted_ids',[])+m.get('synthesis_context',{}).get('duplicate_ids',[]))
  result.append(check('selected_citations','citation_validity','fail' if omitted&set(audit['cited_ids']) else 'pass','No citations to evidence excluded before synthesis'))
+ money=validate_money(answer,e)
+ runtime_money=m.get('synthesis_context',{}).get('money_integrity') or {}
+ mismatch=money['explicit_pair_mismatches'] or runtime_money.get('explicit_pair_mismatches')
+ status='fail' if mismatch else ('pass' if money['checked_pairs'] else 'unknown')
+ result.append(check('original_currency','currency_preservation',status,json.dumps(money),'critical' if mismatch else 'info'))
  actual={family_key(i) for i in e}
  for wanted in case['required_source_families']:
   result.append(check('evidence_family:'+wanted,'retrieval_family_coverage','pass' if wanted in actual else 'fail',

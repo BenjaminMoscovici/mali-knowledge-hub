@@ -1,80 +1,111 @@
-# MKH capability radar · formula version 1.0
+# MKH professional capability radar · version 2.1
 
-The radar is a visual summary, never an acceptance decision. Its formulas and
-fixed reference targets are versioned and hashed in every capability table.
-They must not be adjusted to improve a candidate's apparent result. A new
-formula version requires recomputing all comparable versions from their
-original measured inputs. No manual capability grades are accepted.
+The current default is `mkh-professional-capability-2.1`. This is a reporting
+recalibration, not a change to frozen questions, judge labels or release gates.
+The prior quality-only formulas and artifacts remain reproducible with
+`--formula-version legacy`; see RADAR_FORMULAS_V1.md. Never compare a v1 score
+to a v2 score as a product improvement.
 
-All rates are fractions. A judge mean on the existing 1–5 rubric becomes
-`(mean − 1)/4`. Multiply the final weighted fraction by 100. Missing required
-components make the whole axis **Unavailable**; weights are not redistributed.
-The JSON artifact contains every exact input, denominator, scorecard hash and
-comparison signature. Analytical judge scores remain provisional until human
-calibration. Coverage exclusions and unassessable claims remain visible in the
-quality scorecard; a high radar score cannot certify them.
+100 means a mature, reliable professional analytical assistant across the fixed
+Mali evidence requirements. Every available axis is:
 
-| Stable axis | Exact formula |
-| --- | --- |
-| Evidence accuracy | `100 × mean(deterministic factual-grounding pass rate, min(citation-ID validity, citation entailment), 1 − unsupported/contradicted claim rate)` |
-| Geographic intelligence | `100 × mean(deterministic geographic-discipline pass rate, normalized judge geographic discipline)` |
-| Source coverage | `100 × mean(required-source-family presence rate, normalized judge evidence completeness)` |
-| Joined analysis | `100 × mean(normalized cross-source synthesis, normalized inference discipline, normalized evidence-gap handling)`, using **joined-category attempts only** |
-| Analytical usefulness | `100 × mean(normalized decision usefulness, normalized evidence completeness, normalized writing quality, normalized inference discipline)` |
-| Conversational ability | `100 × mean(correct follow-up interpretation, 1 − unnecessary clarification, factual-grounding proxy after resolution)`, requiring all frozen sequence turns to be attempted and at least 20 sequences |
-| Performance | `100 × [0.45 × min(1,5/complex median seconds) + 0.25 × min(1,15/complex P95 seconds) + 0.15 × explicit route-assertion pass rate + 0.15 × explicit zero-call-budget pass rate]` |
-| Cost efficiency | `100 × min(1,(complex usefulness points/90) × (0.003/complex median USD))`; all successful complex attempts must have priced usage |
+`quality points × demonstrated capability coverage fraction × availability`.
 
-The 5-second median, 15-second P95 and USD0.003 at 90/100 usefulness are fixed
-scoring anchors, not claimed measurements or release acceptance thresholds.
-Targets stay fixed across releases. Failed attempts remain in availability and
-client-attempt latency distributions; missing cost receipts are not zero-cost
-successes. Radar latency is success-only server latency and is labelled as such.
-The observed complex cohort includes `complex_research` and `deep_research`.
-Incorrect fast routing remains an independent route assertion and hard quality
-failure: it cannot be used to qualify a release through a faster radar.
+No manually assigned scores, total radar average or redistributed weights.
+Missing required measurements are **Unavailable**, not zero or a pass.
 
-Geographic checks and judge geographic discipline cover hierarchy, resolution
-and release/boundary handling according to the frozen case expectations. They
-are not three independently measured subscores. Relevant source diversity is
-represented by **requested family presence**; extra unrelated families earn
-no reward. Conversational grounding is the frozen suite's evidence/citation/
-number proxy, not a substitute for semantic entailment. Route and call scores
-use only explicit assertions; unavailable source-plan observations do not
-become an inferred unnecessary-call measurement.
+## Quality and coverage
 
-Repeated attempts receive the same attempt weighting as the release scorecard.
-Overlay comparisons require identical benchmark manifest, suite, split,
-case/repetition configuration and evaluator configuration. An older version
-with only legacy test pass counts has **no radar score**. Versions v0.3, V1, V2,
-V3, V4 and the current candidate remain listed even when unavailable.
+Rates use their recorded denominators; a 1–5 judge mean becomes `(mean−1)/4`.
+The quality formulas from v1 remain the measured quality component, with these
+explicit overrides. Their exact expressions and anchors appear in every JSON.
 
-## Automatic release artifacts
+| Axis | Quality component | Coverage component |
+| --- | --- | --- |
+| Evidence reliability & completeness | V1 grounding/citation/unsupported-claim quality × assessable claims / all material claims | Mean of all ten evidence layers |
+| Geographic intelligence | V1 geographic validator and judge quality | Geographic requirements |
+| Source coverage | V1 relevant-family recall and evidence completeness | Mean of all ten evidence layers |
+| Joined analysis | V1 joined-only synthesis, inference and gap-handling quality | Mean of all ten layers; acknowledging a missing layer earns no coverage credit |
+| Analytical usefulness | V1 decision usefulness, completeness, clarity and inference discipline | Mean of all ten layers needed for coordination, prioritisation, gaps and sequencing |
+| Conversational ability | V1 interpretation, unnecessary-clarification and grounding-proxy quality | Demonstrated share of seven fixed context requirements |
+| Performance | `100 × mean(min(1,mode target / all-attempt client median) × cell success rate) × mean(route assertion pass rate, zero-call assertion pass rate)` | Mean of professional evidence layers; all six cold/warm mode cells must first be observed |
+| Cost efficiency | `min(V1 quality-adjusted cost-efficiency points, V1 usefulness points)` | Mean of professional layers; cheap incomplete answers cannot reach maturity |
 
-`evaluation.scorecard` regenerates a `release/` directory whenever a benchmark
-scorecard is generated. The report includes an SVG radar, JSON/CSV 0–100 table,
-protected-gate status, quality/latency/cost data, the five highest-priority
-measured weaknesses or missing qualifications, and comparison against live.
-The SVG has accessible text and a fixed 0–100 scale. Missing values break its
-lines and are explicitly labelled; no missing polygon is drawn through zero.
+Availability is successful attempts / all attempts. Failed calls remain visible
+and receive no success substitution. Cost retains unknown/unpriced usage.
+The evidence reliability and completeness axis discounts unassessable material claims instead of ignoring
+them. Missing facts, incomplete relevant source coverage and citation failures
+also lower the quality component; missing operational evidence lowers coverage.
+
+## Frozen professional evidence requirements
+
+`benchmarks/professional_requirements_v2_1.json` and its freeze manifest define
+20 machine-checkable requirements, exactly two per evidence layer: needs,
+priorities, actors, interventions, delivery/reach, funding, timelines, results,
+learning and geography. Requirements have equal weights within each layer;
+required layers have equal weights within an axis. Definitions, typed record
+selectors, minimum distinct entities and numeric field checks are immutable.
+
+Examples: organization presence cannot satisfy reached beneficiaries;
+indicative allocations cannot satisfy verified project transactions; country
+project profiles cannot satisfy approved local activity geography; three IEG
+findings on one project cannot satisfy multi-project learning breadth.
+Historical needs observations earn bounded evidence credit, but do not satisfy
+current multisector assessment readiness. Traceable national strategies do not
+satisfy local priorities. Narrative assertions and source-name counts cannot
+satisfy operational data requirements.
+
+Coverage is a **conservative demonstrated lower bound**, not a percentage of
+all Mali documents. An unmatched requirement is **Not demonstrated**, not proof
+that no relevant source exists. The evaluator scans immutable packaged data
+from the measured commit and original captured evidence; it emits snapshot
+hashes, source row witnesses, selector definitions and denominators. If the
+commit's source objects cannot be retrieved, coverage is unavailable; today's
+inventory is never substituted for a historical release.
+
+Seven fixed conversation requirements cover geography/administrative level,
+sex/metric, period, entity/status subset, continuity/topic reset, false-premise
+referents and genuine ambiguity. A requirement is demonstrated only when all
+its expected frozen follow-up turns interpret correctly and pass the factual
+presence/number/context proxy. This is stricter than average turn reliability;
+both measurements are reported. It is still not semantic claim entailment.
+
+Performance requires explicitly tagged cold and warm observations for Quick,
+Balanced and Deep, with client elapsed time and availability. Targets are
+1/8/15 seconds respectively. Provider cached-token counts or request order do
+not establish application cold/warm state. Historical runs without these six
+cells are unavailable. Client timings are not compared across UI, HTTP or
+isolated ASGI observer protocols.
+
+Maturity bands: 0–20 prototype; 20–40 basic; 40–60 useful but materially
+incomplete; 60–75 strong; 75–90 advanced; 90–100 near-mature professional.
+These labels interpret calculated scores; they do not assign them.
+
+## Release artifacts and comparability
+
+`evaluation.scorecard` automatically generates the professional radar SVG/PNG,
+0–100 JSON/CSV table, capability coverage/witnesses, protected gates,
+quality/latency/cost scorecard, five remaining weaknesses and live comparison.
+The JSON includes exact formulas, requirement SHA256, component scores and
+limitations. Version 2 scores use independently recorded baseline judgments;
+uncalibrated analytical scores remain provisional. Missing historical or
+candidate independent judgments remain unavailable; no labels are fabricated.
+
+Comparisons require identical original suite, repetition, evaluator, observer
+protocol and recalibration definitions. Frozen baseline data and v1 artifacts
+must not be overwritten. Recompute comparable versions into a new directory:
 
 ```
-python -m evaluation.scorecard --run CANDIDATE_RUN --oracle PRIVATE_ORACLE \
-  --live-run LIVE_RUN --conversation CONVERSATION_SCORECARD --label 'Current candidate'
-python -m evaluation.radar --run LIVE_RUN --label V4 --output RELEASE_DIRECTORY
-python -m evaluation.radar --run CANDIDATE_RUN --live LIVE_RUN \
-  --conversation CONVERSATION_SCORECARD --historical V2=COMPARABLE_V2_RUN
+python -m evaluation.radar --run BASELINE_RUN --label 'Current live V4' \
+  --output PROFESSIONAL_V2_OUTPUT
+python -m evaluation.radar --run CANDIDATE_RUN --live BASELINE_RUN \
+  --conversation CONVERSATION_SCORECARD --output CANDIDATE_V2_OUTPUT
+python -m evaluation.radar --run BASELINE_RUN --formula-version legacy \
+  --output LEGACY_REPRODUCTION_OUTPUT
 ```
 
-Protected gates use the release scorecard with zero regression tolerance for
-this sprint's explicit no-regression requirement. Citation-ID correctness requires no invalid
-IDs. Deterministic factual-grounding failures remain explicit failures. Privacy,
-human calibration, held-out qualification, live smoke and target improvement
-retain their own statuses. No radar average or total score is generated.
+Hard gates stay separate: grounding, citation IDs/entailment, geography,
+unsupported claims, privacy/access and original-currency preservation.
+No high radar polygon compensates for a failure or unknown prerequisite.
 
-Service-produced aggregate exports may regenerate charts without raw evidence.
-Their `radar_inputs.json` must bind to the exported scorecard SHA256 and this exact
-formula version. Inputs are computed from the privately retained original run,
-not manually rated. Original scorecard SHA256 and deployed commit remain recorded.
-A separately measured conversation suite can replace only conversation inputs;
-partial suites remain unavailable. This export path does not change formulas.
+Version 2.1 changes the evidence-axis display name only. The 2.0 freeze and artifacts remain preserved; numerical quality/coverage formulas and protected factual correctness are unchanged.

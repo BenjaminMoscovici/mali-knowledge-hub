@@ -213,7 +213,7 @@ def gates(scorecard, live=None):
         status = 'UNKNOWN' if value is None else 'BASELINE_ONLY'
         if live is not None:
             status = 'NOT_COMPARABLE' if not compatible else ('UNKNOWN' if loss is None else ('REGRESSION' if loss > 1e-12 else 'NO_MEASURED_REGRESSION'))
-        if name == 'citation_validity' and value is not None and value < 1:
+        if name in {'citation_validity', 'currency_preservation'} and value is not None and value < 1:
             status = 'FAIL'
         result[name] = {'status': status, 'value': value, 'live': previous, 'regression': loss}
     # Explicitly expose factual grounding separately from the unsupported-claim gate.
@@ -226,9 +226,10 @@ def gates(scorecard, live=None):
     return result
 
 
-def svg(series):
+def svg(series, axes=None):
+    axes = axes or AXES
     cx, cy, radius = 440, 350, 230
-    drawn = [s for s in series if any(s['scores'][a] is not None for a in AXES)]
+    drawn = [s for s in series if any(s['scores'][a] is not None for a in axes)]
     height = max(790, 715 + 23 * len(drawn))
     def point(index, value):
         angle = -math.pi / 2 + index * math.pi / 4
@@ -242,7 +243,7 @@ def svg(series):
     for value in [20, 40, 60, 80, 100]:
         out.append(f'<polygon points="{coords([point(i,value) for i in range(8)])}" fill="none" stroke="#dbe5e7"/>')
         out.append(f'<text x="{cx+6}" y="{cy-radius*value/100+15:.2f}" font-size="11" fill="#789096">{value}</text>')
-    for i, axis in enumerate(AXES):
+    for i, axis in enumerate(axes):
         x, y = point(i, 100)
         tx, ty = point(i, 122)
         anchor = 'start' if tx > cx + 20 else ('end' if tx < cx - 20 else 'middle')
@@ -251,7 +252,7 @@ def svg(series):
     colors = ['#007f86', '#ce7130', '#6549a2', '#5875a4']
     for j, s in enumerate(drawn):
         color = colors[j % len(colors)]
-        vals = [s['scores'][a] for a in AXES]
+        vals = [s['scores'][a] for a in axes]
         if all(v is not None for v in vals):
             out.append(f'<polygon points="{coords([point(i,v) for i,v in enumerate(vals)])}" fill="{color}" fill-opacity="0.06" stroke="none"/>')
         for i, v in enumerate(vals):
@@ -262,7 +263,7 @@ def svg(series):
             if vals[nxt] is not None:
                 nx, ny = point(nxt, vals[nxt])
                 out.append(f'<line x1="{x:.2f}" y1="{y:.2f}" x2="{nx:.2f}" y2="{ny:.2f}" stroke="{color}" stroke-width="2.5"/>')
-            out.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="4" fill="{color}"><title>{html.escape(s["label"])} — {html.escape(AXES[i])}: {v:.2f}</title></circle>')
+            out.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="4" fill="{color}"><title>{html.escape(s["label"])} — {html.escape(axes[i])}: {v:.2f}</title></circle>')
         ly = 660 + j * 23
         missing = ', '.join(a for a,v in s['scores'].items() if v is None)
         caption = s['label'] + (' · unavailable: ' + missing if missing else '')
@@ -271,7 +272,8 @@ def svg(series):
     return '\n'.join(out)
 
 
-def png(series, output):
+def png(series, output, professional=False, axes=None):
+    axes = axes or AXES
     """Optional standard plotting export; the dependency-free SVG always exists."""
     try:
         import matplotlib
@@ -287,20 +289,20 @@ def png(series, output):
     ax.set_theta_offset(math.pi / 2); ax.set_theta_direction(-1)
     ax.set_ylim(0, 100); ax.set_yticks([20,40,60,80,100]); ax.set_rlabel_position(12)
     ax.tick_params(axis='y', labelsize=9, colors='#789096')
-    ax.set_xticks(angles, [a.replace(' ', '\n', 1) for a in AXES])
+    ax.set_xticks(angles, [a.replace(' ', '\n', 1) for a in axes])
     ax.tick_params(axis='x', pad=18, labelsize=11, colors='#143b46')
     ax.grid(color='#dbe5e7'); ax.spines['polar'].set_color('#dbe5e7')
     colors=['#007f86','#ce7130','#6549a2','#5875a4']
     drawn=[s for s in series if any(v is not None for v in s['scores'].values())]
     for i,s in enumerate(drawn):
-        values=[s['scores'][a] if s['scores'][a] is not None else float('nan') for a in AXES]
+        values=[s['scores'][a] if s['scores'][a] is not None else float('nan') for a in axes]
         ax.plot(angles+[angles[0]], values+[values[0]], marker='o', linewidth=2.2, color=colors[i%len(colors)], label=s['label'])
-        if all(s['scores'][a] is not None for a in AXES):
+        if all(s['scores'][a] is not None for a in axes):
             ax.fill(angles,values,color=colors[i%len(colors)],alpha=.06)
     if drawn:
         ax.legend(loc='lower center',bbox_to_anchor=(.5,-.22),frameon=False,ncol=2)
     figure.suptitle('MKH capability radar',fontsize=21,color='#143b46',fontweight='bold',y=.98)
-    figure.text(.5,.936,'Measured capabilities · 0–100 · provisional judge scores · gates remain separate',ha='center',fontsize=11,color='#586e75')
+    figure.text(.5,.936,'Professional capability v2 · quality × coverage · gates remain separate' if professional else 'Measured capabilities · 0–100 · provisional judge scores · gates remain separate',ha='center',fontsize=11,color='#586e75')
     missing='; '.join(s['label']+': '+', '.join(a for a,v in s['scores'].items() if v is None) for s in drawn if any(v is None for v in s['scores'].values()))
     figure.text(.5,.026,'Unavailable measurements break the line; missing ≠ zero.\n'+missing,ha='center',fontsize=10,color='#586e75',wrap=True)
     figure.subplots_adjust(top=.84,bottom=.2,left=.15,right=.85)
@@ -308,14 +310,37 @@ def png(series, output):
     plt.close(figure)
 
 
-def generate(run, output=None, label='Current candidate', live=None, conversation=None, historical=None):
+def generate(run, output=None, label='Current candidate', live=None, conversation=None, historical=None, formula_version='professional'):
+    if formula_version not in {'legacy', 'professional'}:
+        raise ValueError('Unknown radar formula version')
+    formula_name, formulas, anchors = VERSION, FORMULAS, ANCHORS
+    axis_names = AXES
+    if formula_version == 'professional':
+        from . import professional_capability as professional
+        spec = professional.requirements()
+        axis_names = ['Evidence reliability & completeness' if a == 'Evidence accuracy' else a for a in AXES]
+        formula_name = professional.VERSION
+        formulas = {a: spec['axes'][a]['quality_formula'] + '; ' + spec['axes'][a]['formula'] for a in axis_names}
+        for axis, key in [('Evidence reliability & completeness','evidence_adjustment'), ('Conversational ability','conversation_adjustment'),
+                          ('Performance','performance_adjustment'), ('Cost efficiency','cost_adjustment')]:
+            formulas[axis] += '; ' + spec[key]
+        anchors = {'legacy_quality_anchors': ANCHORS, 'client_latency_targets_seconds': spec['latency_targets_seconds'],
+                   'requirements_sha256': digest(spec)}
+    def evaluate(card, path, metrics, conv=None):
+        legacy = scores(metrics)
+        if formula_version == 'legacy':
+            return legacy
+        extra = professional.professional_inputs(card, path, metrics, conv)
+        computed, components = professional.scores(legacy, metrics, extra)
+        metrics['professional_capability'] = extra | {'axis_components': components}
+        return computed
     run = Path(run); output = Path(output) if output else run / 'release'
     output.mkdir(parents=True, exist_ok=True)
     scorecard = json.loads((run / 'scorecard.json').read_text())
     measured = inputs(scorecard, run, conversation)
     if conversation is not None:
         write_json(run / 'conversation_scorecard.json', conversation)
-    current = {'label': label, 'scores': scores(measured), 'input_metrics': measured, 'scorecard_sha256': digest(scorecard), 'benchmark_signature': signature(scorecard)}
+    current = {'label': label, 'scores': evaluate(scorecard, run, measured, conversation), 'input_metrics': measured, 'scorecard_sha256': digest(scorecard), 'benchmark_signature': signature(scorecard)}
     series = [current]
     live_card = None
     if live:
@@ -328,9 +353,9 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
                     raise ValueError('Conversational comparison requires the same measurement protocol')
                 if measured['conversation_provenance'].get('evaluator_version') != metrics['conversation_provenance'].get('evaluator_version'):
                     raise ValueError('Conversational comparison requires the same evaluator version')
-            series.insert(0, {'label': 'Current live V4', 'scores': scores(metrics), 'scorecard_sha256': digest(live_card), 'input_metrics': metrics, 'benchmark_signature': signature(live_card)})
+            series.insert(0, {'label': 'Current live V4', 'scores': evaluate(live_card, live, metrics), 'scorecard_sha256': digest(live_card), 'input_metrics': metrics, 'benchmark_signature': signature(live_card)})
         else:
-            series.insert(0, {'label': 'Current live V4', 'scores': dict.fromkeys(AXES), 'unavailable_reason': 'Missing or incompatible benchmark, repetition or evaluator configuration'})
+            series.insert(0, {'label': 'Current live V4', 'scores': dict.fromkeys(axis_names), 'unavailable_reason': 'Missing or incompatible benchmark, repetition or evaluator configuration'})
     for version in ['v0.3', 'V1', 'V2', 'V3', 'V4', 'Current candidate']:
         if version == label or version == 'V4' and live or version == 'Current candidate' and label.lower().endswith('candidate'):
             continue
@@ -339,9 +364,9 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
             old = json.loads((Path(path) / 'scorecard.json').read_text())
             if comparable(old, scorecard):
                 metrics = inputs(old, path)
-                series.append({'label': version, 'scores': scores(metrics), 'scorecard_sha256': digest(old), 'input_metrics': metrics, 'benchmark_signature': signature(old)})
+                series.append({'label': version, 'scores': evaluate(old, path, metrics), 'scorecard_sha256': digest(old), 'input_metrics': metrics, 'benchmark_signature': signature(old)})
                 continue
-        series.append({'label': version, 'scores': dict.fromkeys(AXES), 'unavailable_reason': 'No comparable measured benchmark supplied'})
+        series.append({'label': version, 'scores': dict.fromkeys(axis_names), 'unavailable_reason': 'No comparable measured benchmark supplied'})
     protected = gates(scorecard, live_card)
     weaknesses = []
     for name, gate in protected.items():
@@ -350,13 +375,27 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
             weaknesses.append({'priority_class': priority, 'area': name, 'status': gate['status'], 'measured_value': gate.get('value')})
     for axis, value in sorted(current['scores'].items(), key=lambda p: -1 if p[1] is None else p[1]):
         weaknesses.append({'priority_class': 1 if value is None else 2, 'area': axis, 'status': 'UNAVAILABLE' if value is None else 'MEASURED_CAPABILITY', 'measured_value': value})
+    if formula_version == 'professional':
+        for layer, value in measured['professional_capability']['coverage'].get('layers', {}).items():
+            if value < 1:
+                weaknesses.append({'priority_class': 2, 'area': layer + ' evidence coverage',
+                                   'status': 'INCOMPLETE_DEMONSTRATED_COVERAGE', 'measured_value': 100 * value})
     weaknesses.sort(key=lambda w:(w['priority_class'], -1 if w['measured_value'] is None else w['measured_value']))
     comparison = {a: {'live': series[0]['scores'][a] if live else None, 'candidate': current['scores'][a] if live else None,
-                       'change': round(current['scores'][a] - series[0]['scores'][a], 2) if live and current['scores'][a] is not None and series[0]['scores'][a] is not None else None} for a in AXES}
-    result = {'formula_version': VERSION, 'formula_sha256': digest({'formulas': FORMULAS, 'anchors': ANCHORS}), 'generated_at': now(), 'axes': AXES,
-              'formulas': FORMULAS, 'anchors': ANCHORS, 'series': series, 'protected_gates': protected, 'comparison_against_live': comparison,
+                       'change': round(current['scores'][a] - series[0]['scores'][a], 2) if live and current['scores'][a] is not None and series[0]['scores'][a] is not None else None} for a in axis_names}
+    result = {'formula_version': formula_name, 'formula_sha256': digest({'formulas': formulas, 'anchors': anchors}), 'generated_at': now(), 'axes': axis_names,
+              'formulas': formulas, 'anchors': anchors, 'series': series, 'protected_gates': protected, 'comparison_against_live': comparison,
               'top_5_remaining_weaknesses': weaknesses[:5], 'release_qualification': 'Use the protected scorecard and all release prerequisites; radar scores never authorize release.',
               'limitations': ['Judge scores are provisional until Publisher calibration.', 'Unassessable claims and missing historical data are not passes or zero capability.', 'Required-family presence is a relevant-source recall proxy; unrelated source families do not earn extra points.', 'Conversational grounding is a deterministic presence/number proxy, not semantic entailment.', 'Performance and cost use the observed complex-research cohort; incorrect fast routing is separately gated.', 'Repeated attempts have the same weighting as in the paired release scorecard.']}
+    if formula_version == 'professional':
+        result['requirements'] = spec
+        result['limitations'] = ['Coverage is a conservative measured lower bound on fixed professional requirements. NOT_DEMONSTRATED is not proof of absent evidence.',
+                                'Every axis multiplies quality by demonstrated breadth; missing operational layers cannot earn credit by being acknowledged.',
+                                'Performance requires explicitly measured cold/warm Quick/Balanced/Deep client cohorts; historical runs without them remain unavailable.',
+                                'Analytical judgments remain provisional until human calibration. Conversation grounding is a proxy, not semantic entailment.',
+                                'All original v1 scores and frozen benchmark inputs remain reproducible using --formula-version legacy.']
+        write_json(output / 'capability_coverage.json', measured['professional_capability'])
+        write_json(output / 'professional_radar_inputs.json', measured['professional_capability'])
     write_json(output / 'capability_table.json', result)
     write_json(output / 'protected_gates.json', protected)
     write_json(output / 'comparison_against_live.json', comparison)
@@ -364,16 +403,24 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
     quality = {k: scorecard.get(k) for k in ['composition', 'availability', 'analytical_dimensions', 'unsupported_claim_rate', 'citation_entailment', 'claim_assessment_coverage', 'by_mode', 'hub_estimated_cost_usd', 'evaluator_estimated_cost_usd', 'release_prerequisites']}
     quality['complex_cohort'] = {k:v for k,v in measured.items() if k.startswith('complex_')}
     write_json(output / 'quality_latency_cost.json', quality)
-    (output / 'capability_radar.svg').write_text(svg(series))
-    png(series,output)
+    chart = svg(series, axis_names)
+    if formula_version == 'professional':
+        chart = chart.replace('Measured capabilities · 0–100 · provisional judge scores · gates remain separate', 'Professional capability v2 · quality × coverage · gates remain separate')
+    (output / 'capability_radar.svg').write_text(chart)
+    png(series,output,formula_version == 'professional',axis_names)
     with (output / 'capability_table.csv').open('w', newline='') as stream:
         writer = csv.writer(stream); writer.writerow(['Capability'] + [s['label'] for s in series])
-        writer.writerows([[a] + ['Unavailable' if s['scores'][a] is None else s['scores'][a] for s in series] for a in AXES])
-    rows = ''.join('<tr><th>'+html.escape(a)+'</th>'+''.join('<td>'+('Unavailable' if s['scores'][a] is None else f"{s['scores'][a]:.2f}")+'</td>' for s in series)+'</tr>' for a in AXES)
-    details = ''.join('<dt>'+html.escape(a)+'</dt><dd>'+html.escape(FORMULAS[a])+'</dd>' for a in AXES)
+        writer.writerows([[a] + ['Unavailable' if s['scores'][a] is None else s['scores'][a] for s in series] for a in axis_names])
+    rows = ''.join('<tr><th>'+html.escape(a)+'</th>'+''.join('<td>'+('Unavailable' if s['scores'][a] is None else f"{s['scores'][a]:.2f}")+'</td>' for s in series)+'</tr>' for a in axis_names)
+    details = ''.join('<dt>'+html.escape(a)+'</dt><dd>'+html.escape(formulas[a])+'</dd>' for a in axis_names)
     gate_rows = ''.join(f'<tr><th>{html.escape(k)}</th><td>{html.escape(v["status"])}</td><td>{html.escape(str(v.get("value")))}</td></tr>' for k,v in protected.items())
     weakness_rows = ''.join('<li>'+html.escape(w['area']+' — '+w['status'])+'</li>' for w in weaknesses[:5])
     page = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MKH capability release report</title><style>body{font:15px/1.6 system-ui;color:#143b46;background:#f4f8f8}main{max-width:1160px;background:white;margin:24px auto;padding:36px}img{width:100%;max-width:1000px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px;text-align:left;border-bottom:1px solid #dbe5e7}th{background:#f1f7f7}dd{margin-bottom:16px}.scroll{overflow:auto}h2{margin-top:32px}</style><main><h1>MKH capability release report</h1><p>Visual summary only. Provisional analytical scores; unavailable measurements remain explicit. The radar cannot qualify a release.</p><img src="capability_radar.svg" alt="MKH eight-axis capability radar"><h2>Capability table · 0–100</h2><div class="scroll"><table><tr><th>Capability</th>'+''.join('<th>'+html.escape(s['label'])+'</th>' for s in series)+'</tr>'+rows+'</table></div><h2>Protected gates</h2><table><tr><th>Metric</th><th>Status</th><th>Measured value</th></tr>'+gate_rows+'</table><h2>Top five remaining weaknesses</h2><ol>'+weakness_rows+'</ol><h2>Fixed formulas</h2><p>'+VERSION+' · Rates are fractions. Judge means use (score−1)/4. Any missing required component makes the axis unavailable; weights are never redistributed.</p><dl>'+details+'</dl><p>Fixed reference targets: median complex latency 5 seconds; P95 15 seconds; USD0.003 per complex query at 90/100 usefulness. These are scoring anchors, not measured facts or release acceptance thresholds.</p><h2>Quality, latency and cost</h2><p>Complete distributions, token counts and costs: <a href="quality_latency_cost.json">quality_latency_cost.json</a>. Paired live comparison: <a href="comparison_against_live.json">comparison_against_live.json</a>. Full metric inputs and provenance: <a href="capability_table.json">capability_table.json</a>.</p></main></html>'
+    page = page.replace(VERSION + ' · Rates', formula_name + ' · Rates')
+    if formula_version == 'professional':
+        page = page.replace('Visual summary only. Provisional analytical scores; unavailable measurements remain explicit.', 'Professional capability = measured quality × demonstrated coverage × availability. Coverage is a conservative lower bound; unavailable measurements remain explicit.')
+        page = page.replace('Fixed reference targets: median complex latency 5 seconds; P95 15 seconds; USD0.003 per complex query at 90/100 usefulness. These are scoring anchors, not measured facts or release acceptance thresholds.', 'Cold/warm client-latency targets: Quick 1 second, Balanced 8 seconds, Deep 15 seconds. All six measurement cells are required. Coverage criteria and their witnesses: capability_coverage.json. Legacy quality anchors remain fixed for reproducibility; protected gates are unchanged.')
+        page = page.replace('<h2>Protected gates</h2>', '<p>0–20 prototype · 20–40 basic · 40–60 useful but incomplete · 60–75 strong · 75–90 advanced · 90–100 near-mature professional capability.</p><h2>Protected gates</h2>')
     (output / 'release_report.html').write_text(page)
     return result
 
@@ -382,8 +429,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run', required=True); parser.add_argument('--output'); parser.add_argument('--label', default='Current candidate')
     parser.add_argument('--live'); parser.add_argument('--conversation'); parser.add_argument('--historical', action='append', default=[])
+    parser.add_argument('--formula-version', choices=['legacy','professional'], default='professional')
     args = parser.parse_args()
     conversation = json.loads(Path(args.conversation).read_text()) if args.conversation else None
     historical = dict(item.split('=', 1) for item in args.historical)
-    result = generate(args.run, args.output, args.label, args.live, conversation, historical)
-    print(json.dumps({'formula_version': VERSION, 'scores': result['series'][-1]['scores'] if len(result['series']) == 1 else next(s['scores'] for s in result['series'] if s['label'] == args.label)}))
+    result = generate(args.run, args.output, args.label, args.live, conversation, historical, args.formula_version)
+    print(json.dumps({'formula_version': result['formula_version'], 'scores': next(s['scores'] for s in result['series'] if s['label'] == args.label)}))
