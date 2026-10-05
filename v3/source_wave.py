@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -18,7 +19,8 @@ import requests
 
 
 SNAPSHOT_GZ = Path(__file__).with_name("source_wave1.sqlite.gz")
-SNAPSHOT = Path(tempfile.gettempdir()) / "mkh-source-wave1.sqlite"
+SNAPSHOT = Path(tempfile.gettempdir()) / ("mkh-source-wave1-" +
+    hashlib.sha256(SNAPSHOT_GZ.read_bytes()).hexdigest() + ".sqlite")
 TABLES = (
     "mkh_sources", "mkh_datasets", "mkh_ingestion_runs",
     "mkh_source_releases", "mkh_geo_units", "mkh_geo_names",
@@ -37,14 +39,23 @@ def _fold(value):
 
 
 def snapshot_path():
-    if SNAPSHOT.exists() and SNAPSHOT.stat().st_mtime >= SNAPSHOT_GZ.stat().st_mtime:
+    if SNAPSHOT.exists():
         return SNAPSHOT
     with _lock:
-        if not SNAPSHOT.exists() or SNAPSHOT.stat().st_mtime < SNAPSHOT_GZ.stat().st_mtime:
-            temporary = SNAPSHOT.with_suffix(".part")
-            with gzip.open(SNAPSHOT_GZ, "rb") as source, temporary.open("wb") as target:
-                shutil.copyfileobj(source, target)
-            os.replace(temporary, SNAPSHOT)
+        if not SNAPSHOT.exists():
+            # Separate processes have separate locks. A unique temporary file
+            # prevents one worker from renaming another worker's partial output.
+            temporary = None
+            try:
+                with tempfile.NamedTemporaryFile(dir=SNAPSHOT.parent,
+                        prefix=SNAPSHOT.name + '.', suffix='.part', delete=False) as target:
+                    temporary = Path(target.name)
+                    with gzip.open(SNAPSHOT_GZ, "rb") as source:
+                        shutil.copyfileobj(source, target)
+                os.replace(temporary, SNAPSHOT)
+            finally:
+                if temporary is not None:
+                    temporary.unlink(missing_ok=True)
     return SNAPSHOT
 
 

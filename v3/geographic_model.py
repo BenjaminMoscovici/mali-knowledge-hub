@@ -228,7 +228,7 @@ class GeographyModel:
                 'method': 'Exact normalized name phrases, level and named parents within this release; no fuzzy or cross-version identity inference'}
             ev[0]['content'] = json.dumps(basis, ensure_ascii=False)
             answer = ("Je n’ai pas pu résoudre le lieu demandé dans le référentiel sélectionné. Précisez le nom, le niveau et le parent. [E01] " if fr else
-                "I could not resolve the requested place in the selected reference. Please specify the name, level and parent. [E01] ") + "\n\n" + caveat
+                "No exact match was resolved: I could not resolve the requested place in the selected reference. Please specify the name, level and parent. [E01] ") + "\n\n" + caveat
         else:
             ids = []
             lines = []

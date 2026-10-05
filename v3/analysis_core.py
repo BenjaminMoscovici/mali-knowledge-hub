@@ -2856,6 +2856,30 @@ in a different language; translate faithfully while retaining citations.
 
     identified_answer = preserve_project_identifiers(response.output_text, synthesis_ledger, question)
     answer, prompt_citation_audit = verify_citations(identified_answer, synthesis_ledger)
+    context_audit['citation_repair_attempted'] = False
+    if not prompt_citation_audit['valid'] and prompt_citation_audit['invalid_ids']:
+        # One bounded regeneration only when every missing citation belongs to
+        # freshly retrieved evidence omitted by prompt selection. Invented IDs
+        # cannot acquire evidence, and no citation is silently reassigned.
+        available = {item['evidence_id']: item for item in ledger}
+        missing = prompt_citation_audit['invalid_ids']
+        if all(eid in available for eid in missing):
+            context_audit['initial_citation_audit'] = prompt_citation_audit
+            synthesis_ledger = synthesis_ledger + [available[eid] for eid in missing]
+            repair_text = serialize_synthesis(synthesis_ledger, question=question)
+            repair_prompt = user_prompt.replace(evidence_text, repair_text)
+            repair_prompt += '\nRegenerate from this updated ledger. Cite only explicitly supplied evidence IDs. Preserve every scope, period, financial stage and original currency.\n'
+            context_audit.update(citation_repair_attempted=True,
+                citation_repair_added_ids=list(missing), repair_prompt_chars=len(repair_prompt),
+                initial_omitted_ids=list(context_audit.get('omitted_ids', [])),
+                omitted_ids=[eid for eid in context_audit.get('omitted_ids', []) if eid not in missing],
+                synthesis_items=len(synthesis_ledger))
+            PHASE.set('synthesis_citation_repair')
+            response = openai_client.responses.create(model=model, reasoning={'effort':'none'},
+                max_output_tokens=configuration['max_output_tokens'],
+                instructions=system_prompt, input=repair_prompt)
+            identified_answer = preserve_project_identifiers(response.output_text, synthesis_ledger, question)
+            answer, prompt_citation_audit = verify_citations(identified_answer, synthesis_ledger)
     context_audit['money_integrity'] = validate_money(answer, synthesis_ledger)
     if not prompt_citation_audit["valid"]:
         answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."

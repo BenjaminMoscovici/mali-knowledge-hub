@@ -209,3 +209,15 @@ def test_ending_example_index_uses_only_supplied_project_ids():
     assert 'partial list' in note and 'not independent evidence' in note
     assert availability_note(items,'Compare food-security needs')==''
     assert availability_note(items[1:],'Which interventions are ending?')==''
+
+
+def test_dated_index_covers_every_supplied_record_for_relative_window_questions():
+    rows=[row(f'E{i+9:02d}',source_type='fongim_structured',section='Project-ID relationship',
+        content=f'FONGIM project ID {i}: Name {i}. Status: En cours; start/end dates: 2024-01-01 / {end}; recorded sectors: Nutrition.')
+        for i,end in enumerate(['2026-11-30','2026-12-31','2027-01-01','2027-01-01','2027-01-01','2027-01-01'],1)]
+    note=availability_note(rows,'Which individually dated FONGIM project examples fall in the next 180 days?')
+    for r in rows:
+        assert '['+r['evidence_id']+']' in note
+    assert note.count('; reported end')==6 and 'EVERY' in note
+    assert availability_note(rows,'Which organisations are present?')==''
+    assert 'do not impose an ending window' in availability_note(rows,'Which of those projects are still active?')
