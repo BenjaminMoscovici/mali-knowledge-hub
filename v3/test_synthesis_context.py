@@ -92,6 +92,16 @@ def test_explicit_join_removes_only_planning_pass():
     assert explicit_source_plan('What explains changing local conditions?') is None
 
 
+def test_bounded_packaged_queries_skip_unrelated_live_retrieval():
+    empty = {'government_docs':False,'hnrp_docs':False,'hapi':False,'fongim':False}
+    assert explicit_source_plan('Quels stocks de personnes déplacées internes sont documentés pour Mopti et Socoura dans le DTM de septembre 2025 ?') == empty
+    assert explicit_source_plan('What does the ECHO HIP 2026 Mali indicative allocation establish, including its components, and what does it not show?') == empty
+    assert explicit_source_plan('Compare DTM stocks in Mopti and Socoura') == empty
+    assert explicit_source_plan('Does DTM displacement establish humanitarian coverage?') is None
+    assert explicit_source_plan('Compare ECHO HIP funding with national priorities') is None
+    assert explicit_source_plan('Compare DTM with HNRP humanitarian needs') != empty
+
+
 def test_packaged_cache_copy_isolation_bound_and_expiry(tmp_path,monkeypatch):
     import evidence_cache
     path=tmp_path/'snapshot';path.write_text('release')

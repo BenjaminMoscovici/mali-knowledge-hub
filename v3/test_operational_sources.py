@@ -43,6 +43,18 @@ def test_commune_query_does_not_inherit_regional_records():
     assert all('source_label_only_no_approved_commune_crosswalk' in r['content'] for r in rows)
 
 
+def test_compared_dtm_localities_both_survive_without_a_regional_total():
+    rows = retrieve_operational_evidence(
+        'Quels stocks de personnes déplacées internes sont documentés pour Mopti et Socoura dans le DTM de septembre 2025 ?')
+    displaced = [r for r in rows if 'category internally_displaced,' in r['content']]
+    assert {r['geographic_scope'] for r in displaced} == {
+        'Mopti > Mopti > Mopti', 'Mopti > Mopti > Socoura'}
+    assert any('13,582 people' in r['content'] for r in displaced)
+    assert any('13,002 people' in r['content'] for r in displaced)
+    assert all(r['record_id'] and r['locator'] and 'not a region/cercle total' in r['content']
+               for r in displaced)
+
+
 def test_unrelated_query_is_not_polluted():
     assert retrieve_operational_evidence('What colour is the logo?') == []
 
@@ -71,3 +83,8 @@ def test_release_count_conflict_never_activates_pointer(monkeypatch):
         publish_operational_snapshot({'tables':{},'records':[{'release_id':'test'},{'release_id':'test'}],
                                       'releases':{'test-dataset':'test'}})
     assert session.patches==[]
+def test_compared_ambiguous_place_names_do_not_silently_become_communes():
+    from operational_sources import _scope, _displacement_scope, package
+    records=[r for r in package()['records'] if r['source_type']=='displacement_stock']
+    for query in ['Compare DTM stocks in Mopti and Gao regions', 'Compare DTM stocks in Mopti and Gao']:
+        assert _displacement_scope(query,records) == _scope(query,records)

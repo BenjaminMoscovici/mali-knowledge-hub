@@ -43,6 +43,17 @@ def explicit_source_plan(question):
     selected = {family: any(re.search(pattern, q) for pattern in patterns)
                 for family, patterns in markers.items()}
     if not any(selected.values()):
+        # These families are read independently by the packaged retrievers.
+        # A bounded question about their own records needs neither a model
+        # planner nor unrelated live HAPI/document searches. Broad joins still
+        # fall through to the planner; this rule never supplies an answer.
+        packaged = re.search(r"\b(?:dtm|echo hip)\b", q)
+        wider = re.search(
+            r"\b(?:needs?|besoins?|priorit\w*|strateg\w*|actors?|acteurs?|"
+            r"projects?|projets?|fongim|hnrp|hapi|government|gouvernement|"
+            r"national|coverage|couverture|alignment|alignement|nexus)\b", q)
+        if packaged and not wider:
+            return selected
         return None
     # A needs × intervention question requires actual needs evidence, even if
     # the user names only FONGIM. It is not answerable from project presence.

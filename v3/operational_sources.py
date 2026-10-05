@@ -42,6 +42,27 @@ def _scope(question, records):
     return selected, f"Source-reported {level}: {raw}", level
 
 
+def _displacement_scope(question, records):
+    """Keep every explicitly compared source locality, never invent a total."""
+    folded = _fold(question)
+    if re.search(r"\b(and|et|versus|vs|compare|comparer)\b", folded):
+        labels = {_fold(r['payload']['geography'].get('commune'))
+                  for r in records}
+        requested = {name for name in labels if len(name) > 2 and
+                     re.search(r"(?:^| )" + re.escape(name) + r"(?: |$)", folded)}
+        higher_labels = {_fold(r['payload']['geography'].get(level))
+                         for r in records for level in ('region', 'cercle')}
+        explicit_local = bool(re.search(r'\b(communes?|localit\w*)\b', folded))
+        explicit_higher = bool(re.search(r'\b(regions?|regional|cercles?)\b', folded))
+        if len(requested) >= 2 and not explicit_higher and (explicit_local or requested - higher_labels):
+            selected = [r for r in records
+                        if _fold(r['payload']['geography'].get('commune')) in requested]
+            # These are labels in a commune-level source. A name shared with a
+            # region/cercle does not turn its observation into a higher total.
+            return selected, 'Requested source commune labels; no region/cercle aggregate', 'commune'
+    return _scope(question, records)
+
+
 def _locator(rows):
     grouped = {}
     for row in rows:
@@ -127,7 +148,7 @@ def retrieve_operational_evidence(question, limit=10):
             evidence.append(_evidence(source_rows[:1], scope, "The selected source labels/sector filter have no matching rows in OCHA Q1 2026. This is absence of records in this release, not evidence of absence of actors, activities or services.", "OCHA 3W — retrieval limitation"))
     if displacement:
         rows = [r for r in package()["records"] if r["source_type"] == "displacement_stock"]
-        selected, scope, level = _scope(question, rows)
+        selected, scope, level = _displacement_scope(question, rows)
         categories = ["internally_displaced", "returned_idps", "repatriated_persons"]
         if re.search(r"\b(return\w*|retour\w*)\b", folded) and not re.search(r"\b(displace\w*|deplace\w*)\b", folded):
             categories = ["returned_idps", "repatriated_persons"]
