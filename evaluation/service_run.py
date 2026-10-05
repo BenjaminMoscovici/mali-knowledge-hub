@@ -93,7 +93,8 @@ def archive(directory, secrets):
     allowed_files = {'run_manifest.json', 'scorecard.json', 'oracle.json', 'milestone.json',
                      'web_verification.json', 'calibration_samples.json', 'publisher_ratings.csv',
                      'calibration_result.json', 'capture_interruptions.json',
-                     'failure_telemetry.json', 'paired_comparison.json'}
+                     'failure_telemetry.json', 'paired_comparison.json', 'publication_equivalence.json',
+                     'conversation_quality.json', 'conversation_scorecard.json'}
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as zipped:
         for path in sorted(directory.rglob('*')):
             if not path.is_file() or path.is_symlink():
@@ -184,7 +185,7 @@ def run_from_environment():
         existing = {x.get('name') for x in storage.list(prefix)}
         progress = sorted((name[:-4] for name in existing
             if re.fullmatch(r'judged-\d{6}\.zip', name)), reverse=True)
-        for phase in progress + ['heldout-scored', 'rolling-scored', 'frozen-scored', 'conversations-captured', 'captured', 'rolling-captured', 'frozen-captured']:
+        for phase in progress + ['heldout-scored', 'rolling-scored', 'frozen-scored', 'conversations-judged', 'conversations-captured', 'captured', 'rolling-captured', 'frozen-captured']:
             if phase + '.zip' in existing:
                 data = storage.download(f'{prefix}/{phase}.zip')
                 with zipfile.ZipFile(io.BytesIO(data)) as zipped:
@@ -221,6 +222,19 @@ def run_from_environment():
             base=BASE,hub_commit=commit,ids=None,require_commit=True))
         checkpoint(storage,directory,prefix,'conversations-captured',secrets)
         public = provenance(directory / 'public-provenance') if not approved_project else None
+        from .conversation_judge import judge_conversations
+        last_conversation_checkpoint=0
+        def persist_conversation_progress(_value):
+            nonlocal last_conversation_checkpoint
+            count=sum(1 for path in directory.glob('*/judgments/*.json'))
+            if count>=last_conversation_checkpoint+5:
+                checkpoint(storage,directory,prefix,f'judged-{count:06d}',secrets)
+                last_conversation_checkpoint=count
+        conversation['independent_grounding']=judge_conversations(directory/'conversation',
+            settings['OPENAI_API_KEY'],approved_hub_project=approved_project,
+            public_provenance=str(public) if public else None,workers=2,
+            on_progress=persist_conversation_progress)
+        checkpoint(storage,directory,prefix,'conversations-judged',secrets)
         for split in splits:
             out = directory / split
             last_saved_count = sum(1 for path in directory.glob('*/judgments/*.json'))

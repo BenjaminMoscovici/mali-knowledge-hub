@@ -1,0 +1,9 @@
+results/**/raw/
+results/**/*.sqlite
+results/**/judge_receipts/
+results/**/judge_packets/
+__pycache__/
+*.partial
+*.secret*
+results/**/public-provenance*/
+giz_corpus_snapshot.json

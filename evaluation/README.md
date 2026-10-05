@@ -173,3 +173,10 @@ after a milestone to keep ordinary starts free of benchmark work. If source
 provenance, storage or judging fails, the worker logs only the error type and
 retains measurements already checkpointed; it never marks an incomplete suite
 qualified or hides failures by retrying them.
+
+The milestone also independently scores all 23 factual follow-ups with the pinned
+analytical judge, after latency capture. `conversation_quality.json` reports
+assessed/unassessable claims, unsupported-claim rate, citation entailment and
+separate evaluator cost. Prior assistant messages remain context, never evidence.
+The deterministic grounding proxy and professional radar formulas remain unchanged.
+Incomplete or failed conversation judgments cannot certify factual continuity.
