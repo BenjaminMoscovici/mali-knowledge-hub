@@ -64,6 +64,8 @@ DO $$ DECLARE affected integer; BEGIN
 END $$;
 RESET ROLE;
 SET LOCAL ROLE anon;
+SET LOCAL request.jwt.claim.sub = '';
+SET LOCAL request.jwt.claims = '{}';
 DO $$ BEGIN
  BEGIN
   IF EXISTS (SELECT 1 FROM public.mkh_user_messages WHERE conversation_id='b017f7e4-0990-4388-9d6c-45deaf80b103') THEN
