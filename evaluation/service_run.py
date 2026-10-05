@@ -38,6 +38,15 @@ def authorized(env):
     return True
 
 
+def approved_evidence_project(env):
+    scope=env.get('MKH_EVALUATION_EVIDENCE_SCOPE','public-provenance')
+    if scope=='public-provenance':
+        return None
+    if scope!='approved-anonymous-synthesis-v1' or not authorized(env):
+        raise ValueError('Normal Hub evidence requires an explicitly enabled, correctly scoped milestone')
+    return PROJECT
+
+
 def private_storage(client):
     buckets = client.storage.list_buckets()
     existing = next((b for b in buckets if b.id == BUCKET), None)
@@ -81,7 +90,10 @@ def archive(directory, secrets):
     directory = Path(directory); output = io.BytesIO()
     allowed_dirs = {'raw', 'judgments', 'judge_receipts', 'judge_packets',
                     'judge_errors', 'validation', 'release', 'public-provenance', 'exports'}
-    allowed_files = {'run_manifest.json', 'scorecard.json', 'oracle.json', 'milestone.json'}
+    allowed_files = {'run_manifest.json', 'scorecard.json', 'oracle.json', 'milestone.json',
+                     'web_verification.json', 'calibration_samples.json', 'publisher_ratings.csv',
+                     'calibration_result.json', 'capture_interruptions.json',
+                     'failure_telemetry.json', 'paired_comparison.json'}
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as zipped:
         for path in sorted(directory.rglob('*')):
             if not path.is_file() or path.is_symlink():
@@ -158,6 +170,7 @@ def run_from_environment():
             return
         verify_freeze()
         settings = config(); label = os.environ['MKH_EVALUATION_RUN']; commit = os.environ['RENDER_GIT_COMMIT']
+        approved_project=approved_evidence_project(os.environ)
         from supabase import create_client
         storage = private_storage(create_client(settings['SUPABASE_URL'], settings['SUPABASE_SECRET_KEY']))
         prefix = f'{commit}/{label}'
@@ -171,7 +184,7 @@ def run_from_environment():
         existing = {x.get('name') for x in storage.list(prefix)}
         progress = sorted((name[:-4] for name in existing
             if re.fullmatch(r'judged-\d{6}\.zip', name)), reverse=True)
-        for phase in progress + ['heldout-scored', 'rolling-scored', 'frozen-scored', 'captured', 'rolling-captured', 'frozen-captured']:
+        for phase in progress + ['heldout-scored', 'rolling-scored', 'frozen-scored', 'conversations-captured', 'captured', 'rolling-captured', 'frozen-captured']:
             if phase + '.zip' in existing:
                 data = storage.download(f'{prefix}/{phase}.zip')
                 with zipfile.ZipFile(io.BytesIO(data)) as zipped:
@@ -203,7 +216,11 @@ def run_from_environment():
             if split != 'heldout':
                 checkpoint(storage, directory, prefix, split + '-captured', secrets)
         checkpoint(storage, directory, prefix, 'captured', secrets)
-        public = provenance(directory / 'public-provenance')
+        from .conversations import run as run_conversations
+        conversation=run_conversations(SimpleNamespace(output=str(directory/'conversation'),
+            base=BASE,hub_commit=commit,ids=None,require_commit=True))
+        checkpoint(storage,directory,prefix,'conversations-captured',secrets)
+        public = provenance(directory / 'public-provenance') if not approved_project else None
         for split in splits:
             out = directory / split
             last_saved_count = sum(1 for path in directory.glob('*/judgments/*.json'))
@@ -215,11 +232,13 @@ def run_from_environment():
                     last_saved_count = count
             print(json.dumps({'event':'MKH_BENCHMARK_PHASE', 'split':split, 'phase':'judging'}),flush=True)
             judge_run(out, split, settings['OPENAI_API_KEY'], workers=2,
-                acceptance=split == 'heldout', public_provenance=str(public), on_progress=persist_progress)
+                acceptance=split == 'heldout', public_provenance=str(public) if public else None,
+                approved_hub_project=approved_project,on_progress=persist_progress)
             count = sum(1 for path in directory.glob('*/judgments/*.json'))
             checkpoint(storage, directory, prefix, f'judged-{count:06d}', secrets)
             print(json.dumps({'event':'MKH_BENCHMARK_PHASE', 'split':split, 'phase':'scoring'}),flush=True)
-            card = summarize(out, split, oracle, acceptance=split == 'heldout', label='Current candidate')
+            card = summarize(out, split, oracle, acceptance=split == 'heldout',
+                conversation=conversation,label='Current candidate')
             export_aggregates(out, card)
             checkpoint(storage, directory, prefix, split + '-scored', secrets)
         checkpoint(storage, directory, prefix, 'complete', secrets)

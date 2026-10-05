@@ -220,7 +220,7 @@ def gates(scorecard, live=None):
     fact = scorecard.get('deterministic_metrics', {}).get('factual_grounding', {})
     result['factual_grounding_checks'] = {'status': 'FAIL' if fact.get('fail', 0) else ('MEASURED' if fact.get('value') is not None else 'UNKNOWN'), 'value': fact.get('value'), 'failures': fact.get('fail')}
     prereqs = scorecard.get('release_prerequisites', {})
-    for key in ['privacy_audit_pass', 'human_calibrated', 'heldout_qualified', 'live_smoke_pass', 'target_improvement_verified']:
+    for key in ['privacy_audit_pass', 'human_calibrated', 'calibration_samples_exported', 'heldout_qualified', 'live_smoke_pass', 'target_improvement_verified']:
         value = prereqs.get(key)
         result[key] = {'status': 'PASS' if value is True else ('NOT_ESTABLISHED' if value is False else 'UNKNOWN'), 'value': value}
     return result

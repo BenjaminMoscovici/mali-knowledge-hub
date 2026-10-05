@@ -7,6 +7,15 @@ formulas, missing-data policy and release artifacts. Use `--live-run`,
 Historical measurements are overlaid only when benchmark and evaluator
 configurations match. The radar never changes protected gates or release acceptance.
 
+The opt-in GIZ V4 test milestone worker captures frozen, rolling, held-out and
+all 24 conversation sequences before independent judging. Its default evidence
+scope remains verified public provenance. After explicit authorization to send
+the anonymous Hub's necessary synthesis evidence to OpenAI, set
+`MKH_EVALUATION_EVIDENCE_SCOPE=approved-anonymous-synthesis-v1` for the named
+milestone. The worker rejects any other service/project or private-history scope.
+Every conversation turn must match the expected deployed commit. Calibration,
+web-verification and failed-attempt receipts remain in the private checkpoint.
+
 This package is separate from the production answer pipeline. It evaluates the existing V4
 guest API backed by the GIZ project `hofoubbmepacdljeablj`. It does not change Hub prompts,
 retrieval, source ingestion, accounts, or deployments. No TGA/n8n component is used.
@@ -81,7 +90,10 @@ Scorecards include median/P90/P95/max latency and median/total cost by mode, inp
 French language/writing results, evidence distribution, failures and judge findings. Quantiles
 use linear interpolation. Protected metrics reject any measured regression for this sprint; missing
 protected evidence cannot pass. Release acceptance additionally requires held-out qualification,
-live smoke, privacy audit, human calibration and measured target improvement. A baseline
+live smoke, privacy audit, an exported ten-answer human-review pack and measured target improvement. Human
+calibration remains an explicit provisional-status field until real Publisher ratings arrive;
+ToR §19 does not require recurring Publisher approval for normal development decisions.
+A baseline
 scorecard alone is not release acceptance. Configuration comparisons can use the same runner
 against another isolated candidate URL, preserving the same benchmark and repetitions.
 

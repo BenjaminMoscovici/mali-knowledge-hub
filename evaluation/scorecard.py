@@ -87,6 +87,7 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
   'french':{'judged_attempts':len(french),'language_correct_fraction':sum(j['result']['language_correct'] for j in french)/len(french) if french else None,
    'writing_mean':statistics.mean(j['result']['scores']['writing_quality'] for j in french if j['result']['scores']['writing_quality'] is not None) if french else None},
   'by_mode':modes,'hub_estimated_cost_usd':sum(r['telemetry'].get('estimated_usd') or 0 for r in records),
+  'hub_cost_is_lower_bound':any(not r['ok'] or r['telemetry'].get('estimated_usd') is None or r['telemetry'].get('unpriced_calls') for r in records),
   'evaluator_estimated_cost_usd':sum(j['receipt'].get('estimated_usd') or 0 for _,j in judges),
   'telemetry_missing':dict(Counter(k for r in records for k in r['telemetry']['telemetry_missing'])),
   'limitations':['Success-only server latency has an explicitly reported availability denominator; all attempted client times are retained.',
@@ -96,6 +97,11 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
    'Analytical scores and atomic claim labels need human calibration; privacy cross-user testing is a separate live prerequisite.',
    'Reported costs use actual provider tokens and application meter; not invoices. Failure cost can remain unknown.'],
   'coverage_adjustments':coverage_adjustments,'findings':findings}
+ from .calibration import export, SAMPLES
+ review_ready=all((out/'raw'/f'{cid}--0.json').exists() and (out/'judgments'/f'{cid}--0.json').exists() for cid in SAMPLES)
+ if split=='frozen' and review_ready:export(out)
+ result['release_prerequisites']={'calibration_samples_exported':bool(split=='frozen' and review_ready),
+   'human_calibrated':None}
  write_json(out/'scorecard.json',result)
  # Every benchmark scorecard emits the six release-summary artifacts. The
  # radar reads the scorecard; it cannot change quality metrics or acceptance.
@@ -103,7 +109,10 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
  generate(out,label=label,live=live_run,conversation=conversation)
  return result
 
-PROTECTED={'currency_preservation':('deterministic_metrics','currency_preservation','value'),
+PROTECTED={'factual_checks':('deterministic_metrics','factual_grounding','value'),
+ 'geographic_checks':('deterministic_metrics','geographic_discipline','value'),
+ 'temporal_checks':('deterministic_metrics','temporal_discipline','value'),
+ 'currency_preservation':('deterministic_metrics','currency_preservation','value'),
  'citation_validity':('deterministic_metrics','citation_validity','value'),
  'geography':('analytical_dimensions','geographic_discipline','acceptable_fraction'),
  'evidence_gap':('analytical_dimensions','evidence_gap_handling','acceptable_fraction'),
@@ -111,6 +120,8 @@ PROTECTED={'currency_preservation':('deterministic_metrics','currency_preservati
  'claim_coverage':('claim_assessment_coverage','value')}
 def compare(live,candidate,tolerance=0):
  changes={};reasons=[]
+ if live['run_manifest'].get('measurement_protocol','guest-api-v1')!=candidate['run_manifest'].get('measurement_protocol','guest-api-v1'):
+  reasons.append('Measurement protocols differ; latency and cost require a paired run')
  if live['run_manifest']['benchmark_manifest_sha256']!=candidate['run_manifest']['benchmark_manifest_sha256']:
   reasons.append('Benchmark hashes differ; not a valid regression comparison')
  if not live.get('evaluator_configuration') or live.get('evaluator_configuration')!=candidate.get('evaluator_configuration'):
@@ -133,13 +144,27 @@ def compare(live,candidate,tolerance=0):
   changes[name]={'live':a,'candidate':b,'regression':loss}
   if loss is None:reasons.append(name+' not measured')
   elif loss>tolerance+1e-12:reasons.append(name+' regressed beyond the protected tolerance')
+ def deterministic_failures(card):
+  protected={'factual_grounding','geographic_discipline','temporal_discipline','citation_validity','currency_preservation'}
+  return {(f['case_id'],f.get('rep',0),f['finding']['id']) for f in card.get('findings',[])
+          if f.get('kind')=='deterministic' and f['finding'].get('status')=='fail'
+          and f['finding'].get('dimension') in protected}
+ new_failures=sorted(deterministic_failures(candidate)-deterministic_failures(live))
+ if new_failures:reasons.append('New protected deterministic failures: '+str(new_failures))
  if candidate['composition']['unique_cases']!=candidate['composition']['expected_unique_cases']:reasons.append('Incomplete candidate frozen suite')
  if candidate['judged_attempts']<candidate['availability']['successes']:reasons.append('Incomplete analytical judging')
  if candidate['availability']['failures']:reasons.append('Candidate request failures require review')
  # Acceptance requires attached held-out, smoke and privacy evidence, never inferred from soft scores.
- for required in ['heldout_qualified','live_smoke_pass','privacy_audit_pass','human_calibrated','target_improvement_verified']:
+ # ToR §19 requires a representative human-review pack at milestones, not
+ # recurring Publisher authorization for normal candidate decisions. The
+ # actual calibration status stays explicit; never infer human ratings.
+ for required in ['heldout_qualified','live_smoke_pass','privacy_audit_pass','calibration_samples_exported','target_improvement_verified']:
   if candidate.get('release_prerequisites',{}).get(required) is not True:reasons.append(required+' not established')
- return {'decision':'REJECT_OR_EXPERIMENTAL' if reasons else 'ACCEPT','protected_tolerance':tolerance,'changes':changes,'reasons':reasons,'soft_comparison':{'live_by_mode':live['by_mode'],'candidate_by_mode':candidate['by_mode']}}
+ return {'decision':'REJECT_OR_EXPERIMENTAL' if reasons else 'ACCEPT','protected_tolerance':tolerance,'changes':changes,'reasons':reasons,
+  'human_calibration_status':candidate.get('release_prerequisites',{}).get('human_calibrated'),
+  'new_protected_deterministic_failures':new_failures,
+  'evaluation_caveat':'Independent analytical ratings remain provisional until real human calibration; review disagreements without inventing ratings.',
+  'soft_comparison':{'live_by_mode':live['by_mode'],'candidate_by_mode':candidate['by_mode']}}
 
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--run');p.add_argument('--split',default='frozen');p.add_argument('--oracle');p.add_argument('--acceptance',action='store_true');p.add_argument('--live');p.add_argument('--candidate');p.add_argument('--output');p.add_argument('--live-run');p.add_argument('--conversation');p.add_argument('--label',default='Current candidate');a=p.parse_args()

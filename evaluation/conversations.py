@@ -4,7 +4,7 @@ import json
 import re
 from pathlib import Path
 from .common import digest, now, write_json
-from .runner import request_case, capture_telemetry
+from .runner import request_case, capture_telemetry, deployed_commit_matches
 from .scorecard import distribution
 from .validators import contains_number
 from .conversation_integrity import VERSION, validate_context, intent_matches
@@ -45,6 +45,8 @@ def run(args):
                 write_json(path, record)
                 print(json.dumps({'sequence': sequence['id'], 'turn': index, 'ok': record['ok'],
                                   'seconds': record['telemetry']['server_seconds']}), flush=True)
+            if record['ok'] and not deployed_commit_matches(record,args.hub_commit,getattr(args,'require_commit',False)):
+                raise ValueError('Conversation turn belongs to a different or unverified deployment; immutable attempt retained')
             if not record['ok']:
                 break  # A failed sequence is retained, never replaced or continued on fake context.
             response = record['response']
