@@ -1,5 +1,21 @@
 import io
 import json
+
+
+def test_aggregate_export_never_includes_evaluator_quotations(tmp_path):
+    from unittest.mock import patch
+    from evaluation.service_run import export_aggregates
+    quote='Synthetic anonymous answer quotation must remain in the private receipt'
+    card={'split':'frozen','findings':[], 'judge_quote_integrity':{
+        'version':'judge-quote-integrity-1.0','checked_quotes':2,'nonliteral_quotes':1,
+        'score_override':False,'flags':[{'returned_quote':quote}]}}
+    with patch('evaluation.radar.inputs',return_value={}), patch(
+            'evaluation.professional_capability.professional_inputs',return_value={'coverage':{'criteria':{}}}):
+        export_aggregates(tmp_path,card)
+    exported=json.loads((tmp_path/'exports/aggregate.json').read_text())
+    assert quote not in json.dumps(exported)
+    assert exported['scorecard']['judge_quote_integrity']['nonliteral_quotes']==1
+    assert 'flags' not in exported['scorecard']['judge_quote_integrity']
 import tempfile
 import unittest
 import zipfile
