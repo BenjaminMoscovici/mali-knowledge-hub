@@ -1,8 +1,21 @@
 import unittest
-from evaluation.conversation_integrity import validate_context
+from evaluation.conversation_integrity import validate_context, intent_matches, project_ids
 
 
 class ContextIntegrityTests(unittest.TestCase):
+    def test_labelled_table_ids_and_prose_preserve_subset(self):
+        answer = 'Project 715 remains active.\n| Project ID | Status | End date |\n|---|---|---|\n| 715 | Active | 2027 |\n| 461 | Closed | 2025 |\n'
+        self.assertEqual(project_ids(answer), {'715', '461'})
+        self.assertEqual(project_ids('| Year | Amount |\n|---|---|\n| 2025 | 715 |'), set())
+        sequence = {'turns': ['Which projects?', 'Which of those are still active?']}
+        self.assertEqual(validate_context(sequence, 1, 'ID 715 and ID 461', answer)[0]['status'], 'pass')
+        self.assertEqual(validate_context(sequence, 1, 'ID 715', answer)[0]['status'], 'fail')
+
+    def test_equivalent_french_sex_term_without_female_substring_match(self):
+        self.assertTrue(intent_matches('hommes|male', 'Population masculine de Gao'))
+        self.assertTrue(intent_matches('hommes|male', 'Male population of Gao'))
+        self.assertFalse(intent_matches('hommes|male', 'Female population of Gao'))
+
     def test_retrieval_of_unrelated_projects_cannot_pass_subset(self):
         sequence = {'turns': ['Which projects?', 'Which of those are still active?']}
         result = validate_context(sequence, 1, 'AGRO (ID 715), KELEN (ID 461)',

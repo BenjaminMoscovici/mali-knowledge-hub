@@ -10,6 +10,16 @@ from evaluation.validators import contains_number,validate
 from evaluation.scorecard import percentile,compare
 
 class FrameworkTests(unittest.TestCase):
+ def test_approved_hub_evidence_scope_excludes_oracle_and_requires_correct_project(self):
+  from evaluation.public_packets import approved_hub_packet
+  record={'request_payload':{},'response':{'saved':False,'evidence':[{'evidence_id':'E01','source_family':'Government docs','content':'Required retrieved excerpt','publication_date':'2024-12-01','independent_giz_source_chunk':'UNRELATED ORACLE'}]}}
+  p=approved_hub_packet({'answer':'Synthetic answer','evidence':[]},record,'https://hofoubbmepacdljeablj.supabase.co')
+  self.assertIn('Required retrieved excerpt',json.dumps(p));self.assertNotIn('UNRELATED ORACLE',json.dumps(p))
+  self.assertEqual(p['evidence'][0]['publication_date'],'2024-12-01')
+  with self.assertRaises(ValueError):approved_hub_packet({},record,'https://other.supabase.co')
+  record['response']['saved']=True
+  with self.assertRaises(ValueError):approved_hub_packet({},record,'https://hofoubbmepacdljeablj.supabase.co')
+
  def test_frozen_composition_and_legacy_preservation(self):
   cases=load_cases('frozen');self.assertEqual(len(cases),75)
   self.assertEqual(sum(c['language']=='fr' for c in cases),22)
