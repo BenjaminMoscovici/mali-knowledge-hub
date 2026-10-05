@@ -1,0 +1,6 @@
+{
+  "version": "mkh-professional-capability-2.1",
+  "frozen_at": "2026-10-05T19:18:57.158208+00:00",
+  "requirements_sha256": "ccbea2a234e21d41b7a73b454b4926d6c2bf6629ac0286af8fe7f07e961dab92",
+  "purpose": "Label clarification only: evidence radar capability combines correctness, coverage and availability; protected factual correctness is unchanged. Numerical formulas unchanged from 2.0."
+}

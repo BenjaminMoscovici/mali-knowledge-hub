@@ -1,0 +1,744 @@
+{
+  "version": "mkh-professional-capability-2.0",
+  "purpose": "Overall demonstrated professional capability; 100 means mature, reliable analytical assistance across all fixed evidence layers.",
+  "layers": [
+    "needs",
+    "priorities",
+    "actors",
+    "interventions",
+    "delivery",
+    "funding",
+    "timelines",
+    "results",
+    "learning",
+    "geography"
+  ],
+  "coverage_definition": "Each layer has two equally weighted observable requirements. Layer coverage is demonstrated requirements / 2; axis coverage is equal-weight mean of its fixed layers. NOT_DEMONSTRATED is a measured lower-bound exclusion, not proof of absent evidence. Unmeasured inventory or required quality is unavailable.",
+  "evidence_requirements": [
+    {
+      "id": "needs.observations",
+      "layer": "needs",
+      "definition": "Attributed period-specific displacement and food-security quantities with units, geography and method.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "displacement_stock",
+              "food_security_classification"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "reference_start",
+            "reference_end",
+            "payload.geography",
+            "payload.methodology",
+            "payload.unit"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "needs.current_multisector",
+      "layer": "needs",
+      "definition": "Current assessment covering at least two needs sectors with dated local quantitative observations and representativeness.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "needs_assessment"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "reference_start",
+            "reference_end",
+            "payload.sector",
+            "payload.geography.commune",
+            "payload.methodology",
+            "payload.representativeness",
+            "payload.current_observation"
+          ],
+          "numeric": [
+            "payload.value"
+          ]
+        }
+      ],
+      "distinct_by": "payload.sector",
+      "minimum_distinct": 2
+    },
+    {
+      "id": "priorities.national",
+      "layer": "priorities",
+      "definition": "Versioned national strategy excerpts with a page and dated validity.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "knowledge_base_document"
+            ],
+            "source_family": [
+              "Government strategies"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.document_title",
+            "payload.content",
+            "version",
+            "reference_end"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "priorities.local",
+      "layer": "priorities",
+      "definition": "Local priority or PDSEC evidence with approved administrative identifiers, actions, time period and source page.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "local_priority",
+              "pdsec_priority"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "reference_start",
+            "reference_end",
+            "payload.geo_unit_id",
+            "payload.priority",
+            "payload.action"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "actors.presence",
+      "layer": "actors",
+      "definition": "Attributable organizations and sectors at a source-reported local place; presence remains distinct from delivery.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "operational_presence"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.organization",
+            "payload.sector",
+            "payload.geography.commune",
+            "reference_end"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "actors.delivery_links",
+      "layer": "actors",
+      "definition": "At least two implementers linked by verified IDs to dated local delivery observations.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "delivery_observation"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.organization_id",
+            "payload.project_id",
+            "payload.geo_unit_id",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.reached"
+          ]
+        }
+      ],
+      "distinct_by": "payload.organization_id",
+      "minimum_distinct": 2
+    },
+    {
+      "id": "interventions.profiles",
+      "layer": "interventions",
+      "definition": "Dated source project identifiers, titles and reported lifecycle status.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "development_project"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.title",
+            "payload.status",
+            "payload.board_date_reported"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "interventions.local_activities",
+      "layer": "interventions",
+      "definition": "Dated actual activities linked to projects and approved local geography, with source stage explicit.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "implemented_activity"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.activity",
+            "payload.geo_unit_id",
+            "payload.delivery_status",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "delivery.reach",
+      "layer": "delivery",
+      "definition": "Verified local people/services reached, with unit, period, actor and project ID; targets alone do not count.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "delivery_observation"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.organization_id",
+            "payload.geo_unit_id",
+            "payload.unit",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.reached"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delivery.coverage",
+      "layer": "delivery",
+      "definition": "Comparable target, reach and needs denominators at the same geography and period with overlap handling.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "delivery_coverage"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.geo_unit_id",
+            "payload.project_id",
+            "payload.unit",
+            "payload.denominator_definition",
+            "payload.overlap_method",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.targeted",
+            "payload.reached",
+            "payload.needs_denominator"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "funding.aggregate",
+      "layer": "funding",
+      "definition": "Source-defined funding and requirements in explicit currency, period and plan.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "funding_aggregate"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.currency",
+            "payload.funding_definition",
+            "payload.plan_id",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.funding",
+            "payload.requirements"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "funding.transactions",
+      "layer": "funding",
+      "definition": "Verified project-level financial transactions with amount, currency, date, stage and recipient.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "funding_transaction"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.currency",
+            "payload.transaction_date",
+            "payload.financial_stage",
+            "payload.recipient_id"
+          ],
+          "numeric": [
+            "payload.amount"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "timelines.profiles",
+      "layer": "timelines",
+      "definition": "Dated project starts and ends with source status; planned dates are distinguished from actual delivery.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "aid_activity"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.start_date_reported",
+            "payload.end_date_reported",
+            "payload.status"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "timelines.delivery_stages",
+      "layer": "timelines",
+      "definition": "Actual implementation milestones and completion dates linked by ID to delivery and funding stages.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "implementation_milestone"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.actual_date",
+            "payload.stage",
+            "payload.delivery_record_id",
+            "payload.financial_record_id"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "results.observations",
+      "layer": "results",
+      "definition": "Observed quantitative results, indicator definition, measurement period and linked project.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "result_observation"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.indicator",
+            "payload.unit",
+            "payload.methodology",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.observed_value"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "results.comparable",
+      "layer": "results",
+      "definition": "Results with baseline/target/observed values and attribution or contribution limits at matched local scope.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "result_observation"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.indicator",
+            "payload.geo_unit_id",
+            "payload.attribution_limits",
+            "payload.unit",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": [
+            "payload.baseline",
+            "payload.target",
+            "payload.observed_value"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "learning.findings",
+      "layer": "learning",
+      "definition": "Traceable project evaluation findings with method and transferability limits.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "evaluation_finding"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.finding",
+            "payload.methodology",
+            "payload.transferability"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "learning.breadth",
+      "layer": "learning",
+      "definition": "Evaluated findings from at least two distinct projects, each with method and transferability limits.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "evaluation_finding"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.project_id",
+            "payload.finding",
+            "payload.methodology",
+            "payload.transferability"
+          ],
+          "numeric": []
+        }
+      ],
+      "distinct_by": "payload.project_id",
+      "minimum_distinct": 2
+    },
+    {
+      "id": "geography.versioned",
+      "layer": "geography",
+      "definition": "Captured versioned authoritative geography with source scope and original identifiers.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "official_geography_registry"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "version",
+            "payload.geographic_scope",
+            "payload.record_id"
+          ],
+          "numeric": []
+        }
+      ]
+    },
+    {
+      "id": "geography.approved_local_links",
+      "layer": "geography",
+      "definition": "Approved dated local crosswalks for at least two operational evidence families, not name-only matches.",
+      "selectors": [
+        {
+          "equals": {
+            "source_type": [
+              "approved_geographic_crosswalk"
+            ]
+          },
+          "required": [
+            "id",
+            "locator",
+            "payload.geo_unit_id",
+            "payload.source_record_id",
+            "payload.approval_method",
+            "payload.boundary_version",
+            "reference_start",
+            "reference_end"
+          ],
+          "numeric": []
+        }
+      ],
+      "distinct_by": "payload.source_family",
+      "minimum_distinct": 2
+    }
+  ],
+  "conversation_requirements": [
+    {
+      "id": "geography_metric",
+      "categories": [
+        "geography_metric",
+        "geography_path",
+        "administrative_level"
+      ]
+    },
+    {
+      "id": "sex_metric",
+      "categories": [
+        "sex_level",
+        "sex_geography"
+      ]
+    },
+    {
+      "id": "time",
+      "categories": [
+        "category_period",
+        "period_geography",
+        "period_change"
+      ]
+    },
+    {
+      "id": "entities",
+      "categories": [
+        "entity_pronoun",
+        "status_subset",
+        "status_dates"
+      ]
+    },
+    {
+      "id": "topic_continuity",
+      "categories": [
+        "topic_after_social_turn",
+        "topic_reset",
+        "needs_geography"
+      ]
+    },
+    {
+      "id": "false_premise",
+      "categories": [
+        "unverified_prior_claim"
+      ]
+    },
+    {
+      "id": "clarification",
+      "categories": [
+        "no_prior_place",
+        "multiple_places",
+        "ambiguous_metric",
+        "multiple_entities",
+        "sex_without_indicator"
+      ]
+    }
+  ],
+  "axes": {
+    "Evidence accuracy": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × mean(deterministic factual-grounding pass rate, min(citation-ID validity, claim citation entailment), 1 − unsupported-or-contradicted claim rate)",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Geographic intelligence": {
+      "layers": [
+        "geography"
+      ],
+      "quality_formula": "100 × mean(deterministic geographic-discipline pass rate, (mean judge geographic discipline − 1)/4)",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Source coverage": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × mean(required relevant source-family presence rate, (mean judge evidence completeness − 1)/4)",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Joined analysis": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × mean((joined-case mean cross-source synthesis − 1)/4, (joined-case mean inference discipline − 1)/4, (joined-case mean evidence-gap handling − 1)/4)",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Analytical usefulness": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × mean((mean decision usefulness − 1)/4, (mean evidence completeness − 1)/4, (mean writing quality − 1)/4, (mean inference discipline − 1)/4)",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Conversational ability": {
+      "layers": [],
+      "quality_formula": "100 × mean(follow-up correct-interpretation rate, 1 − unnecessary-clarification rate, follow-up factual-grounding proxy rate); requires every frozen sequence/turn to have been attempted",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Performance": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × [0.45 × min(1,5/complex median seconds) + 0.25 × min(1,15/complex P95 seconds) + 0.15 × explicit route-assertion pass rate + 0.15 × explicit zero-call-budget pass rate]",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    },
+    "Cost efficiency": {
+      "layers": [
+        "needs",
+        "priorities",
+        "actors",
+        "interventions",
+        "delivery",
+        "funding",
+        "timelines",
+        "results",
+        "learning",
+        "geography"
+      ],
+      "quality_formula": "100 × min(1, (normalized complex-query decision-usefulness points/90) × (0.003/complex median USD)); all complex success costs must be priced",
+      "formula": "quality_points × demonstrated_coverage_fraction × availability_fraction"
+    }
+  },
+  "latency_targets_seconds": {
+    "quick": 1.0,
+    "balanced": 8.0,
+    "deep": 15.0
+  },
+  "evidence_adjustment": "V1 quality × assessable material claims / all material claims, then multiply by coverage and availability. Missing important evidence lowers completeness and typed layer coverage. Historical sources count only in bounded basic requirements, not current operational readiness.",
+  "conversation_adjustment": "V1 quality × share of seven fixed conversational requirements demonstrated on every expected turn, including grounding proxy, then availability. Full original suite required; source facts must still be retrieved.",
+  "performance_adjustment": "Requires all six explicitly tagged cold/warm Quick/Balanced/Deep cohorts. Quality=100×mean(min(1, mode target / all-attempt client median) × cohort availability)×mean(route pass rate, zero-call pass rate). Then multiply by professional layer coverage and overall availability. Missing cache-state observations make this axis unavailable.",
+  "cost_adjustment": "Quality=min(V1 cost-efficiency points,V1 analytical usefulness points), then multiply by professional layer coverage and availability; unpriced complex usage is unavailable.",
+  "maturity_bands": [
+    [
+      0,
+      20,
+      "very limited / prototype"
+    ],
+    [
+      20,
+      40,
+      "basic"
+    ],
+    [
+      40,
+      60,
+      "useful but materially incomplete"
+    ],
+    [
+      60,
+      75,
+      "strong"
+    ],
+    [
+      75,
+      90,
+      "advanced"
+    ],
+    [
+      90,
+      100,
+      "near-mature professional capability"
+    ]
+  ],
+  "protected_gates": "Unchanged, separate, never averaged. No total radar score. Historical comparisons require identical formulas, requirements, suite and evaluators."
+}

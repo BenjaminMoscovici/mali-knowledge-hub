@@ -1,0 +1,6 @@
+{
+  "version": "mkh-professional-capability-2.0",
+  "frozen_at": "2026-10-05T18:14:01.091076+00:00",
+  "requirements_sha256": "1868aa3f1e8d57a0a9f326716776fba26f1a239df747dff2eb38d5f7e2649e6a",
+  "purpose": "Professional capability reporting calibration; original regression/acceptance benchmarks unchanged."
+}
