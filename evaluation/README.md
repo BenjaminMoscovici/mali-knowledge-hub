@@ -212,3 +212,6 @@ also requires an executed privacy-audit receipt from the correct GIZ project.
 Final `release_accepted` additionally requires a live smoke receipt bound to
 the exact candidate commit and V4 test URL. Missing receipts remain false.
 No receipt or human-calibration decision is invented by the framework.
+
+Question-answering and decision-usefulness means must also not regress in
+any split. Strong protected metrics cannot average away less useful answers.

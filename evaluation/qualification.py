@@ -19,7 +19,7 @@ def value(card,path):
 
 
 def qualify(baseline,candidate,base_conversation=None,conversation=None,base_grounding=None,grounding=None,privacy=None,live=None):
-    reasons=[];comparisons={};new_failures=[]
+    reasons=[];comparisons={};new_failures=[];quality_comparisons={}
     commits={c['run_manifest']['hub_commit'] for c in candidate.values()}
     if len(commits)!=1:reasons.append('Mixed candidate commits')
     commit=next(iter(commits)) if len(commits)==1 else None
@@ -53,6 +53,14 @@ def qualify(baseline,candidate,base_conversation=None,conversation=None,base_gro
         added=sorted(failures(b)-failures(a));new_failures.extend({'split':split,'attempt':x} for x in added)
         if added:reasons.append(split+': new protected deterministic failures')
         comparisons[split]=changes
+        quality={}
+        for name in ['decision_usefulness','question_answering']:
+            av=value(a,('analytical_dimensions',name,'mean'))
+            bv=value(b,('analytical_dimensions',name,'mean'))
+            loss=None if av is None or bv is None else av-bv
+            quality[name]={'baseline':av,'candidate':bv,'regression':loss}
+            if loss is None or loss>1e-12:reasons.append(split+': '+name+' unknown or regressed')
+        quality_comparisons[split]=quality
     conversation_checks={}
     if not base_conversation or not conversation:reasons.append('Complete paired conversation scorecards missing')
     else:
@@ -102,6 +110,7 @@ def qualify(baseline,candidate,base_conversation=None,conversation=None,base_gro
     return {'version':'whole-milestone-qualification-1.0','generated_at':now(),'hub_commit':commit,
             'quality_and_performance_pass':quality_pass,'quality_and_performance_reasons':reasons,
             'protected_tolerance':0,'protected_comparisons':comparisons,'new_protected_deterministic_failures':new_failures,
+            'analytical_quality_comparisons':quality_comparisons,
             'conversation_comparisons':conversation_checks,'material_improvement_targets':targets,
             'prerequisites':{'heldout_qualified':quality_pass,'calibration_samples_exported':pack,
                              'privacy_audit_pass':privacy_pass,'live_smoke_pass':live_pass,'human_calibrated':None},
