@@ -135,13 +135,10 @@ def prepare(ledger, question, depth='balanced'):
     for item in deduplicated:
         if item.get('source_type') == 'knowledge_base_document' and item['evidence_id'] not in doc_ids:
             omitted.append(item['evidence_id']); continue
-        # These are two transposes of the same project-ID relationship, not extra facts.
-        # Keep the sector orientation unless the question asks about actor breadth.
-        breadth = bool(re.search(r'breadth|divers|multi.sector|organisation.*sector|organization.*sector',fold(question)))
+        # Keep both actor/sector orientations. The measured joined benchmark
+        # referenced the discarded orientation and the citation guard withheld
+        # two answers. Exact deduplication and lossless serialization still apply.
         section = item.get('section')
-        if section in ('Organization-sector relationships', 'Sector-organization relationships'):
-            if section == ('Sector-organization relationships' if breadth else 'Organization-sector relationships'):
-                omitted.append(item['evidence_id']); continue
         view = dict(item)
         content = str(item.get('content') or '')
         if (item.get('source_type') == 'knowledge_base_document' and not exhaustive) or (section in ('Organization-sector relationships','Sector-organization relationships') and not exhaustive):
@@ -225,14 +222,17 @@ def serialize(ledger, audit=None, question=''):
             content += '\nIncludes the shared exact passages explicitly attributed to this evidence ID above.'
         blocks.append(f"[{item['evidence_id']}] SOURCE {sources[key]} " +
             json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + content)
-    text = ('Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims. '
+    allowed_ids = ', '.join('[' + item['evidence_id'] + ']' for item in ledger)
+    text = ('PERMITTED CITATION IDS (complete explicit list; gaps are intentional): ' + allowed_ids + '\n'
+        'Cite only these IDs. Never infer missing IDs from a numeric range. '
+        'Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims. '
         'Original URLs and record/chunk anchors are available through each evidence ID in the source panel. '
         'Lossless JSON packing: __mkh_table represents rows with shared_fields recursively merged into '
         'each row; __mkh_missing_fields lists fields originally null, never zero. All original '
         'observations, values, scope, periods and restrictions remain applicable.\n'+'\n\n'.join(blocks))
     if audit is not None:
         audit.update(structured_summary_ids=packed_ids, serialized_chars=len(text),
-                     shared_exact_passages=len(emitted), serialization_version='lossless-synthesis-1.0')
+                     shared_exact_passages=len(emitted), serialization_version='lossless-synthesis-1.1')
     return text
 
 

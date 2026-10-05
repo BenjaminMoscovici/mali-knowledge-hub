@@ -59,15 +59,30 @@ def test_document_selection_keeps_each_document_and_original_ids():
     assert not verify('Claim [E02]',[row('E01')])[1]['valid']
 
 
-def test_transposed_fongim_table_selected_and_excerpts_disclose_partial_roster():
+def test_fongim_orientations_retained_and_excerpts_disclose_partial_roster():
     rows=[row('E01',source_type='fongim_structured',section='Organization-sector relationships',content='Organization orientation.'),
         row('E02',source_type='fongim_structured',section='Sector-organization relationships',
             content='Counts are unique projects, not people reached. '+ '; '.join(f'Sector {i}: Actor {i} ({i} projects)' for i in range(150)))]
     selected,audit=prepare(rows,'Mopti food security actor presence')
-    assert audit['omitted_ids']==['E01']
-    assert len(selected[0]['content'])<len(rows[1]['content'])
-    assert 'not people reached' in selected[0]['content']
-    assert 'not a complete roster/table' in selected[0]['content']
+    assert audit['omitted_ids']==[]
+    assert [item['evidence_id'] for item in selected]==['E01','E02']
+    assert len(selected[1]['content'])<len(rows[1]['content'])
+    assert 'not people reached' in selected[1]['content']
+    assert 'not a complete roster/table' in selected[1]['content']
+
+
+def test_joined_citation_failures_keep_original_relationship_ids_and_guard():
+    rows=[row('E39'),row('E40',source_type='fongim_structured',section='Organization-sector relationships'),
+          row('E45',source_type='fongim_structured',section='Sector-organization relationships')]
+    original=[item.copy() for item in rows]
+    selected,audit=prepare(rows,'Join needs, national priorities and actors in Gao','deep')
+    assert rows==original
+    assert verify('Recorded relationships [E40, E45]',selected)[1]['valid']
+    assert not verify('Invented reference [E41]',selected)[1]['valid']
+    prompt=serialize(selected,audit)
+    header=prompt.split('\n',1)[0]
+    assert '[E40]' in header and '[E45]' in header and '[E41]' not in header
+    assert 'Never infer missing IDs from a numeric range' in prompt
 
 
 def test_explicit_join_removes_only_planning_pass():
