@@ -118,6 +118,12 @@ def resolve(question,messages):
     # "there" must not turn an already scoped lookup into clarification.
     if deictic and places(question):deictic=False
     pronoun=bool(re.search(r'\b(it|its|them|those|that|ses|son|sa|lesquels|lesquelles)\b',q))
+    current=describe(question)
+    explicit_scope=bool(current['geography'] or current['source_families'] or current['entities'])
+    # Pronouns and conjunctions inside a fully scoped question do not make it
+    # an ellipse. In particular, "establish that" is not a context reference.
+    if explicit_scope and not re.match(r'^(and|et|same|what about|qu en est)\b',q):
+        pronoun=False
     sex=bool(re.search(r'\b(women|female|femmes?|men|male|hommes?)\b',q))
     followup=deictic or pronoun or bool(re.match(r'^(and|et|same|what about|qu en est|at .*level)\b',q)) or (sex and len(q.split())<=5)
     if state and len(q.split())<=4 and describe(question)['topic']=='other' and places(question):followup=True
@@ -128,8 +134,8 @@ def resolve(question,messages):
         return result
     if deictic and len(state.get('geography',[]))!=1:return ask('place')
     if not state:
-        if pronoun:return ask('entity')
-        result['state']=describe(question)
+        if pronoun and len(q.split())<=10:return ask('entity')
+        result['state']=current
         return result
     if not followup:
         result['state']=describe(question)
