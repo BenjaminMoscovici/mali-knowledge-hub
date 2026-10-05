@@ -123,7 +123,8 @@ class ServiceBenchmarkTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp)
             wanted={'web_verification.json','calibration_samples.json','capture_interruptions.json',
-                    'failure_telemetry.json','paired_comparison.json'}
+                    'failure_telemetry.json','paired_comparison.json','conversation_quality.json',
+                    'publication_equivalence.json'}
             for name in wanted:(p/name).write_text('{"scope":"synthetic benchmark"}')
             (p/'unrelated-account-history.json').write_text('{"private":"excluded"}')
             with zipfile.ZipFile(io.BytesIO(archive(p,[]))) as zipped:
