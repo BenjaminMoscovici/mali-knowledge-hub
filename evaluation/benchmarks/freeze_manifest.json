@@ -1,0 +1,30 @@
+{
+  "version": "mkh-evaluation-1.0",
+  "frozen_at": "2026-10-05T09:20:59.782974+00:00",
+  "baseline_remote_commit": "ccd77fed567574b4b1319677a1a1c461fa8f130c",
+  "giz_project_ref": "hofoubbmepacdljeablj",
+  "files": {
+    "frozen_v1.json": "ba1806647b342f1523fe541b31613dbd6c461add7d34faa343c83709b93818ee",
+    "heldout_v1.json": "7eaa7e644e79eb649d12f1efdae4fe44fc1e14457fb7b04d603a203a9f03962d",
+    "rolling_v1.json": "e034c6879f1631e7faa688aa18ca13d22cf97f1c9262f293ba8d02cf73650be1"
+  },
+  "category_counts": {
+    "plans_priorities": 10,
+    "humanitarian_needs": 10,
+    "actors_projects": 10,
+    "joined_analysis": 10,
+    "geography_population": 15,
+    "adversarial": 5,
+    "funding_timelines": 10,
+    "learning_evaluation": 5
+  },
+  "frozen_french_count": 22,
+  "policy": "Frozen/held-out case files immutable. Changes require a new version, reason and retained old suite. Expected behaviors never sent to Hub. Held-out invocation requires --acceptance; no active tuning. Existing V1/V2 questions/checks retained verbatim; V3 fixture tests remain unchanged.",
+  "repetition_ids": [
+    "JOIN01",
+    "JOIN02",
+    "JOIN03",
+    "FUND04",
+    "CHALLENGE-END-EXAMPLES"
+  ]
+}
