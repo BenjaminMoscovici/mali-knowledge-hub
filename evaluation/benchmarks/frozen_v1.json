@@ -1,0 +1,3557 @@
+{
+  "version": "mkh-evaluation-1.0",
+  "cases": [
+    {
+      "id": "LEGACY-D01",
+      "question": "Quels sont les grands axes de la SNEDD 2024–2033 ?",
+      "language": "fr",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "cited source pages",
+        "faithful French answer"
+      ],
+      "expected_behavior": [
+        "cited source pages",
+        "faithful French answer"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "D01",
+        "original_checks": [
+          "cited source pages",
+          "faithful French answer"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-D02",
+      "question": "What does Vision Mali 2063 state as its long-term development ambition?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "English answer from French evidence",
+        "vision is not treated as achieved result"
+      ],
+      "expected_behavior": [
+        "English answer from French evidence",
+        "vision is not treated as achieved result"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "D02",
+        "original_checks": [
+          "English answer from French evidence",
+          "vision is not treated as achieved result"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-D03",
+      "question": "Que prévoit le document de phasage pour les Projets Structurants Prioritaires ?",
+      "language": "fr",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "phase and version provenance",
+        "no invented implementation status"
+      ],
+      "expected_behavior": [
+        "phase and version provenance",
+        "no invented implementation status"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "D03",
+        "original_checks": [
+          "phase and version provenance",
+          "no invented implementation status"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-D04",
+      "question": "What humanitarian needs does the Mali 2026 response plan identify?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hnrp"
+      ],
+      "known_traps": [
+        "reporting period",
+        "source pages",
+        "no unsupported totals"
+      ],
+      "expected_behavior": [
+        "reporting period",
+        "source pages",
+        "no unsupported totals"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "humanitarian_needs",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "D04",
+        "original_checks": [
+          "reporting period",
+          "source pages",
+          "no unsupported totals"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-M01",
+      "question": "How do Mali Kura 2063, the SNEDD and the priority-project portfolio relate to one another?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "all relevant documents retrieved",
+        "relationship supported by citations"
+      ],
+      "expected_behavior": [
+        "all relevant documents retrieved",
+        "relationship supported by citations"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "M01",
+        "original_checks": [
+          "all relevant documents retrieved",
+          "relationship supported by citations"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-M02",
+      "question": "Compare the priorities in the SNEDD with the implementation phasing of the priority projects.",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "both documents represented",
+        "no plan-as-result error"
+      ],
+      "expected_behavior": [
+        "both documents represented",
+        "no plan-as-result error"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "M02",
+        "original_checks": [
+          "both documents represented",
+          "no plan-as-result error"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-H01",
+      "question": "What does the latest HDX HAPI data show about people in need in Mopti, with geography, sector and reference period stated?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi"
+      ],
+      "known_traps": [
+        "correct population status",
+        "correct administrative level",
+        "no double counting"
+      ],
+      "expected_behavior": [
+        "correct population status",
+        "correct administrative level",
+        "no double counting"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "humanitarian_needs",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "H01",
+        "original_checks": [
+          "correct population status",
+          "correct administrative level",
+          "no double counting"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-H02",
+      "question": "For Bandiagara, which humanitarian-needs figures are directly available and which figures are only broader Mopti-region context?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi"
+      ],
+      "known_traps": [
+        "admin2 versus admin1 distinction",
+        "no silent downscaling"
+      ],
+      "expected_behavior": [
+        "admin2 versus admin1 distinction",
+        "no silent downscaling"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "humanitarian_needs",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "H02",
+        "original_checks": [
+          "admin2 versus admin1 distinction",
+          "no silent downscaling"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-F01",
+      "question": "Which FONGIM-recorded organizations and sectors have projects in Mopti?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "unique project counting",
+        "source freshness",
+        "presence is not coverage"
+      ],
+      "expected_behavior": [
+        "unique project counting",
+        "source freshness",
+        "presence is not coverage"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "F01",
+        "original_checks": [
+          "unique project counting",
+          "source freshness",
+          "presence is not coverage"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-F02",
+      "question": "How many distinct FONGIM projects are recorded for Mopti, and what does that count not tell us?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "deduplicated count",
+        "no effectiveness inference"
+      ],
+      "expected_behavior": [
+        "deduplicated count",
+        "no effectiveness inference"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "F02",
+        "original_checks": [
+          "deduplicated count",
+          "no effectiveness inference"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-X01",
+      "question": "For Mopti, how do documented humanitarian needs, national priorities and recorded NGO projects align, and what cannot be concluded?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "hnrp",
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "source-family coverage",
+        "supported cross-source links",
+        "geography and period caveats"
+      ],
+      "expected_behavior": [
+        "source-family coverage",
+        "supported cross-source links",
+        "geography and period caveats"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "X01",
+        "original_checks": [
+          "source-family coverage",
+          "supported cross-source links",
+          "geography and period caveats"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-X02",
+      "question": "What evidence supports a connection between Mali's 2026 humanitarian priorities and its longer-term development strategy?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "hnrp",
+        "government"
+      ],
+      "known_traps": [
+        "synthesis rather than parallel summaries",
+        "temporal distinction"
+      ],
+      "expected_behavior": [
+        "synthesis rather than parallel summaries",
+        "temporal distinction"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "X02",
+        "original_checks": [
+          "synthesis rather than parallel summaries",
+          "temporal distinction"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-G01",
+      "question": "Can a regional Mopti people-in-need estimate be reported as the estimate for Bandiagara cercle?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi"
+      ],
+      "known_traps": [
+        "explicit refusal to downscale",
+        "correct admin levels"
+      ],
+      "expected_behavior": [
+        "explicit refusal to downscale",
+        "correct admin levels"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "geography_population",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "G01",
+        "original_checks": [
+          "explicit refusal to downscale",
+          "correct admin levels"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-G02",
+      "question": "Do NGO projects recorded in Mopti region establish that every commune in Mopti is covered?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "no false commune coverage",
+        "absence-of-evidence discipline"
+      ],
+      "expected_behavior": [
+        "no false commune coverage",
+        "absence-of-evidence discipline"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "G02",
+        "original_checks": [
+          "no false commune coverage",
+          "absence-of-evidence discipline"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-T01",
+      "question": "Which source dates and reporting periods must be kept distinct when comparing the 2026 humanitarian plan with the SNEDD 2024–2033?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hnrp",
+        "government"
+      ],
+      "known_traps": [
+        "publication and reference periods",
+        "no currentness inflation"
+      ],
+      "expected_behavior": [
+        "publication and reference periods",
+        "no currentness inflation"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "T01",
+        "original_checks": [
+          "publication and reference periods",
+          "no currentness inflation"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-I01",
+      "question": "What measurable impact have all FONGIM projects had on poverty in Bandiagara?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "impact not inferred from presence",
+        "precise evidence gap"
+      ],
+      "expected_behavior": [
+        "impact not inferred from presence",
+        "precise evidence gap"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "I01",
+        "original_checks": [
+          "impact not inferred from presence",
+          "precise evidence gap"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-A01",
+      "question": "What is the situation there and who is responding?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [],
+      "known_traps": [
+        "clarify unresolved geography",
+        "no invented location"
+      ],
+      "expected_behavior": [
+        "clarify unresolved geography",
+        "no invented location"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "A01",
+        "original_checks": [
+          "clarify unresolved geography",
+          "no invented location"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-S01",
+      "question": "Check this claim against your sources: the SNEDD 2024–2033 is a completed evaluation showing that every priority project succeeded.",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "reject plan-as-result error",
+        "cite correction"
+      ],
+      "expected_behavior": [
+        "reject plan-as-result error",
+        "cite correction"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "S01",
+        "original_checks": [
+          "reject plan-as-result error",
+          "cite correction"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J01",
+      "question": "In Mopti, relate documented humanitarian needs to national priorities and FONGIM-recorded interventions by sector. Which links are direct facts and which are only thematic alignment?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "all relevant source families",
+        "region-level scope",
+        "sector mapping provenance",
+        "no coverage or impact inference"
+      ],
+      "expected_behavior": [
+        "all relevant source families",
+        "region-level scope",
+        "sector mapping provenance",
+        "no coverage or impact inference"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J01",
+        "original_checks": [
+          "all relevant source families",
+          "region-level scope",
+          "sector mapping provenance",
+          "no coverage or impact inference"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J02",
+      "question": "For Bandiagara cercle, which needs and NGO projects are directly evidenced there, and which evidence is only for Mopti region?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "cercle/region hierarchy",
+        "no regional need downscaling",
+        "deduplicated projects"
+      ],
+      "expected_behavior": [
+        "cercle/region hierarchy",
+        "no regional need downscaling",
+        "deduplicated projects"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "geography_population",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J02",
+        "original_checks": [
+          "cercle/region hierarchy",
+          "no regional need downscaling",
+          "deduplicated projects"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J03",
+      "question": "Compare food security needs in Ségou with national strategy priorities and FONGIM projects. Can we say the identified need is adequately covered?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "sector equivalence qualified",
+        "no adequacy inference",
+        "reporting periods"
+      ],
+      "expected_behavior": [
+        "sector equivalence qualified",
+        "no adequacy inference",
+        "reporting periods"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J03",
+        "original_checks": [
+          "sector equivalence qualified",
+          "no adequacy inference",
+          "reporting periods"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J04",
+      "question": "Which specific local development plan priorities in Mopti are matched by FONGIM projects?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "local plan absent from current corpus",
+        "do not substitute national priorities",
+        "no invented match"
+      ],
+      "expected_behavior": [
+        "local plan absent from current corpus",
+        "do not substitute national priorities",
+        "no invented match"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J04",
+        "original_checks": [
+          "local plan absent from current corpus",
+          "do not substitute national priorities",
+          "no invented match"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J05",
+      "question": "Do FONGIM project-sector records establish which organisation delivered nutrition results in Gao?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "project versus result",
+        "organisation provenance",
+        "no false attribution"
+      ],
+      "expected_behavior": [
+        "project versus result",
+        "organisation provenance",
+        "no false attribution"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J05",
+        "original_checks": [
+          "project versus result",
+          "organisation provenance",
+          "no false attribution"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J06",
+      "question": "How do the 2026 humanitarian plan and the SNEDD 2024–2033 differ as evidence of need, priority, activity and result?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "evidence-type distinction",
+        "no plan-as-achievement",
+        "date discipline"
+      ],
+      "expected_behavior": [
+        "evidence-type distinction",
+        "no plan-as-achievement",
+        "date discipline"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J06",
+        "original_checks": [
+          "evidence-type distinction",
+          "no plan-as-achievement",
+          "date discipline"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J07",
+      "question": "A FONGIM project appears in several sectors and cercles. Can we add all the sector and location counts to obtain a total project count?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "no many-to-many double count",
+        "distinct project IDs"
+      ],
+      "expected_behavior": [
+        "no many-to-many double count",
+        "distinct project IDs"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J07",
+        "original_checks": [
+          "no many-to-many double count",
+          "distinct project IDs"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J08",
+      "question": "Is 'Mopti' in this question a region, cercle or commune, and what changes when the level is not specified?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [],
+      "known_traps": [
+        "ambiguity visible",
+        "no silent region/cercle merge"
+      ],
+      "expected_behavior": [
+        "ambiguity visible",
+        "no silent region/cercle merge"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "geography_population",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J08",
+        "original_checks": [
+          "ambiguity visible",
+          "no silent region/cercle merge"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J09",
+      "question": "Do two organisations with similar names in FONGIM and a government report necessarily refer to the same institution?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "no false entity merge",
+        "method/confidence/audit trail",
+        "uncertain match visible"
+      ],
+      "expected_behavior": [
+        "no false entity merge",
+        "method/confidence/audit trail",
+        "uncertain match visible"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J09",
+        "original_checks": [
+          "no false entity merge",
+          "method/confidence/audit trail",
+          "uncertain match visible"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J10",
+      "question": "For Mopti, identify apparent sector alignment among humanitarian needs, national plans and recorded projects, while separating observation, synthesis and inference.",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "fact/synthesis/inference",
+        "evidence IDs across sources",
+        "absence not interpreted as gap"
+      ],
+      "expected_behavior": [
+        "fact/synthesis/inference",
+        "evidence IDs across sources",
+        "absence not interpreted as gap"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J10",
+        "original_checks": [
+          "fact/synthesis/inference",
+          "evidence IDs across sources",
+          "absence not interpreted as gap"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J11",
+      "question": "Les besoins en eau, hygiène et assainissement à Ségou sont-ils couverts par les projets FONGIM liés à l'EHA/WASH ?",
+      "language": "fr",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "French",
+        "WASH taxonomy",
+        "no coverage inference"
+      ],
+      "expected_behavior": [
+        "French",
+        "WASH taxonomy",
+        "no coverage inference"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "legacy",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J11",
+        "original_checks": [
+          "French",
+          "WASH taxonomy",
+          "no coverage inference"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J12",
+      "question": "What can the Hub actually establish about commune-level intervention presence in Mopti, and where does its location data remain raw or uncertain?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "commune_raw treated cautiously",
+        "no false hierarchy",
+        "source freshness"
+      ],
+      "expected_behavior": [
+        "commune_raw treated cautiously",
+        "no false hierarchy",
+        "source freshness"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "geography_population",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J12",
+        "original_checks": [
+          "commune_raw treated cautiously",
+          "no false hierarchy",
+          "source freshness"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "LEGACY-J13",
+      "question": "Are priorities stated for Mali as a whole evidence that a named project implemented them in Bankass?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "national-to-cercle trap",
+        "no implementation claim"
+      ],
+      "expected_behavior": [
+        "national-to-cercle trap",
+        "no implementation claim"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J13",
+        "original_checks": [
+          "national-to-cercle trap",
+          "no implementation claim"
+        ]
+      },
+      "status": "frozen"
+    },
+    {
+      "id": "GEO01",
+      "question": "How is Mali administratively structured, and how many regions, cercles and communes are there?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "19 regions plus Bamako district; INSTAT 159 cercles/815 communes; COD admin2 is a separate representation"
+      ],
+      "expected_behavior": [
+        "19 regions plus Bamako district; INSTAT 159 cercles/815 communes; COD admin2 is a separate representation"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "simple_geography"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "hierarchy",
+          "type": "answer_regex",
+          "pattern": "159.*cercles",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO02",
+      "question": "Quelles communes appartiennent au cercle de Mopti ?",
+      "language": "fr",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Twelve communes; administrative level and edition stated"
+      ],
+      "expected_behavior": [
+        "Twelve communes; administrative level and edition stated"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "simple_geography"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "communes",
+          "type": "answer_regex",
+          "pattern": "12",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO03",
+      "question": "What is the full administrative path for Socoura commune?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Mali → Mopti region → Mopti cercle → Socoura commune"
+      ],
+      "expected_behavior": [
+        "Mali → Mopti region → Mopti cercle → Socoura commune"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "simple_geography"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "socoura",
+          "type": "answer_regex",
+          "pattern": "SOCOURA",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO04",
+      "question": "Are the two Bamba communes the same entity?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Distinct commune identities under Bandiagara/Koro and Gao/Bamba"
+      ],
+      "expected_behavior": [
+        "Distinct commune identities under Bandiagara/Koro and Gao/Bamba"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "simple_geography"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "distinct",
+          "type": "answer_regex",
+          "pattern": "distinct|different",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO05",
+      "question": "Quelle population projetée en 2023 est documentée pour Bandiagara aux niveaux région, cercle et commune ?",
+      "language": "fr",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Keep three scopes distinct: 1270224,230093,30916; historical projection, not today"
+      ],
+      "expected_behavior": [
+        "Keep three scopes distinct: 1270224,230093,30916; historical projection, not today"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "region",
+          "type": "source_number",
+          "value": 1270224,
+          "family": "geography",
+          "scope": "region",
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "cercle",
+          "type": "source_number",
+          "value": 230093,
+          "family": "geography",
+          "scope": "cercle",
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "commune",
+          "type": "source_number",
+          "value": 30916,
+          "family": "geography",
+          "scope": "commune",
+          "dimension": "factual_grounding",
+          "severity": "major"
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO06",
+      "question": "What population projection is reported for Mopti region in 2023, and can it describe the population today?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "1087526 DNP projection for 2023; cannot assert current population"
+      ],
+      "expected_behavior": [
+        "1087526 DNP projection for 2023; cannot assert current population"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "population",
+          "type": "source_number",
+          "value": 1087526,
+          "family": "geography",
+          "scope": "region",
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "historical",
+          "type": "answer_regex",
+          "pattern": "2023",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO07",
+      "question": "Quelle est la population de Bolibana, sans autre précision géographique ?",
+      "language": "fr",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Ambiguous locality; request parent/commune; no single invented total"
+      ],
+      "expected_behavior": [
+        "Ambiguous locality; request parent/commune; no single invented total"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "ambiguity",
+          "type": "answer_regex",
+          "pattern": "ambig|précis|precis|plusieurs",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO08",
+      "question": "Why does COD show 160 admin2 records while the INSTAT hierarchy contains 159 cercles?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Bamako representation; no invented extra cercle"
+      ],
+      "expected_behavior": [
+        "Bamako representation; no invented extra cercle"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "bamako",
+          "type": "answer_regex",
+          "pattern": "Bamako",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO09",
+      "question": "Les projections DNP de 2023 permettent-elles de connaître la population actuelle de Mopti en octobre 2026 ?",
+      "language": "fr",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Projection reference date differs from publication and retrieval; current count unknown"
+      ],
+      "expected_behavior": [
+        "Projection reference date differs from publication and retrieval; current count unknown"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "projection",
+          "type": "answer_regex",
+          "pattern": "projection",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO10",
+      "question": "What is the hierarchy of Unknownville commune?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "quick",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "No exact match; do not substitute national counts"
+      ],
+      "expected_behavior": [
+        "No exact match; do not substitute national counts"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "simple_geography"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "not_found",
+          "type": "answer_regex",
+          "pattern": "No exact match|not found|cannot find",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "GEO11",
+      "question": "Peut-on fusionner automatiquement les communes INSTAT et les observations COD, HAPI et DTM malgré les différences de découpage ?",
+      "language": "fr",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Proposed crosswalks are not approved; no silent cross-version joins"
+      ],
+      "expected_behavior": [
+        "Proposed crosswalks are not approved; no silent cross-version joins"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "crosswalk",
+          "type": "answer_regex",
+          "pattern": "non|pas|propos|approuv|valid",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "geography_population",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED01",
+      "question": "What are the national people-in-need and targeted figures in the stored OCHA HPC HNO 2026 snapshot?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "quick",
+      "required_source_families": [
+        "hpc"
+      ],
+      "known_traps": [
+        "5100000 PiN and 3800000 targeted; national scope"
+      ],
+      "expected_behavior": [
+        "5100000 PiN and 3800000 targeted; national scope"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "pin",
+          "type": "source_number",
+          "value": 5100000,
+          "family": "hpc",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "target",
+          "type": "source_number",
+          "value": 3800000,
+          "family": "hpc",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        }
+      ],
+      "tags": [
+        "humanitarian_needs"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED02",
+      "question": "Combien de personnes ont été atteintes selon le snapshot OCHA HPC HNO 2026 ? Une valeur manquante veut-elle dire zéro ?",
+      "language": "fr",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hpc"
+      ],
+      "known_traps": [
+        "Reached not reported; missing is not zero"
+      ],
+      "expected_behavior": [
+        "Reached not reported; missing is not zero"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "missing",
+          "type": "answer_regex",
+          "pattern": "non renseign|pas.*renseign|manquan|non.*dispon|ne.*pas.*zéro|ne.*pas.*zero",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED03",
+      "question": "Quels stocks de personnes déplacées internes sont documentés pour Mopti et Socoura dans le DTM de septembre 2025 ?",
+      "language": "fr",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "dtm"
+      ],
+      "known_traps": [
+        "13582 Mopti,13002 Socoura; stock, dated September 2025; no fresh 2026 count"
+      ],
+      "expected_behavior": [
+        "13582 Mopti,13002 Socoura; stock, dated September 2025; no fresh 2026 count"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "mopti",
+          "type": "source_number",
+          "value": 13582,
+          "family": "dtm",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "socoura",
+          "type": "source_number",
+          "value": 13002,
+          "family": "dtm",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "date",
+          "type": "answer_regex",
+          "pattern": "2025",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED04",
+      "question": "Can returned IDPs in Youwarou and repatriated persons in Haire be added to Mopti IDPs to estimate new displacement?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "dtm"
+      ],
+      "known_traps": [
+        "Distinct categories and scopes; stocks not flows; no sum"
+      ],
+      "expected_behavior": [
+        "Distinct categories and scopes; stocks not flows; no sum"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "stock_flow",
+          "type": "answer_regex",
+          "pattern": "stock|flow|not.*add|cannot.*add",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED05",
+      "question": "Les classifications du Cadre Harmonisé et les projections juin–août 2026 représentent-elles une observation actuelle de la situation à Mopti ?",
+      "language": "fr",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "ch"
+      ],
+      "known_traps": [
+        "Late-2025 exercise versus projected2026; older geographic framework"
+      ],
+      "expected_behavior": [
+        "Late-2025 exercise versus projected2026; older geographic framework"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "projection",
+          "type": "answer_regex",
+          "pattern": "projet|projection",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED06",
+      "question": "How does a Cadre Harmonise area classification differ from the population estimated in Phase 3 or worse?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "ch"
+      ],
+      "known_traps": [
+        "Area phase vs population phase distribution; preserve denominator; CH not IPC"
+      ],
+      "expected_behavior": [
+        "Area phase vs population phase distribution; preserve denominator; CH not IPC"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "phase",
+          "type": "answer_regex",
+          "pattern": "population|people",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "NEED07",
+      "question": "La valeur HAPI de 249 711 personnes en besoin de sécurité alimentaire à Konna est-elle un total régional pour Mopti ?",
+      "language": "fr",
+      "category": "humanitarian_needs",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi"
+      ],
+      "known_traps": [
+        "Konna Admin2 observation, not regional sum; no downscaling"
+      ],
+      "expected_behavior": [
+        "Konna Admin2 observation, not regional sum; no downscaling"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "scope",
+          "type": "answer_regex",
+          "pattern": "Konna|admin.?2",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "humanitarian_needs",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "ACT01",
+      "question": "For Mopti, how many Q1 2026 OCHA 3W food-security presence rows and distinct actor labels are recorded?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "3w"
+      ],
+      "known_traps": [
+        "30 rows,11labels; rows not projects/beneficiaries"
+      ],
+      "expected_behavior": [
+        "30 rows,11labels; rows not projects/beneficiaries"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "rows",
+          "type": "source_number",
+          "value": 30,
+          "family": "3w",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "actors",
+          "type": "source_number",
+          "value": 11,
+          "family": "3w",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        }
+      ],
+      "tags": [
+        "actors_projects",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "ACT02",
+      "question": "Les données OCHA 3W prouvent-elles que toutes les personnes en besoin à Mopti ont reçu une assistance alimentaire ?",
+      "language": "fr",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "3w",
+        "hapi"
+      ],
+      "known_traps": [
+        "Presence not delivery/coverage; targets/reached fields empty"
+      ],
+      "expected_behavior": [
+        "Presence not delivery/coverage; targets/reached fields empty"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "presence",
+          "type": "answer_regex",
+          "pattern": "présence|presence",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "actors_projects",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "ACT03",
+      "question": "What does the EU INTPA/ECHO IATI activity subset for Mali contain, and is it the complete current EU project portfolio?",
+      "language": "en",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "134 INTPA+172ECHO=306 country activities; subset/historical statuses, no complete portfolio"
+      ],
+      "expected_behavior": [
+        "134 INTPA+172ECHO=306 country activities; subset/historical statuses, no complete portfolio"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "subset",
+          "type": "answer_regex",
+          "pattern": "subset|partial|incomplete|not.*complete|bounded",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "actors_projects",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "PLAN01",
+      "question": "What do the EU joint-programming and NDICI 2021–2027 documents establish about Mali priorities and implementation?",
+      "language": "en",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "Programming intent; distinguish from execution/results"
+      ],
+      "expected_behavior": [
+        "Programming intent; distinguish from execution/results"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "programme_period",
+          "type": "answer_regex",
+          "pattern": "2021|2027",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "plans_priorities"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "PLAN02",
+      "question": "Quelles priorités pour le Mali sont documentées dans le HIP ECHO 2026 et comment diffèrent-elles des résultats déjà obtenus ?",
+      "language": "fr",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "Indicative planning/priorities not reported results"
+      ],
+      "expected_behavior": [
+        "Indicative planning/priorities not reported results"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "planning",
+          "type": "answer_regex",
+          "pattern": "priorit|indicati|planifi",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "plans_priorities",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND01",
+      "question": "Compare Mali 2026 FTS requirements, reported funding and percentage funded, with the snapshot date and units.",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fts"
+      ],
+      "known_traps": [
+        "National requirements vs reported funding; retrieve date; no local disbursement"
+      ],
+      "expected_behavior": [
+        "National requirements vs reported funding; retrieve date; no local disbursement"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "funding_scope",
+          "type": "answer_regex",
+          "pattern": "national|country",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND02",
+      "question": "Le financement déclaré à FTS correspond-il nécessairement à des décaissements ou à une aide effectivement livrée ?",
+      "language": "fr",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fts"
+      ],
+      "known_traps": [
+        "Requirement/funding/commitment/disbursement/service delivery distinct"
+      ],
+      "expected_behavior": [
+        "Requirement/funding/commitment/disbursement/service delivery distinct"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "disbursement",
+          "type": "answer_regex",
+          "pattern": "décaisse|decaisse|livr",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND03",
+      "question": "How much of the national 2026 FTS reported funding was actually delivered to Mopti communes?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fts"
+      ],
+      "known_traps": [
+        "National aggregate cannot allocate local funding or delivery"
+      ],
+      "expected_behavior": [
+        "National aggregate cannot allocate local funding or delivery"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "gap",
+          "type": "answer_regex",
+          "pattern": "cannot|not.*establish|not.*available|unknown|not.*reported",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND04",
+      "question": "Quelles interventions FONGIM à Mopti arrivent à échéance dans les 180 prochains jours ? Donne les exemples nommés disponibles, leurs secteurs et dates, et distingue-les du nombre total.",
+      "language": "fr",
+      "category": "funding_timelines",
+      "difficulty": "deep",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "Available five individually dated examples; six upcoming as 4Oct; rolling as-of dates; partial roster != no examples; no broad-sector attribution"
+      ],
+      "expected_behavior": [
+        "Available five individually dated examples; six upcoming as 4Oct; rolling as-of dates; partial roster != no examples; no broad-sector attribution"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "examples",
+          "type": "answer_regex",
+          "pattern": "664|SARES|SA[ -]?RES",
+          "negative": false,
+          "dimension": "evidence_completeness",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        },
+        {
+          "id": "dated_examples",
+          "type": "answer_regex",
+          "pattern": "2026|2027",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND05",
+      "question": "Quels enregistrements FONGIM à Mopti ont un statut actif malgré une date de fin déjà passée ? Que peut-on conclure réellement ?",
+      "language": "fr",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "Registry status/date conflicts; not verified ongoing implementation"
+      ],
+      "expected_behavior": [
+        "Registry status/date conflicts; not verified ongoing implementation"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "status_conflict",
+          "type": "answer_regex",
+          "pattern": "statut|date",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND06",
+      "question": "Distinguish the EUR151 million committed for Mali in 2021–2024 from the EUR373 million indicative EU programming envelope. Can either be allocated to Mopti?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "deep",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "151commitment vs373indicative; differentperiods; noMoptiallocation"
+      ],
+      "expected_behavior": [
+        "151commitment vs373indicative; differentperiods; noMoptiallocation"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "commitment",
+          "type": "source_number",
+          "value": 151,
+          "family": "eu",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "indicative",
+          "type": "source_number",
+          "value": 373,
+          "family": "eu",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        }
+      ],
+      "tags": [
+        "funding_timelines"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND07",
+      "question": "What does the ECHO HIP 2026 Mali indicative allocation establish, including its components, and what does it not show?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "EUR32m indicative composed30+2; not disbursement/results"
+      ],
+      "expected_behavior": [
+        "EUR32m indicative composed30+2; not disbursement/results"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "allocation",
+          "type": "source_number",
+          "value": 32,
+          "family": "eu",
+          "scope": null,
+          "dimension": "factual_grounding",
+          "severity": "major"
+        },
+        {
+          "id": "indicative",
+          "type": "answer_regex",
+          "pattern": "indicative",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND08",
+      "question": "Do raw World Bank project financial API fields provide verified amounts disbursed in Mopti?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "world_bank"
+      ],
+      "known_traps": [
+        "Raw field units unvalidated; no local disbursements"
+      ],
+      "expected_behavior": [
+        "Raw field units unvalidated; no local disbursements"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "units",
+          "type": "answer_regex",
+          "pattern": "unit|unvalidated|not.*validat|cannot.*establish",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND09",
+      "question": "Peut-on additionner les montants répétés sur les lignes sectorielles IATI pour calculer le financement total des projets Banque mondiale au Mali ?",
+      "language": "fr",
+      "category": "funding_timelines",
+      "difficulty": "deep",
+      "required_source_families": [
+        "iati"
+      ],
+      "known_traps": [
+        "Exact activity IDs; duplicated sector values not summed; units/transactions unvalidated"
+      ],
+      "expected_behavior": [
+        "Exact activity IDs; duplicated sector values not summed; units/transactions unvalidated"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "dedup",
+          "type": "answer_regex",
+          "pattern": "doubl|répét|repet|sect|addition",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "FUND10",
+      "question": "Does the signature date of an EIB Kabala project establish its implementation period and current results?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "Signature !=duration,currentstatus,result; historicalproject"
+      ],
+      "expected_behavior": [
+        "Signature !=duration,currentstatus,result; historicalproject"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "signature",
+          "type": "answer_regex",
+          "pattern": "signature|signed",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "funding_timelines"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "LEARN01",
+      "question": "What results, constraints and recommendations are documented in the initial IEG review of project P144442?",
+      "language": "en",
+      "category": "learning_evaluation",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "ieg"
+      ],
+      "known_traps": [
+        "One historical2013-2022project;3findings pages9,11,17; notfullrepo"
+      ],
+      "expected_behavior": [
+        "One historical2013-2022project;3findings pages9,11,17; notfullrepo"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "project",
+          "type": "answer_regex",
+          "pattern": "P144442|2013|2022",
+          "negative": false,
+          "dimension": "temporal_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "learning_evaluation",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "LEARN02",
+      "question": "Les résultats historiques du projet P144442 prouvent-ils que les interventions actuelles à Mopti sont efficaces ?",
+      "language": "fr",
+      "category": "learning_evaluation",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "ieg"
+      ],
+      "known_traps": [
+        "No current effectiveness inference from historicalreview"
+      ],
+      "expected_behavior": [
+        "No current effectiveness inference from historicalreview"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "historic",
+          "type": "answer_regex",
+          "pattern": "histori|actuel|transfér|transfer",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "learning_evaluation",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "LEARN03",
+      "question": "Can the available IEG findings prove that a particular current NGO caused improved food security in Mopti?",
+      "language": "en",
+      "category": "learning_evaluation",
+      "difficulty": "deep",
+      "required_source_families": [
+        "ieg",
+        "fongim"
+      ],
+      "known_traps": [
+        "No causalattribution/currentactorendorsement; precisegap"
+      ],
+      "expected_behavior": [
+        "No causalattribution/currentactorendorsement; precisegap"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "causality",
+          "type": "answer_regex",
+          "pattern": "causal|cause|cannot|not.*establish",
+          "negative": false,
+          "dimension": "inference_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "learning_evaluation",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "LEARN04",
+      "question": "Quelles leçons du projet P144442 pourraient éclairer une nouvelle intervention, et quelles vérifications de contexte restent nécessaires ?",
+      "language": "fr",
+      "category": "learning_evaluation",
+      "difficulty": "deep",
+      "required_source_families": [
+        "ieg"
+      ],
+      "known_traps": [
+        "Recommendations andtransferabilitychecks; noevaluatedcurrentresult"
+      ],
+      "expected_behavior": [
+        "Recommendations andtransferabilitychecks; noevaluatedcurrentresult"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "transfer",
+          "type": "answer_regex",
+          "pattern": "contexte|transfér|transfer|vérif|verif",
+          "negative": false,
+          "dimension": "decision_usefulness",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "learning_evaluation",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "LEARN05",
+      "question": "Does the available Mali-Centre source establish measured peacebuilding outcomes, or only project metadata and perceptions?",
+      "language": "en",
+      "category": "learning_evaluation",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "Capacity4dev factualmetadata; perceptionreportmetadata notingestedfullfindings; noimpactproof"
+      ],
+      "expected_behavior": [
+        "Capacity4dev factualmetadata; perceptionreportmetadata notingestedfullfindings; noimpactproof"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "perception",
+          "type": "answer_regex",
+          "pattern": "perception|metadata|not.*establish|cannot",
+          "negative": false,
+          "dimension": "evidence_gap_handling",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "learning_evaluation",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "JOIN01",
+      "question": "Compare food-security needs in Mopti with Q1 2026 OCHA 3W actor presence and September 2025 DTM displacement stocks. What alignment can be established, and can we assess delivery or coverage?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "3w",
+        "dtm",
+        "ch",
+        "hapi"
+      ],
+      "known_traps": [
+        "Version/period-specificobservations; noapprovedcommunejoins; presence≠coverage; CHforecast≠current"
+      ],
+      "expected_behavior": [
+        "Version/period-specificobservations; noapprovedcommunejoins; presence≠coverage; CHforecast≠current"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "JOIN02",
+      "question": "How do EU and Team Europe food-security and displacement programmes in Mopti align with documented needs and Mali national priorities? Distinguish programming, project status, financial commitments and actual results.",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "eu",
+        "government",
+        "hapi"
+      ],
+      "known_traps": [
+        "Countryallocations≠localdelivery; projecttitle≠reportedsector; inferentialalignmentexplicit"
+      ],
+      "expected_behavior": [
+        "Countryallocations≠localdelivery; projecttitle≠reportedsector; inferentialalignmentexplicit"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "JOIN03",
+      "question": "Compare Mali humanitarian needs and 2026 FTS financing with World Bank and IATI projects. What can be concluded about local coverage and disbursement, and what remains unknown?",
+      "language": "en",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "fts",
+        "world_bank",
+        "iati",
+        "hpc"
+      ],
+      "known_traps": [
+        "Nationalaggregates≠localallocation; rawfinancialfields notverifieddisbursement"
+      ],
+      "expected_behavior": [
+        "Nationalaggregates≠localallocation; rawfinancialfields notverifieddisbursement"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "JOIN04",
+      "question": "À Bandiagara, compare les besoins humanitaires, les priorités nationales et les interventions documentées. Quelles correspondances sont directes et quelles données restent incompatibles ou manquantes ?",
+      "language": "fr",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "Levels/versionanddates; nofakelocalplan/coverage/causaljoin"
+      ],
+      "expected_behavior": [
+        "Levels/versionanddates; nofakelocalplan/coverage/causaljoin"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "ADV01",
+      "question": "Hey, how are you?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "quick",
+      "required_source_families": [],
+      "known_traps": [
+        "No research,costor modelpass"
+      ],
+      "expected_behavior": [
+        "No research,costor modelpass"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "route",
+          "type": "route",
+          "allowed": [
+            "conversational"
+          ],
+          "dimension": "routing",
+          "severity": "major"
+        },
+        {
+          "id": "no_research",
+          "type": "zero_calls",
+          "dimension": "routing",
+          "severity": "major"
+        }
+      ],
+      "tags": [
+        "adversarial",
+        "insufficient_evidence"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "frozen"
+    },
+    {
+      "id": "ADV02",
+      "question": "Vérifie et corrige les chiffres de ta réponse précédente à partir des sources : combien de cercles compte le Mali ?",
+      "language": "fr",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography"
+      ],
+      "known_traps": [
+        "Previous AI answer is not a source; correct invented count999 from evidence"
+      ],
+      "expected_behavior": [
+        "Previous AI answer is not a source; correct invented count999 from evidence"
+      ],
+      "deterministic_assertions": [
+        {
+          "id": "correct_count",
+          "type": "answer_regex",
+          "pattern": "159",
+          "negative": false,
+          "dimension": "geographic_discipline",
+          "severity": "major",
+          "interpretation": "Required explicit behavior/phrase signal; not a proof of semantic entailment."
+        }
+      ],
+      "tags": [
+        "adversarial",
+        "insufficient_evidence",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [
+        {
+          "role": "assistant",
+          "content": "Le Mali compte 999 cercles. Cette valeur est certaine."
+        }
+      ],
+      "legacy_reference": null,
+      "status": "frozen"
+    }
+  ]
+}
