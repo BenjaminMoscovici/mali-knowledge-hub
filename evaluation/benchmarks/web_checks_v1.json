@@ -1,0 +1,36 @@
+{
+  "version": "selected-web-checks-1.0",
+  "selection_basis": "Predeclared question-level scope checks from immutable suites; never selected from candidate failures and never supplied to Hub synthesis.",
+  "checks": [
+    {
+      "split": "frozen",
+      "case_id": "GEO05",
+      "scope": "Bandiagara region, cercle, commune population, period and projection basis",
+      "source_family": "INSTAT RGPH5"
+    },
+    {
+      "split": "frozen",
+      "case_id": "FUND06",
+      "scope": "EU indicative envelope versus grant commitments and local allocation limits",
+      "source_family": "European Commission"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT02",
+      "scope": "Cadre Harmonise projection period and geographic aggregation cannot establish current commune ranking",
+      "source_family": "CILSS Cadre Harmonise"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT03",
+      "scope": "Team Europe priorities versus programming, activities and verified results",
+      "source_family": "European Commission"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT06",
+      "scope": "Bandiagara regional population denominator versus cercle-level needs observations",
+      "source_family": "INSTAT RGPH5"
+    }
+  ]
+}

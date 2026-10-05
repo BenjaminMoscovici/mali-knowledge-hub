@@ -1,0 +1,5 @@
+{
+  "frozen_at": "2026-10-05T21:38:38.847740+00:00",
+  "selection_sha256": "8d7bef8fe2c90e4eeaa8c2a8b19e9a71c1de3ee9ea9b7b43b6560f741ee0668e",
+  "rule": "Selection remains stable across paired releases; checks run independently after immutable answer capture. Unverifiable claims remain unknown."
+}
