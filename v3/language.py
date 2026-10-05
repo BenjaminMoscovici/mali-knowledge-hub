@@ -5,5 +5,5 @@ import re
 
 def answer_language(question):
     q = (question or "").strip().casefold()
-    french_openings = r"^(?:quels?\b|quelles?\b|que\b|qu['’]|combien\b|comment\b|pourquoi\b|où\b|est-ce\b|peut-on\b|dans quelle?\b|comparez\b|vérifiez\b|lesquels?\b|les\b|le\b|la\b|des\b|ces\b|et\b|mais\b|même\b|à\b|pour\b|pouvez-vous\b|peux-tu\b|cela\b|cette\b)"
+    french_openings = r"^(?:quels?\b|quelles?\b|que\b|qu['’]|combien\b|comment\b|pourquoi\b|où\b|est-ce\b|peut-on\b|dans quelle?\b|comparez\b|vérifiez\b|lesquels?\b|les\b|le\b|la\b|des\b|ces\b|et\b|mais\b|même\b|à\b|pour\b|pouvez-vous\b|peux-tu\b|cela\b|cette\b|selon\b|donne[rz]?\b|explique[rz]?\b|décris\b|indique[rz]?\b)"
     return "French" if re.search(french_openings, q) else "English"

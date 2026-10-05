@@ -113,7 +113,7 @@ class GeographyModel:
                 "Historical releases and source identifiers are preserved. Proposed crosswalks are not approved identities.",
                 "INSTAT reports 12,917 localities; 12,915 were parsed. Two missing/discrepant occurrences remain unresolved."]}
 
-    def evidence(self, rid, ids=(), eid="E01"):
+    def evidence(self, rid, ids=(), eid="E01", computed_counts=()):
         r = self.releases[rid]
         pages = sorted({self.spans[uid]["page"] for uid in ids if uid in self.spans})
         if rid == self.preferred and not pages:
@@ -129,6 +129,7 @@ class GeographyModel:
             "geographic_scope": "Mali — release-specific hierarchy",
             "content": json.dumps({"release": r["upstream_version"],
                 "enumerated_counts": dict(Counter(u['unit_type'] for u in self.units.values() if u['release_id'] == rid)),
+                "query_scope_counts": list(computed_counts),
                 "records": [self.describe(uid) for uid in ids],
                 "unresolved_matches": self.unresolved if rid != self.preferred else [],
                 "calculation": "Counts, child lists and unresolved cross-release matches are computed from the stored source records. INSTAT pages 6/7 describe the framework, not a printed national count table."}, ensure_ascii=False)}
@@ -162,6 +163,8 @@ class GeographyModel:
         children_level = None
         if re.search(r"\b(communes|municipalities)\b", q) and re.search(r"\b(cercle|circle)\b", q):
             level, children_level = "cercle", "commune"
+        elif re.search(r"\b(communes|municipalities)\b", q) and re.search(r"\bregion\b", q):
+            level, children_level = "region", "commune"
         elif re.search(r"\bcercles\b", q) and re.search(r"\b(region|regions)\b", q):
             level, children_level = "region", "cercle"
         elif re.search(r"\b(localities|localites|villages)\b", q) and re.search(r"\bcommune\b", q):
@@ -192,6 +195,7 @@ class GeographyModel:
         else:
             ids = []
             lines = []
+            computed_counts=[]
             for u in candidates[:12]:
                 ids.append(u["id"])
                 path = " → ".join(p["name"] + " (" + p["unit_type"] + ")" for p in u["path"])
@@ -200,13 +204,26 @@ class GeographyModel:
                     variants = [a['name'] + ' (' + a['kind'] + ')' for a in u['aliases'] if _fold(a['name']) != _fold(u['name'])]
                     lines.append("  " + (", ".join(variants) if variants else "No separately recorded alternative name; no historical renaming is inferred.") + " [E01]")
                 if children_level:
-                    children = [self.describe(uid) for uid in self.children[u["id"]] if self.units[uid]["level"] == children_level]
+                    pending=list(self.children[u['id']]); descendant_ids=[]
+                    while pending:
+                        uid=pending.pop()
+                        if self.units[uid]['release_id']!=u['release_id']:
+                            raise ValueError('Cross-release child in geographic count')
+                        if self.units[uid]['level']==children_level:descendant_ids.append(uid)
+                        else:pending.extend(self.children[uid])
+                    children = [self.describe(uid) for uid in descendant_ids]
+                    computed_counts.append({'parent_id':u['id'],'parent_name':u['name'],'parent_level':u['level'],
+                        'counted_level':children_level,'count':len(children),'release_id':u['release_id'],
+                        'basis':'Enumerated descendant identities within this source release; no cross-release join',
+                        'source_unit_ids':[c['id'] for c in children]})
                     ids.extend(c["id"] for c in children[:200])
                     label = (f"{len(children)} {children_level}(s) enregistrés" if fr else f"{len(children)} recorded {children_level}(s)")
-                    lines.append("  " + label + ": " + ", ".join(c["name"] for c in sorted(children, key=lambda c:c['name'])[:200]) + ". [E01]")
+                    listing=bool(re.search(r'\b(which|quels?|quelles?|list|liste\w*|name|nommer)\b',q))
+                    names_text=": " + ", ".join(c["name"] for c in sorted(children,key=lambda c:c['name'])[:200]) if listing else ''
+                    lines.append("  " + label + names_text + ". [E01]")
                     if len(children) > 200:
                         lines.append("  " + ("Liste limitée aux 200 premières entrées." if fr else "List limited to the first 200 entries."))
-            ev[0] = self.evidence(self.preferred, ids)
+            ev[0] = self.evidence(self.preferred, ids,computed_counts=computed_counts)
             answer = "\n".join(lines)
             if len(candidates) > 1:
                 answer = ("Ce nom correspond à plusieurs identités distinctes; le parent et le niveau sont indispensables.\n\n" if fr else "This name matches distinct identities; parent and level are required.\n\n") + answer
@@ -241,7 +258,7 @@ def simple_geography_question(question):
     if re.search(r"\b(in there|over there|here|that place|this place|la bas|cette zone)\b", q) or re.match(r"^(and|et)\b", q) or q.endswith("belong there"):
         return False
     # Contextual analytics always use fresh research; presence is not geography.
-    if re.search(r"\b(needs?|besoins?|population|people|habitants?|projects?|projets?|actors?|acteurs?|fund\w*|financ\w*|coverage|couverture|sectors?|secteurs?|displace\w*|deplace\w*|food|security|sante|health|priorit\w*|risk|risque|conflict|conflit|delivery|reach|livraison)\b", q):
+    if re.search(r"\b(needs?|besoins?|population|people|habitants?|projects?|projets?|actors?|acteurs?|interventions?|presence|operational|operationnel\w*|fund\w*|financ\w*|coverage|couverture|sectors?|secteurs?|displace\w*|deplace\w*|food|security|sante|health|priorit\w*|risk|risque|conflict|conflit|delivery|reach|livraison)\b", q):
         return False
     place_term = re.search(r"\b(regions?|cercles?|communes?|municipalities|municipality|administrativ\w*|hierarch\w*|parent|p codes?|pcode|localit\w*|geograph\w*|homonyms?|homonymes?)\b", q)
     lookup_intent = re.search(r"\b(how many|combien|which|what|quels?|quelles?|belong|appartien\w*|structure\w*|hierarch\w*|path|parent|same|identical\w*|homonym\w*|list|liste\w*|version\w*|reference|referentiel|unresolved|disputed|conflicts?|conflits?|aliases|alternative|historical|historique|pcode)\b", q)

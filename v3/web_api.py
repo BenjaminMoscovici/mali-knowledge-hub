@@ -35,6 +35,7 @@ from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
 from query_router import classify
 from geographic_model import geographic_model
+from conversation_state import resolve as resolve_context
 
 
 WEB = Path(__file__).with_name("web")
@@ -360,23 +361,33 @@ async def chat(request):
     phase = "engine_load"
     context_usage = {}
     standalone = question
+    context_resolution={'method':'fast_conversation','state':{},'clarification_required':False,'needs_model':False,'language':answer_language(question)}
     try:
-        if route["path"] == "conversational":
+        context_started=time.perf_counter()
+        if route['path'] not in {'conversational','conversation_only'}:
+            context_resolution=await asyncio.to_thread(resolve_context,question,prior)
+            standalone=context_resolution['standalone_question']
+            route=classify(standalone,mode)
+        context_seconds=time.perf_counter()-context_started
+        language=context_resolution['language']
+        if context_resolution['clarification_required']:
+            result={'answer':context_resolution['clarification_answer'],'evidence':[]}
+        elif route["path"] == "conversational":
             result = {"answer": route["reply"], "evidence": []}
         elif route["path"] == "conversation_only":
             from conversation_transform import restate
             phase = "conversation_transform"
             async with _transform_limit:
-                result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+                result = await asyncio.to_thread(restate, question, prior, language)
         elif route["path"] == "simple_geography":
             phase = "structured_geography"
-            result = await asyncio.to_thread(lambda: geographic_model().answer(question, answer_language(question)))
+            result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
         else:
             from analysis_core import (generate_grounded_answer, is_source_inventory_question,
                                    likely_context_dependent_followup, resolve_conversational_question,
                                    source_inventory_answer, openai_client)
             async with _analysis_limit:
-                if likely_context_dependent_followup(question, prior):
+                if context_resolution['needs_model']:
                     phase = "context_rewrite"
                     context_token, context_id = openai_client.begin()
                     try:
@@ -387,12 +398,12 @@ async def chat(request):
                 if classify(standalone, mode)["path"] == "simple_geography":
                     route = {"path": "simple_geography"}
                     phase = "structured_geography"
-                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
+                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
                 elif is_source_inventory_question(standalone):
                     result = {"answer": source_inventory_answer(), "evidence": [], "family_counts": {}}
                 else:
                     result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
-                                                 response_language=answer_language(question))
+                                                 response_language=language)
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
         print("MKH_API_FAILURE " + json.dumps({
@@ -419,6 +430,9 @@ async def chat(request):
     metrics = {
         "request_id": result.get("request_id"), "depth": mode,
         "route": route["path"], "routing_seconds": round(routing_seconds, 6),
+        "context_resolution_method":context_resolution['method'],
+        "context_resolution_seconds":round(context_seconds,6),
+        "clarification_required":context_resolution['clarification_required'] or result.get('execution_trace',{}).get('clarification_required',False),
         "server_seconds": round(time.perf_counter() - request_started, 4),
         "model_calls": len([c for c in context_usage.get("calls", []) + research_usage.get("calls", []) if c.get("endpoint") == "responses"]),
         "embedding_calls": len([c for c in context_usage.get("calls", []) + research_usage.get("calls", []) if c.get("endpoint") == "embeddings"]),
@@ -429,6 +443,9 @@ async def chat(request):
         "estimated_usd": round((context_usage.get("estimated_usd") or 0)
                                + (research_usage.get("estimated_usd") or 0), 8),
         "synthesis_context": result.get("execution_trace", {}).get("synthesis_context", {}),
+        "source_plan":result.get('source_plan'),
+        "per_family_retrieval_seconds":{k:{field:v.get(field) for field in ['requested','status','seconds','records']} for k,v in result.get('execution_trace',{}).get('sources',{}).items() if isinstance(v,dict)},
+        "retrieval_ranks":[{field:item.get(field) for field in ['evidence_id','source_family','similarity','rank']} for item in result.get('evidence',[])],
         "research_seconds": result.get("research_seconds", 0),
         "synthesis_seconds": result.get("synthesis_seconds", 0),
         "unpriced_calls": (context_usage.get("unpriced_calls") or 0)
@@ -437,6 +454,7 @@ async def chat(request):
     print("MKH_REQUEST_USAGE " + json.dumps(metrics, separators=(",", ":")), flush=True)
     response = JSONResponse({"answer": answer, "evidence": public_evidence(result),
                              "standalone_question": standalone, "conversation_id": cid,
+                             "conversation_state":context_resolution['state'],
                              "position": position, "saved": bool(store and not save_error),
                              "save_error": save_error,
                              "metrics": metrics,
@@ -548,6 +566,13 @@ async def lifespan(app):
     asyncio.create_task(asyncio.to_thread(publish_analytical_logged))
     asyncio.create_task(asyncio.to_thread(publish_project_learning_logged))
     asyncio.create_task(asyncio.to_thread(publish_eu_logged))
+    if os.environ.get('MKH_EVALUATION_RUN'):
+        # Opt-in release measurement, restricted inside the worker to this
+        # GIZ test service. Other deployments retain their existing startup.
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from evaluation.service_run import launch
+        asyncio.create_task(launch())
     yield
 
 
