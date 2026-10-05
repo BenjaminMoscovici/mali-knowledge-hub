@@ -8,6 +8,7 @@ from collections import defaultdict
 import json
 import re
 import unicodedata
+from structured_summary import compact_text, exact_sentences
 
 
 def fold(value):
@@ -43,6 +44,10 @@ def identity(item):
             'chunk_id', 'record_id', 'page', 'locator', 'section', 'version',
             'geographic_scope', 'admin1_code', 'admin2_code', 'reference_period_start',
             'reference_period_end', 'population_category', 'population_status', 'unit')
+    if item.get('source_type') == 'knowledge_base_document':
+        # Ingestion chunk IDs do not make an otherwise identical passage on
+        # the same document/page/version independent evidence.
+        keys = tuple(k for k in keys if k not in ('chunk_id', 'record_id'))
     return tuple(str(item.get(k) or '') for k in keys) + (' '.join(str(item.get('content') or '').split()),)
 
 
@@ -155,26 +160,80 @@ def prepare(ledger, question, depth='balanced'):
         'synthesis_content_chars':sum(len(str(e.get('content') or '')) for e in selected)}
 
 
-def serialize(ledger):
+def serialize(ledger, audit=None, question=''):
     """Source headers once, evidence IDs/locators/scopes beside every observation."""
-    shared_keys = ('source_family','source_type','document_title','organization','document_type',
+    shared_keys = ('source_family','source_type','organization','document_type',
         'version','publication_date','valid_from','valid_until','reference_period_start',
-        'reference_period_end','source_endpoint','release_id')
+        'reference_period_end','release_id','retrieved_at','geographic_scope','geographic_precision')
     sources, blocks = {}, []
+    packed_ids = []
+    include_urls = bool(re.search(r'\b(url|links?|liens?|consulter)\b|original source', fold(question)))
+    prepared = []
     for item in ledger:
         metadata = {k:item[k] for k in shared_keys if item.get(k) not in (None,'',[],{})}
-        key = json.dumps(metadata,sort_keys=True,ensure_ascii=False,default=str)
+        if item.get('source_type') == 'knowledge_base_document' and item.get('document_title'):
+            metadata['document_title'] = item['document_title']
+        key = json.dumps(metadata,sort_keys=True,ensure_ascii=False,separators=(',',':'),default=str)
+        fields = {k:item[k] for k in ('page','section','locator',
+            'admin1_name','admin2_name','admin_level','evidence_types')
+            if item.get(k) not in (None,'',[],{})}
+        if fields.get('section') == fields.get('locator'):
+            fields.pop('section', None)
+        content = str(item.get('content') or '')
+        if item.get('source_type') != 'knowledge_base_document':
+            content, packed = compact_text(content)
+            if packed:
+                packed_ids.append(item['evidence_id'])
+            title = item.get('document_title')
+            if title and title not in content:
+                fields['document_title'] = title
+        if include_urls:
+            for field in ('source_url', 'source_endpoint'):
+                if item.get(field):
+                    fields[field] = item[field]
+        if item.get('normalized_sectors'):
+            fields['sector_cues'] = list(item['normalized_sectors'])
+        units = list(exact_sentences(content)) if item.get('source_type') != 'knowledge_base_document' else [content]
+        prepared.append((item, key, fields, units))
+    memberships = defaultdict(set)
+    for item, key, _, units in prepared:
+        if item.get('source_type') == 'knowledge_base_document':
+            continue
+        for unit in units:
+            if len(unit.strip()) >= 80:
+                memberships[(key, unit.strip())].add(item['evidence_id'])
+    shared = {key: ids for key, ids in memberships.items() if len(ids) >= 3}
+    emitted = set()
+    for item, key, fields, units in prepared:
         if key not in sources:
             sources[key] = f'S{len(sources)+1}'
             blocks.append('SOURCE HEADER '+sources[key]+': '+key)
-        fields = {k:item[k] for k in ('page','section','locator','geographic_scope','geographic_precision',
-            'admin1_name','admin2_name','admin_level','retrieved_at','record_id','chunk_id','evidence_types')
-            if item.get(k) not in (None,'',[],{})}
-        if item.get('normalized_sectors'):
-            fields['sector_cues'] = list(item['normalized_sectors'])
+        remaining = []
+        references = []
+        for unit in units:
+            token = (key, unit.strip())
+            if token not in shared:
+                remaining.append(unit)
+                continue
+            references.append(token)
+            if token not in emitted:
+                emitted.add(token)
+                ids = ', '.join('['+eid+']' for eid in sorted(shared[token]))
+                blocks.append('SHARED EXACT PASSAGE — applies only to '+ids+':\n'+unit.strip())
+        content = ''.join(remaining)
+        if references:
+            content += '\nIncludes the shared exact passages explicitly attributed to this evidence ID above.'
         blocks.append(f"[{item['evidence_id']}] SOURCE {sources[key]} " +
-            json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + str(item.get('content') or ''))
-    return 'Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims.\n'+'\n\n'.join(blocks)
+            json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + content)
+    text = ('Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims. '
+        'Original URLs and record/chunk anchors are available through each evidence ID in the source panel. '
+        'Lossless JSON packing: __mkh_table represents rows with shared_fields recursively merged into '
+        'each row; __mkh_missing_fields lists fields originally null, never zero. All original '
+        'observations, values, scope, periods and restrictions remain applicable.\n'+'\n\n'.join(blocks))
+    if audit is not None:
+        audit.update(structured_summary_ids=packed_ids, serialized_chars=len(text),
+                     shared_exact_passages=len(emitted), serialization_version='lossless-synthesis-1.0')
+    return text
 
 
 def availability_note(ledger, question):
