@@ -220,8 +220,15 @@ class GeographyModel:
                 regions = sorted(u["name"] for u in self.units.values() if u["release_id"] == self.preferred and u["unit_type"] == "region")
                 answer += "\n\n" + ", ".join(regions) + ". [E01]"
         elif not candidates:
-            answer = ("Aucune correspondance exacte à ce niveau dans le référentiel sélectionné. Précisez le nom, le niveau et le parent; je ne devine pas l'identité. " if fr else
-                "No exact match at that level in the selected reference. Please specify the name, level and parent; I will not guess its identity. ") + "\n\n" + caveat
+            # Expose the actual lookup result. An unresolved input does not
+            # establish that a real place is absent from the source universe.
+            basis = json.loads(ev[0]['content'])
+            basis['query_resolution'] = {'matched_name_phrases': names,
+                'requested_level': level, 'matched_units_after_parent_filter': 0,
+                'method': 'Exact normalized name phrases, level and named parents within this release; no fuzzy or cross-version identity inference'}
+            ev[0]['content'] = json.dumps(basis, ensure_ascii=False)
+            answer = ("Je n’ai pas pu résoudre le lieu demandé dans le référentiel sélectionné. Précisez le nom, le niveau et le parent. [E01] " if fr else
+                "I could not resolve the requested place in the selected reference. Please specify the name, level and parent. [E01] ") + "\n\n" + caveat
         else:
             ids = []
             lines = []

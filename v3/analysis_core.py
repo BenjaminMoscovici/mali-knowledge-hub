@@ -35,7 +35,7 @@ from user_research import (ResearchStore, ResearchStoreError,
 from source_wave import retrieve_source_evidence
 from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
-from project_dates import select_examples
+from project_dates import select_examples, ending_intent
 from conversation_state import referenced_fongim_ids
 from project_learning_sources import retrieve_project_learning
 from eu_sources import retrieve_eu_evidence
@@ -2164,7 +2164,9 @@ def research_fongim(
                 (row.get("region") or "?", row.get("cercle") or "?",
                  row.get("commune_raw") or "")
             )
-    selected = project_examples if referenced_ids else project_examples[:5]
+    # Date screening already bounds this set to eight relevant records. Keep
+    # their exact ID/date/sector relationships instead of cutting it again.
+    selected = project_examples if referenced_ids or ending else project_examples[:5]
     for project in selected:
         pid = project["fongim_project_id"]
         place = sorted(locations_by_project.get(pid, []))[:4]
@@ -2414,7 +2416,11 @@ def run_four_source_research(question, document_count=8):
                 "evidence": [item for part in parts for item in part["evidence"]],
             }
         else:
-            value = build_hapi_evidence(geography)
+            # Only these fields affect the provider filters and row reduction.
+            # Trace-only interpretation annotations must not force the same
+            # stable scope to be fetched again in another conversation turn.
+            value = build_hapi_evidence({'region': geography.get('region'),
+                                         'cercle': geography.get('cercle')})
         return value, time.perf_counter() - started
 
     def timed_fongim():
@@ -2423,7 +2429,7 @@ def run_four_source_research(question, document_count=8):
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
-                                ending=bool(re.search(r"\b(ending|end dates?|past end|still active|closing|close|expire|expiration|echeances?|dates? de fin|termin\w*|finissent|finissant)\b", normalize_text(question))),
+                                ending=ending_intent(question),
                                 referenced_ids=referenced_fongim_ids(question))
         return value, time.perf_counter() - started
 
@@ -2747,8 +2753,12 @@ SOURCE SEMANTICS
 - Government strategies show stated priorities, diagnoses, targets or scenarios,
   not implementation or impact. Planning documents and structured humanitarian
   observations differ in definitions, periods and levels.
-- HAPI People in Need are reported needs estimates, not measured prevalence or
-  reach. Need, target, reach, requirements, commitments and disbursements differ.
+- Preserve project titles and explicitly stated purposes. A metaphorical title,
+  sector cue or financial table does not establish a project's operational sector;
+  label inferred themes as inference rather than adding sectors to a factual list.
+- HAPI People in Need are reported needs counts. Counts alone do not establish
+  population prevalence or humanitarian reach; do not assert an undocumented
+  measurement method. Need, target, reach, requirements, commitments and disbursements differ.
   National HPC context cannot establish local need intensity or coverage.
 - FONGIM project counts show recorded presence, not adequacy, delivery, quality,
   effectiveness or impact. Projects can have several sectors/locations: never
@@ -2779,6 +2789,9 @@ SOURCE SEMANTICS
 - Report supplied individual project examples as a bounded, incomplete list.
   Do not claim their names/sectors/dates are entirely unavailable when examples
   supply them. A complete count does not imply a complete supplied roster.
+- Use the request's UTC date for relative periods, unless the user gives an
+  explicit reference date. A reported end date must actually fall inside the
+  requested window; an ongoing label alone does not establish that it does.
 
 RESPONSE
 Write in the user's language for a busy policy or operational adviser. Answer
@@ -2802,6 +2815,9 @@ sections or unsolicited offers of further work.
 QUESTION
 
 {question}
+
+REQUEST DATE (UTC; context for relative periods, not source evidence)
+{datetime.now(timezone.utc).date().isoformat()}
 
 
 EVIDENCE LEDGER

@@ -69,8 +69,13 @@ def test_homonyms_are_distinct_not_merged(model):
 
 
 def test_unknown_place_does_not_return_national_count(model):
-    assert 'No exact match' in model.answer('What is the hierarchy of Unknownville commune?')['answer']
-    assert '815 communes' not in model.answer('What is the hierarchy of Unknownville commune?')['answer']
+    import json
+    result=model.answer('What is the hierarchy of Unknownville commune?')
+    assert 'could not resolve' in result['answer'] and '[E01]' in result['answer']
+    assert '815 communes' not in result['answer']
+    basis=json.loads(result['evidence'][0]['content'])['query_resolution']
+    assert basis['matched_units_after_parent_filter']==0
+    assert basis['matched_name_phrases']==[] and basis['requested_level']=='commune'
 
 
 def test_unresolved_places_can_be_inspected(model):

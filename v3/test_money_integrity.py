@@ -36,6 +36,7 @@ def test_explicit_correction_of_wrong_currency_is_not_blocked():
 
 
 def test_synthesis_withholds_explicit_currency_error_without_an_extra_model_pass():
+    from datetime import datetime, timezone
     import ast
     import re
     import time
@@ -55,7 +56,7 @@ def test_synthesis_withholds_explicit_currency_error_without_an_extra_model_pass
                            'content':'Reported amount: USD 42 million.','record_id':'funding-42','locator':'row 1'}],
                 'geography':{},'joined':{},'execution_trace':{},'source_plan':{},'family_counts':{},
                 'hapi_raw_count':0,'fongim_project_count':0,'research_seconds':0}
-    ns={'re':re,'time':time,'PHASE':SimpleNamespace(set=lambda _:None),
+    ns={'re':re,'time':time,'datetime':datetime,'timezone':timezone,'PHASE':SimpleNamespace(set=lambda _:None),
         'get_mode':lambda _:{'document_count':1,'max_output_tokens':1800},
         'run_four_source_research':research,'prepare_synthesis':prepare,'serialize_synthesis':serialize,
         'build_join_context':lambda *a:{},'prompt_context':lambda _:'',

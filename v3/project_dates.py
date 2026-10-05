@@ -1,6 +1,17 @@
 """Reported project dates are signals for review, never proof of completion."""
 from datetime import date, datetime, timedelta, timezone
+import re
 from source_wave import _fold
+
+
+def ending_intent(question):
+    q = _fold(question)
+    if re.search(r'\b(ending|end dates?|past end|still active|closing|close|expire|expiration|echeances?|dates? de fin|termin\w*|finissent|finissant)\b', q):
+        return True
+    # A bounded project-date follow-up need not repeat the word "ending".
+    # Do not apply date screening to unrelated future needs or forecasts.
+    return bool(re.search(r'\b(projects?|projets?|interventions?|dated|dates?)\b', q)
+                and re.search(r'\b(next|prochains?|prochaines?)\s+(180\s+(days|jours)|(?:six|6)\s+(months|mois))\b', q))
 
 
 def parsed_date(value):
