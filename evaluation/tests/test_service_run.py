@@ -10,6 +10,9 @@ from unittest.mock import Mock, patch
 from evaluation.common import digest
 from evaluation.radar import VERSION, inputs
 from evaluation.service_run import SERVICE, PROJECT, authorized, archive, private_storage, provenance
+from evaluation.service_run import checkpoint
+from evaluation.runner import deployed_commit_matches
+from evaluation.ui_capture import import_conversation
 
 
 class ServiceBenchmarkTests(unittest.TestCase):
@@ -30,6 +33,28 @@ class ServiceBenchmarkTests(unittest.TestCase):
             private_storage(client)
         client.storage.create_bucket.assert_not_called()
         client.storage.from_.assert_not_called()
+
+    def test_mixed_or_missing_live_commit_stops_required_measurement(self):
+        answer={'response':{'metrics':{'hub_commit':'a'*40}}}
+        self.assertTrue(deployed_commit_matches(answer,'a'*40,True))
+        self.assertFalse(deployed_commit_matches(answer,'b'*40,True))
+        self.assertFalse(deployed_commit_matches({'response':{}},'a'*40,True))
+        # Earlier immutable baseline captures explicitly lacked this field.
+        self.assertTrue(deployed_commit_matches({'response':{}},'a'*40,False))
+
+    def test_ui_import_rejects_a_turn_from_another_deployment(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'capture.json'
+            path.write_text(json.dumps([{'sequence_id':'C01','turn':0,'answer':'815',
+                'metrics':{'hub_commit':'a'*40}}]))
+            with self.assertRaises(ValueError):import_conversation(path,Path(tmp)/'run','b'*40)
+            self.assertFalse((Path(tmp)/'run/raw/C01--0.json').exists())
+
+    def test_anonymously_readable_artifact_fails_even_when_storage_says_uploaded(self):
+        storage=Mock();storage.list.side_effect=[[],[{'name':'captured.zip'}]]
+        response=Mock();response.__enter__=Mock(return_value=response);response.__exit__=Mock()
+        with tempfile.TemporaryDirectory() as tmp, patch('urllib.request.urlopen',return_value=response):
+            with self.assertRaises(ValueError):checkpoint(storage,tmp,'commit/milestone','captured',[])
 
     def test_archive_allowlist_excludes_configuration_and_detects_credentials(self):
         with tempfile.TemporaryDirectory() as tmp:
