@@ -36,6 +36,13 @@ def test_caveat_evidence_exposes_source_levels_and_actual_parent_paths(model):
     assert evidence['enumerated_counts']['region'] == 19
     assert evidence['hierarchy_basis']['source_admin_level_counts'] == {
         'admin0':1,'admin1':20,'admin2':160}
+    witnesses=evidence['hierarchy_basis']['bamako_admin2_records']
+    assert len(witnesses)==1 and witnesses[0]['source_admin_level']=='admin2'
+    witness=model.units[witnesses[0]['unit_id']]
+    assert witness['release_id']==cod and witness['level']=='cercle'
+    assert witnesses[0]['source_record_id']==witness['original_record_id']
+    assert witnesses[0]['path']==model.path(witness['id'])
+    assert witnesses[0]['identifiers']['ocha_pcode']
     preferred = json.loads(model.evidence(model.preferred)['content'])['hierarchy_basis']
     assert {'parent_type':'district','parent_name':'BAMAKO','arrondissement_records':7} in preferred['arrondissement_parent_counts']
     assert ['country','district','arrondissement','locality'] in [p['path'] for p in preferred['locality_path_counts']]

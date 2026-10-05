@@ -155,6 +155,12 @@ class GeographyModel:
                          if self.releases[rid]['dataset_id'] == 'mli-cod-ab' else None)
         return {'basis': 'Computed from stored records and parent IDs within this release only',
                 'source_admin_level_counts': source_levels,
+                'bamako_admin2_records': [
+                    {'source_admin_level':'admin2','unit_id':u['id'],
+                     'name':u['name'],'source_record_id':u['original_record_id'],
+                     'path':self.path(u['id']),'identifiers':dict(self.identifiers[u['id']])}
+                    for u in units if source_levels is not None
+                    and u['level']=='cercle' and _fold(u['name'])=='bamako'],
                 'locality_path_counts': [{'path': list(path), 'locality_records': count}
                                         for path, count in sorted(paths.items())],
                 'arrondissement_parent_counts': [{'parent_type': kind, 'parent_name': name,
