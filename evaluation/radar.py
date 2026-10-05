@@ -79,7 +79,7 @@ def inputs(scorecard, run, conversation=None):
             for key in ['correct_interpretation_rate', 'unnecessary_clarification_rate', 'factual_grounding_proxy_rate']:
                 values[key] = fraction(conversation.get(key)) if complete else None
             values['conversation_complete'] = bool(complete)
-            values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit']}
+            values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit', 'evaluator_version']}
         return values
     cases = {c['id']: c for c in load_cases(scorecard['split'], scorecard['split'] == 'heldout')}
     records = [enriched(run, json.loads(p.read_text())) for p in sorted((run / 'raw').glob('*.json'))]
@@ -158,7 +158,7 @@ def inputs(scorecard, run, conversation=None):
     for key in ['correct_interpretation_rate', 'unnecessary_clarification_rate', 'factual_grounding_proxy_rate']:
         values[key] = fraction(conversation.get(key)) if complete else None
     values['conversation_complete'] = bool(complete)
-    values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit']} if conversation else None
+    values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit', 'evaluator_version']} if conversation else None
     values['assertion_denominators'] = {k: len(v) for k, v in groups.items()}
     return values
 
@@ -322,6 +322,8 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
             if measured.get('conversation_complete') and metrics.get('conversation_complete'):
                 if measured['conversation_provenance'].get('measurement_protocol') != metrics['conversation_provenance'].get('measurement_protocol'):
                     raise ValueError('Conversational comparison requires the same measurement protocol')
+                if measured['conversation_provenance'].get('evaluator_version') != metrics['conversation_provenance'].get('evaluator_version'):
+                    raise ValueError('Conversational comparison requires the same evaluator version')
             series.insert(0, {'label': 'Current live V4', 'scores': scores(metrics), 'scorecard_sha256': digest(live_card), 'input_metrics': metrics, 'benchmark_signature': signature(live_card)})
         else:
             series.insert(0, {'label': 'Current live V4', 'scores': dict.fromkeys(AXES), 'unavailable_reason': 'Missing or incompatible benchmark, repetition or evaluator configuration'})

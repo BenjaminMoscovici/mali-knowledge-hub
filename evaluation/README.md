@@ -105,6 +105,13 @@ Do not commit runtime credentials, user histories or private packets. The read-o
 tool reads only shared documents/chunks, and omits embedding vectors. No Supabase migration
 is necessary for evaluation persistence: SQLite plus JSON and versioned scorecards suffice.
 Cross-user privacy requires a separate authenticated test; anonymous denials alone do not prove it.
+Conversation evaluator 2.0 adds independent preceding-turn project-subset and
+administrative-referent checks. Unknown subset identities cannot pass. Rescore
+both sides from unchanged captures when changing evaluator versions; keep the
+original derived scores alongside the new ones. Radar comparisons reject mixed
+conversation evaluator versions. The frozen suite, expectations, raw responses
+and radar formulas remain unchanged. These checks still do not establish factual
+entailment or the correctness of freshly retrieved project status.
 The baseline rolling v1 transport fixture had a construction error (wrong question).
 `rolling_v2.json` documents its correction and retires that ID; the frozen v1 manifest
 and original rolling v1 are retained unchanged. Rolling run manifests pin their suite hash.

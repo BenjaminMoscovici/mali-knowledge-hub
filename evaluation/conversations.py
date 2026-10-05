@@ -7,6 +7,7 @@ from .common import digest, now, write_json
 from .runner import request_case, capture_telemetry
 from .scorecard import distribution
 from .validators import contains_number
+from .conversation_integrity import VERSION, validate_context
 
 ROOT = Path(__file__).parent / 'benchmarks'
 CLARIFY = r'which (?:place|metric|measure|project|entity|indicator|answer)|what (?:place|metric|measure|project|indicator) do you mean|please (?:specify|clarify)|do you mean|de quel|quel(?:le)? (?:lieu|mesure|projet|indicateur)|pr[eé]cisez|voulez.vous parler|souhaitez.vous|pourriez.vous pr[eé]ciser'
@@ -76,18 +77,26 @@ def summarize(out):
             grounded = bool(response.get('evidence')) and bool(re.search(r'\[E\d+', answer))
             intent = all(re.search(p, text, re.I) for p in expected['intent_patterns'])
             numeric = all(contains_number(answer, n) for n in expected['answer_numbers'])
+            previous_path = out / 'raw' / f'{sequence["id"]}--{index - 1}.json'
+            previous = json.loads(previous_path.read_text()) if previous_path.exists() else {}
+            context_checks = validate_context(sequence, index, (previous.get('response') or {}).get('answer', ''), answer)
+            context_verified = all(c['status'] == 'pass' for c in context_checks)
             correct = r['ok'] and (clarify if expected['clarification_required'] else not clarify and intent)
+            if not expected['clarification_required']:
+                correct = correct and context_verified
             checks.append({'sequence_id': sequence['id'], 'turn': index, 'correct_interpretation': bool(correct),
                            'expected_clarification': expected['clarification_required'],
                            'clarification_observed': clarify, 'numeric_check': numeric,
                            'grounded_required': expected['grounded_answer_required'], 'grounded': grounded,
-                           'grounding_proxy_pass': not expected['grounded_answer_required'] or grounded and numeric,
+                           'context_integrity_checks': context_checks,
+                           'grounding_proxy_pass': not expected['grounded_answer_required'] or grounded and numeric and context_verified,
                            'response_hash': r['response_hash']})
     straightforward = [c for c in checks if not c['expected_clarification']]
     factual = [c for c in checks if c['grounded_required']]
     success = [r for r in attempts if r['ok']]
     manifest = json.loads((out / 'run_manifest.json').read_text())
-    result = {'method': 'Deterministic intent/clarification and explicit-number checks; grounding proxy is evidence presence plus citations and numbers, not full semantic entailment.',
+    result = {'evaluator_version': VERSION,
+              'method': 'Deterministic intent, clarification, explicit-number and preceding-turn referent/subset checks; unknown context checks cannot pass. Grounding remains a proxy, not semantic entailment.',
               'suite_sha256': manifest['suite_sha256'], 'hub_commit': manifest['hub_commit'],
               'measurement_protocol': manifest.get('measurement_protocol', 'guest-api-v1'),
               'suite_sequences': len(suite['sequences']), 'completed_sequences': sum(all((out / 'raw' / f'{s["id"]}--{i}.json').exists() for i in range(len(s['turns']))) for s in suite['sequences']),
