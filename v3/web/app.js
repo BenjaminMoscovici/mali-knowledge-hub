@@ -312,6 +312,9 @@
         client_seconds:Number(((performance.now()-requestStarted)/1000).toFixed(4))}));
       const message={role:'assistant',content:data.answer,evidence:data.evidence || [],
         standalone_question:data.standalone_question,position:data.position,analysis_mode:mode};
+      const userTurn=state.messages[state.messages.length-1];
+      userTurn.standalone_question=data.standalone_question;
+      thread.conversation_state=data.conversation_state || null;
       state.messages.push(message);
       thread.analysis_mode=mode;
       if (data.save_error) toast('The answer is available, but it could not be saved.');
