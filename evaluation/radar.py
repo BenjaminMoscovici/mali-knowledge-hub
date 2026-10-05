@@ -62,6 +62,18 @@ def observed_rate(checks):
 
 def inputs(scorecard, run, conversation=None):
     run = Path(run)
+    cache = run / 'radar_inputs.json'
+    if not (run / 'raw').exists() and cache.exists():
+        saved = json.loads(cache.read_text())
+        if saved.get('scorecard_sha256') != digest(scorecard) or saved.get('formula_version') != VERSION:
+            raise ValueError('Exported radar inputs do not match scorecard/formula')
+        values = saved['input_metrics'].copy()
+        if conversation is not None:
+            complete = conversation.get('completed_sequences') == conversation.get('suite_sequences') and conversation.get('suite_sequences', 0) >= 20
+            for key in ['correct_interpretation_rate', 'unnecessary_clarification_rate', 'factual_grounding_proxy_rate']:
+                values[key] = fraction(conversation.get(key)) if complete else None
+            values['conversation_complete'] = bool(complete)
+        return values
     cases = {c['id']: c for c in load_cases(scorecard['split'], scorecard['split'] == 'heldout')}
     records = [enriched(run, json.loads(p.read_text())) for p in sorted((run / 'raw').glob('*.json'))]
     groups = {'route': [], 'zero_calls': []}
@@ -192,7 +204,7 @@ def gates(scorecard, live=None):
         loss = value - previous if name == 'grounding' and value is not None and previous is not None else (previous - value if value is not None and previous is not None else None)
         status = 'UNKNOWN' if value is None else 'BASELINE_ONLY'
         if live is not None:
-            status = 'NOT_COMPARABLE' if not compatible else ('UNKNOWN' if loss is None else ('REGRESSION' if loss > .05 + 1e-12 else 'WITHIN_TOLERANCE'))
+            status = 'NOT_COMPARABLE' if not compatible else ('UNKNOWN' if loss is None else ('REGRESSION' if loss > 1e-12 else 'NO_MEASURED_REGRESSION'))
         if name == 'citation_validity' and value is not None and value < 1:
             status = 'FAIL'
         result[name] = {'status': status, 'value': value, 'live': previous, 'regression': loss}
@@ -208,14 +220,16 @@ def gates(scorecard, live=None):
 
 def svg(series):
     cx, cy, radius = 440, 350, 230
+    drawn = [s for s in series if any(s['scores'][a] is not None for a in AXES)]
+    height = max(790, 715 + 23 * len(drawn))
     def point(index, value):
         angle = -math.pi / 2 + index * math.pi / 4
         return cx + radius * value / 100 * math.cos(angle), cy + radius * value / 100 * math.sin(angle)
     def coords(points):
         return ' '.join(f'{x:.2f},{y:.2f}' for x, y in points)
-    out = ['<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="790" viewBox="0 0 1000 790" role="img" aria-labelledby="title desc">',
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="{height}" viewBox="0 0 1000 {height}" role="img" aria-labelledby="title desc">',
            '<title id="title">MKH capability radar</title><desc id="desc">Eight capabilities on a fixed zero to one hundred scale. Missing measurements break the lines, and are labelled unavailable. This chart does not certify a release.</desc>',
-           '<rect width="1000" height="790" fill="white"/>',
+           f'<rect width="1000" height="{height}" fill="white"/>',
            '<g font-family="system-ui,Arial,sans-serif" fill="#143b46"><text x="40" y="38" font-size="25" font-weight="700">MKH capability radar</text><text x="40" y="64" font-size="14" fill="#586e75">Measured capabilities · 0–100 · provisional judge scores · gates remain separate</text>']
     for value in [20, 40, 60, 80, 100]:
         out.append(f'<polygon points="{coords([point(i,value) for i in range(8)])}" fill="none" stroke="#dbe5e7"/>')
@@ -227,7 +241,6 @@ def svg(series):
         out.append(f'<line x1="{cx}" y1="{cy}" x2="{x:.2f}" y2="{y:.2f}" stroke="#dbe5e7"/>')
         out.append(f'<text x="{tx:.2f}" y="{ty:.2f}" text-anchor="{anchor}" font-size="14" font-weight="600">{html.escape(axis)}</text>')
     colors = ['#007f86', '#ce7130', '#6549a2', '#5875a4']
-    drawn = [s for s in series if any(s['scores'][a] is not None for a in AXES)]
     for j, s in enumerate(drawn):
         color = colors[j % len(colors)]
         vals = [s['scores'][a] for a in AXES]
@@ -246,7 +259,7 @@ def svg(series):
         missing = ', '.join(a for a,v in s['scores'].items() if v is None)
         caption = s['label'] + (' · unavailable: ' + missing if missing else '')
         out.append(f'<line x1="40" y1="{ly}" x2="66" y2="{ly}" stroke="{color}" stroke-width="3"/><text x="77" y="{ly+5}" font-size="13">{html.escape(caption)}</text>')
-    out.append('<text x="40" y="758" font-size="12" fill="#586e75">Missing ≠ zero. Historical versions without comparable measurements are listed in the table.</text></g></svg>')
+    out.append(f'<text x="40" y="{height-32}" font-size="12" fill="#586e75">Missing ≠ zero. Historical versions without comparable measurements are listed in the table.</text></g></svg>')
     return '\n'.join(out)
 
 

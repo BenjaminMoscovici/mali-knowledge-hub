@@ -106,7 +106,7 @@ PROTECTED={'citation_validity':('deterministic_metrics','citation_validity','val
  'evidence_gap':('analytical_dimensions','evidence_gap_handling','acceptable_fraction'),
  'grounding':('unsupported_claim_rate','value'),'citation_entailment':('citation_entailment','value'),
  'claim_coverage':('claim_assessment_coverage','value')}
-def compare(live,candidate,tolerance=.05):
+def compare(live,candidate,tolerance=0):
  changes={};reasons=[]
  if live['run_manifest']['benchmark_manifest_sha256']!=candidate['run_manifest']['benchmark_manifest_sha256']:
   reasons.append('Benchmark hashes differ; not a valid regression comparison')
@@ -129,7 +129,7 @@ def compare(live,candidate,tolerance=.05):
   loss=None if a is None or b is None else (b-a if name=='grounding' else a-b)
   changes[name]={'live':a,'candidate':b,'regression':loss}
   if loss is None:reasons.append(name+' not measured')
-  elif loss>tolerance+1e-12:reasons.append(name+' regressed more than five percentage points')
+  elif loss>tolerance+1e-12:reasons.append(name+' regressed beyond the protected tolerance')
  if candidate['composition']['unique_cases']!=candidate['composition']['expected_unique_cases']:reasons.append('Incomplete candidate frozen suite')
  if candidate['judged_attempts']<candidate['availability']['successes']:reasons.append('Incomplete analytical judging')
  if candidate['availability']['failures']:reasons.append('Candidate request failures require review')
