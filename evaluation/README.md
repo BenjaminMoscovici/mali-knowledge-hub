@@ -79,7 +79,7 @@ Baseline API telemetry gaps are explicitly reported; source-plan logs may enrich
 
 Scorecards include median/P90/P95/max latency and median/total cost by mode, input tokens,
 French language/writing results, evidence distribution, failures and judge findings. Quantiles
-use linear interpolation. Protected metrics reject regressions exceeding .05; missing
+use linear interpolation. Protected metrics reject any measured regression for this sprint; missing
 protected evidence cannot pass. Release acceptance additionally requires held-out qualification,
 live smoke, privacy audit, human calibration and measured target improvement. A baseline
 scorecard alone is not release acceptance. Configuration comparisons can use the same runner
@@ -109,3 +109,38 @@ The baseline rolling v1 transport fixture had a construction error (wrong questi
 `rolling_v2.json` documents its correction and retires that ID; the frozen v1 manifest
 and original rolling v1 are retained unchanged. Rolling run manifests pin their suite hash.
 The offline GitHub workflow checks benchmark integrity and evaluator tests without secrets.
+
+## Optional Render milestone worker
+
+`MKH_EVALUATION_RUN=<unique-milestone-label>` enables the fixed release worker
+on the GIZ V4 test service only (`srv-davpdjugekts73ev4v3g`, project
+`hofoubbmepacdljeablj`). The default is off. A 40-character deployed commit is
+required; labels cannot select commands, arbitrary endpoints or repositories.
+The worker reuses the frozen 83-attempt configuration, rolling challenge set and
+18-case held-out acceptance milestone. It captures Hub latency before invoking
+any independent judge. It does not access user history or add an HTTP trigger.
+
+The source oracle, raw answers and judge receipts are checkpointed in the private
+`mkh-evaluations` GIZ bucket (ZIP only, 32 MiB maximum, no new access policy).
+Public government PDFs are admitted to judge packets only if their downloaded
+bytes match the baseline's recorded SHA256. Changed or unavailable files remain
+unassessable. No source integration is added. Existing public Hub startup and
+source publication remain unchanged when the flag is absent.
+
+Each split emits computed aggregate chunks to the existing private Render logs
+with `MKH_BENCHMARK_AGGREGATE`, a chunk index, count and SHA256. Those exports omit
+questions, answers, source passages and claim labels. Save the exported scorecard
+and its bound `radar_inputs.json` together to regenerate the six release artifacts
+without exporting raw evidence. The original scorecard hash is retained; metric
+inputs are calculated inside the worker from validators and immutable judgments.
+Cached inputs must match the scorecard hash and formula version. Attach the
+separately captured 24-sequence UI conversation scorecard for protocol-matched
+conversation comparison. Missing historical scores and unresolved privacy/human
+calibration gates remain unavailable; neither exports nor radar authorize release.
+
+Restarting the same completed commit/milestone skips measurement. Intermediate
+private checkpoints resume captured attempts and receipts. Clear the opt-in flag
+after a milestone to keep ordinary starts free of benchmark work. If source
+provenance, storage or judging fails, the worker logs only the error type and
+retains measurements already checkpointed; it never marks an incomplete suite
+qualified or hides failures by retrying them.

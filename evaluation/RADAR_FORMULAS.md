@@ -66,8 +66,15 @@ python -m evaluation.radar --run CANDIDATE_RUN --live LIVE_RUN \
   --conversation CONVERSATION_SCORECARD --historical V2=COMPARABLE_V2_RUN
 ```
 
-Protected gates use the existing release scorecard and five-percentage-point
-regression tolerance. Citation-ID correctness additionally requires no invalid
+Protected gates use the release scorecard with zero regression tolerance for
+this sprint's explicit no-regression requirement. Citation-ID correctness requires no invalid
 IDs. Deterministic factual-grounding failures remain explicit failures. Privacy,
 human calibration, held-out qualification, live smoke and target improvement
 retain their own statuses. No radar average or total score is generated.
+
+Service-produced aggregate exports may regenerate charts without raw evidence.
+Their `radar_inputs.json` must bind to the exported scorecard SHA256 and this exact
+formula version. Inputs are computed from the privately retained original run,
+not manually rated. Original scorecard SHA256 and deployed commit remain recorded.
+A separately measured conversation suite can replace only conversation inputs;
+partial suites remain unavailable. This export path does not change formulas.

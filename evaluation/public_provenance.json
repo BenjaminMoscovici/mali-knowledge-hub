@@ -1,0 +1,38 @@
+{
+  "documents": [
+    {
+      "document_id": "495a9123-89f9-448e-986a-48fb27a0774b",
+      "public_url": "https://finances.ml/sites/default/files/2025-05/VISION-MALI-2063.pdf",
+      "sha256": "c95bdf300178bc3b77ab25162be038d46bb51ffcb6ffb4ae227516d06f841253",
+      "status": "verified_public_download"
+    },
+    {
+      "document_id": "f88ef966-bbbc-4c2e-85b6-b01b6fe929a5",
+      "public_url": "https://finances.ml/sites/default/files/2025-05/STRATEGIE-NATIONALE-DE-DEV-A-MOYEN-TERME-DU-MALI.pdf",
+      "sha256": "32ea0253001f25b7bc0eb53e2c510a08dc060c052414200767df1a749b2975ce",
+      "status": "verified_public_download"
+    },
+    {
+      "document_id": "e6722d26-b611-45f2-b826-d68296629e05",
+      "public_url": "https://finances.ml/sites/default/files/2025-05/RAPPORT-PROJETS-STRUCTURANTS.pdf",
+      "sha256": "31aedf852165c088d141ee79343e842c0750e0cda49d874636e86b214f497a48",
+      "status": "verified_public_download"
+    },
+    {
+      "document_id": "0bb4ec28-96f9-4f4d-aae0-7f32d0d9ffd1",
+      "public_url": "https://finances.ml/sites/default/files/2025-05/PHASAGE-PROJETS-STRUCTURANTS-VISION-2063.pdf",
+      "sha256": "4b90eef3dcd8e2defc77d8dabd0db4266cac2b168a1140f110ae22b553c3c831",
+      "status": "verified_public_download"
+    },
+    {
+      "document_id": "071919d6-7c65-4418-ab99-c243ce4fe46c",
+      "public_url": "https://www.unicef.org/media/179331/file/2026-HAC-Mali.pdf",
+      "status": "unverified"
+    },
+    {
+      "document_id": "3a2cc475-b8aa-441f-9f97-9d501b4198f8",
+      "public_url": "https://www.unicef.org/media/183456/file/Mali-Humanitarian-Situation-Report%20No.2%28Mid-Year%29%2C30-June-2026.pdf.pdf",
+      "status": "unverified"
+    }
+  ]
+}
