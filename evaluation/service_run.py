@@ -10,6 +10,7 @@ import json
 import os
 import re
 import urllib.request
+import urllib.error
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -109,8 +110,18 @@ def checkpoint(storage, directory, prefix, phase, secrets):
     objects = storage.list(prefix)
     if not any(x.get('name') == phase + '.zip' for x in objects):
         raise ValueError('Private artifact upload could not be verified')
+    # Existence is confirmed through service-role storage above. Independently
+    # check that the unauthenticated public object route cannot read it.
+    try:
+        with urllib.request.urlopen(PROJECT + '/storage/v1/object/public/' + BUCKET + '/' + name, timeout=20) as response:
+            response.read(1)
+        raise ValueError('Evaluation artifact unexpectedly readable anonymously')
+    except urllib.error.HTTPError as exc:
+        if exc.code not in {400, 403, 404}:
+            raise ValueError('Anonymous artifact denial could not be established') from None
     print(json.dumps({'event': 'MKH_BENCHMARK_ARCHIVE', 'bucket': BUCKET,
-                      'path': name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}), flush=True)
+                      'path': name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(),
+                      'anonymous_public_read': 'denied'}), flush=True)
 
 
 def export_aggregates(directory, card):
@@ -152,7 +163,7 @@ def run_from_environment():
         # Render's disk is ephemeral. Resume private checkpoints rather than
         # silently buying a second run after a restart of the same milestone.
         existing = {x.get('name') for x in storage.list(prefix)}
-        for phase in ['heldout-scored', 'rolling-scored', 'frozen-scored', 'captured']:
+        for phase in ['heldout-scored', 'rolling-scored', 'frozen-scored', 'captured', 'rolling-captured', 'frozen-captured']:
             if phase + '.zip' in existing:
                 data = storage.download(f'{prefix}/{phase}.zip')
                 with zipfile.ZipFile(io.BytesIO(data)) as zipped:
@@ -160,6 +171,8 @@ def run_from_environment():
                         target = (directory / member.filename).resolve()
                         if not target.is_relative_to(directory.resolve()) or member.file_size > MAX_BYTES:
                             raise ValueError('Unsafe private checkpoint member')
+                    if sum(m.file_size for m in zipped.infolist()) > 8 * MAX_BYTES:
+                        raise ValueError('Private checkpoint expansion exceeds bound')
                     zipped.extractall(directory)
                 break
         write_json(directory / 'milestone.json', {'started_at': now(), 'hub_commit': commit,
@@ -176,9 +189,11 @@ def run_from_environment():
         splits = ['frozen', 'rolling', 'heldout']
         for split in splits:
             run(SimpleNamespace(output=str(directory / split), base=BASE, hub_commit=commit,
-                split=split, acceptance=split == 'heldout', ids=None,
+                split=split, acceptance=split == 'heldout', ids=None, require_commit=True,
                 repetitions=3 if split == 'frozen' else 1,
                 repeat_ids='JOIN01,JOIN02,JOIN03,FUND04' if split == 'frozen' else None))
+            if split != 'heldout':
+                checkpoint(storage, directory, prefix, split + '-captured', secrets)
         checkpoint(storage, directory, prefix, 'captured', secrets)
         public = provenance(directory / 'public-provenance')
         for split in splits:
