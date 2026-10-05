@@ -29,6 +29,9 @@ def import_conversation(source, output, hub_commit):
         seq = sequences[key[0]]
         question = seq['turns'][key[1]]
         answer = item.get('answer')
+        observed_commit = item.get('metrics', {}).get('hub_commit')
+        if observed_commit is not None and observed_commit != hub_commit:
+            raise ValueError('Observed UI turn belongs to a different deployed commit')
         if not isinstance(answer, str) or not answer.strip():
             raise ValueError('UI capture has no observed answer')
         response = {'answer': answer, 'evidence': item.get('evidence', []),
