@@ -276,15 +276,13 @@ def is_source_inventory_question(question):
         "verfugbar"
     ]
 
-    has_source_term = any(
-        term in q
-        for term in source_terms
-    )
-
-    has_inventory_term = any(
-        term in q
-        for term in inventory_terms
-    )
+    # Whole words: German "quelle" must not match French "quelles", and
+    # the French possessive "tes" must not match the end of "limites".
+    def has_phrase(terms):
+        return any(re.search(r'(?<!\w)' + re.escape(term.strip()) + r'(?!\w)', q)
+                   for term in terms)
+    has_source_term = has_phrase(source_terms)
+    has_inventory_term = has_phrase(inventory_terms)
 
     # Keep this deliberately limited to short questions so that
     # substantive research questions mentioning "sources" are not hijacked.
@@ -2398,7 +2396,7 @@ def run_four_source_research(question, document_count=8):
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
-                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))))
+                                ending=bool(re.search(r"\b(ending|end dates?|past end|still active|closing|close|expire|expiration|echeances?|dates? de fin|termin\w*|finissent|finissant)\b", normalize_text(question))))
         return value, time.perf_counter() - started
 
     from geographic_model import canonical_geography_evidence
@@ -2670,7 +2668,7 @@ def _generate_grounded_answer(
     ]
 
     synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
-    evidence_text = serialize_synthesis(synthesis_ledger)
+    evidence_text = serialize_synthesis(synthesis_ledger, context_audit, question)
     # Only IDs actually supplied to synthesis can be used by its navigation aid.
     synthesis_joined = build_join_context(synthesis_ledger, research["geography"])
     synthesis_joined["organization_resolution"] = research["joined"].get("organization_resolution", [])
@@ -2812,20 +2810,28 @@ analytical and decision-useful. Do not reproduce the evidence ledger.
 
 Use this structure unless the question clearly requires another form:
 
-**Bottom line**
-Answer the actual question directly in 2-4 sentences.
+**What we know**
+Answer directly with the most relevant supported facts and exact citations.
+Use a compact comparison table when it makes differences easier to assess.
 
-**What the evidence shows**
-Give 3-5 concise bullets with the most decision-relevant findings.
-Combine related evidence instead of repeating it.
+**What this suggests**
+State decision-relevant synthesis or tentative inference, with its evidence
+and reasoning. Omit this section when the evidence supports no useful inference.
 
-**Important limitations**
-Give only 1-3 limitations that materially affect interpretation or
-action. Omit this section if there are no material limitations.
+**What remains uncertain**
+State only limitations that materially affect interpretation or action.
+Distinguish missing evidence from evidence of absence.
+
+**Sources / evidence**
+When useful, add one short line identifying the key source families and
+reference periods with the corresponding exact evidence IDs. Full original
+references are available in the source panel. Do not repeat every citation.
+Translate these headings into the requested response language.
+Do not force this structure onto trivial lookups or single-fact answers.
 
 LENGTH:
-- Default target: 350-550 words maximum.
-- Simple single-source questions: usually 150-300 words.
+- Default target: 250-400 words maximum, unless the question needs more detail.
+- Simple single-source questions: usually 80-180 words.
 - Do not add separate sections called "Source facts", "Analytical
   synthesis", "Cautious inference", "Evidence limitations" or
   "Next steps" unless the user explicitly asks for that detail.
@@ -3037,7 +3043,7 @@ def likely_context_dependent_followup(
 def resolve_conversational_question(
     question,
     messages,
-    model="gpt-5-mini"
+    model="gpt-5.6-luna"
 ):
     """Convert a follow-up into a standalone research question."""
 
@@ -3096,6 +3102,8 @@ NEW USER QUESTION
         .responses
         .create(
             model=model,
+            reasoning={"effort":"none"},
+            max_output_tokens=min(1400,max(384,len(question)//3+128)),
             instructions=instructions,
             input=input_text
         )
