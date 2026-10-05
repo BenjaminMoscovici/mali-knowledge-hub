@@ -80,6 +80,24 @@ def test_operational_presence_remains_joined_research():
     assert classify('Which communes have documented intervention presence in Mopti?')['path']=='complex_research'
 
 
+def test_complete_questions_with_pronouns_or_conjunctions_are_not_ellipses():
+    questions=[
+        'What does Vision Mali 2063 state as its long-term development ambition?',
+        'How many distinct FONGIM projects are recorded for Mopti, and what does that count not tell us?',
+        'Do NGO projects recorded in Mopti region establish that every commune in Mopti is covered?',
+        'What population projection is reported for Mopti region in 2023, and can it describe the population today?',
+        'Does the signature date of an EIB Kabala project establish its implementation period and current results?',
+        'Que prévoit la SNEDD pour ses priorités de développement ?',
+    ]
+    for question in questions:
+        for prior in [[],history('How many communes are in Gao?')]:
+            result=resolve(question,prior)
+            assert not result['clarification_required'] and not result['needs_model'], question
+            assert result['standalone_question']==question
+    assert resolve('When did it end?',[])['clarification_required']
+    assert resolve('Which of those are still active?',[])['clarification_required']
+
+
 def test_french_evidence_limits_do_not_become_platform_source_inventory():
     import ast
     tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
