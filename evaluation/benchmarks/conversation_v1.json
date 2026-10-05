@@ -1,0 +1,580 @@
+{
+  "version": "conversation-v1",
+  "sequences": [
+    {
+      "id": "C01",
+      "category": "geography_metric",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many municipalities are in Mali?",
+        "And in Gao?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "commune|municipalit",
+            "gao"
+          ],
+          "answer_numbers": [
+            44
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "category": "geography_metric",
+      "language": "fr",
+      "difficulty": "balanced",
+      "turns": [
+        "Combien de communes compte le Mali ?",
+        "Et à Mopti ?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "commune",
+            "mopti"
+          ],
+          "answer_numbers": [
+            50
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C03",
+      "category": "geography_metric",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many cercles are in Mali?",
+        "And in Gao?",
+        "And in Mopti?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "cercle",
+            "gao"
+          ],
+          "answer_numbers": [
+            16
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        },
+        {
+          "intent_patterns": [
+            "cercle",
+            "mopti"
+          ],
+          "answer_numbers": [
+            8
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C04",
+      "category": "administrative_level",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many communes are in Gao cercle?",
+        "And in Ansongo?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "commune",
+            "cercle",
+            "ansongo"
+          ],
+          "answer_numbers": [
+            4
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C05",
+      "category": "geography_path",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What is the parent hierarchy of Socoura commune?",
+        "And Konna?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "parent|hierarch|path",
+            "commune",
+            "konna"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C06",
+      "category": "sex_level",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What is the 2023 population projection for Bandiagara region?",
+        "What about women?",
+        "And at cercle level?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "population|projection",
+            "bandiagara",
+            "2023",
+            "women|female"
+          ],
+          "answer_numbers": [
+            636934
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        },
+        {
+          "intent_patterns": [
+            "population|projection",
+            "bandiagara",
+            "cercle",
+            "women|female"
+          ],
+          "answer_numbers": [
+            115511
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C07",
+      "category": "sex_geography",
+      "language": "fr",
+      "difficulty": "balanced",
+      "turns": [
+        "Quelle est la population projetée de la région de Mopti en 2023 ?",
+        "Et à Gao ?",
+        "Et les hommes ?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "population",
+            "gao",
+            "2023"
+          ],
+          "answer_numbers": [
+            827614
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        },
+        {
+          "intent_patterns": [
+            "population",
+            "gao",
+            "hommes|male"
+          ],
+          "answer_numbers": [
+            425177
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C08",
+      "category": "needs_geography",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What intersectoral people-in-need observations are available for Mopti in OCHA HAPI?",
+        "Same for Gao?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "gao",
+            "hapi|ocha",
+            "intersectoral|people.in.need|needs"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C09",
+      "category": "category_period",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What IDP stock does DTM Round 83 September 2025 report for Socoura?",
+        "What about returned IDPs?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "socoura",
+            "dtm",
+            "2025|83",
+            "return"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C10",
+      "category": "period_geography",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What does the June–August 2026 Cadre Harmonise projection show for Mopti?",
+        "And Gao for the same period?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "gao",
+            "harmoni",
+            "2026",
+            "project|projection"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "category": "period_change",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How much funding does FTS report for Mali in 2026?",
+        "And in 2025?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "fts",
+            "fund|financ",
+            "2025"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "category": "entity_pronoun",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What did the IEG evaluation find for World Bank project P144442?",
+        "What constraints did it face?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "p144442",
+            "constraint|limitation|obstacle"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C13",
+      "category": "entity_pronoun",
+      "language": "fr",
+      "difficulty": "balanced",
+      "turns": [
+        "Que prévoit la SNEDD 2024–2033 pour les services de base ?",
+        "Quelles sont ses limites comme preuve de résultats ?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "snedd",
+            "result|preuve|evidence"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "category": "entity_pronoun",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "What does the EIB Kabala drinking-water project record establish?",
+        "When was it signed?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "kabala|eib",
+            "sign|signature"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "category": "status_subset",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Which FONGIM projects are recorded in Mopti?",
+        "Which of those are still active?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "fongim",
+            "mopti",
+            "active|cours"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C16",
+      "category": "status_dates",
+      "language": "fr",
+      "difficulty": "balanced",
+      "turns": [
+        "Quels projets FONGIM sont enregistrés à Mopti ?",
+        "Lesquels ont une date de fin dépassée mais restent en cours ?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "fongim",
+            "mopti",
+            "fin|end",
+            "cours|active"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C17",
+      "category": "topic_after_social_turn",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many communes are in Mali?",
+        "Thanks!",
+        "And in Gao?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": false
+        },
+        {
+          "intent_patterns": [
+            "commune",
+            "gao"
+          ],
+          "answer_numbers": [
+            44
+          ],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C18",
+      "category": "topic_reset",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many communes are in Gao region?",
+        "What IDP stocks does DTM report for Socoura in September 2025?",
+        "What about women?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "dtm",
+            "socoura"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        },
+        {
+          "intent_patterns": [
+            "dtm",
+            "socoura",
+            "women|female"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C19",
+      "category": "unverified_prior_claim",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "How many cercles are in Mali?",
+        "Are all 999 of them funded by the EU?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [
+            "eu",
+            "cercle|999"
+          ],
+          "answer_numbers": [],
+          "clarification_required": false,
+          "grounded_answer_required": true
+        }
+      ]
+    },
+    {
+      "id": "C20",
+      "category": "no_prior_place",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Hello",
+        "How many communes are there?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": true,
+          "grounded_answer_required": false
+        }
+      ]
+    },
+    {
+      "id": "C21",
+      "category": "multiple_places",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Compare the populations of Gao region and Mopti region in 2023.",
+        "And how many communes are there?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": true,
+          "grounded_answer_required": false
+        }
+      ]
+    },
+    {
+      "id": "C22",
+      "category": "ambiguous_metric",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Compare Mali’s 2026 funding requirement, reported funding and people targeted.",
+        "How much was that?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": true,
+          "grounded_answer_required": false
+        }
+      ]
+    },
+    {
+      "id": "C23",
+      "category": "multiple_entities",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Compare the World Bank P144442 evaluation and the EIB Kabala project record.",
+        "When did it end?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": true,
+          "grounded_answer_required": false
+        }
+      ]
+    },
+    {
+      "id": "C24",
+      "category": "sex_without_indicator",
+      "language": "en",
+      "difficulty": "balanced",
+      "turns": [
+        "Which organisations are present in Mopti in OCHA 3W?",
+        "What about women?"
+      ],
+      "followup_expectations": [
+        {
+          "intent_patterns": [],
+          "answer_numbers": [],
+          "clarification_required": true,
+          "grounded_answer_required": false
+        }
+      ]
+    }
+  ],
+  "method": "Actual multi-turn guest exchanges; oracle expectations remain evaluator-only."
+}

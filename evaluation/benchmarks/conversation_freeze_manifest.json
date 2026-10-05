@@ -1,0 +1,8 @@
+{
+  "frozen_at": "2026-10-05T10:50:52.101927+00:00",
+  "suite_sha256": "5fcc7b4af40c5693cf10ad9e722911e52e96f7ce73ca4fd8e3527303b63c4935",
+  "sequences": 24,
+  "turns": 53,
+  "baseline_hub_commit": "ccd77fed567574b4b1319677a1a1c461fa8f130c",
+  "oracle": "Existing INSTAT versioned hierarchy and original population observation rows; reference2023, not current2026 population."
+}
