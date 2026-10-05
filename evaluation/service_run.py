@@ -163,7 +163,9 @@ def run_from_environment():
         # Render's disk is ephemeral. Resume private checkpoints rather than
         # silently buying a second run after a restart of the same milestone.
         existing = {x.get('name') for x in storage.list(prefix)}
-        for phase in ['heldout-scored', 'rolling-scored', 'frozen-scored', 'captured', 'rolling-captured', 'frozen-captured']:
+        progress = sorted((name[:-4] for name in existing
+            if re.fullmatch(r'judged-\d{6}\.zip', name)), reverse=True)
+        for phase in progress + ['heldout-scored', 'rolling-scored', 'frozen-scored', 'captured', 'rolling-captured', 'frozen-captured']:
             if phase + '.zip' in existing:
                 data = storage.download(f'{prefix}/{phase}.zip')
                 with zipfile.ZipFile(io.BytesIO(data)) as zipped:
@@ -198,8 +200,19 @@ def run_from_environment():
         public = provenance(directory / 'public-provenance')
         for split in splits:
             out = directory / split
+            last_saved_count = sum(1 for path in directory.glob('*/judgments/*.json'))
+            def persist_progress(_value):
+                nonlocal last_saved_count
+                count = sum(1 for path in directory.glob('*/judgments/*.json'))
+                if count >= last_saved_count + 5:
+                    checkpoint(storage, directory, prefix, f'judged-{count:06d}', secrets)
+                    last_saved_count = count
+            print(json.dumps({'event':'MKH_BENCHMARK_PHASE', 'split':split, 'phase':'judging'}),flush=True)
             judge_run(out, split, settings['OPENAI_API_KEY'], workers=2,
-                acceptance=split == 'heldout', public_provenance=str(public))
+                acceptance=split == 'heldout', public_provenance=str(public), on_progress=persist_progress)
+            count = sum(1 for path in directory.glob('*/judgments/*.json'))
+            checkpoint(storage, directory, prefix, f'judged-{count:06d}', secrets)
+            print(json.dumps({'event':'MKH_BENCHMARK_PHASE', 'split':split, 'phase':'scoring'}),flush=True)
             card = summarize(out, split, oracle, acceptance=split == 'heldout', label='Current candidate')
             export_aggregates(out, card)
             checkpoint(storage, directory, prefix, split + '-scored', secrets)

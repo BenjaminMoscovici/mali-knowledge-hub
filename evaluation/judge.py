@@ -92,7 +92,7 @@ def validate_result(result):
  for claim in result['claims']:
   if claim['verdict'] not in ['supported','contradicted','unsupported','unassessable']:raise ValueError('Invalid verdict')
 
-def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_provenance=None):
+def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_provenance=None,on_progress=None):
  out=Path(directory);cases={c['id']:c for c in load_cases(split,acceptance)}
  jobs=[]
  for path in sorted((out/'raw').glob('*.json')):
@@ -116,7 +116,11 @@ def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_
    write_json(out/'judge_errors'/f'{name}.json',{'case_id':case['id'],'error_type':type(exc).__name__,'http_status':getattr(exc,'code',None),'at':now()})
    return {'case':case['id'],'judge_ok':False,'error_type':type(exc).__name__,'status':getattr(exc,'code',None)}
  with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
-  for value in pool.map(work,jobs):print(json.dumps(value),flush=True)
+  for value in pool.map(work,jobs):
+   print(json.dumps(value),flush=True)
+   # Persist receipts and completed judgments incrementally through the caller.
+   # The callback never receives prompts, credentials or source text.
+   if on_progress is not None:on_progress(value)
 
 if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--run',required=True)

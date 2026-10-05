@@ -139,7 +139,17 @@ conversation comparison. Missing historical scores and unresolved privacy/human
 calibration gates remain unavailable; neither exports nor radar authorize release.
 
 Restarting the same completed commit/milestone skips measurement. Intermediate
-private checkpoints resume captured attempts and receipts. Clear the opt-in flag
+private checkpoints resume captured attempts and receipts. Judge progress is
+checkpointed after at least five additional saved judgments and at each split
+boundary; resume selects the highest bounded judgment checkpoint. Phase events
+distinguish judging from scorecard aggregation. This protects completed receipts
+against an interrupted process; it does not establish suitability for long jobs
+on Render free compute. The first candidate's process restarted after its final
+frozen judge result and subsequently shut down. Its captured attempts were saved,
+but the aggregate was not recovered. The opt-in worker remains disabled until
+runtime finalization and artifact recovery have been verified.
+
+Clear the opt-in flag
 after a milestone to keep ordinary starts free of benchmark work. If source
 provenance, storage or judging fails, the worker logs only the error type and
 retains measurements already checkpointed; it never marks an incomplete suite
