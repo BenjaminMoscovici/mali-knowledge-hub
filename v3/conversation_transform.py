@@ -6,6 +6,9 @@ def restate(question, prior, language):
     previous = next((m['content'] for m in reversed(prior) if m.get('role') == 'assistant'), None)
     if not previous:
         return {"answer": "Quelle réponse souhaitez-vous simplifier ?" if language == 'French' else "Which answer would you like me to simplify?", "evidence": []}
+    if re.search(r'\d',previous) and not re.search(r'\[E\d+',previous):
+        return {'answer':("La réponse précédente contient des affirmations chiffrées sans références. Elles restent non vérifiées; il faut les vérifier dans les sources avant de les reprendre." if language=='French' else
+            "The previous answer contains numerical claims without source references. They remain unverified and need to be checked against the sources before being restated."),'evidence':[]}
     text = re.sub(r"\[E\d+(?:\s*,\s*E\d+)*\]", "", previous)
     blocks = [b.strip() for b in re.split(r"\n\s*\n", text) if b.strip()]
     prose = [b for b in blocks if not re.fullmatch(r"(?:#{1,6}\s+[^\n]+|\*\*[^\n]+\*\*:?)", b)
