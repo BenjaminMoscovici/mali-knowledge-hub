@@ -9,7 +9,7 @@ import json
 import re
 import unicodedata
 from structured_summary import compact_text, exact_sentences
-from project_dates import ending_intent
+from project_dates import ending_intent, parsed_date
 
 
 def fold(value):
@@ -243,6 +243,14 @@ def availability_note(ledger, question):
     """Navigate every supplied dated record; the index is not new evidence."""
     if not ending_intent(question):
         return ''
+    # The screening reference date is source-bound, not inferred from the
+    # machine clock or an earlier conversation. Multiple dates are ambiguous.
+    screens = [(e['evidence_id'], m[1]) for e in ledger
+               if e.get('source_type') == 'fongim_structured'
+               and str(e.get('section') or '').startswith('Reported-date selection')
+               for m in re.finditer(r'"asof"\s*:\s*"(\d{4}-\d{2}-\d{2})"', str(e.get('content') or ''))]
+    dates = {d for _, d in screens if parsed_date(d)}
+    asof = parsed_date(next(iter(dates))) if len(dates) == 1 else None
     records = []
     for e in ledger:
         if e.get('source_type') != 'fongim_structured' or e.get('section') != 'Project-ID relationship':
@@ -250,16 +258,24 @@ def availability_note(ledger, question):
         content = str(e.get('content') or '')
         pid = re.search(r'FONGIM project ID (\d+):', content)
         end = re.search(r'start/end dates:\s*\S+\s*/\s*(\d{4}-\d{2}-\d{2})', content)
-        if end:
-            records.append('['+e['evidence_id']+']' + (' project ID '+pid[1] if pid else '') + '; reported end '+end[1])
+        status = re.search(r'Status:\s*([^;\n]+)', content)
+        if end and parsed_date(end[1]):
+            item = '['+e['evidence_id']+']' + (' project ID '+pid[1] if pid else '') + '; reported end '+end[1]
+            if status:
+                item += '; recorded status '+status[1].strip()
+                if asof and parsed_date(end[1]) < asof and fold(status[1].strip()) in ('en cours','active','implementation','ongoing'):
+                    item += '; ongoing registry label conflicts with past reported end date'
+            records.append(item)
     if not records:
         return ''
     return ('SUPPLIED DATED PROJECT INDEX (exact values from the cited current records; navigation, not independent evidence): '
             + ' | '.join(records)
+            + ('; conflict screening reference '+asof.isoformat()+' from '+', '.join('['+eid+']' for eid,d in screens if parsed_date(d)==asof) if asof else '')
             + '. Inspect EVERY indexed record against the actual requested criterion and period. '
             'For a bounded date question, include all supplied examples whose reported dates fall in that window, '
             'with their exact project-level sectors; abbreviate long titles if needed. '
             'For a status-only follow-up, do not impose an ending window that was not requested. '
             'These examples remain a partial list of the full portfolio, but all individually supplied details are available. '
             'Do not claim additional supplied records lack details or stop at an arbitrary number of examples. '
+            'If any indexed record has an ongoing label and a past reported end, report that conflict separately from the forward window; do not deny its existence. '
             'Keep ongoing registry status, reported end dates and verified delivery distinct.')

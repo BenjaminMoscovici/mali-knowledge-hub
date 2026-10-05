@@ -2712,6 +2712,22 @@ def _generate_grounded_answer(
         "ledger"
     ]
 
+    # A simple bounded date roster has typed source values and needs no
+    # synthesis model. Joined analysis and incomplete inputs retain synthesis.
+    from project_listing import render as render_project_listing
+    listed_answer = render_project_listing(ledger, question, response_language or answer_language(question))
+    if listed_answer is not None:
+        listed_answer, audit = verify_citations(listed_answer, ledger)
+        money_audit = validate_money(listed_answer, ledger)
+        if audit['valid'] and money_audit['valid']:
+            research['execution_trace']['synthesis_context'] = {
+                'method': 'fresh-structured-project-listing-1.0', 'model_pass_skipped': True,
+                'retrieved_items': len(ledger), 'synthesis_items': 0, 'prompt_chars': 0,
+                'citation_audit': audit, 'money_integrity': money_audit}
+            return {k: research[k] for k in ['joined','geography','source_plan','family_counts','hapi_raw_count','fongim_project_count','research_seconds','execution_trace']} | {
+                'answer': listed_answer, 'evidence': ledger, 'synthesis_seconds': 0,
+                'total_seconds': round(time.perf_counter()-answer_started,2)}
+
     synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
     evidence_text = serialize_synthesis(synthesis_ledger, context_audit, question)
     # Only IDs actually supplied to synthesis can be used by its navigation aid.

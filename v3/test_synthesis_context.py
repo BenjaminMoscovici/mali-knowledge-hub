@@ -221,3 +221,20 @@ def test_dated_index_covers_every_supplied_record_for_relative_window_questions(
     assert note.count('; reported end')==6 and 'EVERY' in note
     assert availability_note(rows,'Which organisations are present?')==''
     assert 'do not impose an ending window' in availability_note(rows,'Which of those projects are still active?')
+
+
+def test_dated_index_preserves_status_conflicts_at_the_supplied_reference_date():
+    rows=[row('E01',source_type='fongim_structured',section='Reported-date selection; 180-day window',
+              content='Screening: {"asof":"2026-10-05"}.' )]
+    for i,(status,end) in enumerate([('En cours','2026-09-01'),('Closed','2026-09-01'),('Active','2026-11-30')],2):
+        rows.append(row(f'E{i:02d}',source_type='fongim_structured',section='Project-ID relationship',
+            content=f'FONGIM project ID {i}: Example. Status: {status}; start/end dates: 2024-01-01 / {end}; recorded sectors: Nutrition.'))
+    note=availability_note(rows,'Which active records have past end dates?')
+    assert 'reference 2026-10-05 from [E01]' in note
+    assert note.count('ongoing registry label conflicts with past reported end date')==1
+    assert 'recorded status Closed' in note and 'recorded status Active' in note
+    # Without a unique source-bound reference period the navigation aid must
+    # preserve statuses/dates without classifying a date as past.
+    assert 'ongoing registry label conflicts' not in availability_note(rows[1:],'Which projects are ending?')
+    rows.append(row('E05',source_type='fongim_structured',section='Reported-date selection',content='{"asof":"2027-01-01"}'))
+    assert 'ongoing registry label conflicts' not in availability_note(rows,'Which projects are ending?')
