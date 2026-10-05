@@ -62,6 +62,12 @@ def observed_rate(checks):
 
 def inputs(scorecard, run, conversation=None):
     run = Path(run)
+    if conversation is None and (run / 'conversation_scorecard.json').exists():
+        conversation = json.loads((run / 'conversation_scorecard.json').read_text())
+    if conversation is not None:
+        freeze = json.loads((Path(__file__).parent / 'benchmarks/conversation_freeze_manifest.json').read_text())
+        if conversation.get('suite_sha256') != freeze['suite_sha256'] or conversation.get('hub_commit') != scorecard['run_manifest']['hub_commit']:
+            raise ValueError('Conversation scorecard does not match frozen suite/deployed commit')
     cache = run / 'radar_inputs.json'
     if not (run / 'raw').exists() and cache.exists():
         saved = json.loads(cache.read_text())
@@ -73,6 +79,7 @@ def inputs(scorecard, run, conversation=None):
             for key in ['correct_interpretation_rate', 'unnecessary_clarification_rate', 'factual_grounding_proxy_rate']:
                 values[key] = fraction(conversation.get(key)) if complete else None
             values['conversation_complete'] = bool(complete)
+            values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit']}
         return values
     cases = {c['id']: c for c in load_cases(scorecard['split'], scorecard['split'] == 'heldout')}
     records = [enriched(run, json.loads(p.read_text())) for p in sorted((run / 'raw').glob('*.json'))]
@@ -151,6 +158,7 @@ def inputs(scorecard, run, conversation=None):
     for key in ['correct_interpretation_rate', 'unnecessary_clarification_rate', 'factual_grounding_proxy_rate']:
         values[key] = fraction(conversation.get(key)) if complete else None
     values['conversation_complete'] = bool(complete)
+    values['conversation_provenance'] = {k: conversation.get(k) for k in ['suite_sha256', 'measurement_protocol', 'hub_commit']} if conversation else None
     values['assertion_denominators'] = {k: len(v) for k, v in groups.items()}
     return values
 
@@ -301,6 +309,8 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
     output.mkdir(parents=True, exist_ok=True)
     scorecard = json.loads((run / 'scorecard.json').read_text())
     measured = inputs(scorecard, run, conversation)
+    if conversation is not None:
+        write_json(run / 'conversation_scorecard.json', conversation)
     current = {'label': label, 'scores': scores(measured), 'input_metrics': measured, 'scorecard_sha256': digest(scorecard), 'benchmark_signature': signature(scorecard)}
     series = [current]
     live_card = None
@@ -309,6 +319,9 @@ def generate(run, output=None, label='Current candidate', live=None, conversatio
         live_card = json.loads((live / 'scorecard.json').read_text())
         if comparable(scorecard, live_card):
             metrics = inputs(live_card, live)
+            if measured.get('conversation_complete') and metrics.get('conversation_complete'):
+                if measured['conversation_provenance'].get('measurement_protocol') != metrics['conversation_provenance'].get('measurement_protocol'):
+                    raise ValueError('Conversational comparison requires the same measurement protocol')
             series.insert(0, {'label': 'Current live V4', 'scores': scores(metrics), 'scorecard_sha256': digest(live_card), 'input_metrics': metrics, 'benchmark_signature': signature(live_card)})
         else:
             series.insert(0, {'label': 'Current live V4', 'scores': dict.fromkeys(AXES), 'unavailable_reason': 'Missing or incompatible benchmark, repetition or evaluator configuration'})

@@ -86,7 +86,10 @@ def summarize(out):
     straightforward = [c for c in checks if not c['expected_clarification']]
     factual = [c for c in checks if c['grounded_required']]
     success = [r for r in attempts if r['ok']]
+    manifest = json.loads((out / 'run_manifest.json').read_text())
     result = {'method': 'Deterministic intent/clarification and explicit-number checks; grounding proxy is evidence presence plus citations and numbers, not full semantic entailment.',
+              'suite_sha256': manifest['suite_sha256'], 'hub_commit': manifest['hub_commit'],
+              'measurement_protocol': manifest.get('measurement_protocol', 'guest-api-v1'),
               'suite_sequences': len(suite['sequences']), 'completed_sequences': sum(all((out / 'raw' / f'{s["id"]}--{i}.json').exists() for i in range(len(s['turns']))) for s in suite['sequences']),
               'attempts': len(attempts), 'failed_attempts': len(attempts) - len(success),
               'followups': len(checks), 'correct_interpretation_rate': sum(c['correct_interpretation'] for c in checks) / len(checks) if checks else None,
