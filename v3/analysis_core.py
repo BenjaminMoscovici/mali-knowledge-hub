@@ -2154,7 +2154,9 @@ def research_fongim(
                 f"selected FONGIM result set: "
                 f"{examples_text}. "
                 f"These examples are illustrative and are "
-                f"not a ranking of projects."
+                f"not a ranking of projects. This selection is not an "
+                f"exhaustive donor/location roster; it cannot establish "
+                f"that no other projects share a donor or location."
             )
         })
 
@@ -2194,6 +2196,7 @@ def research_fongim(
                 f"Source-reported donor field: {project.get('donor')}; "
                 f"funding amount raw field: {project.get('funding_amount_raw')}. "
                 "Raw donor/budget fields are project-reported associations; currencies, financing period and disbursement status are not inferred. "
+                "This record is one selected example, not an exhaustive donor/location roster. "
                 "Reported dates do not prove actual completion. This is recorded project presence, not verified coverage or impact. "
                 "FONGIM geographic labels and parents are source hierarchy, not an approved COD crosswalk; same-name regions can have different boundaries."
             )
