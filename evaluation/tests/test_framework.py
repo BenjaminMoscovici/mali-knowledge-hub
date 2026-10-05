@@ -82,6 +82,32 @@ class FrameworkTests(unittest.TestCase):
  def test_unknown_protected_metric_cannot_pass(self):
   base={'run_manifest':{'benchmark_manifest_sha256':'h'},'composition':{'unique_cases':0,'expected_unique_cases':75},'availability':{'failures':0,'successes':0},'judged_attempts':0,'by_mode':{}}
   result=compare(base,base);self.assertEqual(result['decision'],'REJECT_OR_EXPERIMENTAL')
+ def test_human_review_pack_required_without_inventing_calibration_or_publisher_approval(self):
+  base={'run_manifest':{'benchmark_manifest_sha256':'h','suite_hash':'s'},'evaluator_configuration':{'judge':'pinned'},
+   'attempt_configuration_hash':'attempts','split':'frozen',
+   'deterministic_metrics':{key:{'value':1} for key in ['citation_validity','currency_preservation','factual_grounding','geographic_discipline','temporal_discipline']},
+   'analytical_dimensions':{'geographic_discipline':{'acceptable_fraction':1},'evidence_gap_handling':{'acceptable_fraction':1}},
+   'unsupported_claim_rate':{'value':0},'citation_entailment':{'value':1},'claim_assessment_coverage':{'value':1},
+   'composition':{'attempts':75,'unique_cases':75,'expected_unique_cases':75},'judged_attempts':75,
+   'availability':{'successes':75,'failures':0},'by_mode':{},
+   'release_prerequisites':{key:True for key in ['heldout_qualified','live_smoke_pass','privacy_audit_pass','calibration_samples_exported','target_improvement_verified']}}
+  base['release_prerequisites']['human_calibrated']=False
+  result=compare(base,base)
+  self.assertEqual(result['decision'],'ACCEPT');self.assertIs(result['human_calibration_status'],False)
+  missing=copy.deepcopy(base);missing['release_prerequisites']['calibration_samples_exported']=False
+  self.assertIn('calibration_samples_exported not established',compare(base,missing)['reasons'])
+  private=copy.deepcopy(base);private['release_prerequisites']['privacy_audit_pass']=False
+  self.assertIn('privacy_audit_pass not established',compare(base,private)['reasons'])
+  newly_wrong=copy.deepcopy(base)
+  newly_wrong['findings']=[{'kind':'deterministic','case_id':'GEO05','rep':0,
+    'finding':{'id':'cercle_population','status':'fail','dimension':'factual_grounding'}}]
+  result=compare(base,newly_wrong)
+  self.assertEqual(result['decision'],'REJECT_OR_EXPERIMENTAL')
+  self.assertEqual(result['new_protected_deterministic_failures'],[('GEO05',0,'cercle_population')])
+ def test_render_and_isolated_latency_cannot_form_a_release_comparison(self):
+  base={'run_manifest':{'benchmark_manifest_sha256':'h','measurement_protocol':'guest-api-v1'},'composition':{'unique_cases':0,'expected_unique_cases':75},'availability':{'failures':0,'successes':0},'judged_attempts':0,'by_mode':{}}
+  other=copy.deepcopy(base);other['run_manifest']['measurement_protocol']='isolated-asgi-guest-v1'
+  self.assertTrue(any('Measurement protocols differ' in r for r in compare(base,other)['reasons']))
  def test_external_judge_excludes_unverified_document_and_private_history(self):
   from evaluation.public_packets import sanitize_packet
   with tempfile.TemporaryDirectory() as d:

@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 from evaluation.common import digest
 from evaluation.radar import VERSION, inputs
 from evaluation.service_run import SERVICE, PROJECT, authorized, archive, private_storage, provenance
-from evaluation.service_run import checkpoint
+from evaluation.service_run import checkpoint, approved_evidence_project
 from evaluation.runner import deployed_commit_matches
 from evaluation.ui_capture import import_conversation
 
@@ -49,6 +49,17 @@ class ServiceBenchmarkTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 authorized(good | {field: value})
 
+    def test_approved_normal_hub_evidence_requires_exact_project_service_and_scope(self):
+        self.assertIsNone(approved_evidence_project({}))
+        good={'MKH_EVALUATION_RUN':'candidate-qualification','RENDER_SERVICE_ID':SERVICE,
+              'SUPABASE_URL':PROJECT,'RENDER_GIT_COMMIT':'a'*40,
+              'MKH_EVALUATION_EVIDENCE_SCOPE':'approved-anonymous-synthesis-v1'}
+        self.assertEqual(approved_evidence_project(good),PROJECT)
+        for changes in [{'SUPABASE_URL':'https://wrong.supabase.co'},
+                        {'RENDER_SERVICE_ID':'other-service'},{'MKH_EVALUATION_RUN':''},
+                        {'MKH_EVALUATION_EVIDENCE_SCOPE':'export-private-history'}]:
+            with self.assertRaises(ValueError):approved_evidence_project(good|changes)
+
     def test_public_artifact_bucket_is_rejected_without_permission_changes(self):
         client = Mock(); client.storage.list_buckets.return_value = [SimpleNamespace(id='mkh-evaluations', public=True)]
         with self.assertRaises(ValueError):
@@ -63,6 +74,25 @@ class ServiceBenchmarkTests(unittest.TestCase):
         self.assertFalse(deployed_commit_matches({'response':{}},'a'*40,True))
         # Earlier immutable baseline captures explicitly lacked this field.
         self.assertTrue(deployed_commit_matches({'response':{}},'a'*40,False))
+
+    def test_resumed_conversation_rejects_mixed_commit_and_retains_failed_attempt(self):
+        from evaluation.conversations import run
+        from evaluation.common import write_json
+        for ok in [True,False]:
+            with tempfile.TemporaryDirectory() as tmp:
+                path=Path(tmp)/'raw/C01--0.json'
+                record={'ok':ok,'response':{'metrics':{'hub_commit':'b'*40}},
+                        'response_hash':'immutable','telemetry':{'server_seconds':1}}
+                write_json(path,record)
+                args=SimpleNamespace(output=tmp,base='https://synthetic.invalid',
+                    hub_commit='a'*40,ids='C01',require_commit=True)
+                with patch('evaluation.conversations.request_case') as request:
+                    if ok:
+                        with self.assertRaises(ValueError):run(args)
+                    else:
+                        run(args)
+                    request.assert_not_called()
+                self.assertEqual(json.loads(path.read_text()),record)
 
     def test_ui_import_rejects_a_turn_from_another_deployment(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -88,6 +118,16 @@ class ServiceBenchmarkTests(unittest.TestCase):
                 self.assertEqual(zipped.namelist(), ['frozen/raw/answer.json'])
             (p / 'frozen/raw/answer.json').write_text('secret-marker')
             with self.assertRaises(ValueError): archive(p, ['secret-marker'])
+
+    def test_archive_preserves_verification_calibration_and_failed_attempt_receipts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp)
+            wanted={'web_verification.json','calibration_samples.json','capture_interruptions.json',
+                    'failure_telemetry.json','paired_comparison.json'}
+            for name in wanted:(p/name).write_text('{"scope":"synthetic benchmark"}')
+            (p/'unrelated-account-history.json').write_text('{"private":"excluded"}')
+            with zipfile.ZipFile(io.BytesIO(archive(p,[]))) as zipped:
+                self.assertEqual(set(zipped.namelist()),wanted)
 
     def test_changed_public_pdf_is_withheld_from_judge(self):
         response = Mock(); response.__enter__ = Mock(return_value=response); response.__exit__ = Mock()
