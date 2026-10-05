@@ -92,7 +92,7 @@ def validate_result(result):
  for claim in result['claims']:
   if claim['verdict'] not in ['supported','contradicted','unsupported','unassessable']:raise ValueError('Invalid verdict')
 
-def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_provenance=None,on_progress=None):
+def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_provenance=None,on_progress=None,approved_hub_project=None):
  out=Path(directory);cases={c['id']:c for c in load_cases(split,acceptance)}
  jobs=[]
  for path in sorted((out/'raw').glob('*.json')):
@@ -102,12 +102,17 @@ def judge_run(directory,split,key,oracle=None,workers=2,acceptance=False,public_
   jobs.append((record,cases[record['case_id']],target,name))
  def work(job):
   record,case,target,name=job;p=packet(case,record,None)
-  if not public_provenance:raise ValueError('External judge requires public-only provenance gate; GIZ oracle is local only')
-  from .public_packets import sanitize_packet
-  p=sanitize_packet(p,record,public_provenance)
+  if approved_hub_project:
+   from .public_packets import approved_hub_packet
+   p=approved_hub_packet(p,record,approved_hub_project)
+  else:
+   if not public_provenance:raise ValueError('External judge requires provenance or explicit approved Hub scope; GIZ oracle is local only')
+   from .public_packets import sanitize_packet
+   p=sanitize_packet(p,record,public_provenance)
   write_json(out/'judge_packets'/f'{name}.json',p)
   try:
    result,receipt=evaluate(p,key)
+   receipt['evidence_packet_version']=p.get('evidence_packet_version','public-provenance-1.0')
    write_json(out/'judge_receipts'/f'{name}.json',receipt)
    write_json(target,{'case_id':case['id'],'repetition':record['repetition'],'response_hash':record['response_hash'],'packet_hash':digest(p),'result':result,'receipt':receipt})
    return {'case':case['id'],'rep':record['repetition'],'judge_ok':True,'usefulness':result['scores']['decision_usefulness'],'usd':receipt['estimated_usd']}
@@ -126,7 +131,8 @@ if __name__=='__main__':
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--run',required=True)
  p.add_argument('--split',choices=['frozen','rolling','heldout'],default='frozen')
  p.add_argument('--config');p.add_argument('--oracle');p.add_argument('--workers',type=int,default=2)
- p.add_argument('--public-provenance',required=True)
+ p.add_argument('--public-provenance')
+ p.add_argument('--approved-hub-project',help='Explicitly authorized anonymous synthesis evidence only; must be the GIZ MKH project URL')
  p.add_argument('--acceptance',action='store_true');a=p.parse_args()
  c=config(a.config);o=json.loads(Path(a.oracle).read_text()) if a.oracle else None
- judge_run(a.run,a.split,c['OPENAI_API_KEY'],None,a.workers,a.acceptance,a.public_provenance)
+ judge_run(a.run,a.split,c['OPENAI_API_KEY'],None,a.workers,a.acceptance,a.public_provenance,approved_hub_project=a.approved_hub_project)

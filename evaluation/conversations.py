@@ -7,7 +7,7 @@ from .common import digest, now, write_json
 from .runner import request_case, capture_telemetry
 from .scorecard import distribution
 from .validators import contains_number
-from .conversation_integrity import VERSION, validate_context
+from .conversation_integrity import VERSION, validate_context, intent_matches
 
 ROOT = Path(__file__).parent / 'benchmarks'
 CLARIFY = r'which (?:place|metric|measure|project|entity|indicator|answer)|what (?:place|metric|measure|project|indicator) do you mean|please (?:specify|clarify)|do you mean|de quel|quel(?:le)? (?:lieu|mesure|projet|indicateur)|pr[eé]cisez|voulez.vous parler|souhaitez.vous|pourriez.vous pr[eé]ciser'
@@ -75,7 +75,7 @@ def summarize(out):
             text = response.get('standalone_question', '') + '\n' + answer
             clarify = bool(response.get('metrics', {}).get('clarification_required') or re.search(CLARIFY, answer, re.I))
             grounded = bool(response.get('evidence')) and bool(re.search(r'\[E\d+', answer))
-            intent = all(re.search(p, text, re.I) for p in expected['intent_patterns'])
+            intent = all(intent_matches(p, text) for p in expected['intent_patterns'])
             numeric = all(contains_number(answer, n) for n in expected['answer_numbers'])
             previous_path = out / 'raw' / f'{sequence["id"]}--{index - 1}.json'
             previous = json.loads(previous_path.read_text()) if previous_path.exists() else {}
