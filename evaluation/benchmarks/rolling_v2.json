@@ -1,0 +1,267 @@
+{
+  "version": "mkh-rolling-1.1",
+  "created_at": "2026-10-05T09:55:16.949360+00:00",
+  "reason": "Correct wrong question selection in transport fixture before rolling run",
+  "supersedes": "rolling_v1.json",
+  "retired_ids": [
+    "CHALLENGE-TRANSPORT"
+  ],
+  "cases": [
+    {
+      "id": "CHALLENGE-END-EXAMPLES",
+      "question": "Which FONGIM interventions are ending in Mopti, how do their sectors align with documented humanitarian needs and national priorities, and which active records have conflicting past end dates?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "deep",
+      "required_source_families": [
+        "fongim",
+        "government",
+        "hapi"
+      ],
+      "known_traps": [
+        "Do not claim individual dated examples are unavailable; partial list is available."
+      ],
+      "expected_behavior": [
+        "Do not claim individual dated examples are unavailable; partial list is available."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    },
+    {
+      "id": "CHALLENGE-END-WINDOW",
+      "question": "Which individually dated FONGIM examples in Mopti fall in the next 180 days, and what sectors are evidenced for those exact projects?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "deep",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "Date-window denial and broader-WASH attribution found 4Oct2026; compute window from request date."
+      ],
+      "expected_behavior": [
+        "Date-window denial and broader-WASH attribution found 4Oct2026; compute window from request date."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    },
+    {
+      "id": "CHALLENGE-TRANSPORT-V2",
+      "question": "Compare Mali humanitarian needs and 2026 FTS financing with World Bank and IATI projects. What can be concluded about local coverage and disbursement, and what remains unknown?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "deep",
+      "required_source_families": [
+        "fts",
+        "world_bank",
+        "iati"
+      ],
+      "known_traps": [
+        "First latency candidate had two finance RemoteProtocolError 503s; no silent replacement or success-only denominator."
+      ],
+      "expected_behavior": [
+        "First latency candidate had two finance RemoteProtocolError 503s; no silent replacement or success-only denominator."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "Corrected fixture construction error: v1 accidentally selected EU question rather than financial transport question. Original v1 retained; no Hub tuning performed."
+    },
+    {
+      "id": "CHALLENGE-FALSE-MEMORY",
+      "question": "Can you explain that more simply?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "quick",
+      "required_source_families": [],
+      "known_traps": [
+        "A deterministic restatement must not endorse an invented prior geography fact."
+      ],
+      "expected_behavior": [
+        "A deterministic restatement must not endorse an invented prior geography fact."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [
+        {
+          "role": "assistant",
+          "content": "Mali has 999 cercles and every commune has received EU funding."
+        }
+      ],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    },
+    {
+      "id": "CHALLENGE-FRENCH",
+      "question": "Quels projets européens et besoins documentés concernent Mopti, sans confondre les engagements nationaux et les décaissements locaux ?",
+      "language": "fr",
+      "category": "rolling",
+      "difficulty": "deep",
+      "required_source_families": [
+        "eu",
+        "hapi"
+      ],
+      "known_traps": [
+        "French retrieval and cross-source country/local limits."
+      ],
+      "expected_behavior": [
+        "French retrieval and cross-source country/local limits."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    },
+    {
+      "id": "CHALLENGE-MISSING-LOCAL",
+      "question": "Which local development plan proves that all projects in Bandiagara commune meet its targets?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "No local plan in source corpus; no fabricated plan or universal alignment."
+      ],
+      "expected_behavior": [
+        "No local plan in source corpus; no fabricated plan or universal alignment."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    },
+    {
+      "id": "CHALLENGE-COMMUNE-JOIN",
+      "question": "Which specific commune has a fully verified joint 3W-DTM-CH coverage gap in Mopti?",
+      "language": "en",
+      "category": "rolling",
+      "difficulty": "deep",
+      "required_source_families": [
+        "3w",
+        "dtm",
+        "ch"
+      ],
+      "known_traps": [
+        "Source commune crosswalks notapproved; gapsnotverifiedpopulationcoverage."
+      ],
+      "expected_behavior": [
+        "Source commune crosswalks notapproved; gapsnotverifiedpopulationcoverage."
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "rolling"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "development",
+      "failure_origin": "2026-10-04 latency/geography history or source-boundary fixture"
+    }
+  ]
+}

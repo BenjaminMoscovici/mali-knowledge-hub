@@ -1,0 +1,756 @@
+{
+  "version": "mkh-evaluation-1.0",
+  "cases": [
+    {
+      "id": "LEGACY-H03",
+      "question": "Compare the available humanitarian-needs data for Gao and Mopti without combining unlike population categories or periods.",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "hapi"
+      ],
+      "known_traps": [
+        "denominator and period discipline",
+        "geography"
+      ],
+      "expected_behavior": [
+        "denominator and period discipline",
+        "geography"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "H03",
+        "original_checks": [
+          "denominator and period discipline",
+          "geography"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-F03",
+      "question": "What evidence does the FONGIM dataset provide about intervention presence in Ségou, and what remains unknown about effectiveness?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "project versus location counts",
+        "effectiveness caveat"
+      ],
+      "expected_behavior": [
+        "project versus location counts",
+        "effectiveness caveat"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "F03",
+        "original_checks": [
+          "project versus location counts",
+          "effectiveness caveat"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-X03",
+      "question": "In Ségou, connect documented needs, government priorities and recorded projects while separating fact, thematic alignment and inference.",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "source coverage",
+        "analytical status",
+        "no false relationship"
+      ],
+      "expected_behavior": [
+        "source coverage",
+        "analytical status",
+        "no false relationship"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "X03",
+        "original_checks": [
+          "source coverage",
+          "analytical status",
+          "no false relationship"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-G03",
+      "question": "Does a national strategy objective prove that a particular commune in Gao has received the intervention?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "no national-to-commune generalization",
+        "no implementation inference"
+      ],
+      "expected_behavior": [
+        "no national-to-commune generalization",
+        "no implementation inference"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "G03",
+        "original_checks": [
+          "no national-to-commune generalization",
+          "no implementation inference"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-I02",
+      "question": "Which donor has definitively closed the largest financing gap in Mali this month?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [],
+      "known_traps": [
+        "no invented funding claim",
+        "time-sensitive evidence gap"
+      ],
+      "expected_behavior": [
+        "no invented funding claim",
+        "time-sensitive evidence gap"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "I02",
+        "original_checks": [
+          "no invented funding claim",
+          "time-sensitive evidence gap"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-S02",
+      "question": "Verify the assertion that 1,000 FONGIM sector records necessarily represent 1,000 distinct projects.",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "reject many-to-one counting error",
+        "explain scope"
+      ],
+      "expected_behavior": [
+        "reject many-to-one counting error",
+        "explain scope"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v1_frozen.json",
+        "id": "S02",
+        "original_checks": [
+          "reject many-to-one counting error",
+          "explain scope"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-J14",
+      "question": "In Gao, join needs, national priorities, FONGIM sectors and actors. Identify what is linked only by geography and broad theme rather than a documented programme relationship.",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "cross-layer completeness",
+        "join type disclosure",
+        "no fabricated relation"
+      ],
+      "expected_behavior": [
+        "cross-layer completeness",
+        "join type disclosure",
+        "no fabricated relation"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J14",
+        "original_checks": [
+          "cross-layer completeness",
+          "join type disclosure",
+          "no fabricated relation"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-J15",
+      "question": "Could 'Mopti' refer to both an administrative region and a cercle in the same FONGIM records? How should a regional count be interpreted?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "ambiguity and hierarchy",
+        "no false equivalence"
+      ],
+      "expected_behavior": [
+        "ambiguity and hierarchy",
+        "no false equivalence"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J15",
+        "original_checks": [
+          "ambiguity and hierarchy",
+          "no false equivalence"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-J16",
+      "question": "Which local priority plan in Bandiagara proves that all recorded NGO projects respond to its targets?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "government"
+      ],
+      "known_traps": [
+        "local plan absence",
+        "no universal alignment",
+        "do not fabricate plan"
+      ],
+      "expected_behavior": [
+        "local plan absence",
+        "no universal alignment",
+        "do not fabricate plan"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J16",
+        "original_checks": [
+          "local plan absence",
+          "no universal alignment",
+          "do not fabricate plan"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-J17",
+      "question": "If the same organisation is written with an acronym in one source and a full name in another, when can the Hub merge them and how is a wrong merge reversed?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "fongim"
+      ],
+      "known_traps": [
+        "confidence",
+        "original values",
+        "audit and reversibility"
+      ],
+      "expected_behavior": [
+        "confidence",
+        "original values",
+        "audit and reversibility"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J17",
+        "original_checks": [
+          "confidence",
+          "original values",
+          "audit and reversibility"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "LEGACY-J18",
+      "question": "Distinguish directly observed nutrition needs, stated national priorities, project activities, outputs and evaluated results in Ségou. Which evidence layers are missing?",
+      "language": "en",
+      "category": "adversarial",
+      "difficulty": "deep",
+      "required_source_families": [
+        "government",
+        "hapi",
+        "fongim"
+      ],
+      "known_traps": [
+        "evidence types",
+        "no activity-as-result",
+        "explicit missing layers"
+      ],
+      "expected_behavior": [
+        "evidence types",
+        "no activity-as-result",
+        "explicit missing layers"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "adversarial",
+        "legacy"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": {
+        "file": "benchmark_v2_frozen.json",
+        "id": "J18",
+        "original_checks": [
+          "evidence types",
+          "no activity-as-result",
+          "explicit missing layers"
+        ]
+      },
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT01",
+      "question": "Dans le cercle de Koro, comment distinguer une présence d’acteur 3W, un projet FONGIM et un résultat effectivement vérifié ?",
+      "language": "fr",
+      "category": "actors_projects",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "3w",
+        "fongim"
+      ],
+      "known_traps": [
+        "Separatepresence,project,result; sourcelevel/date"
+      ],
+      "expected_behavior": [
+        "Separatepresence,project,result; sourcelevel/date"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "actors_projects",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT02",
+      "question": "Can the national CILSS 2026 projected food-insecurity total identify the current commune with the greatest unmet need?",
+      "language": "en",
+      "category": "humanitarian_needs",
+      "difficulty": "deep",
+      "required_source_families": [
+        "ch"
+      ],
+      "known_traps": [
+        "Nationalprojectioncannotidentifycurrentcommune"
+      ],
+      "expected_behavior": [
+        "Nationalprojectioncannotidentifycurrentcommune"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "humanitarian_needs"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT03",
+      "question": "Quelle est la différence entre une priorité Team Europe, une activité INTPA enregistrée et un résultat de développement mesuré au Mali ?",
+      "language": "fr",
+      "category": "plans_priorities",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "eu"
+      ],
+      "known_traps": [
+        "Intent,registryactivity,measuredresultdistinct"
+      ],
+      "expected_behavior": [
+        "Intent,registryactivity,measuredresultdistinct"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "plans_priorities",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT04",
+      "question": "Which donor has verified the largest amount of local disbursement to Youwarou from the integrated EU, FTS and World Bank sources?",
+      "language": "en",
+      "category": "funding_timelines",
+      "difficulty": "deep",
+      "required_source_families": [
+        "eu",
+        "fts",
+        "world_bank"
+      ],
+      "known_traps": [
+        "Cannotranklocaldisbursements; partialcountrylayers"
+      ],
+      "expected_behavior": [
+        "Cannotranklocaldisbursements; partialcountrylayers"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "funding_timelines"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT05",
+      "question": "Les évaluations intégrées permettent-elles de recommander avec certitude le même modèle d’intervention dans toutes les communes de Gao ?",
+      "language": "fr",
+      "category": "learning_evaluation",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "ieg"
+      ],
+      "known_traps": [
+        "Historicalboundedfindingscannotuniversalize"
+      ],
+      "expected_behavior": [
+        "Historicalboundedfindingscannotuniversalize"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "learning_evaluation",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT06",
+      "question": "Can a population projection for Bandiagara region be used as the denominator for a nutrition-needs observation in Bandiagara cercle?",
+      "language": "en",
+      "category": "geography_population",
+      "difficulty": "balanced",
+      "required_source_families": [
+        "geography",
+        "hapi"
+      ],
+      "known_traps": [
+        "Differentlevel/referenceperiod; cannotmixdenominators"
+      ],
+      "expected_behavior": [
+        "Differentlevel/referenceperiod; cannotmixdenominators"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "geography_population"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    },
+    {
+      "id": "ACCEPT07",
+      "question": "Compare les programmes européens, la présence humanitaire et les stocks de déplacés à Ségou en distinguant les périmètres et les périodes.",
+      "language": "fr",
+      "category": "joined_analysis",
+      "difficulty": "deep",
+      "required_source_families": [
+        "eu",
+        "3w",
+        "dtm"
+      ],
+      "known_traps": [
+        "NoassertedregionalEUallocations/communejoin"
+      ],
+      "expected_behavior": [
+        "NoassertedregionalEUallocations/communejoin"
+      ],
+      "deterministic_assertions": [],
+      "tags": [
+        "joined_analysis",
+        "French"
+      ],
+      "evaluator_rubric": [
+        "question_answering",
+        "evidence_completeness",
+        "cross_source_synthesis",
+        "inference_discipline",
+        "evidence_gap_handling",
+        "geographic_discipline",
+        "temporal_discipline",
+        "decision_usefulness",
+        "writing_quality"
+      ],
+      "prior_messages": [],
+      "legacy_reference": null,
+      "status": "held-out"
+    }
+  ]
+}
