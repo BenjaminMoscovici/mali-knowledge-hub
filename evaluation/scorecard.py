@@ -97,6 +97,10 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
    'Analytical scores and atomic claim labels need human calibration; privacy cross-user testing is a separate live prerequisite.',
    'Reported costs use actual provider tokens and application meter; not invoices. Failure cost can remain unknown.'],
   'coverage_adjustments':coverage_adjustments,'findings':findings}
+ from .cohorts import summarize as summarize_cohorts
+ result['performance_cohorts'] = summarize_cohorts(records, cases, judges)
+ from .judge_integrity import inspect as inspect_judge_integrity
+ result['judge_quote_integrity'] = inspect_judge_integrity(out)
  from .calibration import export, SAMPLES
  review_ready=all((out/'raw'/f'{cid}--0.json').exists() and (out/'judgments'/f'{cid}--0.json').exists() for cid in SAMPLES)
  if split=='frozen' and review_ready:export(out)

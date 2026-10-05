@@ -6,7 +6,7 @@ from pathlib import Path
 from .common import digest,now,write_json
 from .judge import packet,evaluate
 from .public_packets import approved_hub_packet,sanitize_packet
-from .adjudication import claims_with_coverage
+from .adjudication import claims_with_coverage,VERSION as ADJUDICATION_VERSION
 
 ROOT=Path(__file__).parent/'benchmarks'
 
@@ -75,16 +75,19 @@ def judge_conversations(directory,key,approved_hub_project=None,public_provenanc
     with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
         for value in pool.map(work,selected):
             if value and on_progress:on_progress(value)
-    claims=[];judgments=[]
+    claims=[];judgments=[];adjustments=[]
     for name,record,_ in selected:
         path=root/'judgments'/f'{name}.json'
         if not path.exists():continue
         j=json.loads(path.read_text());p=json.loads((root/'judge_packets'/f'{name}.json').read_text())
-        adjusted,_=claims_with_coverage(j,p,record);claims.extend(adjusted);judgments.append(j)
+        adjusted,changes=claims_with_coverage(j,p,record);claims.extend(adjusted);judgments.append(j)
+        adjustments.extend({'case_id':name,**change} for change in changes)
     assessed=[c for c in claims if c['verdict']!='unassessable']
     cited=[c for c in claims if c['evidence_ids'] and c['citation_supported'] is not None]
     result={'method':'Independent pinned analytical judge of frozen factual follow-ups; prior AI answers remain context, not evidence.',
         'suite_sha256':manifest['suite_sha256'],'hub_commit':manifest['hub_commit'],
+        'coverage_adjudication_version':ADJUDICATION_VERSION,
+        'evidence_packet_version':('approved' if approved_hub_project else 'public')+'-conversation-evidence-1.1',
         'expected_followups':len(selected),'judged_followups':len(judgments),
         'failed_hub_attempts':sum(not r['ok'] for _,r,_ in selected),
         'complete':len(judgments)==len(selected),
@@ -93,5 +96,7 @@ def judge_conversations(directory,key,approved_hub_project=None,public_provenanc
         'citation_entailment':sum(c['citation_supported'] for c in cited)/len(cited) if cited else None,
         'assessed_cited_claims':len(cited),
         'evaluator_estimated_cost_usd':sum(j['receipt'].get('estimated_usd') or 0 for j in judgments),
-        'human_calibrated':None}
+        'human_calibrated':None,'coverage_adjustments':adjustments}
+    from .judge_integrity import inspect
+    result['judge_quote_integrity']=inspect(root)
     write_json(root/'conversation_quality.json',result);return result

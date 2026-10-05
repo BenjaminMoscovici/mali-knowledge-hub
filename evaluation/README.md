@@ -1,5 +1,14 @@
 # MKH evaluation framework
 
+Evaluator coverage guard 1.2 preserves raw judgments while excluding a narrowly
+proved non-candidate administrative-role quotation: the quote is absent from
+the answer, the actual cited full path exactly matches a fresh official registry
+record, and no contradictory role statement appears in the answer. A real wrong
+path, an uncited path, missing registry evidence or an ordinary paraphrased fact
+cannot pass this guard. Record exact source witnesses and retain original scores
+before rescoring both sides under the same version. Quote-integrity warnings are
+advisory and never change ratings by themselves. No human ratings are invented.
+
 Capability radar generation is now automatic whenever a benchmark scorecard
 is generated. See [RADAR_FORMULAS.md](RADAR_FORMULAS.md) for the fixed eight-axis
 formulas, missing-data policy and release artifacts. Use `--live-run`,
@@ -180,3 +189,26 @@ assessed/unassessable claims, unsupported-claim rate, citation entailment and
 separate evaluator cost. Prior assistant messages remain context, never evidence.
 The deterministic grounding proxy and professional radar formulas remain unchanged.
 Incomplete or failed conversation judgments cannot certify factual continuity.
+
+
+Whole-milestone qualification (`python -m evaluation.qualification`) compares
+complete paired frozen, rolling and held-out runs plus the full conversation
+suite and independent factual-follow-up judgments. A protected deterministic
+anchor absent on both sides of rolling/held-out is reported as not applicable
+in that split; the frozen suite must still measure it. Analytical protected
+metrics apply in every split, and a new individual protected failure rejects
+even when the aggregate is unchanged. Failed or unjudged attempts reject.
+
+The prospective material targets for the next full candidate qualification
+are at least 20% complex median latency, 15% input-token and 10% estimated-cost
+reductions, with no complex P95 increase. The complex cohort is defined by
+frozen expected Balanced/Deep difficulty, including failures and erroneous
+fast routes. These thresholds do not retroactively redefine any frozen
+question, previous measurement or radar formula. Cost estimates include
+provider caching and are not invoices. Joined Mopti is reported separately.
+
+`quality_and_performance_pass` is separate from `pre_deploy_qualified`, which
+also requires an executed privacy-audit receipt from the correct GIZ project.
+Final `release_accepted` additionally requires a live smoke receipt bound to
+the exact candidate commit and V4 test URL. Missing receipts remain false.
+No receipt or human-calibration decision is invented by the framework.

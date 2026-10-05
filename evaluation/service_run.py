@@ -94,7 +94,7 @@ def archive(directory, secrets):
                      'web_verification.json', 'calibration_samples.json', 'publisher_ratings.csv',
                      'calibration_result.json', 'capture_interruptions.json',
                      'failure_telemetry.json', 'paired_comparison.json', 'publication_equivalence.json',
-                     'conversation_quality.json', 'conversation_scorecard.json'}
+                     'conversation_quality.json', 'conversation_scorecard.json', 'judge_integrity.json'}
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as zipped:
         for path in sorted(directory.rglob('*')):
             if not path.is_file() or path.is_symlink():
@@ -142,7 +142,10 @@ def export_aggregates(directory, card):
     # labels leave private artifacts. The exported inputs are computed, not rated.
     from .radar import VERSION, inputs
     measured = inputs(card, directory)
-    exported = {k: v for k, v in card.items() if k not in {'findings', 'coverage_adjustments'}}
+    exported = {k: v for k, v in card.items() if k not in {'findings', 'coverage_adjustments', 'judge_quote_integrity'}}
+    if card.get('judge_quote_integrity'):
+        exported['judge_quote_integrity'] = {k: card['judge_quote_integrity'][k]
+            for k in ['version','checked_quotes','nonliteral_quotes','score_override']}
     findings = Counter((f['case_id'], f['kind']) for f in card.get('findings', []))
     exported['finding_counts'] = [{'case_id': case, 'kind': kind, 'count': count}
         for (case, kind), count in sorted(findings.items(), key=lambda row: (-row[1], row[0]))]
