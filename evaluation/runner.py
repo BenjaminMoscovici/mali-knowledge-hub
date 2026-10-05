@@ -37,7 +37,7 @@ def capture_telemetry(record):
  for key in ['source_plan','per_family_retrieval_seconds','retrieval_ranks']:
   if key not in m:missing.append(key)
  audit=m.get('synthesis_context') or {}
- return {'route':m.get('route'),'depth':m.get('depth'),'routing_seconds':m.get('routing_seconds'),
+ return {'hub_commit':m.get('hub_commit'),'route':m.get('route'),'depth':m.get('depth'),'routing_seconds':m.get('routing_seconds'),
   'source_plan':m.get('source_plan'),'source_plan_observation':'not returned by baseline API; evidence families do not prove all queried families',
   'retrieval_seconds':m.get('research_seconds'),'evidence_count':len(e),'family_counts':families,
   'rankings':[{k:i.get(k) for k in ['evidence_id','source_family','similarity','score','rank']} for i in e],
@@ -56,6 +56,11 @@ def persist(out,record):
  db.execute('create table if not exists attempts(case_id text,repetition integer,split text,ok integer,payload text,primary key(case_id,repetition))')
  db.execute('insert or replace into attempts values(?,?,?,?,?)',(record['case_id'],record['repetition'],record['split'],record['ok'],json.dumps(record,ensure_ascii=False)))
  db.commit();db.close()
+
+def deployed_commit_matches(record,expected,required=False):
+ observed=(record.get('response') or {}).get('metrics',{}).get('hub_commit')
+ if observed is None:return not required
+ return observed==expected
 
 def run(args):
  manifest=verify_freeze();out=Path(args.output);out.mkdir(parents=True,exist_ok=True)
@@ -85,6 +90,11 @@ def run(args):
    record.update(case_id=case['id'],repetition=repeat,split=args.split,case_hash=digest(case),
     response_hash=digest(record['response']),run_hub_commit=args.hub_commit)
    record['telemetry']=capture_telemetry(record);persist(out,record)
+   if record['ok'] and not deployed_commit_matches(record,args.hub_commit,getattr(args,'require_commit',False)):
+    # Preserve the actual answer and cost before stopping a mixed/unknown build.
+    record['ok']=False;record['error_type']='DeployedCommitMismatch'
+    persist(out,record)
+    raise ValueError('Live answer did not come from the immutable benchmarked commit')
    print(json.dumps({'case':case['id'],'repetition':repeat,'ok':record['ok'],
     'server_seconds':record['telemetry']['server_seconds'],'client_seconds':round(record['client_seconds'],2),
     'usd':record['telemetry']['estimated_usd']}),flush=True)
@@ -96,6 +106,7 @@ if __name__=='__main__':
  p.add_argument('--split',choices=['frozen','rolling','heldout'],default='frozen')
  p.add_argument('--output',required=True);p.add_argument('--base',default=BASE)
  p.add_argument('--hub-commit',required=True);p.add_argument('--acceptance',action='store_true')
+ p.add_argument('--require-commit',action='store_true')
  p.add_argument('--ids');p.add_argument('--repetitions',type=int,default=1);p.add_argument('--repeat-ids')
  args=p.parse_args()
  if args.repetitions<1:raise SystemExit('At least one repetition required')
