@@ -428,6 +428,7 @@ async def chat(request):
             save_error = True
     research_usage = result.get("api_usage") or {}
     metrics = {
+        "hub_commit": os.environ.get('RENDER_GIT_COMMIT'),
         "request_id": result.get("request_id"), "depth": mode,
         "route": route["path"], "routing_seconds": round(routing_seconds, 6),
         "context_resolution_method":context_resolution['method'],
