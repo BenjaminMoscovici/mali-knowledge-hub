@@ -54,6 +54,9 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
    'cost_usd':distribution(costs),'cost_unknown_attempts':sum(not r['ok'] or bool(r['telemetry'].get('unpriced_calls')) for r in rows),
    'decision_usefulness_mean':statistics.mean(mode_scores) if mode_scores else None,
    'input_tokens':distribution([r['telemetry']['input_tokens'] for r in ok]),
+   'output_tokens':distribution([r['telemetry']['output_tokens'] for r in ok]),
+   'model_calls':distribution([len([c for c in r['telemetry']['model_calls'] if c.get('endpoint')=='responses']) for r in ok]),
+   'embedding_calls':distribution([len([c for c in r['telemetry']['model_calls'] if c.get('endpoint')=='embeddings']) for r in ok]),
    'assembly_prompt_chars':distribution([r['telemetry']['evidence_assembly']['prompt_chars'] for r in ok if 'prompt_chars' in r['telemetry']['evidence_assembly']])}
  dimensions={}
  for dimension in ['question_answering','evidence_completeness','cross_source_synthesis','inference_discipline','evidence_gap_handling','geographic_discipline','temporal_discipline','decision_usefulness','writing_quality']:
