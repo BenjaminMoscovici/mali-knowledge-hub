@@ -16,6 +16,28 @@ from evaluation.ui_capture import import_conversation
 
 
 class ServiceBenchmarkTests(unittest.TestCase):
+    def test_judge_progress_follows_persisted_receipts_and_resume_skips_completed_calls(self):
+        from evaluation.judge import judge_run
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); (root/'raw').mkdir()
+            (root/'raw/ADV01--0.json').write_text(json.dumps({'case_id':'ADV01','repetition':0,
+                'response_hash':'original-answer-hash','ok':True,'response':{'answer':'synthetic'}}))
+            result={'scores':{'decision_usefulness':4},'findings':[],'claims':[]}
+            receipt={'estimated_usd':.001}
+            observed=[]
+            def progress(value):
+                self.assertTrue((root/'judgments/ADV01--0.json').exists())
+                self.assertTrue((root/'judge_receipts/ADV01--0.json').exists())
+                self.assertEqual(set(value),{'case','rep','judge_ok','usefulness','usd'})
+                observed.append(value)
+            with patch('evaluation.judge.packet',return_value={}), \
+                 patch('evaluation.public_packets.sanitize_packet',return_value={}), \
+                 patch('evaluation.judge.evaluate',return_value=(result,receipt)) as call:
+                judge_run(root,'frozen','dummy',public_provenance='synthetic',on_progress=progress)
+                judge_run(root,'frozen','dummy',public_provenance='synthetic',on_progress=progress)
+                self.assertEqual(call.call_count,1)
+            self.assertEqual(len(observed),1)
+
     def test_worker_is_opt_in_and_rejects_wrong_deployment_or_project(self):
         self.assertFalse(authorized({}))
         good = {'MKH_EVALUATION_RUN': 'candidate-20261005', 'RENDER_SERVICE_ID': SERVICE,
