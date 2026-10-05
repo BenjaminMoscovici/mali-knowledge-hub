@@ -61,6 +61,7 @@ def test_synthesis_withholds_explicit_currency_error_without_an_extra_model_pass
         'run_four_source_research':research,'prepare_synthesis':prepare,'serialize_synthesis':serialize,
         'build_join_context':lambda *a:{},'prompt_context':lambda _:'',
         'intersectoral_locality_note':lambda _:'','availability_note':availability_note,
+        'preserve_project_identifiers':lambda text,ledger,question:text,
         'answer_language':lambda _:'English','verify_citations':verify,'validate_money':validate,
         'openai_client':SimpleNamespace(responses=SimpleNamespace(create=generate))}
     exec(compile(ast.Module(body=[function],type_ignores=[]),'isolated-synthesis-guard','exec'),ns)

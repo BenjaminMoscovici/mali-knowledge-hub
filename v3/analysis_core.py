@@ -36,6 +36,7 @@ from source_wave import retrieve_source_evidence
 from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
 from project_dates import select_examples, ending_intent
+from project_identity import preserve_project_identifiers
 from conversation_state import referenced_fongim_ids
 from project_learning_sources import retrieve_project_learning
 from eu_sources import retrieve_eu_evidence
@@ -2127,6 +2128,7 @@ def research_fongim(
         examples_text = "; ".join(
             (
                 f"{p.get('project_name')}"
+                + f" (project ID {p['fongim_project_id']})"
                 + (
                     f" [{p.get('status')}]"
                     if p.get("status")
@@ -2145,6 +2147,8 @@ def research_fongim(
             "version": None,
             "page": None,
             "section": "Illustrative project records",
+            "project_referents": [{'project_id': p['fongim_project_id'],
+                                    'project_name': p['project_name']} for p in project_examples],
             "content": (
                 f"Illustrative project records from the "
                 f"selected FONGIM result set: "
@@ -2850,7 +2854,8 @@ in a different language; translate faithfully while retaining citations.
         )
     )
 
-    answer, prompt_citation_audit = verify_citations(response.output_text, synthesis_ledger)
+    identified_answer = preserve_project_identifiers(response.output_text, synthesis_ledger, question)
+    answer, prompt_citation_audit = verify_citations(identified_answer, synthesis_ledger)
     context_audit['money_integrity'] = validate_money(answer, synthesis_ledger)
     if not prompt_citation_audit["valid"]:
         answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."
