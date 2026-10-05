@@ -40,6 +40,13 @@ class RadarTests(unittest.TestCase):
         self.assertFalse(comparable(card,different))
         self.assertFalse(comparable({},{}))
 
+    def test_small_protected_regression_is_not_averaged_away(self):
+        live={'split':'frozen','attempt_configuration_hash':'a','evaluator_configuration':{'model':'m'},
+              'run_manifest':{'benchmark_manifest_sha256':'b','suite_hash':'s'},
+              'citation_entailment':{'value':.99}}
+        candidate=copy.deepcopy(live);candidate['citation_entailment']['value']=.98
+        self.assertEqual(gates(candidate,live)['citation_entailment']['status'],'REGRESSION')
+
     def test_missing_axis_breaks_polygon_and_is_explicit(self):
         values=dict.fromkeys(AXES,100);values['Conversational ability']=None
         result=svg([{'label':'V4','scores':values}])
