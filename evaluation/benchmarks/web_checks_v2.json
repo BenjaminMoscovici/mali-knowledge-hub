@@ -1,0 +1,72 @@
+{
+  "version": "selected-web-checks-2.0",
+  "selection_basis": "Eleven of 100 benchmark questions (11%): time-sensitive population, humanitarian, funding, programming and learning evidence. Extends the retained v1 selection by question topic before inspecting the new candidate selected answers; never chosen from answer failures and never supplied to Hub generation.",
+  "checks": [
+    {
+      "split": "frozen",
+      "case_id": "GEO05",
+      "scope": "Bandiagara region, cercle, commune population, period and projection basis",
+      "source_family": "INSTAT RGPH5"
+    },
+    {
+      "split": "frozen",
+      "case_id": "FUND06",
+      "scope": "EU indicative envelope versus grant commitments and local allocation limits",
+      "source_family": "European Commission"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT02",
+      "scope": "Cadre Harmonise projection period and geographic aggregation cannot establish current commune ranking",
+      "source_family": "CILSS Cadre Harmonise"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT03",
+      "scope": "Team Europe priorities versus programming, activities and verified results",
+      "source_family": "European Commission"
+    },
+    {
+      "split": "heldout",
+      "case_id": "ACCEPT06",
+      "scope": "Bandiagara regional population denominator versus cercle-level needs observations",
+      "source_family": "INSTAT RGPH5"
+    },
+    {
+      "split": "frozen",
+      "case_id": "NEED01",
+      "scope": "National HNO 2026 people-in-need and targeted snapshot figures; requirement versus delivered assistance",
+      "source_family": "OCHA Global HPC"
+    },
+    {
+      "split": "frozen",
+      "case_id": "NEED03",
+      "scope": "September 2025 DTM Mopti/Socoura displacement stocks, categories and geography scope",
+      "source_family": "IOM DTM"
+    },
+    {
+      "split": "frozen",
+      "case_id": "NEED05",
+      "scope": "Cadre Harmonise source reference periods versus current October observations",
+      "source_family": "CILSS Cadre Harmonise"
+    },
+    {
+      "split": "frozen",
+      "case_id": "FUND01",
+      "scope": "2026 FTS requirements, reported funding, units and snapshot freshness",
+      "source_family": "OCHA FTS"
+    },
+    {
+      "split": "frozen",
+      "case_id": "LEARN01",
+      "scope": "Initial IEG P144442 documented results and recommendations versus current outcomes",
+      "source_family": "World Bank IEG"
+    },
+    {
+      "split": "frozen",
+      "case_id": "JOIN02",
+      "scope": "EU and Team Europe programming/status/commitments versus measured Mopti results",
+      "source_family": "European Commission"
+    }
+  ]
+}

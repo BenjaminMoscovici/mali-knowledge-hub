@@ -1,0 +1,5 @@
+{
+  "frozen_at": "2026-10-05T22:30:19.279266+00:00",
+  "selection_sha256": "bea12db4f8788f62af8d1bbf7c80849ab54eaba3e4c58829e240e6e1bb9a9d4f",
+  "rule": "Same paired-release selection; preserve v1 results, answer-hash-bound v2 checks after capture; unsupported verification remains unknown."
+}
