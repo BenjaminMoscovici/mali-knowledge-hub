@@ -30,7 +30,11 @@ class DuplicateDocumentError(ValueError):
 
 
 def safe_filename(filename: str) -> str:
-    return re.sub(r"[^A-Za-z0-9._-]", "_", filename.rsplit("/", 1)[-1])[:120] or "upload.pdf"
+    cleaned = re.sub(r"[^A-Za-z0-9._-]", "_", filename.rsplit("/", 1)[-1])
+    stem, dot, extension = cleaned.rpartition(".")
+    if dot and extension.lower() in MIME_TYPES:
+        return (stem or "upload")[:119-len(extension)] + "." + extension
+    return cleaned[:120] or "upload.pdf"
 
 
 def chunks_from_text(text: str, page: int):

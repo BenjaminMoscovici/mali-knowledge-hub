@@ -174,6 +174,14 @@ class DocumentFormatsTests(unittest.TestCase):
         self.assertEqual(db.published, {})
         self.assertEqual(db.jobs[job]['status'], 'failed')
 
+    def test_long_original_filename_retains_format_and_processes(self):
+        db = Database()
+        job = create_job(db, 'long_original_name_' * 20 + '.docx', fixture_docx(), 'synthetic-admin')
+        self.assertLessEqual(len(db.jobs[job]['filename']), 120)
+        self.assertTrue(db.jobs[job]['filename'].endswith('.docx'))
+        process_job(db, SimpleNamespace(embeddings=Embeddings()), job)
+        self.assertEqual(db.jobs[job]['status'], 'ready')
+
 
 class AttachmentAPITests(unittest.TestCase):
     def setUp(self):
