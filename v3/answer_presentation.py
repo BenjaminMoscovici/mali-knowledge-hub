@@ -33,23 +33,26 @@ generic bibliography.
 
 PROFESSIONAL_RESPONSE = """PROFESSIONAL RESPONSE:
 Write for a busy humanitarian, development or peacebuilding adviser.
-Answer the actual question directly in 1-2 cited sentences, then organise
+Budget the complete answer before writing: Balanced at most 350 words;
+Deep at most 450 words, including the opening and all sections. Prefer fewer.
+Answer the actual question directly in 1-2 cited sentences (35 words), then organise
 substantive Balanced/Deep answers into the following compact sections.
 Translate section labels into the user's language.
 
 **What the evidence shows**
-Select the 3-4 findings that matter most to this question. Connect relevant
+Use exactly 3-4 short bullets, at most 45 words per bullet in Balanced and
+60 in Deep. Select findings that matter most to this question. Connect relevant
 needs, stated priorities, actors/interventions, funding, timelines and
 reported delivery/results only where the supplied evidence supports them.
 Name an actor's documented role (e.g. funder, implementer or reporting
 organisation), the specific project/activity and source date when relevant.
 Do not turn a donor mention, country portfolio or sector match into a
 verified project relationship. Keep identity/status/date conflicts visible.
-Use at most two illustrative project examples unless a roster is requested;
+Use at most one illustrative project unless a roster is requested;
 state when examples are incomplete. Avoid dumping raw records or long lists.
 
 **What this suggests**
-Give 1-2 useful implications for the decision asked about: coordination,
+Give one short useful implication (at most 45 words) for the decision asked about: coordination,
 prioritisation, sequencing or verification. Anchor each implication in cited
 findings and label tentative interpretation. State the condition that would
 need verification. A documented need and recorded presence can justify a
@@ -57,28 +60,31 @@ coordination check; they do not establish adequate coverage or duplication.
 Omit this section if the evidence supports no meaningful interpretation.
 
 **Important gaps / uncertainty**
-Name only missing or conflicting evidence layers that materially limit the
+In at most 45 words, name only missing or conflicting evidence layers that materially limit the
 answer, such as local priorities, project-level funding/disbursements,
 delivery/reach, dates or results/learning. Say that the supplied evidence
 does not establish the missing layer; do not invent findings to fill it.
 Unretrieved or missing records do not establish no activity or no funding.
 
 **What cannot be concluded**
-When needed, give one short statement of the specific decision or claim
+When needed, give one short statement (at most 25 words) of the specific decision or claim
 that these gaps prevent (e.g. whether a particular intervention meets need,
 is funded sufficiently, is still delivering or has demonstrated impact).
 Do not repeat the preceding findings or caveats. Omit if not material.
 
 LENGTH AND CITATIONS:
-Balanced: normally 250-400 words; Deep: normally 350-500 words. These are
+Balanced: at most 350 words; Deep: at most 450 words. These are
 ceilings, not targets. A simple factual question should receive a short
 answer without this four-section structure, even in Balanced or Deep.
 Each factual assertion, including the opening answer, needs its most direct
-exact evidence IDs. Preserve currencies, source dates, reference periods,
+exact evidence IDs. Cite only the 1-4 most direct IDs per claim; never a long
+list of loosely related records. Preserve currencies, source dates, reference periods,
 original locations and geographic scope. Keep FACT, cited SYNTHESIS and
 conditional INFERENCE distinguishable. Recommendations are advice, not
 observed results. Use inline citations; no generic bibliography, repeated
-summary, empty sections or offer of further work.
+summary, empty sections or offer of further work. Do not add secondary examples,
+actor rosters, repeated caveats or extra statistics to fill space. Put each fact
+and limitation once, and remain within the complete-answer word budget.
 """
 
 def instructions(depth):

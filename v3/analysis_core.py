@@ -2832,6 +2832,16 @@ Produce a concise evidence-grounded analytical answer.
 Write the entire answer in {response_language or answer_language(question)}. The evidence may be
 in a different language; translate faithfully while retaining citations.
 """
+    if depth != "quick":
+        word_budget = 350 if depth == "balanced" else 450
+        user_prompt += (
+            f"\nComplete-answer budget: at most {word_budget} words. "
+            "Use 3-4 brief findings, one conditional decision implication, "
+            "one brief material-gap paragraph and, only if useful, one "
+            "non-conclusion. Each fact appears once. Cite the opening "
+            "answer as well as findings with the 1-4 most direct evidence "
+            "IDs per claim. No record dumps, actor rosters or extra examples."
+        )
 
     synthesis_started = time.perf_counter()
 
