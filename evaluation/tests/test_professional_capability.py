@@ -49,6 +49,14 @@ class ProfessionalCapabilityTests(unittest.TestCase):
         extra=self.extra();extra['performance_cells']['quick/cold']['attempts']=0
         self.assertIsNone(scores(dict.fromkeys(AXES,100),{},extra)[0]['Performance'])
 
+    def test_interrupted_run_and_unknown_latency_are_unavailable_even_with_six_cells(self):
+        quality=dict.fromkeys(AXES,100);extra=self.extra()
+        measured={'route_efficiency':1,'call_efficiency':1,'performance_measurement_complete':False}
+        self.assertIsNone(scores(quality,measured,extra)[0]['Performance'])
+        measured['performance_measurement_complete']=True
+        extra['performance_cells']['deep/cold']['client_median_seconds']=None
+        self.assertIsNone(scores(quality,measured,extra)[0]['Performance'])
+
     def test_programming_prose_and_presence_never_satisfy_delivery(self):
         criterion=next(r for r in requirements()['evidence_requirements'] if r['id']=='delivery.reach')
         selector=criterion['selectors'][0]

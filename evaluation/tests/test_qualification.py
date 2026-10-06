@@ -35,6 +35,14 @@ def test_unknown_privacy_and_live_never_pass_even_with_quality_gains():
     assert not q['pre_deploy_qualified']
 
 
+def test_unmeasured_interruption_cannot_pass_despite_complete_successful_saved_answers():
+    args=inputs()
+    args[1]['frozen']['run_manifest']['capture_interruption_cost_unknown']=True
+    q=qualify(*args)
+    assert not q['quality_and_performance_pass']
+    assert 'frozen: candidate interrupted capture has unmeasured latency/cost' in q['quality_and_performance_reasons']
+
+
 def test_split_missing_anchors_are_na_but_frozen_missing_measurement_rejects():
     args=inputs()
     for cards in args[:2]:

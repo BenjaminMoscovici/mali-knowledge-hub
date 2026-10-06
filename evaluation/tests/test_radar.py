@@ -61,3 +61,12 @@ class RadarTests(unittest.TestCase):
         self.assertEqual(after['Cost efficiency'],50)
         self.assertLess(after['Performance'],before['Performance'])
         self.assertIsNone(combine([1,None]))
+
+    def test_unknown_interruption_cannot_earn_performance_or_cost_credit(self):
+        value=self.metrics()
+        value['performance_measurement_complete']=False
+        value['complex_priced']=False
+        result=scores(value)
+        self.assertIsNone(result['Performance'])
+        self.assertIsNone(result['Cost efficiency'])
+        self.assertEqual(result['Evidence accuracy'],100)
