@@ -75,3 +75,21 @@ def test_lower_usefulness_cannot_be_averaged_away_by_protected_quality_gains():
     q=qualify(*args)
     assert not q['quality_and_performance_pass']
     assert 'frozen: decision_usefulness unknown or regressed' in q['quality_and_performance_reasons']
+
+
+def test_browser_published_identity_requires_verified_source_bytes(monkeypatch):
+    args=inputs()
+    privacy={'pass':True,'project':'hofoubbmepacdljeablj','executed_at':'now','receipt_sha256':'a'*64}
+    live={'pass':True,'hub_commit':'published','base':'https://mali-knowledge-hub-v4-test.onrender.com','executed_at':'now'}
+    receipt={'synthetic_receipt_for_test':True}
+    calls=[]
+    def verify(measured,published,proof):
+        calls.append((measured,published,proof))
+        return False
+    monkeypatch.setattr('evaluation.publication.verified',verify)
+    assert not qualify(*args,privacy=privacy,live=live,publication=receipt)['release_accepted']
+    assert calls==[('candidate','published',receipt)]
+    monkeypatch.setattr('evaluation.publication.verified',lambda *a: True)
+    result=qualify(*args,privacy=privacy,live=live,publication=receipt)
+    assert result['release_accepted'] and result['hub_commit']=='candidate'
+    assert result['live_observed_commit']=='published'

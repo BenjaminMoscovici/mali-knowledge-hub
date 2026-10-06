@@ -129,6 +129,8 @@ class ServiceBenchmarkTests(unittest.TestCase):
             p = Path(tmp); (p / 'frozen/raw').mkdir(parents=True)
             (p / 'frozen/raw/answer.json').write_text('{"answer":"synthetic"}')
             (p / 'runtime.json').write_text('secret-marker')
+            (p / 'oracle.json').write_text('{"whole_corpus":"excluded"}')
+            (p / 'frozen/raw/oracle.json').write_text('{"whole_corpus":"excluded even in an allowed directory"}')
             data = archive(p, ['secret-marker'])
             with zipfile.ZipFile(io.BytesIO(data)) as zipped:
                 self.assertEqual(zipped.namelist(), ['frozen/raw/answer.json'])
