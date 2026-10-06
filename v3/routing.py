@@ -9,8 +9,57 @@ def _normal(text):
     return "".join(c for c in value if not unicodedata.combining(c))
 
 
+def _bounded_fts(question):
+    """A comparison of financial fields is not necessarily a source join."""
+    q = _normal(question)
+    if not re.search(r"\bfts\b", q) or not re.search(
+        r"\b(?:fund\w*|financ\w*|requirements?|exigences?|percent\w*|"
+        r"pourcent\w*|currency|currencies|devise\w*|snapshot|montants?)\b", q
+    ):
+        return False
+    # Subnational attribution, causes, operational delivery, and other source
+    # families remain ordinary research questions. This shortcut only selects
+    # retrieval; the dated FTS records still supply every factual answer.
+    wider = re.search(
+        r"\b(?:needs?|besoins?|priorit\w*|strateg\w*|actors?|acteurs?|"
+        r"donors?|bailleurs?|projects?|projets?|interventions?|"
+        r"food|aliment\w*|hunger|faim|health|sante|nutrition|education|"
+        r"protection|peace|paix|agricult\w*|water|eau|wash|"
+        r"delivery|reach\w*|beneficiar\w*|beneficiair\w*|results?|resultats?|"
+        r"women|femmes|children|enfants|sectors?|secteurs?|"
+        r"regions?|regional\w*|cercles?|communes?|villages?|local\w*|subnational|"
+        r"coverage|couverture|alignment|alignement|nexus|"
+        r"why|pourquoi|explain\w*|expliqu\w*|causes?|"
+        r"fongim|hnrp|hrp|hpc|hapi|hdx|dtm|iom|3w|iati|ieg|"
+        r"world bank|banque mondiale|cadre harmonis\w*|ipc|"
+        r"echo|eu|ue|europe\w*|unicef|government|gouvernement|"
+        r"snedd|mali kura|vision mali)\b", q)
+    if wider:
+        return False
+    # An unqualified place name can still request local allocation. Use only
+    # exact names in the existing registry to decline the shortcut; a name
+    # match here never resolves a place or joins geographical vintages.
+    from geographic_model import geographic_model
+    model = geographic_model()
+    words = re.findall(r"\w+", q)
+    for size in range(1, model.max_name_words + 1):
+        for start in range(len(words) - size + 1):
+            name = ' '.join(words[start:start + size])
+            if name in {'mali', 'a', 'au', 'aux', 'de', 'du', 'des', 'en',
+                        'et', 'la', 'le', 'les', 'and', 'for', 'in', 'of',
+                        'on', 'the', 'to', 'with'}:
+                continue
+            if any(model.units[uid]['level'] != 'country'
+                   for uid in model.names.get(name, ())):
+                return False
+    return True
+
+
 def explicit_source_plan(question):
     q = _normal(question)
+    if _bounded_fts(question):
+        return {family: False for family in
+                ("government_docs", "hnrp_docs", "hapi", "fongim")}
     national = re.search(r"\b(?:national strateg\w*|government priorit\w*|"
                          r"national priorit\w*|strategie nationale|"
                          r"priorites nationales)\b", q)
@@ -87,6 +136,9 @@ def packaged_source_names(question, source_plan, planner_output=None):
     government_only = source_plan == {
         'government_docs': True, 'hnrp_docs': False, 'hapi': False, 'fongim': False}
     explicit = (planner_output or {}).get('method') == 'explicit_source_rules'
+    if explicit and source_plan is not None and not any(source_plan.values()) and _bounded_fts(question):
+        # Keep the geographical caveats alongside the actual financial rows.
+        return {'analytical', 'geographic_model'}
     other_family = re.search(
         r'\b(?:3w|dtm|iom|ocha|fts|hpc|hdx|hapi|iati|ieg|world bank|banque mondiale|'
         r'cadre harmonis\w*|echo|eu|ue|european|europeenne?|unicef|fongim)\b',

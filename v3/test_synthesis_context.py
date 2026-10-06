@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import re
 import unicodedata
+import pytest
 from synthesis_context import prepare, serialize, extract_spans, availability_note
 from citations import verify
 from routing import explicit_source_plan, packaged_source_names
@@ -100,6 +101,54 @@ def test_bounded_packaged_queries_skip_unrelated_live_retrieval():
     assert explicit_source_plan('Does DTM displacement establish humanitarian coverage?') is None
     assert explicit_source_plan('Compare ECHO HIP funding with national priorities') is None
     assert explicit_source_plan('Compare DTM with HNRP humanitarian needs') != empty
+
+
+@pytest.mark.parametrize('question', [
+    'Compare Mali 2026 FTS requirements, reported funding and percentage funded, with the snapshot date and units.',
+    'How much funding does FTS report for Mali in 2025 and 2026?',
+    'Dans FTS, quels montants de financement sont déclarés pour le Mali en 2026, dans quelle devise et à quelle date ?',
+    'Compare national FTS requirements with reported funding, without adding different usage years.',
+])
+def test_bounded_fts_fields_use_financial_records_without_live_needs_search(question):
+    plan = explicit_source_plan(question)
+    assert plan == {'government_docs':False, 'hnrp_docs':False,
+                    'hapi':False, 'fongim':False}
+    families = packaged_source_names(question, plan, {'method':'explicit_source_rules'})
+    assert families == {'analytical', 'geographic_model'}
+    from analytical_sources import retrieve_analytical_evidence
+    records = retrieve_analytical_evidence(question)
+    assert records and all(r['source_family'] == 'OCHA FTS financing' for r in records)
+    for record in records:
+        assert 'Currency USD' in record['content']
+        assert 'Provider updated' in record['content']
+        assert 'No actor/project/sector/subnational breakdown' in record['content']
+        assert record['reference_period_start'] and record['release_id']
+    # A model-selected plan never receives this deterministic pruning.
+    assert 'project_learning' in packaged_source_names(question, plan, {'method':'model'})
+
+
+@pytest.mark.parametrize('question', [
+    'Compare FTS funding with humanitarian needs in Mopti.',
+    'Compare FTS funding with national priorities.',
+    'Which FTS funding reached communes in Gao?',
+    'Compare FTS funding and World Bank project delivery.',
+    'Compare FTS funding with EU and Team Europe interventions.',
+    'Compare FTS funding with IATI commitments.',
+    'Which actors received the reported FTS funding?',
+    'Why did Mali FTS funding fall?',
+    'FTS financing and women: what is covered?',
+    'Comparer les financements FTS aux besoins humanitaires et aux projets FONGIM.',
+    'Quel financement FTS couvre les priorités nationales et les résultats locaux ?',
+    'Compare FTS requirements with HNRP population figures.',
+    'How much FTS funding is recorded for Mopti?',
+    'Quel montant FTS est déclaré à Socoura ?',
+    'FTS funding for food security: what does it establish?',
+])
+def test_fts_source_join_and_local_delivery_do_not_lose_evidence_families(question):
+    plan = explicit_source_plan(question)
+    assert plan is None or any(plan.values())
+    names = packaged_source_names(question, plan or {}, {'method':'explicit_source_rules'})
+    assert {'analytical', 'project_learning', 'operational', 'eu'} <= names
 
 
 def test_named_government_summary_does_not_request_unrelated_bank_profiles():
