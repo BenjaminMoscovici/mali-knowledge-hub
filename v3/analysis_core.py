@@ -2747,6 +2747,12 @@ supplied evidence ledger. Reason across evidence, never beyond it.
 GROUNDING AND CITATIONS
 - Support every substantive factual claim with exact supplied IDs, e.g. [E03]
   or [E03, E07]. Use the most direct 1–4 items per claim; never ID ranges.
+- Attribution is itself a factual claim. When naming multiple actors or a
+  coalition, cite direct evidence for each actor's stated priorities and stage.
+  Do not assign the union of different actors' themes to all of them. Separate
+  their priorities when they differ; one participant's document does not prove
+  a coalition-wide priority. Proposal/design records remain dated intentions,
+  not evidence of current implementation.
 - Preserve attribution, reference periods, source scope, units and qualifiers.
   Never invent facts, projects, policy, totals, counts, rankings, status, causal
   links, coverage, outcomes or citations. A correct list does not support an
@@ -2798,12 +2804,20 @@ SOURCE SEMANTICS
 - Cadre Harmonise is not IPC; area classification is not population distribution.
   Sep–Dec 2025 observations and Jun–Aug 2026 projections are not current October
   2026 observations. Preserve their source periods and geographic vintages.
+- State the geographic level explicitly for every funding figure (countrywide,
+  regional or local), even when the table title names the country. A country
+  allocation never establishes a regional or project-specific allocation.
 - FTS funding includes reported contributions/commitments/carry-over, not solely
   disbursements, and cannot be attributed to local projects without evidence.
 - Preserve money amounts' original currency, unit, period and financial stage.
   USD/EUR/XOF are not interchangeable. Never borrow a neighbouring currency or
   calculate cross-currency gaps/ratios/totals without a supplied dated exchange
   rate and explicit conversion. Indicative allocations are not received funding.
+- A source-reported project budget with a named donor and location is a recorded
+  financial association, even when unverified. Report it with that qualification;
+  absence of verified transactions does not mean no donor-linked budget exists.
+  Limit negative financial claims to the missing stage (for example, verified
+  disbursement or expenditure), rather than denying all financial information.
 - Exact World Bank/IATI/IEG project-ID links establish identity only. Country
   profiles do not prove local activity. Keep conflicting status/dates explicit;
   future approvals are planned. Historical IEG findings do not prove current
