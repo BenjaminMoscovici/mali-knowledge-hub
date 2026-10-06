@@ -2841,6 +2841,12 @@ in a different language; translate faithfully while retaining citations.
             "non-conclusion. Each fact appears once. Cite the opening "
             "answer as well as findings with the 1-4 most direct evidence "
             "IDs per claim. No record dumps, actor rosters or extra examples."
+            " Prefer one project with an explicitly documented funder and "
+            "implementer when available. A place mentioned in a project title "
+            "is only a title mention, never a verified operational location. "
+            "If using it, say 'the title mentions [place]; local coverage "
+            "is unverified'. Scope missing implementers/budgets/results to "
+            "the specific records concerned, not to all supplied sources."
         )
 
     synthesis_started = time.perf_counter()
