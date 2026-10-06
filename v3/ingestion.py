@@ -16,6 +16,7 @@ import uuid
 from datetime import datetime
 
 import fitz
+from document_formats import MIME_TYPES, document_format, extract_units
 
 BUCKET = "mkh-originals"
 MAX_BYTES = 20 * 1024 * 1024
@@ -253,7 +254,8 @@ def embed_chunks(openai_client, chunks, title):
     vectors, token_count = [], 0
     for start in range(0, len(chunks), 50):
         batch = chunks[start:start + 50]
-        inputs = [f"Document: {title}\nSection: Unknown\nPage: {page}\n\n{content}"
+        inputs = [f"Document: {title}\nSection: Unknown\nPage: {page}\n\n{content}" if page is not None
+                  else f"Document: {title}\nLocation: document text (no stable page numbering)\n\n{content}"
                   for page, content in batch]
         response = openai_client.embeddings.create(model="text-embedding-3-small", input=inputs)
         if len(response.data) != len(batch):
@@ -268,6 +270,7 @@ def embed_chunks(openai_client, chunks, title):
 def create_job(db, filename: str, raw: bytes, uploaded_by: str):
     if len(raw) > MAX_BYTES:
         raise ValueError("Document exceeds the 20 MB upload limit")
+    kind = document_format(filename, raw)
     digest = hashlib.sha256(raw).hexdigest()
     existing = (db.table("ingestion_jobs").select("id,status")
                 .eq("sha256", digest).in_("status", ["uploaded", "queued", "processing", "ready"])
@@ -290,7 +293,7 @@ def create_job(db, filename: str, raw: bytes, uploaded_by: str):
             raise DuplicateDocumentError("This file already has a live ingestion job. Refresh the job list.") from None
         raise
     try:
-        db.storage.from_(BUCKET).upload(path, raw, {"content-type": "application/pdf", "upsert": "false"})
+        db.storage.from_(BUCKET).upload(path, raw, {"content-type": MIME_TYPES[kind], "upsert": "false"})
         db.table("ingestion_jobs").update({"status": "queued"}).eq("id", row["id"]).execute()
     except Exception:
         db.table("ingestion_jobs").update({"status": "failed", "error": "Original storage failed"}).eq("id", row["id"]).execute()
@@ -323,7 +326,21 @@ def process_job(db, openai_client, job_id: str, corrections: dict | None = None)
         if hashlib.sha256(raw).hexdigest() != job["sha256"]:
             raise ValueError("Stored original failed checksum validation")
         stage = "parse"
-        chunks, quality, first_text = extract_pdf(raw, openai_client=openai_client)
+        if document_format(job["filename"], raw) == "pdf":
+            chunks, quality, first_text = extract_pdf(raw, openai_client=openai_client)
+            locations = [None] * len(chunks)
+        else:
+            units, quality = extract_units(job["filename"], raw)
+            chunks, locations = [], []
+            for unit in units:
+                fragments = chunks_from_text(unit.text, None)
+                chunks.extend(fragments)
+                locations.extend([unit.location] * len(fragments))
+            if len(chunks) > 2000:
+                raise ValueError("Document exceeds the 2,000 passage limit; split it first")
+            quality.update(pages=0, chunks=len(chunks), characters=sum(len(c) for _, c in chunks),
+                           locator_type="original_text_location")
+            first_text = "\n".join(unit.text for unit in units)[:5000]
         metadata, confidence = propose_metadata(job["filename"], first_text)
         metadata, confidence = reviewed_metadata(metadata, confidence, retained)
         stage = "embed"
@@ -336,9 +353,9 @@ def process_job(db, openai_client, job_id: str, corrections: dict | None = None)
         if quality["embeddings"] != quality["chunks"]:
             raise ValueError("Incomplete embedding set")
         stage = "publish"
-        records = [{"page_number": page, "chunk_index": index, "section_title": None,
+        records = [{"page_number": page, "chunk_index": index, "section_title": location,
                     "content": content, "embedding": vector}
-                   for index, ((page, content), vector) in enumerate(zip(chunks, embeddings))]
+                   for index, ((page, content), vector, location) in enumerate(zip(chunks, embeddings, locations))]
         # One DB transaction inserts every chunk and marks the job ready. Any
         # failure rolls back both the public document and all its chunks.
         result = db.rpc("publish_ingestion", {"p_job_id": job_id,

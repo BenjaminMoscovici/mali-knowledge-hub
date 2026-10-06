@@ -187,7 +187,7 @@ class IngestionAcceptance(unittest.TestCase):
         self.assertFalse(self.db.published)
 
     def test_broken_document_is_excluded_and_error_visible(self):
-        job = create_job(self.db, "broken.pdf", b"not a PDF", "admin")
+        job = create_job(self.db, "broken.pdf", b"%PDF-broken", "admin")
         with self.assertRaises(ValueError):
             process_job(self.db, self.client, job)
         self.assertEqual(self.db.jobs[job]["status"], "failed")

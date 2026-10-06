@@ -7,3 +7,5 @@ pandas>=2.2,<3
 socksio>=1.0,<2
 starlette==1.7.0
 uvicorn==0.54.0
+olefile==0.47
+striprtf==0.0.29

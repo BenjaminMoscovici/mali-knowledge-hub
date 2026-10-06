@@ -15,7 +15,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, unquote
 
 from starlette.applications import Starlette
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -47,6 +47,39 @@ MAX_QUESTION = 5000
 MAX_GUEST_CONTEXT = 10
 _analysis_limit = asyncio.Semaphore(8)
 _transform_limit = asyncio.Semaphore(8)
+_attachment_limit = asyncio.Semaphore(2)
+
+
+async def extract_attachment(request):
+    """Transient local parsing. No corpus writes, provider calls, or file logs."""
+    if not same_origin(request):
+        return error("Only same-origin attachments are accepted.", 403)
+    if request.headers.get("content-type", "").split(";", 1)[0] != "application/octet-stream":
+        return error("Send the document as a binary attachment.", 415)
+    filename = unquote(request.headers.get("x-mkh-filename", ""))
+    query = unquote(request.headers.get("x-mkh-question", ""))
+    if not filename or len(filename) > 250 or len(query) > MAX_QUESTION:
+        return error("Invalid attachment name or question.")
+    maximum = 5 * 1024 * 1024
+    try:
+        if int(request.headers.get("content-length", "0")) > maximum:
+            return error("Chat attachments must be smaller than 5 MB. Administration accepts 20 MB.", 413)
+    except ValueError:
+        return error("Invalid attachment length.")
+    async with _attachment_limit:
+        raw = bytearray()
+        async for part in request.stream():
+            if len(raw) + len(part) > maximum:
+                return error("Chat attachments must be smaller than 5 MB.", 413)
+            raw.extend(part)
+        from document_formats import chat_excerpt
+        try:
+            data = await asyncio.to_thread(chat_excerpt, filename, bytes(raw), query)
+            return JSONResponse(data)
+        except ValueError as exc:
+            return error(str(exc), 422)
+        finally:
+            raw.clear()
 
 
 def error(message, status=400):
@@ -551,6 +584,7 @@ routes = [
     Route("/api/auth/session", accept_link, methods=["POST"]),
     Route("/api/auth/logout", logout, methods=["POST"]),
     Route("/api/chat", chat, methods=["POST"]),
+    Route("/api/attachments/extract", extract_attachment, methods=["POST"]),
     Route("/api/conversations", conversations, methods=["GET", "POST"]),
     Route("/api/conversations/import", import_guest, methods=["POST"]),
     Route("/api/conversations/{conversation_id}/evidence", saved_evidence),
