@@ -400,13 +400,25 @@
     $('plus-button').addEventListener('click',()=>el['text-attachment'].click());
     el['text-attachment'].addEventListener('change',async () => {
       const file=el['text-attachment'].files[0]; if(!file)return;
-      if(file.size>25_000){toast('Choose a text file smaller than 25 KB.');return;}
+      if(file.size>5*1024*1024){toast('Chat accepts files up to 5 MB. Administration accepts 20 MB.');el['text-attachment'].value='';return;}
+      if(el.prompt.value.length>1000){toast('Shorten the question to leave room for document excerpts.');el['text-attachment'].value='';return;}
+      const button=$('plus-button'); button.disabled=true;
+      const startingQuestion=el.prompt.value, startingThread=state.selected;
       try {
-        const content=await file.text(); const insertion=`\n\nContext from ${file.name} (user-provided, verify against cited sources):\n${content}`;
+        toast('Reading document…');
+        const response=await fetch('/api/attachments/extract',{method:'POST',credentials:'same-origin',
+          headers:{'Content-Type':'application/octet-stream','X-MKH-Filename':encodeURIComponent(file.name),
+            'X-MKH-Question':encodeURIComponent(el.prompt.value)},body:file});
+        const data=await response.json(); if(!response.ok)throw new Error(data.error || 'The document could not be read.');
+        if(state.selected!==startingThread || el.prompt.value!==startingQuestion){toast('The conversation or question changed. Attach the document again to the intended question.');return;}
+        const scope=data.complete_text?'Extracted text':'Selected excerpts (not the whole document)';
+        const warnings=(data.warnings || []).join(' ');
+        const insertion=`\n\n${scope} from ${file.name} (user-provided context; verify facts against cited sources):\n${data.text}\n${warnings}`;
         if(el.prompt.value.length+insertion.length>5000){toast('The question and attachment must fit within 5,000 characters.');return;}
         el.prompt.value+=insertion;resizePrompt();el.prompt.focus();
-      } catch {toast('This text file could not be read.');}
-      el['text-attachment'].value='';
+        toast(data.complete_text?'Document text attached. Review before sending.':'Relevant excerpts attached; the full document is not included. Review before sending.');
+      } catch(err) {toast(err.message || 'This document could not be read.');}
+      finally {el['text-attachment'].value='';button.disabled=false;}
     });
     $('profile-button').addEventListener('click',()=>el['profile-menu'].classList.toggle('hidden'));
     document.addEventListener('click',e=>{
