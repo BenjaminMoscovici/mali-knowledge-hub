@@ -3,6 +3,34 @@ import re
 from geographic_model import geographic_model, simple_geography_question
 from query_router import classify
 from source_wave import _fold
+from followup_context import previous_question
+
+
+def resolve_hierarchy_followup(question, messages):
+    followup = re.fullmatch(r'(?:and(?: in)?|what about|same for|et(?: a|dans|en)?) (.+)',
+                            _fold(question))
+    if not followup:
+        return None
+    previous = previous_question(messages)
+    if not previous or not simple_geography_question(previous):
+        return None
+    base = re.fullmatch(
+        r'(?:what is the (?:parent hierarchy|full administrative path|administrative path|hierarchy) of|'
+        r'quelle est la hierarchie administrative de) (.+) '
+        r'(region|cercle|commune|locality|arrondissement)', _fold(previous))
+    if not base:
+        return None
+    old_place, level = base.groups()
+    model = geographic_model()
+    if len(model.lookup(old_place, level, model.preferred)) != 1:
+        return None
+    new_place = followup[1]
+    explicit = re.fullmatch(r'(.+) (region|cercle|commune|locality|arrondissement)', new_place)
+    if explicit:
+        new_place, level = explicit.groups()
+    if len(model.lookup(new_place, level, model.preferred)) != 1:
+        return None
+    return f'What is the parent hierarchy of {new_place} {level}?'
 
 
 def resolve_count_followup(question, messages):

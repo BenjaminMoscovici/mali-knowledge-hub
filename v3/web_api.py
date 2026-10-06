@@ -35,7 +35,7 @@ from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
 from query_router import classify
 from geographic_model import geographic_model
-from geography_context import resolve_count_followup
+from geography_context import resolve_count_followup, resolve_hierarchy_followup
 from followup_context import resolve_slots
 
 
@@ -367,10 +367,14 @@ async def chat(request):
     try:
         if route["path"] not in {"conversational", "conversation_only"}:
             resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
+            geography_method = 'structured_geographic_count'
+            if not resolved:
+                resolved = await asyncio.to_thread(resolve_hierarchy_followup, question, prior)
+                geography_method = 'structured_geographic_hierarchy'
             if resolved:
                 standalone = resolved
                 route = classify(standalone, mode)
-                context_method = "structured_geographic_count"
+                context_method = geography_method
             else:
                 slot_context = await asyncio.to_thread(resolve_slots, question, prior)
                 if slot_context:
