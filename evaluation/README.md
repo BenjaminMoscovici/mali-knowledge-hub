@@ -120,7 +120,7 @@ as not independently verifiable. `consistent` is an additional positive category
 Frozen/held-out hashes are checked before every run. To change them, retain the old version,
 create a new version and document why; do not remove failures or weaken expectations.
 New rolling challenges need new IDs and failure provenance. Held-out requires `--acceptance`
-and must not be used for active tuning. Raw public-source evidence/receipts are kept in the
+and must not be used for active tuning. The whole-corpus oracle remains local and is explicitly excluded from benchmark archives, even inside otherwise allowed subdirectories. Raw public-source evidence/receipts are kept in the
 durable evidence bundle; compact scorecards, code, benchmark cases and reports are versioned.
 Do not commit runtime credentials, user histories or private packets. The read-only corpus
 tool reads only shared documents/chunks, and omits embedding vectors. No Supabase migration
@@ -148,7 +148,7 @@ The worker reuses the frozen 83-attempt configuration, rolling challenge set and
 18-case held-out acceptance milestone. It captures Hub latency before invoking
 any independent judge. It does not access user history or add an HTTP trigger.
 
-The source oracle, raw answers and judge receipts are checkpointed in the private
+Only approved anonymous answers, required retrieved evidence, scores and telemetry are checkpointed in the private
 `mkh-evaluations` GIZ bucket (ZIP only, 32 MiB maximum, no new access policy).
 Public government PDFs are admitted to judge packets only if their downloaded
 bytes match the baseline's recorded SHA256. Changed or unavailable files remain
@@ -215,3 +215,5 @@ No receipt or human-calibration decision is invented by the framework.
 
 Question-answering and decision-usefulness means must also not regress in
 any split. Strong protected metrics cannot average away less useful answers.
+
+Browser-published commit IDs may differ from the measured local Git SHA. Qualification 1.1 accepts this only with `--publication` proof recomputed from actual immutable Git objects in BenjaminMoscovici/mali-knowledge-hub: the complete v3 tree and root build/launch file blobs must match. The measured SHA and actual live SHA remain separate, and byte equivalence never implies deployment, privacy or quality acceptance.

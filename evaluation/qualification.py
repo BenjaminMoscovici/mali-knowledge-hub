@@ -18,7 +18,7 @@ def value(card,path):
     return card
 
 
-def qualify(baseline,candidate,base_conversation=None,conversation=None,base_grounding=None,grounding=None,privacy=None,live=None):
+def qualify(baseline,candidate,base_conversation=None,conversation=None,base_grounding=None,grounding=None,privacy=None,live=None,publication=None):
     reasons=[];comparisons={};new_failures=[];quality_comparisons={}
     commits={c['run_manifest']['hub_commit'] for c in candidate.values()}
     if len(commits)!=1:reasons.append('Mixed candidate commits')
@@ -105,9 +105,13 @@ def qualify(baseline,candidate,base_conversation=None,conversation=None,base_gro
     quality_pass=not reasons
     privacy_pass=bool(privacy and privacy.get('pass') is True and privacy.get('project')=='hofoubbmepacdljeablj'
                       and privacy.get('executed_at') and re.fullmatch(r'[0-9a-f]{64}',str(privacy.get('receipt_sha256',''))))
-    live_pass=bool(live and live.get('pass') is True and live.get('hub_commit')==commit
+    live_identity=bool(live and live.get('hub_commit')==commit)
+    if live and not live_identity and publication:
+        from .publication import verified
+        live_identity=verified(commit,live.get('hub_commit'),publication)
+    live_pass=bool(live and live.get('pass') is True and live_identity
                    and live.get('base')=='https://mali-knowledge-hub-v4-test.onrender.com' and live.get('executed_at'))
-    return {'version':'whole-milestone-qualification-1.0','generated_at':now(),'hub_commit':commit,
+    return {'version':'whole-milestone-qualification-1.1','generated_at':now(),'hub_commit':commit,
             'quality_and_performance_pass':quality_pass,'quality_and_performance_reasons':reasons,
             'protected_tolerance':0,'protected_comparisons':comparisons,'new_protected_deterministic_failures':new_failures,
             'analytical_quality_comparisons':quality_comparisons,
@@ -115,6 +119,8 @@ def qualify(baseline,candidate,base_conversation=None,conversation=None,base_gro
             'prerequisites':{'heldout_qualified':quality_pass,'calibration_samples_exported':pack,
                              'privacy_audit_pass':privacy_pass,'live_smoke_pass':live_pass,'human_calibrated':None},
             'pre_deploy_qualified':quality_pass and privacy_pass,'release_accepted':quality_pass and privacy_pass and live_pass,
+            'live_observed_commit':live.get('hub_commit') if live else None,
+            'publication_equivalence':publication if live_identity and publication else None,
             'limitations':['Unknown privacy or absent live receipts never passes. Live candidate verification follows gated deployment; the accepted baseline remains the rollback target.',
                            'Independent model judgments remain provisional pending real human calibration; original outputs and proof-bound measurement adjustments remain reviewable.',
                            'Material targets are 20% complex median, 15% input and 10% estimated cost reduction, with no complex P95 increase; provider estimates are not invoices.',
@@ -126,9 +132,9 @@ def read(path):return json.loads(Path(path).read_text()) if path else None
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--baseline',required=True);p.add_argument('--candidate',required=True)
-    for name in ['base-conversation','conversation','base-grounding','grounding','privacy','live']:
+    for name in ['base-conversation','conversation','base-grounding','grounding','privacy','live','publication']:
         p.add_argument('--'+name)
     p.add_argument('--output',required=True);a=p.parse_args()
     cards=lambda root:{s:read(Path(root)/s/'scorecard.json') for s in ['frozen','rolling','heldout']}
-    result=qualify(cards(a.baseline),cards(a.candidate),*[read(getattr(a,k)) for k in ['base_conversation','conversation','base_grounding','grounding','privacy','live']])
+    result=qualify(cards(a.baseline),cards(a.candidate),*[read(getattr(a,k)) for k in ['base_conversation','conversation','base_grounding','grounding','privacy','live','publication']])
     write_json(a.output,result);print(json.dumps({k:result[k] for k in ['hub_commit','quality_and_performance_pass','quality_and_performance_reasons','pre_deploy_qualified','release_accepted']}))

@@ -90,14 +90,14 @@ def archive(directory, secrets):
     directory = Path(directory); output = io.BytesIO()
     allowed_dirs = {'raw', 'judgments', 'judge_receipts', 'judge_packets',
                     'judge_errors', 'validation', 'release', 'public-provenance', 'exports'}
-    allowed_files = {'run_manifest.json', 'scorecard.json', 'oracle.json', 'milestone.json',
+    allowed_files = {'run_manifest.json', 'scorecard.json', 'milestone.json',
                      'web_verification.json', 'calibration_samples.json', 'publisher_ratings.csv',
                      'calibration_result.json', 'capture_interruptions.json',
                      'failure_telemetry.json', 'paired_comparison.json', 'publication_equivalence.json',
                      'conversation_quality.json', 'conversation_scorecard.json', 'judge_integrity.json'}
     with zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED) as zipped:
         for path in sorted(directory.rglob('*')):
-            if not path.is_file() or path.is_symlink():
+            if not path.is_file() or path.is_symlink() or path.name == 'oracle.json':
                 continue
             relative = path.relative_to(directory)
             if path.name not in allowed_files and not any(p in allowed_dirs for p in relative.parts[:-1]):
