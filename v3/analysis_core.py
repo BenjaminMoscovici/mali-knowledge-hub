@@ -25,6 +25,7 @@ from depth import get_mode
 from document_targets import named_targets, explicit_title_targets
 from document_families import document_family
 from language import answer_language
+from answer_presentation import instructions as answer_instructions
 from hapi_cardinality import intersectoral_locality_note
 from normalization import GeographyRegistry, OrganizationResolver, filter_hapi_rows
 from entity_audit import load as load_entity_decisions
@@ -2809,36 +2810,7 @@ EPISTEMIC RULES:
     them. A complete count does not imply that every individual record was
     supplied. Cite a sync timestamp only to an item containing that timestamp.
 
-DEFAULT RESPONSE:
-Write for a busy policy or operational adviser. Be concise,
-analytical and decision-useful. Do not reproduce the evidence ledger.
-
-Use this structure unless the question clearly requires another form:
-
-**Bottom line**
-Answer the actual question directly in 2-4 sentences.
-
-**What the evidence shows**
-Give 3-5 concise bullets with the most decision-relevant findings.
-Combine related evidence instead of repeating it.
-
-**Important limitations**
-Give only 1-3 limitations that materially affect interpretation or
-action. Omit this section if there are no material limitations.
-
-LENGTH:
-- Default target: 350-550 words maximum.
-- Simple single-source questions: usually 150-300 words.
-- Do not add separate sections called "Source facts", "Analytical
-  synthesis", "Cautious inference", "Evidence limitations" or
-  "Next steps" unless the user explicitly asks for that detail.
-- Do not repeat the same evidence in multiple sections.
-- Do not offer additional work at the end unless necessary to answer
-  the question.
-
-Citations belong directly after the claims they support. Do not add a
-generic bibliography.
-"""
+""" + answer_instructions(depth)
 
     user_prompt = f"""
 QUESTION
