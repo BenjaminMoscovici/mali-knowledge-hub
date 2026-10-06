@@ -129,8 +129,8 @@ class GeographyModel:
             "geographic_scope": "Mali — release-specific hierarchy",
             "content": json.dumps({"release": r["upstream_version"],
                 "enumerated_counts": dict(Counter(u['unit_type'] for u in self.units.values() if u['release_id'] == rid)),
-                "records": [self.describe(uid) for uid in ids],
                 "query_scope_counts": list(computed_counts),
+                "records": [self.describe(uid) for uid in ids],
                 "unresolved_matches": self.unresolved if rid != self.preferred else [],
                 "calculation": "Counts, child lists and unresolved cross-release matches are computed from the stored source records. INSTAT pages 6/7 describe the framework, not a printed national count table."}, ensure_ascii=False)}
 

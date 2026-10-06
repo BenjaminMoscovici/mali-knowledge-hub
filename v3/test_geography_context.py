@@ -78,3 +78,11 @@ def test_api_no_model_no_network_no_cross_guest_context():
                         headers={'Origin': 'https://mali-knowledge-hub.onrender.com'})
         assert r.status_code == 503
     client.close()
+
+
+def test_count_calculation_and_every_counted_identity_are_visible_in_public_evidence():
+    answer=geographic_model().answer('How many communes are in Gao region?')
+    witness=json.loads(answer['evidence'][0]['content'])['query_scope_counts'][0]
+    displayed=web_api.public_evidence(answer)[0]['content']
+    assert '\"count\": 44' in displayed
+    assert all(uid in displayed for uid in witness['source_unit_ids'])
