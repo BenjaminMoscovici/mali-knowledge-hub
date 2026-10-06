@@ -11,6 +11,7 @@ from supabase import create_client
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from ingestion import DuplicateDocumentError, create_job  # noqa: E402
 from ingestion_worker import schedule_job  # noqa: E402
+from document_formats import SUPPORTED_EXTENSIONS  # noqa: E402
 
 st.set_page_config(page_title="Mali Knowledge Hub · Administration", layout="wide")
 
@@ -135,9 +136,10 @@ if st.button("Sign out"):
 
 with st.container(border=True):
     st.subheader("Add a document")
-    st.write("Drop a PDF here. The original is stored privately; the document becomes searchable only after extraction, embedding and validation succeed.")
+    st.write("Upload a PDF, Word document (DOC/DOCX), ODT, RTF or text file. The original is stored privately; the document becomes searchable only after extraction, embedding and validation succeed.")
     st.caption("DEV accepts public-source documents. Ready documents are available to public queries.")
-    upload = st.file_uploader("PDF document", type=None, max_upload_size=20)
+    upload = st.file_uploader("Document", type=list(SUPPORTED_EXTENSIONS), max_upload_size=20)
+    st.caption("PDFs keep page citations. Other files use original paragraph, table-row or line locations. Images and embedded objects in Word files are not extracted.")
     if st.button("Upload and process", disabled=upload is None, type="primary"):
         try:
             job_id = create_job(db, upload.name, upload.getvalue(), user.id)
@@ -146,6 +148,8 @@ with st.container(border=True):
             st.caption("Refresh the registry to see the current status. The document is searchable only when ready.")
         except DuplicateDocumentError as exc:
             st.info(str(exc))
+        except ValueError as exc:
+            st.error(str(exc))
         except Exception:
             st.error("The upload could not be queued. Review the server configuration and try again.")
 
