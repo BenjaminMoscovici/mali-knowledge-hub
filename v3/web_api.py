@@ -36,6 +36,7 @@ from eu_sources import publish_eu_logged
 from query_router import classify
 from geographic_model import geographic_model
 from geography_context import resolve_count_followup
+from followup_context import resolve_slots
 
 
 WEB = Path(__file__).with_name("web")
@@ -362,6 +363,7 @@ async def chat(request):
     context_usage = {}
     standalone = question
     context_method = "existing_resolver"
+    slot_context = None
     try:
         if route["path"] not in {"conversational", "conversation_only"}:
             resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
@@ -369,6 +371,12 @@ async def chat(request):
                 standalone = resolved
                 route = classify(standalone, mode)
                 context_method = "structured_geographic_count"
+            else:
+                slot_context = await asyncio.to_thread(resolve_slots, question, prior)
+                if slot_context:
+                    standalone = slot_context['standalone_question']
+                    route = classify(standalone, mode)
+                    context_method = slot_context['method']
         if route["path"] == "conversational":
             result = {"answer": route["reply"], "evidence": []}
         elif route["path"] == "conversation_only":
@@ -384,7 +392,7 @@ async def chat(request):
                                    likely_context_dependent_followup, resolve_conversational_question,
                                    source_inventory_answer, openai_client)
             async with _analysis_limit:
-                if likely_context_dependent_followup(question, prior):
+                if not slot_context and likely_context_dependent_followup(question, prior):
                     phase = "context_rewrite"
                     context_token, context_id = openai_client.begin()
                     try:
