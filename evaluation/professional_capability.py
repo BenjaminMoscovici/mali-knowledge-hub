@@ -192,7 +192,11 @@ def scores(old_scores, measured, extra):
             cells = extra['performance_cells']
             # All six cells are required. Cold/warm user experience was not
             # captured historically, so that axis is unavailable for that run.
-            if any(not c['attempts'] for c in cells.values()):
+            if measured.get('performance_measurement_complete') is False or any(
+                not c['attempts'] or not numeric(c.get('client_median_seconds'))
+                or c['client_median_seconds'] <= 0 or not numeric(c.get('success_rate'))
+                for c in cells.values()
+            ):
                 quality = None
             else:
                 quality = 100 * statistics.mean(min(1, spec['latency_targets_seconds'][key.split('/')[0]] / c['client_median_seconds']) * c['success_rate'] for key, c in cells.items())

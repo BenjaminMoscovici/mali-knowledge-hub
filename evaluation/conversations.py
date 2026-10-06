@@ -4,7 +4,7 @@ import json
 import re
 from pathlib import Path
 from .common import digest, now, write_json
-from .runner import request_case, capture_telemetry, deployed_commit_matches
+from .runner import request_case, capture_telemetry, deployed_commit_matches, journaled_request
 from .scorecard import distribution
 from .validators import contains_number
 from .conversation_integrity import VERSION, validate_context, intent_matches
@@ -37,8 +37,9 @@ def run(args):
             if path.exists():
                 record = json.loads(path.read_text())
             else:
-                record = request_case({'question': question, 'difficulty': sequence['difficulty'],
-                                       'prior_messages': history}, args.base)
+                record = journaled_request(out, f'{sequence["id"]}--{index}',
+                    {'question': question, 'difficulty': sequence['difficulty'],
+                     'prior_messages': history}, args.base, request_case)
                 record.update(sequence_id=sequence['id'], turn=index,
                               sequence_hash=digest(sequence), response_hash=digest(record['response']))
                 record['telemetry'] = capture_telemetry(record)

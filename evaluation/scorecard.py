@@ -12,9 +12,11 @@ def percentile(values,p):
  values=sorted(values);rank=(len(values)-1)*p/100;lo=math.floor(rank);hi=math.ceil(rank)
  return values[lo]+(values[hi]-values[lo])*(rank-lo)
 def distribution(values):
+ missing=sum(v is None for v in values)
+ values=[v for v in values if v is not None]
  return {'n':len(values),'median':statistics.median(values) if values else None,
   'p90':percentile(values,90),'p95':percentile(values,95),'max':max(values) if values else None,
-  'total':sum(values) if values else None,'quantile_method':'linear interpolation (n-1)*p'}
+  'total':sum(values) if values else None,'missing':missing,'quantile_method':'linear interpolation (n-1)*p'}
 def rate(checks,dimension):
  group=[c for c in checks if c['dimension']==dimension]
  assessed=[c for c in group if c['status'] in {'pass','fail'}]
@@ -67,7 +69,8 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
  unsupported=[c for c in assessed if c['verdict'] in {'unsupported','contradicted'}]
  cited_claims=[c for c in claims if c['evidence_ids'] and c['citation_supported'] is not None]
  french=[j for c,j in judges if c['language']=='fr']
- result={'generated_at':now(),'split':split,'run_manifest':json.loads((out/'run_manifest.json').read_text()),
+ manifest=json.loads((out/'run_manifest.json').read_text())
+ result={'generated_at':now(),'split':split,'run_manifest':manifest,
   'attempt_configuration_hash':digest(sorted((r['case_id'],r['repetition']) for r in records)),
   'composition':{'unique_cases':len({r['case_id'] for r in records}),'attempts':len(records),'expected_unique_cases':len(cases),
    'categories':dict(Counter(cases[i]['category'] for i in {r['case_id'] for r in records})),
@@ -87,7 +90,7 @@ def summarize(directory,split,oracle=None,acceptance=False,live_run=None,convers
   'french':{'judged_attempts':len(french),'language_correct_fraction':sum(j['result']['language_correct'] for j in french)/len(french) if french else None,
    'writing_mean':statistics.mean(j['result']['scores']['writing_quality'] for j in french if j['result']['scores']['writing_quality'] is not None) if french else None},
   'by_mode':modes,'hub_estimated_cost_usd':sum(r['telemetry'].get('estimated_usd') or 0 for r in records),
-  'hub_cost_is_lower_bound':any(not r['ok'] or r['telemetry'].get('estimated_usd') is None or r['telemetry'].get('unpriced_calls') for r in records),
+  'hub_cost_is_lower_bound':bool(manifest.get('capture_interruption_cost_unknown')) or any(not r['ok'] or r['telemetry'].get('estimated_usd') is None or r['telemetry'].get('unpriced_calls') for r in records),
   'evaluator_estimated_cost_usd':sum(j['receipt'].get('estimated_usd') or 0 for _,j in judges),
   'telemetry_missing':dict(Counter(k for r in records for k in r['telemetry']['telemetry_missing'])),
   'limitations':['Success-only server latency has an explicitly reported availability denominator; all attempted client times are retained.',

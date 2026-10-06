@@ -62,6 +62,24 @@ def deployed_commit_matches(record,expected,required=False):
  if observed is None:return not required
  return observed==expected
 
+def journaled_request(out,name,case,base,request):
+ """An interrupted call stays an unknown-cost attempt; never silently repeat it."""
+ path=Path(out)/'attempt_journal'/f'{name}.json'
+ payload={'question':case['question'],'analysis_mode':case['difficulty'],
+          'prior_messages':case.get('prior_messages',[])}
+ if path.exists():
+  pending=json.loads(path.read_text())
+  if pending['request_payload_hash']!=digest(payload):
+   raise ValueError('Interrupted attempt belongs to a different request')
+  return {'ok':False,'http_status':None,'started_at':pending['started_at'],
+          'client_seconds':None,'error_type':'InterruptedAttempt',
+          'response':None,'request_payload':payload,'cost_unknown':True,
+          'interruption_observed_at':now(),
+          'measurement_limitation':'Unobserved completion; latency and cost are unknown, not zero. No retry.'}
+ write_json(path,{'started_at':now(),'request_payload_hash':digest(payload),
+                 'scope':'Frozen synthetic request only; no credentials or account data'})
+ return request(case,base)
+
 def run(args):
  manifest=verify_freeze();out=Path(args.output);out.mkdir(parents=True,exist_ok=True)
  meta=out/'run_manifest.json'
@@ -86,7 +104,7 @@ def run(args):
   for repeat in range(count):
    path=out/'raw'/f"{case['id']}--{repeat}.json"
    if path.exists():continue
-   record=request_case(case,args.base)
+   record=journaled_request(out,f"{case['id']}--{repeat}",case,args.base,request_case)
    record.update(case_id=case['id'],repetition=repeat,split=args.split,case_hash=digest(case),
     response_hash=digest(record['response']),run_hub_commit=args.hub_commit)
    record['telemetry']=capture_telemetry(record);persist(out,record)
@@ -96,7 +114,7 @@ def run(args):
     persist(out,record)
     raise ValueError('Live answer did not come from the immutable benchmarked commit')
    print(json.dumps({'case':case['id'],'repetition':repeat,'ok':record['ok'],
-    'server_seconds':record['telemetry']['server_seconds'],'client_seconds':round(record['client_seconds'],2),
+    'server_seconds':record['telemetry']['server_seconds'],'client_seconds':round(record['client_seconds'],2) if record['client_seconds'] is not None else None,
     'usd':record['telemetry']['estimated_usd']}),flush=True)
  configuration=json.loads(meta.read_text());configuration['completed_at']=now()
  configuration['attempts']=len(list((out/'raw').glob('*.json')));write_json(meta,configuration)

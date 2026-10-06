@@ -113,7 +113,7 @@ def inputs(scorecard, run, conversation=None):
     ok = [r for r in complex_rows if r['ok']]
     latency = distribution([r['telemetry']['server_seconds'] for r in ok if r['telemetry'].get('server_seconds') is not None])
     costs = [r['telemetry'].get('estimated_usd') for r in ok]
-    priced = bool(ok) and all(c is not None and c >= 0 and not r['telemetry'].get('unpriced_calls') for c, r in zip(costs, ok))
+    priced = bool(ok) and not scorecard.get('hub_cost_is_lower_bound') and not scorecard['run_manifest'].get('capture_interruption_cost_unknown') and all(c is not None and c >= 0 and not r['telemetry'].get('unpriced_calls') for c, r in zip(costs, ok))
     dims = scorecard.get('analytical_dimensions', {})
     deterministic = scorecard.get('deterministic_metrics', {})
     values = {
@@ -145,6 +145,10 @@ def inputs(scorecard, run, conversation=None):
     judging_complete = scorecard.get('judged_attempts', 0) >= scorecard.get('availability', {}).get('successes', 0)
     values['benchmark_complete'] = full_suite
     values['judging_complete'] = judging_complete
+    values['performance_measurement_complete'] = bool(
+        full_suite and scorecard['run_manifest'].get('completed_at')
+        and not scorecard['run_manifest'].get('capture_interruption_cost_unknown')
+        and not values['complex_failures'])
     if not full_suite or not judging_complete:
         # Partial benchmark means cannot masquerade as whole-release capability.
         for key in ['grounding','citation_ids','citation_entailment','unsupported_claim_rate',
@@ -169,6 +173,8 @@ def scores(v):
     clarifications = 1 - v['unnecessary_clarification_rate'] if v['unnecessary_clarification_rate'] is not None else None
     latency = v['complex_latency']
     def speed(key, anchor):
+        if v.get('performance_measurement_complete') is False:
+            return None
         measured = latency.get(key)
         return min(1, anchor / measured) if measured is not None and measured > 0 else (1 if measured == 0 else None)
     cost = v['complex_median_usd']

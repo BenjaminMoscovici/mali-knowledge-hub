@@ -31,6 +31,8 @@ def qualify(baseline,candidate,base_conversation=None,conversation=None,base_gro
         if a['attempt_configuration_hash']!=b['attempt_configuration_hash']:reasons.append(split+': attempt configuration differs')
         if a['evaluator_configuration']!=b['evaluator_configuration']:reasons.append(split+': evaluator configuration differs')
         for label,card in [('baseline',a),('candidate',b)]:
+            if card['run_manifest'].get('capture_interruption_cost_unknown'):
+                reasons.append(split+': '+label+' interrupted capture has unmeasured latency/cost')
             if not card['run_manifest'].get('completed_at') or card['composition']['unique_cases']!=card['composition']['expected_unique_cases']:
                 reasons.append(split+': '+label+' incomplete capture')
             if card['availability']['failures'] or card['judged_attempts']!=card['composition']['attempts']:

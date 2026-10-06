@@ -66,6 +66,14 @@ Each attempt is atomically stored as JSON and in SQLite, with question/response 
 Hub commit, benchmark hashes, dates and request configuration. Failed request cost remains
 unknown where no receipt is available. Client and server latency are separate.
 
+Before sending a request, the runner saves an attempt journal with its start time
+and a hash of the synthetic request. If execution stops before a response is
+saved, resuming records an interrupted failure instead of repeating the request.
+Its unknown latency is not a zero and its cost is not assumed free. Legacy runs
+without a journal require an explicit interruption receipt and the
+`capture_interruption_cost_unknown` manifest flag; qualification rejects those
+runs even when their saved answers are useful for quality diagnosis.
+
 ## Judging and metrics
 
 Independent judge: pinned `gpt-5-mini-2025-08-07`, rubric/schema/prompt version 1.0,
