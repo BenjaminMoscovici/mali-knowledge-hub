@@ -35,6 +35,7 @@ from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
 from query_router import classify
 from geographic_model import geographic_model
+from geography_context import resolve_count_followup
 
 
 WEB = Path(__file__).with_name("web")
@@ -360,7 +361,14 @@ async def chat(request):
     phase = "engine_load"
     context_usage = {}
     standalone = question
+    context_method = "existing_resolver"
     try:
+        if route["path"] not in {"conversational", "conversation_only"}:
+            resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
+            if resolved:
+                standalone = resolved
+                route = classify(standalone, mode)
+                context_method = "structured_geographic_count"
         if route["path"] == "conversational":
             result = {"answer": route["reply"], "evidence": []}
         elif route["path"] == "conversation_only":
@@ -370,7 +378,7 @@ async def chat(request):
                 result = await asyncio.to_thread(restate, question, prior, answer_language(question))
         elif route["path"] == "simple_geography":
             phase = "structured_geography"
-            result = await asyncio.to_thread(lambda: geographic_model().answer(question, answer_language(question)))
+            result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
         else:
             from analysis_core import (generate_grounded_answer, is_source_inventory_question,
                                    likely_context_dependent_followup, resolve_conversational_question,
@@ -417,6 +425,8 @@ async def chat(request):
             save_error = True
     research_usage = result.get("api_usage") or {}
     metrics = {
+        "hub_commit": os.environ.get("RENDER_GIT_COMMIT"),
+        "context_resolution_method": context_method,
         "request_id": result.get("request_id"), "depth": mode,
         "route": route["path"], "routing_seconds": round(routing_seconds, 6),
         "server_seconds": round(time.perf_counter() - request_started, 4),
