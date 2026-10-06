@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from supabase import create_client
 from openai import OpenAI
 from metering import MeteredOpenAI, submit, PHASE
-from routing import explicit_source_plan
+from routing import explicit_source_plan, bounded_fts_source_names
 from citations import verify as verify_citations
 from depth import get_mode
 from document_targets import named_targets, explicit_title_targets
@@ -2411,6 +2411,9 @@ def run_four_source_research(question, document_count=8):
         "eu": retrieve_eu_evidence,
         "geographic_model": canonical_geography_evidence,
     }
+    bounded = bounded_fts_source_names(question, source_plan, planner_result.get("planner_output"))
+    if bounded is not None:
+        packaged_retrievers = {name: retriever for name, retriever in packaged_retrievers.items() if name in bounded}
     def timed_packaged(retriever):
         started = time.perf_counter()
         values = retriever(question)
