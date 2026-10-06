@@ -2847,6 +2847,9 @@ in a different language; translate faithfully while retaining citations.
             "If using it, say 'the title mentions [place]; local coverage "
             "is unverified'. Scope missing implementers/budgets/results to "
             "the specific records concerned, not to all supplied sources."
+            " FONGIM 'Recorded organization names' establishes associated "
+            "organizations only. Say 'recorded associated organization', "
+            "not 'implementer', unless an explicit role is supplied."
         )
 
     synthesis_started = time.perf_counter()
