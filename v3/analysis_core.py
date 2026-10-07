@@ -2656,6 +2656,9 @@ def _generate_grounded_answer(
 
     from project_date_answers import answer as verified_date_answer
     verified = verified_date_answer(question, ledger, response_language)
+    if verified is None:
+        from funding_answers import answer as verified_funding_answer
+        verified = verified_funding_answer(question, ledger, response_language)
     if verified:
         answer, audit = verified
         research['execution_trace']['verified_calculation'] = audit

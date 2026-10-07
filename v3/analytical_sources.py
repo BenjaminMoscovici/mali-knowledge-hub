@@ -85,7 +85,19 @@ def retrieve_analytical_evidence(question, limit=8):
                 'Plan and non-plan figures are separate; do not add funding usage years. Future-year reported amounts are not current-year funding. '
                 'No actor/project/sector/subnational breakdown in this export; cannot attribute this funding to a FONGIM project, local coverage or population reached. '
                 'A funding-requirements gap is an arithmetic financing gap, not an observed service-coverage gap.')
-            results.append(evidence([r],content,p['name']+' — FTS '+str(p['year']),'Mali; national plan/year only','national only'))
+            row=evidence([r],content,p['name']+' — FTS '+str(p['year']),'Mali; national plan/year only','national only')
+            # This export documents USD currency units and national plan/year
+            # totals. Keep a typed, source-backed arithmetic contract alongside
+            # the original passage; it never labels funding as disbursement.
+            row['funding_record']={'source_namespace':'FTS','source_id':r['id'],
+                'plan_id':p['plan_id'],'plan_code':p['plan_code'],'name':p['name'],
+                'year':p['year'],'currency':p['currency'],'amount_unit':'currency_unit',
+                'requirements':p['requirements'],'reported_funding':p['funding'],
+                'publisher_percent':p['percent_funded_reported'],
+                'scope':'Mali; national plan/year only','comparable_within_record':True,
+                'funding_definition':p['funding_definition'],
+                'source_updated_at':p['provider_updated_at'],'retrieved_at':r['retrieved_at']}
+            results.append(row)
     return results[:limit]
 
 
