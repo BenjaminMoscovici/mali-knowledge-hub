@@ -28,3 +28,14 @@ def selection_evidence(requested, projects, geographic_scope):
             f"Returned source project IDs: {found}. IDs not returned within this source/geography selection: {missing}. "
             "No unrelated illustrative projects are substituted. Non-return does not establish that a project does not exist. "
             "Prior answer text supplied lookup identifiers only; all dates, status, donor and actor claims require the fresh project records."}
+
+
+def fongim_roster_ids(text):
+    """Accept a source-qualified roster's labelled Project 32: convention.
+
+    This is history lookup context only. Research queries still require ID
+    labels; dates, counts and arbitrary bare numbers are never identifiers.
+    """
+    labelled=re.sub(r'\b(Project|Projet)\s+(\d+)(?=\s*(?:\*\*)?\s*[:—–])',
+                    r'\1 ID \2',text,flags=re.I)
+    return fongim_project_ids(labelled)

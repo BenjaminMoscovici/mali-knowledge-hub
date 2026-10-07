@@ -6,6 +6,12 @@ from pathlib import Path
 import pytest
 from project_dates import select_examples
 from project_references import fongim_project_ids
+from project_references import fongim_roster_ids
+
+
+def test_roster_labels_support_fresh_lookup_without_turning_years_and_counts_into_ids():
+    assert fongim_roster_ids('FONGIM four projects: **Project 32:** dates; **Project 664:** dates.')==(32,664)
+    assert fongim_roster_ids('FONGIM has 664 projects in 2026. Funding requirements are 32 million.')==()
 
 
 @pytest.mark.parametrize('question,expected', [

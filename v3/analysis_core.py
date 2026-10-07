@@ -2162,6 +2162,10 @@ def research_fongim(
             "version": None, "page": None,
             "section": "Project-ID relationship",
             "geographic_scope": geographic_scope,
+            "project_record": {"source_namespace":"FONGIM", "source_id":str(pid),
+                "title":project['project_name'], "status":project.get('status'),
+                "start_date":project.get('start_date'), "end_date":project.get('end_date'),
+                "source_updated_at":project.get('last_synced_at')},
             "content": (
                 f"FONGIM project ID {pid}: {project['project_name']}. "
                 f"Recorded organization names: {sorted(orgs_by_project.get(pid, []))}. "
@@ -2685,6 +2689,14 @@ def _generate_grounded_answer(
     ledger = research[
         "ledger"
     ]
+
+    from project_date_answers import answer as verified_date_answer
+    verified = verified_date_answer(question, ledger, response_language)
+    if verified:
+        answer, audit = verified
+        research['execution_trace']['verified_calculation'] = audit
+        return {**research, 'answer':answer, 'evidence':ledger, 'synthesis_seconds':0,
+                'total_seconds':round(time.perf_counter()-answer_started,2)}
 
     synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
     evidence_text = serialize_synthesis(synthesis_ledger)

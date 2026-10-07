@@ -71,13 +71,17 @@ def retrieve_project_learning(question,limit=12):
         flags=list(p['flags'])
         if p['status']=='Active' and parsed_date(p['closing_date_reported']) and parsed_date(p['closing_date_reported'])<today:
             flags.append('active_label_is_overdue_as_of_query')
-        results.append(item([r],
+        profile_item=item([r],
             f'World Bank project {pid}: {p["title"]}; source status {p["status"]}; reported board date {p["board_date_reported"]}; '
             f'reported closing date {p["closing_date_reported"]}; borrower {p["borrower"] or "not reported"}; implementing agency {p["implementing_agency"] or "not reported"}. '
             f'Project-level update date {p["project_updated_at"] or "unavailable"}; flags {flags}. Query date {today}. '
             'This is national project-profile evidence, not verified activity/reach in a selected locality. Missing sector/geography is not inferred from its title. '
             'Future board dates are planned; a closing date does not prove completion. Raw financial fields have unverified units and are omitted from analytical amounts.',
-            'World Bank — '+pid+' — '+p['title'],'World Bank projects'))
+            'World Bank — '+pid+' — '+p['title'],'World Bank projects')
+        profile_item['project_record']={'source_namespace':'World Bank','source_id':pid,
+            'title':p['title'],'status':p['status'],'start_date':None,
+            'end_date':p['closing_date_reported'],'source_updated_at':p['project_updated_at']}
+        results.append(profile_item)
     selected_ids={r['payload']['project_id'] for r in selected}
     iati=[r for r in package()['records'] if r['source_type']=='aid_activity' and r['payload']['project_id'] in selected_ids]
     # For explicit IATI browsing, show a small source-status sample even if profiles select newer projects absent in WB's IATI subset.

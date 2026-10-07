@@ -125,8 +125,8 @@ def resolve_project_end_dates(question, messages):
     # A truncated long roster cannot establish its complete lookup set.
     if not latest or len(latest) >= 5900:
         return None
-    from project_references import fongim_project_ids
-    fongim = fongim_project_ids(latest)
+    from project_references import fongim_roster_ids
+    fongim = fongim_roster_ids(latest)
     bank = tuple(sorted(set(re.findall(r'\bP\d{6}\b', latest.upper()))))
     eu = tuple(sorted(set(x.rstrip('.:') for x in re.findall(
         r'\bXI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+', latest))))

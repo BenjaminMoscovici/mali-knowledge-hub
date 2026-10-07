@@ -44,9 +44,14 @@ def _activity_item(row, today):
         flags.append('Implementation status with past reported end: unresolved registry conflict')
     if start and start > today:
         flags.append('Future reported start: planned/actual type unavailable; not confirmed current delivery')
-    return item(row, f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
+    result=item(row, f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
         'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only. '
         'Source sector codes are preserved separately from title-derived thematic relevance; a WASH title does not change a reported governance sector code.')
+    result['project_record']={'source_namespace':'EU IATI','source_id':facts['activity_id'],
+        'title':row['payload']['title'],'status':facts['status'],
+        'start_date':facts['start_date_reported'],'end_date':facts['end_date_reported'],
+        'source_updated_at':None}
+    return result
 
 
 def _referenced_activities(question, records):

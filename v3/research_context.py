@@ -50,14 +50,14 @@ def preserve_lookup_namespace(standalone, question, messages):
     The prior roster supplies lookup context, never its dates/donor/status.
     Only an explicit reference and an exact subset of that roster qualify.
     """
-    from project_references import fongim_project_ids
+    from project_references import fongim_project_ids, fongim_roster_ids
     if not has_reference(question) or re.search(r'\bfongim\b', standalone, re.I):
         return standalone
     if re.search(r'\b(world bank|banque mondiale|intpa|echo|xi.iati|P\d{6})\b', standalone, re.I):
         return standalone
     latest = next((m.get('content','') for m in reversed(messages)
                    if m.get('role') == 'assistant' and m.get('content')), '')
-    prior = set(fongim_project_ids(latest))
+    prior = set(fongim_roster_ids(latest))
     requested = set(fongim_project_ids('FONGIM ' + standalone))
     if requested and requested <= prior:
         return 'FONGIM source project IDs: ' + ', '.join(map(str,sorted(requested))) + '. ' + standalone
