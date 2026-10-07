@@ -9,7 +9,7 @@ import re
 
 from analytical_sources import evidence
 from operational_sources import publish_operational_snapshot
-from project_dates import parsed_date
+from project_dates import parsed_date, calendar_end_year
 from source_wave import _fold
 
 
@@ -38,9 +38,16 @@ def retrieve_project_learning(question,limit=12):
     rows=[r for r in package()['records'] if r['source_type']=='development_project']
     today=datetime.now(timezone.utc).date()
     ending=bool(re.search(r'\b(ending|closing|close|echeances?|termin\w*|end dates?)\b',folded))
+    end_year=calendar_end_year(question, today)
     if learning and not ids:ids={'P144442'}
     if ids:
         selected=[r for r in rows if r['payload']['project_id'] in ids]
+    elif end_year is not None:
+        active_only=bool(re.search(r'\b(active|en cours)\b',folded))
+        selected=[r for r in rows if parsed_date(r['payload']['closing_date_reported'])
+                  and parsed_date(r['payload']['closing_date_reported']).year==end_year
+                  and (not active_only or r['payload']['status']=='Active')]
+        selected=sorted(selected,key=lambda r:(r['payload']['closing_date_reported'],r['payload']['project_id']))[:4]
     elif ending:
         selected=[r for r in rows if r['payload']['status']=='Active' and parsed_date(r['payload']['closing_date_reported'])
                   and parsed_date(r['payload']['closing_date_reported'])<=today+timedelta(days=180)]
@@ -54,6 +61,7 @@ def retrieve_project_learning(question,limit=12):
         results.append(item(selected,
             f'World Bank v3 exact-Mali country-profile snapshot has {len(rows)} project IDs, source status counts {counts}. '
             f'The following {len(selected)} profiles are a bounded selection, not all projects or confirmed local interventions. '
+            +(f'Hub retrieval filter: reported closing date in calendar year {end_year}, not a rolling 180-day window. ' if end_year is not None and not ids else '')+
             'Regional/multicountry profiles are excluded. Country attribution does not place a project in the user-selected region/commune. '
             'Retrieval date is not project-level update date. Pipeline board dates are planned; Active with past closing date is a registry conflict, not proven ongoing delivery. '
             'Financial API fields lack explicit currency/unit metadata in this export and are not exposed as verified money; do not infer disbursements.',

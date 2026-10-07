@@ -27,6 +27,16 @@ def test_place_ranking_uses_registry_names_and_word_boundaries():
     assert any('Douentza' in r['document_title'] for r in retrieve_eu_evidence('Which EU project titles mention Douentza?') if r['source_type'] == 'eu_activity')
 
 
+def test_explicit_end_year_excludes_other_years_without_erasing_status_conflicts():
+    rows=[r for r in retrieve_eu_evidence('Which EU activity records have reported end dates in 2027?') if r['source_type']=='eu_activity']
+    assert rows
+    assert all('"end_date_reported": "2027-' in r['content'] for r in rows)
+    assert all('calendar year 2027, not a rolling 180-day window' in r['content'] for r in rows)
+    mopti=[r for r in retrieve_eu_evidence('Which EU activity records mention Mopti and have reported end dates in 2026?') if r['source_type']=='eu_activity']
+    assert len(mopti)==4 and all('Mopti' in r['document_title'] for r in mopti)
+    assert sum('Implementation status with past reported end' in r['content'] for r in mopti)==3
+
+
 @pytest.mark.parametrize('name', [
     'European Commission', 'Commission européenne', 'Europäische Union',
     'Europäische Kommission', 'NDICI', 'Global Gateway', 'EUTF',

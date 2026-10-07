@@ -1580,7 +1580,7 @@ def get_rows_for_project_ids(
 
 @ttl_cached(900)
 def research_fongim(
-    geography, ending=False, requested_project_ids=()
+    geography, ending=False, requested_project_ids=(), end_year=None, active_only=False
 ):
 
     location_filters = {
@@ -2099,12 +2099,12 @@ def research_fongim(
         project_examples, date_summary = sorted(projects, key=lambda p:p['fongim_project_id']), None
         evidence.append(selection_evidence(requested_project_ids, projects, geographic_scope))
     else:
-        project_examples, date_summary = select_examples(projects, ending=ending)
+        project_examples, date_summary = select_examples(projects, ending=ending, end_year=end_year, active_only=active_only, limit=5 if end_year is not None else 8)
     if date_summary:
         evidence.append({"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
             "document_title":"FONGIM reported project end dates", "organization":"FONGIM",
             "document_type":"structured_operational_data", "geographic_scope":geographic_scope,
-            "section":"Reported-date selection; 180-day window", "page":None,
+            "section":"Reported-date selection; calendar year" if end_year is not None else "Reported-date selection; 180-day window", "page":None,
             "content":f"FONGIM selected geography {geographic_scope}; reported-date screening: {json.dumps(date_summary)}. No matching ending records does not establish no ending interventions."})
 
     if project_examples:
@@ -2405,12 +2405,14 @@ def run_four_source_research(question, document_count=8):
     def timed_fongim():
         started = time.perf_counter()
         from project_references import fongim_project_ids
+        from project_dates import calendar_end_year
         # Cache by the actual query scope, not trace-only normalization and
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
                                 ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))),
-                                requested_project_ids=fongim_project_ids(question))
+                                requested_project_ids=fongim_project_ids(question), end_year=calendar_end_year(question),
+                                active_only=bool(re.search(r"\b(active|en cours)\b", normalize_text(question))))
         return value, time.perf_counter() - started
 
     from geographic_model import canonical_geography_evidence

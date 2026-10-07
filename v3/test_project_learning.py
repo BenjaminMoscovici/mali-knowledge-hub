@@ -31,3 +31,13 @@ def test_future_pipeline_is_not_approved_or_active_delivery():
     assert 'future_board_date_planned_not_approved' in profile['content']
     assert 'not verified activity/reach' in profile['content']
     assert retrieve_project_learning('What colour is the logo?')==[]
+
+
+def test_explicit_closing_year_does_not_return_overdue_or_next_year_examples():
+    rows=retrieve_project_learning('Which World Bank projects have reported closing dates in 2027?')
+    profiles=[r for r in rows if r['source_type']=='development_project' and r['document_title'].startswith('World Bank —')]
+    assert profiles
+    assert all('reported closing date 2027-' in r['content'] for r in profiles)
+    scope=next(r for r in rows if r['document_title']=='World Bank Mali project profile scope')
+    assert 'calendar year 2027, not a rolling 180-day window' in scope['content']
+    assert all('closing date does not prove completion' in r['content'] for r in profiles)
