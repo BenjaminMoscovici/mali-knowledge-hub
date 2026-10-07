@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "source_id": "worldbank-ieg-p160641",
+  "dataset_id": "mli-ieg-p160641",
+  "provider": "World Bank Independent Evaluation Group",
+  "source_name": "IEG PADEL-Mali P160641 — selected evaluation findings",
+  "source_url": "https://documents1.worldbank.org/curated/en/099061025152086670/pdf/P160641-c95cf5d5-0058-4571-9e30-7da4dd7801eb.pdf",
+  "metadata_url": "https://documents.worldbank.org/en/publication/documents-reports/documentdetail/099061025152086670",
+  "sha256": "86db4015244dcceeec84c31087b679d0c3d37c31aca39ad1f57a0360dd2df46c",
+  "publication_date": "2025-06-10",
+  "project_id": "P160641",
+  "report_number": "ICRR0024442",
+  "document_title": "IEG PADEL-Mali ICR Review (P160641)",
+  "source_family": "IEG evaluation and learning",
+  "display_label": "IEG",
+  "reference_start": "2018-02-28",
+  "reference_end": "2024-06-28",
+  "methodology": "Independent desk-based ICR validation; retrospective project evidence",
+  "transferability": "Historical livestock project; no automatic transfer to current programmes or local needs coverage.",
+  "limitations": [
+    "Three short reviewed factual paraphrases only, with exact PDF pages; not the full review or an exhaustive evaluation collection.",
+    "Reach is source-reported project monitoring for 2018–2024, not verified current local delivery, unique population across indicators or causal impact.",
+    "Baseline and end-of-project surveys were implemented; the review still identifies counterfactual attribution limits. Lessons require current-context checks."
+  ],
+  "findings": [
+    {"finding_kind": "reported_reach", "pages": [5], "finding": "IEG reports 346,465 farmers reached with agricultural assets or services against a 340,000 target. This is historical project reach, not current local coverage."},
+    {"finding_kind": "methodology_limits", "pages": [12, 13], "finding": "IEG notes counterfactual studies could strengthen outcome attribution. Planned baseline and end-of-project surveys were implemented; M&E quality was rated Substantial."},
+    {"finding_kind": "recommendations", "pages": [15], "finding": "Lessons favor locally anchored implementation, workload monitoring in shared teams, SME credit access, and transparent matching-grant selection. These are experience-based lessons, not experimental proof."}
+  ]
+}

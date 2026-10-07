@@ -79,5 +79,32 @@
     "responsible_party": "MKH source maintainer",
     "records": 3,
     "checksum": "79f7fbc09bcd39e48e4cc827316f82190bc652e4b962b80b179de3315ecd1686"
+  },
+  {
+    "provider": "World Bank Independent Evaluation Group",
+    "source_name": "IEG PADEL-Mali P160641 — selected evaluation findings",
+    "analytical_use": "evaluation_finding",
+    "authoritative_status": "original provider / attributed provider export",
+    "access_route": "https://documents1.worldbank.org/curated/en/099061025152086670/pdf/P160641-c95cf5d5-0058-4571-9e30-7da4dd7801eb.pdf",
+    "format": "PDF",
+    "authentication": "none",
+    "licence": "Public factual findings/paraphrases only; full-text reproduction rights not assumed",
+    "sensitivity": "public aggregate facts only",
+    "geographic_granularity": "historical Mali project; source-reported reach only",
+    "temporal_granularity": "ICRR0024442; reviewed 2025-06-10",
+    "update_frequency": "provider cycle; checked per wave",
+    "historical_coverage": "2018-02-28 to 2024-06-28",
+    "last_successful_retrieval": "2026-10-07T21:29:47.782653+00:00",
+    "integration_status": "integrated_with_limitations",
+    "limitations": [
+      "Three short reviewed factual paraphrases only, with exact PDF pages; not the full review or an exhaustive evaluation collection.",
+      "Reach is source-reported project monitoring for 2018–2024, not verified current local delivery, unique population across indicators or causal impact.",
+      "Baseline and end-of-project surveys were implemented; the review still identifies counterfactual attribution limits. Lessons require current-context checks."
+    ],
+    "fallback_source": "next provider release / linked original report",
+    "next_action": "refresh reviewed findings on provider updates; retain exact project, pages and methodological limits",
+    "responsible_party": "MKH source maintainer",
+    "records": 3,
+    "checksum": "86db4015244dcceeec84c31087b679d0c3d37c31aca39ad1f57a0360dd2df46c"
   }
 ]

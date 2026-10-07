@@ -107,11 +107,12 @@ def retrieve_project_learning(question,limit=12):
             'Only 36 WB activities are integrated, not all IATI Mali. Raw money fields have unverified currency/conversion/transaction period and are not interpreted as verified disbursements.',
             'IATI World Bank — '+p['activity_id'],'IATI World Bank activity subset'))
     matching_findings=[r for r in findings if r['payload']['project_id'] in ids]
-    if learning and not matching_findings:
+    missing_studies=ids-{r['payload']['project_id'] for r in matching_findings}
+    if learning and (not matching_findings or missing_studies):
         results.append({'source_type':'source_selection', 'source_family':'Evaluation lookup scope',
             'document_title':'Hub evaluation finding lookup', 'organization':'Mali Knowledge Hub',
             'geographic_scope':'Integrated project-ID findings only', 'section':'Exact project identifiers',
-            'content':f'Hub lookup for {"exact project IDs "+str(sorted(ids)) if ids else "the integrated project-ID studies"} returned no matching evaluation findings in the integrated subset. '
+            'content':f'Hub lookup for {"exact project IDs "+str(sorted(missing_studies or ids)) if ids else "the integrated project-ID studies"} returned no matching evaluation findings in the integrated subset. '
             f'The subset contains {len(findings)} findings for {len(evaluated_ids)} project IDs. '
             'This is the scope of the Hub lookup, not an evaluation of the requested projects or evidence that no evaluation exists elsewhere. '
             'Project profiles and source-reported results are not independent evaluations.'})
@@ -122,7 +123,12 @@ def retrieve_project_learning(question,limit=12):
                 f'{p["document_title"]}, exact project ID {p["project_id"]}, PDF page {p["page"]}, finding type {p["finding_kind"]}. Source locator: {r["locator"]}. '
                 +p['finding']+' Methodology: '+p['methodology']+'. Transferability: '+p['transferability']+'. '
                 'This historical project review does not demonstrate effectiveness of current FONGIM/OCHA actors or coverage of current needs; recommendations are experience-based hypotheses for context review.',
-                'IEG '+p['project_id']+' — '+p['finding_kind'],'IEG evaluation and learning'))
+                p.get('display_label','IEG')+' '+p['project_id']+' — '+p['finding_kind'],p.get('source_family','IEG evaluation and learning')))
+    if learning:
+        # Preserve actual study findings before profile context when the loaded
+        # collection grows. Profile/IATI rows must not crowd out later studies.
+        results=[r for r in results if r['source_type']=='evaluation_finding']+[
+            r for r in results if r['source_type']!='evaluation_finding']
     return results[:limit]
 
 

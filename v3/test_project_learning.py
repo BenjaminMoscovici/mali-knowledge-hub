@@ -3,7 +3,7 @@ from project_learning_sources import package,retrieve_project_learning
 
 def test_project_country_subset_and_iati_deduplication():
     rows=package()['records']
-    assert len(rows)==254
+    assert len(rows)==257
     wb=[r for r in rows if r['source_type']=='development_project']
     iati=[r for r in rows if r['source_type']=='aid_activity']
     assert len(wb)==215 and len(iati)==36
@@ -47,7 +47,7 @@ def test_exact_project_evaluation_lookup_does_not_import_another_projects_findin
     rows=retrieve_project_learning('Evaluation findings for exact World Bank P513735; no unrelated studies please')
     assert not any(r['source_type']=='evaluation_finding' for r in rows)
     scope=next(r for r in rows if r['source_family']=='Evaluation lookup scope')
-    assert "['P513735']" in scope['content'] and '3 findings for 1 project IDs' in scope['content']
+    assert "['P513735']" in scope['content'] and '6 findings for 2 project IDs' in scope['content']
     assert 'no evaluation exists elsewhere' in scope['content']
     assert any('World Bank — P513735' in r['document_title'] for r in rows)
 
@@ -66,7 +66,7 @@ def test_new_compatible_study_is_browsed_and_identified_from_loaded_metadata(mon
     evaluations=[r for r in rows if r['source_type']=='evaluation_finding']
     assert any('IEG P513735' in r['document_title'] and 'Synthetic newly loaded evaluation' in r['content']
                and 'Synthetic IEG review / P513735' in r['content'] for r in evaluations)
-    assert len(evaluations)==4
+    assert len(evaluations)==7
     assert all('Transferability:' in r['content'] for r in evaluations)
 
 
