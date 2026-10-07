@@ -11,7 +11,7 @@ from language import answer_language
 from synthesis_context import prepare, serialize
 
 
-def invoke(depth, text):
+def invoke(depth, text, extra_evidence=()):
     source = ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
     fn = next(n for n in source.body if isinstance(n, ast.FunctionDef)
               and n.name == '_generate_grounded_answer')
@@ -21,6 +21,7 @@ def invoke(depth, text):
                'publication_date': '2026-10-06', 'section': 'Body paragraph 4', 'locator': 'Body paragraph 4',
                'page_number': None, 'geographic_scope': 'Mali national',
                'content': 'Planned for 2027. EUR 890.10 and USD 12,345.67. No delivery evidence.'}]
+    ledger.extend(extra_evidence)
     def create(**kwargs):
         calls.append(kwargs)
         return SimpleNamespace(output_text=text)
@@ -59,3 +60,38 @@ def test_presentation_still_rejects_unprovided_evidence_id(depth):
     _, result, _ = invoke(depth, 'Unsupported claim [E99].')
     assert result['answer'].startswith('I could not verify')
     assert not result['execution_trace']['synthesis_context']['citation_audit']['valid']
+
+
+@pytest.mark.parametrize('depth', ['balanced', 'deep'])
+def test_professional_synthesis_keeps_conflicting_roles_and_missing_values(depth):
+    evidence = [
+        {'evidence_id': 'E02', 'source_type': 'fongim_structured',
+         'source_family': 'FONGIM intervention data', 'content':
+         'Project QA; source-reported donor: EU; recorded associated '
+         'organisation: Actor A; implementer: not supplied; '
+         'disbursement: missing; source status: Closed; sync: 2026-08-28.'},
+        {'evidence_id': 'E03', 'source_type': 'eu_iati_activity',
+         'source_family': 'European Union', 'content':
+         'Project QA; publisher: EC; status: Implementation; '
+         'title mentions Mopti; operational locations: not verified.'},
+    ]
+    calls, result, ledger = invoke(depth, 'Roles remain unverified [E02, E03].', evidence)
+    assert len(calls) == 1
+    for item in evidence:
+        assert item['content'] in calls[0]['input']
+    assert result['evidence'] == ledger
+    assert result['execution_trace']['synthesis_context']['citation_audit']['valid']
+    assert instructions('quick') not in calls[0]['instructions']
+
+
+def test_quick_presentation_unchanged_from_accepted_baseline():
+    import subprocess
+    baseline = subprocess.check_output(
+        ['git', 'show', 'd7484a66248171180d0ad43e10b5fea461f6668f:v3/answer_presentation.py'],
+        cwd=Path(__file__).parent, text=True)
+    tree = ast.parse(baseline)
+    original = next(ast.literal_eval(n.value) for n in tree.body
+                    if isinstance(n, ast.Assign)
+                    and any(isinstance(t, ast.Name) and t.id == 'DEFAULT_RESPONSE'
+                            for t in n.targets))
+    assert instructions('quick') == original
