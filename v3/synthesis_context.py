@@ -155,13 +155,64 @@ def prepare(ledger, question, depth='balanced'):
         'synthesis_content_chars':sum(len(str(e.get('content') or '')) for e in selected)}
 
 
+EU_SHARED_QUALIFIERS = (
+    'For activity records this is a registry retrieval snapshot, not delivery dates; for EIB it is signature date, not project duration. '
+    'Programming intent, approved action, commitment, disbursement, implementation and results are separate stages. '
+    'Amounts from different stages, periods, currencies or scopes must not be added or subtracted into funding/coverage gaps. ',
+    'Self-reported activity registry status does not prove delivery. Start/end planned-vs-actual unknown. '
+    'Subnational names in titles are mentions, not approved locations. '
+    'Missing implementers, budgets, transactions, linked documents and results cannot be inferred.',
+    'Source intent/status is not confirmed delivery, coverage or impact. '
+    'Geography is source scope, not an approved local administrative match.',
+    'Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
+    'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. '
+    'Names in titles are geographical mentions only. '
+    'Source sector codes are preserved separately from title-derived thematic relevance; a WASH title does not change a reported governance sector code.',
+)
+
+
+def pack_eu_qualifiers(ledger):
+    """Lossless factoring of exact repeated EU qualification text.
+
+    Originals stay intact. Each replacement points to the complete exact text
+    and explicitly enumerated IDs; unique dates/conflicts and source scopes
+    remain beside their original observation. No inference or model pass.
+    """
+    contents = [str(item.get('content') or '') for item in ledger]
+    shared = []
+    if len({item['evidence_id'] for item in ledger}) != len(ledger):
+        return contents, shared
+    for qualifier in EU_SHARED_QUALIFIERS:
+        positions = [i for i, item in enumerate(ledger)
+                     if str(item.get('source_family') or '').startswith('EU / Team Europe — ')
+                     and contents[i].count(qualifier) == 1]
+        if len(positions) < 3:
+            continue
+        name = f'Q{len(shared)+1}'
+        marker = f'{{{{{name}_APPLIES}}}}'
+        if any(marker in content for content in contents):
+            continue
+        ids = [ledger[i]['evidence_id'] for i in positions]
+        shared.append({'name': name, 'marker': marker, 'evidence_ids': ids,
+                       'text': qualifier})
+        for i in positions:
+            contents[i] = contents[i].replace(qualifier, marker, 1)
+    return contents, shared
+
+
 def serialize(ledger):
     """Source headers once, evidence IDs/locators/scopes beside every observation."""
     shared_keys = ('source_family','source_type','document_title','organization','document_type',
         'version','publication_date','valid_from','valid_until','reference_period_start',
         'reference_period_end','source_endpoint','release_id')
+    contents, shared = pack_eu_qualifiers(ledger)
     sources, blocks = {}, []
-    for item in ledger:
+    for qualifier in shared:
+        blocks.append('SHARED QUALIFIER ' + qualifier['name'] + ' applies only to '
+            + ', '.join(qualifier['evidence_ids']) + '; '
+            + qualifier['marker'] + ' expands to this exact text in each record: '
+            + qualifier['text'])
+    for item, content in zip(ledger, contents):
         metadata = {k:item[k] for k in shared_keys if item.get(k) not in (None,'',[],{})}
         key = json.dumps(metadata,sort_keys=True,ensure_ascii=False,default=str)
         if key not in sources:
@@ -173,8 +224,13 @@ def serialize(ledger):
         if item.get('normalized_sectors'):
             fields['sector_cues'] = list(item['normalized_sectors'])
         blocks.append(f"[{item['evidence_id']}] SOURCE {sources[key]} " +
-            json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + str(item.get('content') or ''))
-    return 'Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims.\n'+'\n\n'.join(blocks)
+            json.dumps(fields,ensure_ascii=False,separators=(',',':'),default=str) + '\n' + content)
+    instruction = 'Cite evidence IDs [E..], never source header IDs. Only supplied excerpts support claims.\n'
+    if shared:
+        instruction += ('Shared qualifiers apply in full to every listed evidence ID. '
+                        'They are analytical usage limits, not new sources or publisher quotations. '
+                        'Never cite Q labels; cite the underlying evidence IDs.\n')
+    return instruction+'\n\n'.join(blocks)
 
 
 def availability_note(ledger, question):
