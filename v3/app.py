@@ -257,26 +257,12 @@ def is_source_inventory_question(question):
 
 
 def source_inventory_answer():
-    return """
-I currently have access to **four source families**:
-
-**1. Government Framework Documents**
-- Vision Mali 2063 — *Mali Kura Ɲɛtaasira ka bɛn san 2063 ma*
-- Stratégie Nationale pour l’Émergence et le Développement Durable (SNEDD 2024–2033)
-- Projets Structurants Prioritaires for implementation of Mali Kura 2063 and SNEDD 2024–2033
-- Phasage des Projets Structurants Prioritaires
-
-**2. Humanitarian Needs Assessment**
-- *Mali — Besoins humanitaires et Plan de Réponse 2026* (OCHA / Équipe Humanitaire Pays)
-
-**3. OCHA Database**
-- Live structured humanitarian-needs data queried through **HDX HAPI**. The Hub retrieves only records relevant to the question and preserves the source geography and categories.
-
-**4. International NGO Activities**
-- Structured **FONGIM** project data, including projects, locations, sectors and organizations. The app queries the synchronized Knowledge Hub operational mirror of the FONGIM source data.
-
-The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
-""".strip()
+    from source_catalogue import answer
+    try:
+        documents=get_document_groups()["documents"]
+    except Exception:
+        return answer(document_registry_available=False)
+    return answer(documents)
 
 
 # ============================================================

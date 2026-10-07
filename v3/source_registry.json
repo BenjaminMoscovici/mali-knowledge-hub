@@ -311,7 +311,7 @@
   },
   {
     "provider": "Government of Mali",
-    "source_name": "Existing four national framework documents",
+    "source_name": "Indexed national framework document corpus",
     "analytical_use": "official national priorities",
     "authoritative_status": "existing operational provider corpus",
     "access_route": "https://finances.ml/",
@@ -334,7 +334,7 @@
   },
   {
     "provider": "OCHA / Mali humanitarian country team",
-    "source_name": "Existing HNRP 2026 document",
+    "source_name": "Indexed humanitarian response-plan documents",
     "analytical_use": "needs, planned response, requirements, methods",
     "authoritative_status": "existing operational provider corpus",
     "access_route": "https://www.unocha.org/publications/report/mali/mali-besoins-humanitaires-et-plan-de-reponse-2026",

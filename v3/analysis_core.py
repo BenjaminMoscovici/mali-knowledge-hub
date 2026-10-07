@@ -300,59 +300,12 @@ def is_source_inventory_question(question):
 
 
 def source_inventory_answer():
-    return """
-I currently retrieve evidence from the following source families:
-
-**1. Government Framework Documents**
-- Vision Mali 2063 — *Mali Kura Ɲɛtaasira ka bɛn san 2063 ma*
-- Stratégie Nationale pour l’Émergence et le Développement Durable (SNEDD 2024–2033)
-- Projets Structurants Prioritaires for implementation of Mali Kura 2063 and SNEDD 2024–2033
-- Phasage des Projets Structurants Prioritaires
-
-**2. Humanitarian Needs Assessment**
-- *Mali — Besoins humanitaires et Plan de Réponse 2026* (OCHA / Équipe Humanitaire Pays)
-
-**3. OCHA Database**
-- Live structured humanitarian-needs data queried through **HDX HAPI**. The Hub retrieves only records relevant to the question and preserves the source geography and categories.
-
-**4. International NGO Activities**
-- Structured **FONGIM** project data, including projects, locations, sectors and organizations. The app queries the synchronized Knowledge Hub operational mirror of the FONGIM source data.
-
-**5. Administrative geography**
-- OCHA COD v03 regions and cercles, P-codes and parent relationships; INSTAT locality geography. Proposed crosswalks are not approved matches.
-
-**6. Official population**
-- INSTAT RGPH5 documents and sex-disaggregated 2023 DNP population projections, with exact pages. These are historical projections, not current population counts.
-
-**7. OCHA operational presence**
-- Mali 3W Q1 2026: 5,413 source rows, with actors, sectors and source geography. All activity, project dates, targets and reached fields are empty: presence does not demonstrate delivery or coverage.
-
-**8. IOM DTM displacement**
-- Round 83, September 2025: 467 public commune aggregate rows across displaced, returned-IDP and repatriated categories. Stocks are not flows; commune labels remain unverified against the geographic spine.
-
-**9. National HPC planning context**
-- Existing OCHA Global HPC HNO 2026 snapshot: population estimate, People in Need and targeted. This stored layer does not contain requirements, funding, reached figures or regional severity.
-
-**10. Cadre Harmonise food security**
-- 56 current-period and 56 projected analysis-area records from the late-2025 Mali exercise, plus one CILSS national projection. June-August 2026 projections are not fresh 2026 observations. Geography vintages and unresolved codes remain explicit; no commune estimates.
-
-**11. Humanitarian financing**
-- OCHA FTS national plan/year requirements and reported funding. Contributions, commitments and carry-over are not solely disbursements. This layer cannot assign money to local projects or beneficiaries.
-
-**12. World Bank projects**
-- 215 exact-Mali country profiles from the v3 API. Planned board dates, reported closing dates and status conflicts stay distinct. Country profiles do not prove subnational activity.
-
-**13. IATI activity subset**
-- 36 World Bank publisher 44000 activities deduplicated from 136 sector rows. Exact project IDs connect them to World Bank profiles. Other publishers and questionable coordinates are excluded; raw financial units require further validation.
-
-**14. Evaluation and learning**
-- A small initial IEG collection: three findings for historical project P144442, pages 9, 11 and 17. Findings cover results, constraints and recommendations with transferability limits; they do not evaluate current actors.
-
-**15. EU / Team Europe**
-- Original joint programming/NDICI annex, current EU overview, two historical TEI proposals, 134 INTPA and 172 ECHO exact-country IATI activities, three historical EIB profiles, one Capacity4dev project and the ECHO HIP 2026 v5 Mali allocation/priorities. Programming, commitments, indicative amounts, signatures and reported status remain distinct. No verified transaction totals, local delivery or current results in this subset. AAP/support-measure downloads and original IATI XML remain unavailable; this is not a complete portfolio.
-
-The language model itself is **not** treated as a source. For analytical questions, the Hub selects the relevant source families and retrieves fresh evidence for that question.
-""".strip()
+    from source_catalogue import answer
+    try:
+        documents=get_document_groups()["documents"]
+    except Exception:
+        return answer(document_registry_available=False)
+    return answer(documents)
 
 
 # ============================================================
