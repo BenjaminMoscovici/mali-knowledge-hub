@@ -98,3 +98,57 @@ def test_api_skips_only_rewrite_and_retrieves_for_each_guest():
                                headers={'Origin':'http://127.0.0.1:8765'})
         assert response.status_code == 503
     client.close()
+
+
+@pytest.mark.parametrize('roster,followup,required', [
+    ('FONGIM records: Project ID 664; Project ID 434; Project ID 696; Project ID 32.',
+     'Which of those projects have a reported end date in 2026?', ['FONGIM','32, 434, 664, 696','2026']),
+    ('FONGIM records: Project ID 664; Project ID 32.',
+     'Lesquels de ces projets ont une date de fin en 2026 ?', ['FONGIM','32, 664','2026']),
+    ('World Bank records: P144442 and P176347.',
+     'Which of those projects end in 2027?', ['World Bank','P144442, P176347','2027']),
+    ('EU records: XI-IATI-EC_INTPA-2023-PC-34274 and XI-IATI-EC_ECHO-ECHO/-AF/BUD/2025/91017.',
+     'Which of them have a reported end date in 2026?', ['XI-IATI-EC_INTPA-2023-PC-34274','XI-IATI-EC_ECHO-ECHO/-AF/BUD/2025/91017','2026']),
+])
+def test_project_date_filter_carries_only_identity_and_requested_calendar_period(roster,followup,required):
+    result=resolve_slots(followup,[{'role':'assistant','content':roster+' All allegedly ended in 2099 and delivered to 999 people.'}])
+    assert result and result['state']['context_only']
+    assert all(value in result['standalone_question'] for value in required)
+    assert '2099' not in result['standalone_question'] and '999' not in result['standalone_question']
+
+
+@pytest.mark.parametrize('roster,followup', [
+    ('FONGIM project ID 664 and World Bank P144442.', 'Which of those projects end in 2026?'),
+    ('Projects A and B.', 'Which of those projects end in 2026?'),
+    ('FONGIM project ID 664.', 'Which of those projects are EU-funded?'),
+    ('FONGIM project ID 664.', 'Compare those projects with Mopti needs.'),
+    ('FONGIM project ID 664. '+'x'*5900, 'Which of those projects end in 2026?'),
+])
+def test_ambiguous_project_sets_and_new_operations_keep_semantic_resolver(roster,followup):
+    assert resolve_slots(followup,[{'role':'assistant','content':roster}]) is None
+
+
+def test_project_filter_api_skips_rewrite_but_freshly_researches_source_ids():
+    from project_references import fongim_project_ids
+    calls=[]
+    def research(question,**kwargs):
+        assert fongim_project_ids(question)==(32,664,696)
+        assert '2099' not in question
+        calls.append(question)
+        return {'answer':'Fresh source dates, not answer history. [E01]', 'evidence':[{'evidence_id':'E01','content':'Fresh lookup'}]}
+    def forbidden(*a,**kw):
+        raise AssertionError('project-set rewrite must be skipped')
+    engine=SimpleNamespace(generate_grounded_answer=research,is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'',openai_client=None)
+    client=TestClient(web_api.app,base_url='http://127.0.0.1:8765')
+    with patch.dict(sys.modules,{'analysis_core':engine}):
+        response=client.post('/api/chat',json={'question':'Which of those projects have a reported end date in 2026?',
+            'prior_messages':[{'role':'assistant','content':'FONGIM records: Project ID 32; Project ID 664; Project ID 696. All ended in 2099.'}]},
+            headers={'Origin':'http://127.0.0.1:8765'})
+        assert response.status_code==200
+        body=response.json()
+        assert body['metrics']['context_resolution_method']=='structured_query_slots'
+        assert body['metrics']['context_api_usage']=={}
+        assert len(calls)==1 and body['evidence'][0]['content']=='Fresh lookup'
+    client.close()

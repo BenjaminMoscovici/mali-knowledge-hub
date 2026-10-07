@@ -1,5 +1,6 @@
 """Bounded query-slot carry-over. History is context, never factual evidence."""
 import re
+from datetime import datetime, timezone
 from query_router import classify
 from source_wave import _fold
 
@@ -36,7 +37,10 @@ def metric(question):
 
 
 def resolve_slots(question, messages):
-    """Only exact sex/year/level ellipses; all other inputs keep existing behavior."""
+    """Exact slot operations only; ambiguous requests keep semantic resolution."""
+    projects = resolve_project_end_dates(question, messages)
+    if projects:
+        return projects
     q = _fold(question)
     sex = re.fullmatch(r'(?:what about|and|et|et les|qu en est il des) '
                        r'(women|female|men|male|femmes|hommes)', q)
@@ -100,3 +104,41 @@ def resolve_slots(question, messages):
             'state': {'context_only': True, 'metric': kind,
                       'time_period': re.findall(r'\b(?:19|20)\d{2}\b', rewritten),
                       'last_question': rewritten}}
+
+
+def resolve_project_end_dates(question, messages):
+    """Carry source-qualified roster IDs for a narrowly recognised date filter.
+
+    Dates/status from prior answers never enter the standalone query. Only
+    identity context survives; the engine freshly retrieves every record.
+    """
+    q = _fold(question)
+    english = re.fullmatch(r'which of (?:those projects|these projects|them) '
+                          r'(?:have (?:a )?(?:reported )?end dates?|end|are ending) '
+                          r'(?:in )?((?:19|20)\d{2}|this year)', q)
+    french = re.fullmatch(r'lesquels de ces projets ont une date de fin en ((?:19|20)\d{2})', q)
+    matched = english or french
+    if not matched:
+        return None
+    latest = next((m.get('content','') for m in reversed(messages)
+                   if m.get('role') == 'assistant' and m.get('content')), '')
+    # A truncated long roster cannot establish its complete lookup set.
+    if not latest or len(latest) >= 5900:
+        return None
+    from project_references import fongim_project_ids
+    fongim = fongim_project_ids(latest)
+    bank = tuple(sorted(set(re.findall(r'\bP\d{6}\b', latest.upper()))))
+    eu = tuple(sorted(set(x.rstrip('.:') for x in re.findall(
+        r'\bXI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+', latest))))
+    families = [(source, ids) for source, ids in
+                [('FONGIM',fongim),('World Bank',bank),('EU IATI',eu)] if ids]
+    if len(families) != 1 or len(families[0][1]) > 12:
+        return None
+    source, ids = families[0]
+    year = datetime.now(timezone.utc).year if matched[1] == 'this year' else int(matched[1])
+    labels = ', '.join(map(str,ids))
+    rewritten = (f'Pour {source}, identifiants de projets {labels}, quels dossiers ont une date de fin déclarée en {year} ?'
+                 if french else f'For {source} project IDs {labels}, which records have a reported end date in {year}?')
+    return {'standalone_question':rewritten, 'method':'structured_query_slots',
+            'state':{'context_only':True, 'metric':'project_reported_end_date',
+                     'source':source,'lookup_ids':list(ids),'time_period':[str(year)],'last_question':rewritten}}
