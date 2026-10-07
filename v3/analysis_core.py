@@ -1580,7 +1580,7 @@ def get_rows_for_project_ids(
 
 @ttl_cached(900)
 def research_fongim(
-    geography, ending=False
+    geography, ending=False, requested_project_ids=()
 ):
 
     location_filters = {
@@ -1605,6 +1605,9 @@ def research_fongim(
         eq_filters=location_filters
     )
 
+    if requested_project_ids:
+        locations = [row for row in locations if row.get('fongim_project_id') in requested_project_ids]
+
     project_ids = sorted({
         row.get("fongim_project_id")
         for row in locations
@@ -1612,10 +1615,11 @@ def research_fongim(
     })
 
     if not project_ids:
+        from project_references import selection_evidence
         return {
             "project_count": 0,
             "location_count": 0,
-            "evidence": []
+            "evidence": [selection_evidence(requested_project_ids, [], str(geography))] if requested_project_ids else []
         }
 
     with ThreadPoolExecutor(max_workers=3) as executor:
@@ -2090,7 +2094,12 @@ def research_fongim(
         })
 
 
-    project_examples, date_summary = select_examples(projects, ending=ending)
+    if requested_project_ids:
+        from project_references import selection_evidence
+        project_examples, date_summary = sorted(projects, key=lambda p:p['fongim_project_id']), None
+        evidence.append(selection_evidence(requested_project_ids, projects, geographic_scope))
+    else:
+        project_examples, date_summary = select_examples(projects, ending=ending)
     if date_summary:
         evidence.append({"source_type":"fongim_structured", "source_family":"FONGIM intervention data",
             "document_title":"FONGIM reported project end dates", "organization":"FONGIM",
@@ -2120,12 +2129,12 @@ def research_fongim(
             "organization": "FONGIM",
             "version": None,
             "page": None,
-            "section": "Illustrative project records",
+            "section": "Requested project records" if requested_project_ids else "Illustrative project records",
             "content": (
-                f"Illustrative project records from the "
+                f"{'Requested' if requested_project_ids else 'Illustrative'} project records from the "
                 f"selected FONGIM result set: "
                 f"{examples_text}. "
-                f"These examples are illustrative and are "
+                f"{'These are the returned requested source records and are' if requested_project_ids else 'These examples are illustrative and are'} "
                 f"not a ranking of projects."
             )
         })
@@ -2140,7 +2149,7 @@ def research_fongim(
                 (row.get("region") or "?", row.get("cercle") or "?",
                  row.get("commune_raw") or "")
             )
-    selected = project_examples[:5]
+    selected = project_examples if requested_project_ids else project_examples[:5]
     for project in selected:
         pid = project["fongim_project_id"]
         place = sorted(locations_by_project.get(pid, []))[:4]
@@ -2395,11 +2404,13 @@ def run_four_source_research(question, document_count=8):
 
     def timed_fongim():
         started = time.perf_counter()
+        from project_references import fongim_project_ids
         # Cache by the actual query scope, not trace-only normalization and
         # ambiguity annotations that differ from question to question.
         value = research_fongim({"region": geography.get("region"),
                                  "cercle": geography.get("cercle")},
-                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))))
+                                ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))),
+                                requested_project_ids=fongim_project_ids(question))
         return value, time.perf_counter() - started
 
     from geographic_model import canonical_geography_evidence

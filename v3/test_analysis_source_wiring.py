@@ -17,11 +17,11 @@ def test_fongim_research_worker_uses_defined_normalization_and_requested_scope(q
     worker=next(n for n in research.body if isinstance(n,ast.FunctionDef) and n.name=='timed_fongim')
     normalization=next(n for n in module.body if isinstance(n,ast.FunctionDef) and n.name=='normalize_text')
     calls=[]
-    def stub(geography,ending=False):
-        calls.append((geography,ending));return {'evidence':[]}
+    def stub(geography,ending=False,requested_project_ids=()):
+        calls.append((geography,ending,requested_project_ids));return {'evidence':[]}
     namespace={'question':question,'geography':{'region':'Mopti','cercle':None},'research_fongim':stub,
                're':re,'time':time,'unicodedata':unicodedata}
     exec(compile(ast.Module(body=[normalization,worker],type_ignores=[]),'research-worker','exec'),namespace)
     result,elapsed=namespace['timed_fongim']()
     assert result=={'evidence':[]} and elapsed>=0
-    assert calls==[({'region':'Mopti','cercle':None},expected)]
+    assert calls==[({'region':'Mopti','cercle':None},expected,())]
