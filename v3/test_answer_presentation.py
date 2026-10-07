@@ -115,3 +115,23 @@ def test_direct_sector_ids_follow_original_evidence_without_another_call(depth):
         assert prompt.index('DIRECT LOCAL NEEDS CITATION INDEX') > prompt.index(evidence[0]['content'])
         assert '"id": "E29", "sector": "Water Sanitation Hygiene"' in prompt
         assert prompt.index('FINAL CITATION CHECK') > prompt.index('DIRECT LOCAL NEEDS CITATION INDEX')
+
+
+@pytest.mark.parametrize('depth',['quick','balanced','deep'])
+def test_results_table_interpretation_preserves_missing_results_and_column_groups(depth):
+    table={'evidence_id':'E20','source_type':'knowledge_base_document','source_family':'Humanitarian reports',
+        'document_id':'report','content':'Sector UNICEF and IPs response Cluster response\n'
+        'Indicator Total needs Targets Results Progress\n'
+        'Water Total - 100 40 40% 200 60 30%\n'
+        'Sanitation Total - 80 - 0% 150 30 20%\n'
+        'Feedback Total - 250000 1044 0% - - -'}
+    calls,result,ledger=invoke(depth,'Missing sanitation results [E20].',[table])
+    assert len(calls)==1 and result['evidence']==ledger and table['content'] in calls[0]['input']
+    prompt=calls[0]['input']
+    if depth=='quick':
+        assert 'RESULTS TABLE INTERPRETATION CHECK' not in prompt
+    else:
+        assert 'RESULTS TABLE INTERPRETATION CHECK for E20' in prompt
+        assert 'claim zero people only if Total results explicitly contains numeric zero' in prompt
+        assert 'do not claim all are absent' in prompt
+        assert prompt.index('RESULTS TABLE INTERPRETATION CHECK')>prompt.index('FINAL CITATION CHECK')

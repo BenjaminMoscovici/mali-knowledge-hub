@@ -63,6 +63,24 @@ def response_coverage_workflow(question):
                 and re.search(r'\b(needs?|besoins?|response|reponse|humanitarian|humanitaire|sectors?|secteurs?)\b',text))
 
 
+def results_table_guard(ledger, depth):
+    if depth=='quick':
+        return ''
+    ids=[item['evidence_id'] for item in ledger if item.get('source_type')=='knowledge_base_document'
+         and results_table(item.get('content',''))]
+    if not ids:
+        return ''
+    return ('RESULTS TABLE INTERPRETATION CHECK for '+', '.join(ids)+': '
+        'Keep publisher/implementing-partner columns separate from cluster/sector columns. '
+        'A dash or blank in Total results is unreported, even when Progress displays 0%; '
+        'claim zero people only if Total results explicitly contains numeric zero. '
+        'A rounded 0% can accompany a positive result and does not imply zero delivery. '
+        'Annual-target progress is not coverage of needs. Some Total needs cells may contain values '
+        'while others are missing: describe denominators row by row, do not claim all are absent. '
+        'A needs-coverage ratio requires compatible population, geography, period and measure definitions; '
+        'do not substitute an annual target or combine indicators into unique people. Cite the exact table.')
+
+
 def extract_spans(content, wanted, budget=2200, separator=None):
     """Select whole sentences/rows, with neighbors; never cut a number or qualifier."""
     if len(content) <= budget:

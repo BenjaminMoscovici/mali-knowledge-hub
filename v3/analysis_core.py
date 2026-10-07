@@ -2868,6 +2868,11 @@ in a different language; translate faithfully while retaining citations.
             "serve as citations for local need sectors."
         )
 
+    from synthesis_context import results_table_guard
+    table_guard=results_table_guard(synthesis_ledger,depth)
+    if table_guard:
+        user_prompt += '\n' + table_guard
+
     synthesis_started = time.perf_counter()
 
     PHASE.set("synthesis")
