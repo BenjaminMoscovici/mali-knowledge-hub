@@ -90,7 +90,11 @@ ceilings, not targets. A simple factual question should receive a short
 answer without this four-section structure, even in Balanced or Deep.
 Each factual assertion, including the opening answer, needs its most direct
 exact evidence IDs. Cite only the 1-4 most direct IDs per claim; never a long
-list of loosely related records. Preserve currencies, source dates, reference periods,
+list of loosely related records. For a list of sectors, actors or activities,
+the cited records must support every named item. A few individual observations
+do not support a longer list: shorten the list or split it into separately
+supported claims. Prefer the most decision-relevant items over an uncited roster.
+Preserve currencies, source dates, reference periods,
 original locations and geographic scope. Keep FACT, cited SYNTHESIS and
 conditional INFERENCE distinguishable. Recommendations are advice, not
 observed results. Use inline citations; no generic bibliography, repeated
