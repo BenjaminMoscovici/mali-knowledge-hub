@@ -63,12 +63,6 @@ def response_coverage_workflow(question):
                 and re.search(r'\b(needs?|besoins?|response|reponse|humanitarian|humanitaire|sectors?|secteurs?)\b',text))
 
 
-def response_search_question(question):
-    if not response_coverage_workflow(question):
-        return question
-    return question+'\nRetrieve quantitative response evidence: sector indicator tables, targets, reported results, achievements, progress, annexes, reporting periods and footnotes. Preserve planned versus achieved values, population definitions and missing figures; these do not independently establish needs coverage.'
-
-
 def extract_spans(content, wanted, budget=2200, separator=None):
     """Select whole sentences/rows, with neighbors; never cut a number or qualifier."""
     if len(content) <= budget:

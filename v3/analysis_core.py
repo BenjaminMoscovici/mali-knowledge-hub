@@ -1007,11 +1007,8 @@ user's question.
 
         started = time.perf_counter()
 
-        from synthesis_context import response_search_question
-        response_question = response_search_question(question)
-
         hnrp_query = f"""
-{response_question}
+{question}
 
 Retrieve evidence specifically from Mali's humanitarian needs
 and response planning documents, including humanitarian needs,
@@ -1025,7 +1022,7 @@ user's question.
             per_document_count = max(3, (hnrp_count + len(humanitarian_targets) - 1) // len(humanitarian_targets))
             with ThreadPoolExecutor(max_workers=len(humanitarian_targets)) as executor:
                 futures = [submit(executor, search_knowledge_base,
-                                  f"{response_question}\nFocus on: {title}",
+                                  f"{question}\nFocus on: {title}",
                                   per_document_count, [document_id])
                            for document_id, title in humanitarian_targets]
                 results = [chunk for future in futures for chunk in future.result()]
@@ -1035,6 +1032,24 @@ user's question.
                 match_count=hnrp_count,
                 filter_document_ids=hnrp_document_ids
             )
+
+        from document_targets import response_report_targets
+        report_targets=response_report_targets(question,[doc for doc in document_groups['documents']
+            if str(doc.get('id')) in hnrp_document_ids])
+        if report_targets:
+            with ThreadPoolExecutor(max_workers=len(report_targets)) as executor:
+                futures=[submit(executor,search_knowledge_base,
+                    f'{title}\nAnnex: sector indicators, targets, results, achievements, progress, reporting period, population definitions and footnotes.',
+                    3,[document_id]) for document_id,title in report_targets]
+                failures=0
+                for future in futures:
+                    try:
+                        results += future.result()
+                    except Exception:
+                        # A failed supplementary lookup must not discard the
+                        # already retrieved primary evidence or expose errors.
+                        failures += 1
+                trace['hnrp_docs']['annex_lookup']={'reports':len(report_targets),'failed':failures}
 
         return results, time.perf_counter() - started
 

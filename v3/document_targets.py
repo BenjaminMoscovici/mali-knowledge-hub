@@ -55,3 +55,22 @@ def explicit_title_targets(question, documents):
                for i in range(len(words) - 3)):
             matches.append((str(doc["id"]), title))
     return matches
+
+
+def response_report_targets(question, documents):
+    """Bound annex lookups to catalogue reports of an explicitly named publisher."""
+    from synthesis_context import response_coverage_workflow
+    if not response_coverage_workflow(question):
+        return []
+    q=normal(question)
+    matches=[]
+    for doc in documents:
+        organization=str(doc.get('organization') or '').strip()
+        labels={normal(organization)}
+        labels.update(normal(alias) for alias in re.findall(r'\(([A-Za-z][A-Za-z0-9_-]{1,12})\)',organization))
+        named=any(len(label)>=3 and re.search(r'(?<!\w)'+re.escape(label)+r'(?!\w)',q) for label in labels)
+        report=bool(re.search(r'\b(report|rapport)\b',normal(str(doc.get('title') or '')+' '+str(doc.get('document_type') or ''))))
+        if named and report and doc.get('id'):
+            matches.append((str(doc['id']),str(doc.get('title') or 'Report')))
+    # A large or ambiguous publisher collection needs a narrower research scope.
+    return list(dict.fromkeys(matches)) if len(matches)<=3 else []
