@@ -148,7 +148,26 @@
       if (list.length) blocks.push(`<${listType}>${list.map(text => `<li>${text}</li>`).join('')}</${listType}>`);
       list = []; listType = null;
     };
-    for (const line of safe.split(/\r?\n/)) {
+    const lines = safe.split(/\r?\n/);
+    const cells = (line) => line.trim().replace(/^\||\|$/g,'')
+      .split(/(?<!\\)\|/).map(cell => cell.trim().replace(/\\\|/g,'|'));
+    for (let i=0; i<lines.length; i++) {
+      const line=lines[i];
+      if (line.trim().startsWith('|') && i+1<lines.length) {
+        const header=cells(line), divider=cells(lines[i+1]);
+        if (header.length>1 && divider.length===header.length &&
+            divider.every(cell => /^:?-{3,}:?$/.test(cell))) {
+          flushParagraph(); flushList();
+          const body=[]; i++;
+          while (i+1<lines.length && lines[i+1].trim().startsWith('|')) {
+            const row=cells(lines[i+1]);
+            if (row.length!==header.length) break;
+            body.push(`<tr>${row.map(text => `<td>${text}</td>`).join('')}</tr>`); i++;
+          }
+          blocks.push(`<div class="answer-table"><table><thead><tr>${header.map(text => `<th scope="col">${text}</th>`).join('')}</tr></thead><tbody>${body.join('')}</tbody></table></div>`);
+          continue;
+        }
+      }
       const heading = line.match(/^(#{1,3})\s+(.+)$/);
       const item = line.match(/^\s*(?:([-*+])\s+|\d+[.)]\s+)(.+)$/);
       if (!line.trim()) { flushParagraph(); flushList(); continue; }
