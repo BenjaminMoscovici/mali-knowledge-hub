@@ -1007,8 +1007,11 @@ user's question.
 
         started = time.perf_counter()
 
+        from synthesis_context import response_search_question
+        response_question = response_search_question(question)
+
         hnrp_query = f"""
-{question}
+{response_question}
 
 Retrieve evidence specifically from Mali's humanitarian needs
 and response planning documents, including humanitarian needs,
@@ -1022,7 +1025,7 @@ user's question.
             per_document_count = max(3, (hnrp_count + len(humanitarian_targets) - 1) // len(humanitarian_targets))
             with ThreadPoolExecutor(max_workers=len(humanitarian_targets)) as executor:
                 futures = [submit(executor, search_knowledge_base,
-                                  f"{question}\nFocus on: {title}",
+                                  f"{response_question}\nFocus on: {title}",
                                   per_document_count, [document_id])
                            for document_id, title in humanitarian_targets]
                 results = [chunk for future in futures for chunk in future.result()]

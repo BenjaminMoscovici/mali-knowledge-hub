@@ -75,7 +75,9 @@ def test_reported_results_tables_survive_narrative_ranking_with_headers_and_peri
                  row('E08',source_type='knowledge_base_document',document_id='report',chunk_id='continued',
                      page=9,content=continuation)])
     original=deepcopy(rows)
-    for question in ('Compare delivery and reach with planned targets', 'Comparer les resultats aux cibles'):
+    for question in ('Compare delivery and reach with planned targets', 'Comparer les resultats aux cibles',
+                     'What is response coverage of needs across sectors?',
+                     'Quelle couverture des besoins par la réponse humanitaire ?'):
         selected,audit=prepare(rows,question)
         assert audit['retained_results_table_ids']==['E07','E08']
         for eid in ('E07','E08'):

@@ -56,6 +56,19 @@ def results_table(content):
             and bool(re.search(r'\b(sectors?|secteurs?|disaggregation|desagregation|progress|progres)\b',text)))
 
 
+def response_coverage_workflow(question):
+    """Coverage language can ask for reported response without saying 'results'."""
+    text=fold(question)
+    return bool(re.search(r'\b(coverage|covered|uncovered|couverture|couverts?|couvertes?)\b|response gaps|lacunes? de la reponse',text)
+                and re.search(r'\b(needs?|besoins?|response|reponse|humanitarian|humanitaire|sectors?|secteurs?)\b',text))
+
+
+def response_search_question(question):
+    if not response_coverage_workflow(question):
+        return question
+    return question+'\nRetrieve quantitative response evidence: sector indicator tables, targets, reported results, achievements, progress, annexes, reporting periods and footnotes. Preserve planned versus achieved values, population definitions and missing figures; these do not independently establish needs coverage.'
+
+
 def extract_spans(content, wanted, budget=2200, separator=None):
     """Select whole sentences/rows, with neighbors; never cut a number or qualifier."""
     if len(content) <= budget:
@@ -140,8 +153,8 @@ def prepare(ledger, question, depth='balanced'):
     # needed to compare reported achievements with targets. Keep every retrieved
     # results-table chunk for this narrow workflow, including repeated headers
     # and period footnotes; do not calculate or assume indicator comparability.
-    quantitative_workflow=depth!='quick' and bool(re.search(
-        r'\b(delivery|reach|reached|results?|achievements?|targets?|progress|resultats?|realisations?|atteints?|cibles?|progres)\b',fold(question)))
+    quantitative_workflow=depth!='quick' and (response_coverage_workflow(question) or bool(re.search(
+        r'\b(delivery|reach|reached|results?|achievements?|targets?|progress|resultats?|realisations?|atteints?|cibles?|progres)\b',fold(question))))
     table_ids={item['evidence_id'] for item in deduplicated
                if quantitative_workflow and item.get('source_type')=='knowledge_base_document'
                and results_table(item.get('content',''))}
