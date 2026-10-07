@@ -36,12 +36,18 @@ def retrieve_project_learning(question,limit=12):
     ids=set(re.findall(r'\bP\d{6}\b',question.upper()))
     if not (learning or project or ids):return []
     rows=[r for r in package()['records'] if r['source_type']=='development_project']
+    findings=[r for r in package()['records'] if r['source_type']=='evaluation_finding']
+    evaluated_ids={r['payload']['project_id'] for r in findings}
     today=datetime.now(timezone.utc).date()
     ending=bool(re.search(r'\b(ending|closing|close|echeances?|termin\w*|end dates?)\b',folded))
     end_year=calendar_end_year(question, today)
-    if learning and not ids:ids={'P144442'}
+    if learning and not ids:
+        # Browse the loaded studies, rather than permanently naming one project.
+        ids=set(sorted(evaluated_ids)[:max(1,min(3,limit//4))])
     if ids:
         selected=[r for r in rows if r['payload']['project_id'] in ids]
+    elif learning:
+        selected=[]
     elif end_year is not None:
         active_only=bool(re.search(r'\b(active|en cours)\b',folded))
         selected=[r for r in rows if parsed_date(r['payload']['closing_date_reported'])
@@ -100,14 +106,23 @@ def retrieve_project_learning(question,limit=12):
             'Differences between source statuses/dates remain visible, not silently overwritten. IATI is self-reported; country assignment does not prove subnational presence. '
             'Only 36 WB activities are integrated, not all IATI Mali. Raw money fields have unverified currency/conversion/transaction period and are not interpreted as verified disbursements.',
             'IATI World Bank — '+p['activity_id'],'IATI World Bank activity subset'))
-    if learning or 'P144442' in ids:
-        for r in [r for r in package()['records'] if r['source_type']=='evaluation_finding']:
+    matching_findings=[r for r in findings if r['payload']['project_id'] in ids]
+    if learning and not matching_findings:
+        results.append({'source_type':'source_selection', 'source_family':'Evaluation lookup scope',
+            'document_title':'Hub evaluation finding lookup', 'organization':'Mali Knowledge Hub',
+            'geographic_scope':'Integrated project-ID findings only', 'section':'Exact project identifiers',
+            'content':f'Hub lookup for {"exact project IDs "+str(sorted(ids)) if ids else "the integrated project-ID studies"} returned no matching evaluation findings in the integrated subset. '
+            f'The subset contains {len(findings)} findings for {len(evaluated_ids)} project IDs. '
+            'This is the scope of the Hub lookup, not an evaluation of the requested projects or evidence that no evaluation exists elsewhere. '
+            'Project profiles and source-reported results are not independent evaluations.'})
+    if learning or ids.intersection(evaluated_ids):
+        for r in matching_findings:
             p=r['payload']
             results.append(item([r],
-                f'IEG ICRR0023565, exact project ID {p["project_id"]}, PDF page {p["page"]}, finding type {p["finding_kind"]}. '
+                f'{p["document_title"]}, exact project ID {p["project_id"]}, PDF page {p["page"]}, finding type {p["finding_kind"]}. Source locator: {r["locator"]}. '
                 +p['finding']+' Methodology: '+p['methodology']+'. Transferability: '+p['transferability']+'. '
                 'This historical project review does not demonstrate effectiveness of current FONGIM/OCHA actors or coverage of current needs; recommendations are experience-based hypotheses for context review.',
-                'IEG P144442 — '+p['finding_kind'],'IEG evaluation and learning'))
+                'IEG '+p['project_id']+' — '+p['finding_kind'],'IEG evaluation and learning'))
     return results[:limit]
 
 
