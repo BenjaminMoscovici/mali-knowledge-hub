@@ -2,7 +2,7 @@
 import ast
 from pathlib import Path
 import pytest
-from routing import explicit_source_plan, bounded_fts_source_names
+from routing import explicit_source_plan, bounded_fts_source_names, bounded_project_learning_source_names
 
 
 @pytest.mark.parametrize('q', [
@@ -76,6 +76,7 @@ def test_actual_bounded_research_runs_only_two_families_without_planner_or_live_
     ns={'re':re,'time':time,'unicodedata':unicodedata,'defaultdict':defaultdict,
         'ThreadPoolExecutor':ThreadPoolExecutor,'submit':submit,
         'explicit_source_plan':explicit_source_plan,'bounded_fts_source_names':bounded_fts_source_names,
+        'bounded_project_learning_source_names':bounded_project_learning_source_names,
         'openai_client':None,'get_document_groups':forbidden,'resolve_geography':forbidden,
         'build_hapi_evidence':forbidden,'research_fongim':forbidden,
         'retrieve_source_evidence':forbidden,'retrieve_operational_evidence':forbidden,

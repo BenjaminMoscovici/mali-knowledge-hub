@@ -56,7 +56,7 @@ def _bounded_fts(question):
 
 def explicit_source_plan(question):
     q = _normal(question)
-    if _bounded_fts(question):
+    if _bounded_fts(question) or _bounded_project_learning(question):
         return {family: False for family in
                 ("government_docs", "hnrp_docs", "hapi", "fongim")}
     national = re.search(r"\b(?:national strateg\w*|government priorit\w*|"
@@ -123,4 +123,52 @@ def bounded_fts_source_names(question, source_plan, planner_output):
             and source_plan is not None and not any(source_plan.values())
             and _bounded_fts(question)):
         return {'analytical', 'geographic_model'}
+    return None
+
+
+def _bounded_project_learning(question):
+    """Exact study lookups can use project-ID evidence without national context."""
+    q = _normal(question)
+    ids = set(re.findall(r'\bp\d{6}\b', q))
+    if not (1 <= len(ids) <= 2) or not re.search(
+        r'\b(?:evaluat\w*|lessons?|learning|worked|failed|enseign\w*|appris)\b', q
+    ):
+        return False
+    if len(ids) < 2 and re.search(r'\b(?:compare|comparison|comparer|comparaison|contrast|versus|vs|relat\w*|relier)\b', q):
+        return False
+    # Wider decisions still need the ordinary joined research. A project ID
+    # never establishes a link to another provider or a subnational place.
+    if re.search(r'\b(?:needs?|besoins?|priorit\w*|strateg\w*|plans?|'
+                 r'coverage|couverture|delivery|reach\w*|beneficiar\w*|beneficiair\w*|'
+                 r'fund\w*|financ\w*|budgets?|donors?|bailleurs?|actors?|acteurs?|'
+                 r'implement\w*|successor\w*|continuity|continuite|'
+                 r'apply|adapt\w*|transfer\w*|replic\w*|current|actuel\w*|'
+                 r'local\w*|subnational|regions?|regional\w*|cercles?|communes?|villages?|'
+                 r'fongim|fts|hnrp|hrp|hapi|hpc|hdx|dtm|iom|3w|'
+                 r'echo|eu|ue|europe\w*|unicef|government|gouvernement|'
+                 r'usaid|afd|giz|wfp|pam|who|oms|undp|pnud|afdb|bad|'
+                 r'other sources|autres sources|all sources|toutes les sources|'
+                 r'snedd|mali kura|vision mali|cadre harmonis\w*|ipc)\b', q):
+        return False
+    from geographic_model import geographic_model
+    model = geographic_model()
+    words = re.findall(r'\w+', q)
+    for size in range(1, model.max_name_words + 1):
+        for start in range(len(words) - size + 1):
+            name = ' '.join(words[start:start + size])
+            if name in {'mali', 'a', 'au', 'aux', 'de', 'du', 'des', 'en',
+                        'et', 'la', 'le', 'les', 'and', 'for', 'in', 'of',
+                        'on', 'the', 'to', 'with'}:
+                continue
+            if any(model.units[uid]['level'] != 'country'
+                   for uid in model.names.get(name, ())):
+                return False
+    return True
+
+
+def bounded_project_learning_source_names(question, source_plan, planner_output):
+    if ((planner_output or {}).get('method') == 'explicit_source_rules'
+            and source_plan is not None and not any(source_plan.values())
+            and _bounded_project_learning(question)):
+        return {'project_learning', 'geographic_model'}
     return None

@@ -148,8 +148,8 @@ def test_actual_research_runs_independent_families_concurrently_and_preserves_ci
             barrier.wait()
             return [row(source_family=family,content='Scoped evidence for '+family)]
         return read
-    from routing import bounded_fts_source_names
-    ns={'bounded_fts_source_names':bounded_fts_source_names,'re':re,'time':time,'unicodedata':unicodedata,'defaultdict':defaultdict,
+    from routing import bounded_fts_source_names, bounded_project_learning_source_names
+    ns={'bounded_project_learning_source_names':bounded_project_learning_source_names,'bounded_fts_source_names':bounded_fts_source_names,'re':re,'time':time,'unicodedata':unicodedata,'defaultdict':defaultdict,
         'ThreadPoolExecutor':ThreadPoolExecutor,'submit':submit,
         'plan_sources_semantically':lambda q:{'source_plan':{'government_docs':False,'hnrp_docs':False,'hapi':False,'fongim':False},'seconds':0},
         'enrich_join_evidence':lambda ledger:None,
