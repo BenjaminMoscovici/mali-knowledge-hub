@@ -2995,6 +2995,10 @@ def likely_context_dependent_followup(
     if not q:
         return False
 
+    from research_context import has_reference
+    if has_reference(q):
+        return True
+
     markers = [
         "what about ",
         "how about ",
@@ -3041,22 +3045,12 @@ def resolve_conversational_question(
 ):
     """Convert a follow-up into a standalone research question."""
 
-    prior_turns = []
-    for message in messages[-10:]:
-        role = message.get("role")
-        if role == "user":
-            value = message.get("standalone_question") or message.get("content")
-            if value:
-                prior_turns.append(f"USER QUESTION: {str(value)[:1200]}")
-        elif role == "assistant" and message.get("content"):
-            # An answer can establish what "that finding" refers to. It is
-            # query context only; the new analysis retrieves fresh evidence.
-            prior_turns.append(f"ASSISTANT CONTEXT ONLY: {str(message['content'])[:1200]}")
-
-    if not prior_turns:
+    from research_context import conversation_context
+    from datetime import datetime, timezone
+    context_text = conversation_context(messages)
+    if not context_text:
         return question.strip()
-
-    context_text = "\n\n".join(prior_turns[-8:])
+    query_date = datetime.now(timezone.utc).date().isoformat()
 
     instructions = """
 You rewrite conversational follow-up questions for an evidence-grounded
@@ -3079,9 +3073,20 @@ Rules:
 5. If the new question is already standalone, return it essentially unchanged.
 6. Use the language of the new question.
 7. Return only the rewritten question.
+8. When filtering or comparing "those projects" or another previous set,
+   preserve the exact source identifiers supplied in that set, or the explicit
+   titles if identifiers were not supplied. Keep the user's restrictions;
+   do not replace the set with a broader country/provider portfolio. Those
+   identifiers and titles are lookup context, not proof of status, funding,
+   delivery or geographic coverage. Fresh evidence must establish those facts.
+9. Resolve relative dates such as "this year" against CURRENT QUERY DATE,
+   preserving the requested calendar period rather than substituting a rolling
+   window. Never infer that an activity actually ended from a reported end date.
 """
 
     input_text = f"""
+CURRENT QUERY DATE (UTC): {query_date}
+
 PREVIOUS CONVERSATION (CONTEXT, NOT EVIDENCE)
 
 {context_text}
