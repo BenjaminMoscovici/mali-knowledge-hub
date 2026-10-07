@@ -186,6 +186,53 @@
     return blocks.join('');
   }
   function evidenceFor(message) { return message.evidence || message.evidence_refs || []; }
+  function researchBrief(message, question, exportedAt) {
+    const answer=String(message.content || '');
+    const ids=new Set(answer.match(/\bE\d{2,}\b/g) || []);
+    const sources=evidenceFor(message).filter(source=>ids.has(source.evidence_id));
+    const present=new Set(sources.map(source=>source.evidence_id));
+    const missing=[...ids].filter(id=>!present.has(id));
+    const text=value=>String(value || '').replace(/[\\`*_\[\]<>]/g,'\\$&').replace(/\r?\n/g,' ');
+    const lines=['# Mali Knowledge Hub — research brief','',
+      `Exported: ${exportedAt}`,'',
+      'This is a saved research snapshot. Source dates below retain their original meaning; exporting does not refresh the evidence.','',
+      '## Research question','',...String(question || 'Question unavailable in this saved turn.').split('\n').map(line=>'> '+line),''];
+    if(message.standalone_question && message.standalone_question!==question) {
+      lines.push('Resolved research scope:','',...String(message.standalone_question).split('\n').map(line=>'> '+line),'');
+    }
+    if(message.created_at) lines.push('Answer recorded: '+text(message.created_at),'');
+    lines.push('## Answer','',answer,'','## Cited source references','');
+    if(!sources.length) lines.push('No cited source references are available in this saved answer.');
+    for(const source of sources) {
+      lines.push('### '+text(source.evidence_id)+' — '+text(source.document_title || source.organization || source.source_family || 'Source record'),'');
+      for(const [label,value] of [['Publisher',source.organization],['Source family',source.source_family],
+        ['Publication date',source.publication_date],['Source update',source.project_record?.source_updated_at || source.funding_record?.source_updated_at],
+        ['Reference period', [source.reference_period_start,source.reference_period_end].filter(Boolean).join(' – ')],
+        ['Geographic scope',source.geographic_scope],['Retrieved',source.retrieved_at],
+        ['Locator',source.locator || source.section],['Page',source.page]]) {
+        if(value!==null && value!==undefined && value!=='') lines.push('- '+label+': '+text(value));
+      }
+      try {
+        const endpoint=new URL(source.source_endpoint);
+        if(['https:','http:'].includes(endpoint.protocol)) lines.push('- Original source: <'+endpoint.href.replace(/</g,'%3C').replace(/>/g,'%3E')+'>');
+      } catch { /* Missing or invalid URLs remain absent, never invented. */ }
+      lines.push('');
+    }
+    if(missing.length) lines.push('Unresolved citation identifiers in this saved answer: '+missing.join(', ')+'. Check the original conversation before relying on these claims.','');
+    lines.push('References identify the records cited by this answer. They do not independently verify its claims; check the original passages before a programme or coordination decision.');
+    return lines.join('\n');
+  }
+  function exportBrief(message) {
+    const index=state.messages.indexOf(message);
+    const question=state.messages.slice(0,index).reverse().find(turn=>turn.role==='user')?.content;
+    const exportedAt=new Date().toISOString();
+    const blob=new Blob([researchBrief(message,question,exportedAt)],{type:'text/markdown;charset=utf-8'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download=`MKH_research_brief_${exportedAt.slice(0,10)}.md`;
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast('Research brief exported with cited source references.');
+  }
   function renderConversation() {
     const hasMessages=state.messages.length>0;
     el.welcome.classList.toggle('hidden',hasMessages);
@@ -206,6 +253,9 @@
         const button=document.createElement('button'); button.className='sources-button';
         button.textContent=evidence.length ? `View sources (${evidence.length})` : 'View sources';
         button.addEventListener('click', () => showSources(message)); footer.append(button);
+        const exportButton=document.createElement('button');exportButton.className='sources-button';
+        exportButton.textContent='Export brief';
+        exportButton.addEventListener('click',()=>exportBrief(message));footer.append(exportButton);
         if (message.analysis_mode) {
           const label=document.createElement('span'); label.textContent=message.analysis_mode[0].toUpperCase()+message.analysis_mode.slice(1);
           footer.append(label);
@@ -359,7 +409,8 @@
       if(data.metrics) console.info('MKH_QUERY_METRICS '+JSON.stringify({...data.metrics,
         client_seconds:Number(((performance.now()-requestStarted)/1000).toFixed(4))}));
       const message={role:'assistant',content:data.answer,evidence:data.evidence || [],
-        standalone_question:data.standalone_question,position:data.position,analysis_mode:mode};
+        standalone_question:data.standalone_question,position:data.position,analysis_mode:mode,
+        created_at:new Date().toISOString()};
       state.messages.push(message);
       thread.analysis_mode=mode;
       if (data.save_error) toast('The answer is available, but it could not be saved.');
