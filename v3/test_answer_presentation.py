@@ -9,6 +9,7 @@ from answer_presentation import instructions
 from citations import verify
 from language import answer_language
 from synthesis_context import prepare, serialize
+from hapi_cardinality import sector_citation_index
 
 
 def invoke(depth, text, extra_evidence=()):
@@ -35,6 +36,7 @@ def invoke(depth, text, extra_evidence=()):
           'build_join_context': lambda *args: {}, 'prompt_context': lambda _: '',
           'answer_instructions': instructions, 'availability_note': lambda *args: '',
           'intersectoral_locality_note': lambda _: '', 'answer_language': answer_language,
+          'sector_citation_index': sector_citation_index,
           'verify_citations': verify,
           'openai_client': SimpleNamespace(responses=SimpleNamespace(create=create))}
     exec(compile(ast.Module(body=[fn], type_ignores=[]), 'synthesis-contract', 'exec'), ns)
@@ -95,3 +97,21 @@ def test_quick_presentation_unchanged_from_accepted_baseline():
                     and any(isinstance(t, ast.Name) and t.id == 'DEFAULT_RESPONSE'
                             for t in n.targets))
     assert instructions('quick') == original
+
+
+@pytest.mark.parametrize('depth', ['quick', 'balanced', 'deep'])
+def test_direct_sector_ids_follow_original_evidence_without_another_call(depth):
+    evidence = [{"evidence_id": "E29", "source_family": "OCHA humanitarian data",
+                 "admin_level": 2, "admin1_name": "Mopti", "admin2_name": "Konna",
+                 "sector_name": "Water Sanitation Hygiene",
+                 "content": "2025 WASH needs in source locality Konna; not a regional total."}]
+    calls, result, ledger = invoke(depth, 'Local WASH needs [E29].', evidence)
+    assert len(calls) == 1 and result['evidence'] == ledger
+    prompt = calls[0]['input']
+    if depth == 'quick':
+        assert 'DIRECT LOCAL NEEDS CITATION INDEX' not in prompt
+        assert 'FINAL CITATION CHECK' not in prompt
+    else:
+        assert prompt.index('DIRECT LOCAL NEEDS CITATION INDEX') > prompt.index(evidence[0]['content'])
+        assert '"id": "E29", "sector": "Water Sanitation Hygiene"' in prompt
+        assert prompt.index('FINAL CITATION CHECK') > prompt.index('DIRECT LOCAL NEEDS CITATION INDEX')

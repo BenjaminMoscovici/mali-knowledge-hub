@@ -26,7 +26,7 @@ from document_targets import named_targets, explicit_title_targets
 from document_families import document_family
 from language import answer_language
 from answer_presentation import instructions as answer_instructions
-from hapi_cardinality import intersectoral_locality_note
+from hapi_cardinality import intersectoral_locality_note, sector_citation_index
 from normalization import GeographyRegistry, OrganizationResolver, filter_hapi_rows
 from entity_audit import load as load_entity_decisions
 from joins import enrich as enrich_join_evidence, build_join_context, prompt_context
@@ -2833,6 +2833,7 @@ Write the entire answer in {response_language or answer_language(question)}. The
 in a different language; translate faithfully while retaining citations.
 """
     if depth != "quick":
+        user_prompt += "\n" + sector_citation_index(synthesis_ledger)
         word_budget = 350 if depth == "balanced" else 450
         user_prompt += (
             f"\nComplete-answer budget: at most {word_budget} words. "
@@ -2850,6 +2851,11 @@ in a different language; translate faithfully while retaining citations.
             " FONGIM 'Recorded organization names' establishes associated "
             "organizations only. Say 'recorded associated organization', "
             "not 'implementer', unless an explicit role is supplied."
+            " FINAL CITATION CHECK: Do not list sectors in the opening. "
+            "Every sector, actor or activity named in a list needs direct "
+            "support from its cited records; shorten or split the list when "
+            "four IDs cannot support all items. National priorities cannot "
+            "serve as citations for local need sectors."
         )
 
     synthesis_started = time.perf_counter()
