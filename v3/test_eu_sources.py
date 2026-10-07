@@ -7,6 +7,26 @@ from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
 
 
+@pytest.mark.parametrize('question', [
+    'Which EU-linked project records mention Mopti? List up to four with their source identifiers, reported status and start/end dates. Distinguish a title mention from verified delivery.',
+    'Quels projets de la Commission européenne mentionnent Mopti ? Donnez les identifiants, les statuts et les dates de début et de fin.',
+])
+def test_place_mentions_outweigh_generic_roster_words(question):
+    rows = [r for r in retrieve_eu_evidence(question) if r['source_type'] == 'eu_activity']
+    assert len(rows) == 4
+    assert all('Mopti' in r['document_title'] for r in rows)
+    assert all('Names in titles are geographical mentions only' in r['content'] for r in rows)
+
+
+def test_place_ranking_uses_registry_names_and_word_boundaries():
+    from geographic_model import geographic_model
+    model = geographic_model()
+    assert model.retrieval_place_names('Compare EU projects in Ségou and Douentza') == ['douentza', 'segou']
+    assert model.retrieval_place_names('Which EU projects mention Moptiville?') == []
+    assert model.retrieval_place_names('Which EU projects end in 2026?') == []
+    assert any('Douentza' in r['document_title'] for r in retrieve_eu_evidence('Which EU project titles mention Douentza?') if r['source_type'] == 'eu_activity')
+
+
 @pytest.mark.parametrize('name', [
     'European Commission', 'Commission européenne', 'Europäische Union',
     'Europäische Kommission', 'NDICI', 'Global Gateway', 'EUTF',

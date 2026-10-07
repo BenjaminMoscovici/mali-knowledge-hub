@@ -86,6 +86,21 @@ class GeographyModel:
                        and (not release or self.units[uid]["release_id"] == release)),
                       key=lambda u: (u["release_id"] != self.preferred, u["level"], [p["name"] for p in u["path"]], u["id"]))
 
+    def retrieval_place_names(self, question):
+        """Exact administrative name mentions for ranking, not resolved identities.
+
+        Retain homonyms and source spellings; never infer a boundary crosswalk
+        or local coverage from this lexical retrieval signal.
+        """
+        words = _fold(question).split()
+        names = {" ".join(words[i:i+size]) for i in range(len(words))
+                 for size in range(1, min(self.max_name_words, len(words)-i)+1)
+                 if len(" ".join(words[i:i+size])) > 2 and
+                 any(self.units[uid]['level'] in ('region', 'cercle', 'commune', 'arrondissement')
+                     for uid in self.names.get(" ".join(words[i:i+size]), ()))}
+        return sorted(n for n in names if not any(
+            n != other and (' ' + n + ' ') in (' ' + other + ' ') for other in names))
+
     @lru_cache(maxsize=1)
     def summary(self):
         releases = []

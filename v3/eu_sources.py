@@ -96,10 +96,17 @@ def retrieve_eu_evidence(question,limit=20):
         'environment':r'climat|environment|environnement|green|vert','energy':r'energ|electric',
         'governance':r'govern|gouvern|state|etat','displacement':r'displace|deplace|dtm'}.items():
         if re.search(pattern,q):themes.append(key)
-    wanted_geo=[g for g in ('mopti','gao','tombouctou','segou','bamako','socoura') if g in q]
+    from geographic_model import geographic_model
+    wanted_geo=geographic_model().retrieval_place_names(question)
+    def place_score(r):
+        # Rank actual title/geography mentions, not repeated limitations or
+        # incidental substrings. A matching name remains a mention only.
+        p=r['payload']
+        text=' '+_fold(p['title']+' '+json.dumps(p['geography'],ensure_ascii=False))+' '
+        return sum((' '+g+' ') in text for g in wanted_geo)
     def score(r):
         p=r['payload'];text=_fold(json.dumps(p,ensure_ascii=False))
-        return sum(t in p['sectors'] for t in themes)*4+sum(g in text for g in wanted_geo)*3+sum(w in text for w in q.split() if len(w)>4)
+        return (place_score(r),sum(t in p['sectors'] for t in themes)*4+sum(w in text for w in q.split() if len(w)>4))
     fixed=[r for r in data if r['source_type'] not in ('eu_activity','eib_project','eu_project_metadata','eu_tei')]
     fixed.sort(key=lambda r:(r['dataset_id']=='mli-eu-current-overview',score(r)),reverse=True)
     results=[_activity_item(r, today) for r in referenced]+[item(r) for r in fixed]
@@ -108,7 +115,7 @@ def retrieve_eu_evidence(question,limit=20):
         if ending:
             rows=[r for r in rows if r['payload']['facts']['status']=='Implementation' and parsed_date(r['payload']['facts']['end_date_reported'])
                 and parsed_date(r['payload']['facts']['end_date_reported'])<=today+timedelta(days=180)]
-            rows.sort(key=lambda r:(parsed_date(r['payload']['facts']['end_date_reported'])<today,r['payload']['facts']['end_date_reported']))
+            rows.sort(key=lambda r:(-place_score(r),parsed_date(r['payload']['facts']['end_date_reported'])<today,r['payload']['facts']['end_date_reported']))
         else:rows.sort(key=lambda r:(score(r),r['payload']['facts']['status']=='Implementation',r['payload']['facts']['start_date_reported'] or ''),reverse=True)
         for r in rows[:2]:
             if r['id'] not in {x['record_id'] for x in results}:
