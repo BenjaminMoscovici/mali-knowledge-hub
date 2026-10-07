@@ -95,8 +95,10 @@ the cited records must support every named item. A few individual observations
 do not support a longer list: shorten the list or split it into separately
 supported claims. Prefer the most decision-relevant items over an uncited roster.
 Keep the opening narrow: one key finding and its decision limit, with at most
-four direct evidence IDs total. Do not enumerate every sector or source family
-in the opening; reserve supported details for the evidence bullets.
+four direct evidence IDs total. Do not list sectors in the opening; reserve
+supported details for the evidence bullets. Country-level sector priorities
+do not establish the same local needs: name a local need sector only with its
+direct local needs observation, never with a national thematic priority alone.
 Preserve currencies, source dates, reference periods,
 original locations and geographic scope. Keep FACT, cited SYNTHESIS and
 conditional INFERENCE distinguishable. Recommendations are advice, not
