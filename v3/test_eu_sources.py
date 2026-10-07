@@ -1,9 +1,31 @@
 import ast
+import pytest
 from collections import Counter
 from pathlib import Path
 from eu_sources import package,retrieve_eu_evidence
 from operational_sources import retrieve_operational_evidence
 from analytical_sources import retrieve_analytical_evidence
+
+
+@pytest.mark.parametrize('name', [
+    'European Commission', 'Commission européenne', 'Europäische Union',
+    'Europäische Kommission', 'NDICI', 'Global Gateway', 'EUTF',
+    'Fonds européen de développement', 'DUE', 'T05-EUTF',
+])
+def test_institutional_names_and_instruments_reach_existing_eu_evidence(name):
+    rows = retrieve_eu_evidence(f'What can be established about {name} in Mali?')
+    assert any(r['source_type'] == 'eu_programming' and
+               '151000000' in r['content'] for r in rows)
+    assert all(r['locator'] and r['release_id'] and r['record_id'] for r in rows)
+    assert all('financial_raw' not in r['content'] for r in rows)
+
+
+@pytest.mark.parametrize('question', [
+    'What is due in Mopti?', 'Which fees are due in Mali?',
+    'European weather forecasts', 'What colour is the logo?',
+])
+def test_ambiguous_english_due_and_unrelated_europe_do_not_select_eu(question):
+    assert retrieve_eu_evidence(question) == []
 
 
 def test_identifier_country_deduplication_and_raw_money_exclusion():

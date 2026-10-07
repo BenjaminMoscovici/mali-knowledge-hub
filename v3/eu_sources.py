@@ -34,7 +34,15 @@ from evidence_cache import snapshot_cached
 @snapshot_cached("source_wave5.json.gz")
 def retrieve_eu_evidence(question,limit=20):
     q=_fold(question)
-    if not re.search(r'\b(eu|ue|european union|union europeenne|team europe|equipe europe|intpa|echo|tei|eib|bei|capacity4dev|kabala|t05-eutf)\b',q):return []
+    # Institutional names and instruments are evidence-family intent, not
+    # evidence of funding, implementing roles or current local delivery.
+    if not re.search(
+        r'\b(eu|ue|european union|union europeenne|europaische union|'
+        r'european commission|commission europeenne|europaische kommission|'
+        r'team europe|equipe europe|intpa|echo|tei|eib|bei|capacity4dev|'
+        r'kabala|t05 eutf|ndici|global gateway|eutf|european development fund|'
+        r'fonds europeen de developpement)\b', q
+    ) and not re.search(r'\bDUE\b',question):return []
     data=package()['records'];today=datetime.now(timezone.utc).date()
     ending=bool(re.search(r'\b(ending|end dates?|closing|echeances?|termin\w*|finissent)\b',q))
     themes=[]
