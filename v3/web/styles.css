@@ -5,4 +5,4 @@
 
 .evidence-filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}.evidence-filters button[aria-pressed="true"]{font-weight:650;color:#202124}
 
-.answer-table{overflow-x:auto;margin:16px 0;max-width:100%}.answer-table table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.5}.answer-table th,.answer-table td{text-align:left;vertical-align:top;border-bottom:1px solid #e8ecea;padding:10px 9px;overflow-wrap:anywhere}.answer-table th{font-weight:650;background:#f6f8f7}.answer-table td:last-child{white-space:nowrap}
+.answer-table{overflow-x:auto;margin:16px 0;max-width:100%}.answer-table table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.5}.answer-table th,.answer-table td{text-align:left;vertical-align:top;border-bottom:1px solid #e8ecea;padding:10px 9px;overflow-wrap:anywhere}.answer-table th{font-weight:650;background:#f6f8f7;overflow-wrap:normal;min-width:7em}
