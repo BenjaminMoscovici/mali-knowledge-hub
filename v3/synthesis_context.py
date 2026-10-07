@@ -46,6 +46,16 @@ def identity(item):
     return tuple(str(item.get(k) or '') for k in keys) + (' '.join(str(item.get('content') or '').split()),)
 
 
+def results_table(content):
+    """Recognize quantitative indicator tables without interpreting their figures."""
+    text=fold(content)
+    return (len(re.findall(r'\b\d[\d,.%]*',text))>=8
+            and bool(re.search(r'\b(indicators?|indicateurs?)\b',text))
+            and bool(re.search(r'\b(targets?|cibles?)\b',text))
+            and bool(re.search(r'\b(results?|resultats?|achievements?|realisations?)\b',text))
+            and bool(re.search(r'\b(sectors?|secteurs?|disaggregation|desagregation|progress|progres)\b',text)))
+
+
 def extract_spans(content, wanted, budget=2200, separator=None):
     """Select whole sentences/rows, with neighbors; never cut a number or qualifier."""
     if len(content) <= budget:
@@ -126,6 +136,16 @@ def prepare(ledger, question, depth='balanced'):
                 doc_ids.add(item['evidence_id']); documents.add(did)
         for item in ranked[:limit]:
             doc_ids.add(item['evidence_id'])
+    # Relevance budgets can favor narrative introductions over the very tables
+    # needed to compare reported achievements with targets. Keep every retrieved
+    # results-table chunk for this narrow workflow, including repeated headers
+    # and period footnotes; do not calculate or assume indicator comparability.
+    quantitative_workflow=depth!='quick' and bool(re.search(
+        r'\b(delivery|reach|reached|results?|achievements?|targets?|progress|resultats?|realisations?|atteints?|cibles?|progres)\b',fold(question)))
+    table_ids={item['evidence_id'] for item in deduplicated
+               if quantitative_workflow and item.get('source_type')=='knowledge_base_document'
+               and results_table(item.get('content',''))}
+    doc_ids.update(table_ids)
     selected, excerpts, omitted = [], {}, []
     for item in deduplicated:
         if item.get('source_type') == 'knowledge_base_document' and item['evidence_id'] not in doc_ids:
@@ -139,7 +159,7 @@ def prepare(ledger, question, depth='balanced'):
                 omitted.append(item['evidence_id']); continue
         view = dict(item)
         content = str(item.get('content') or '')
-        if (item.get('source_type') == 'knowledge_base_document' and not exhaustive) or (section in ('Organization-sector relationships','Sector-organization relationships') and not exhaustive):
+        if (item.get('source_type') == 'knowledge_base_document' and not exhaustive and item['evidence_id'] not in table_ids) or (section in ('Organization-sector relationships','Sector-organization relationships') and not exhaustive):
             compact, spans = extract_spans(content, wanted,
                 budget=3600 if depth=='deep' else 2200,
                 separator=r';\s*' if item.get('source_type')=='fongim_structured' else None)
@@ -151,6 +171,7 @@ def prepare(ledger, question, depth='balanced'):
         selected.append(view)
     return selected, {'retrieved_items':len(ledger), 'synthesis_items':len(selected),
         'duplicate_ids':duplicates, 'omitted_ids':omitted, 'excerpt_spans':excerpts,
+        'retained_results_table_ids':sorted(table_ids),
         'original_content_chars':sum(len(str(e.get('content') or '')) for e in ledger),
         'synthesis_content_chars':sum(len(str(e.get('content') or '')) for e in selected)}
 

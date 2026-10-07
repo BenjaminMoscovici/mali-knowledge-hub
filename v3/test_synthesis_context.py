@@ -59,6 +59,43 @@ def test_document_selection_keeps_each_document_and_original_ids():
     assert not verify('Claim [E02]',[row('E01')])[1]['valid']
 
 
+def test_reported_results_tables_survive_narrative_ranking_with_headers_and_periods():
+    from copy import deepcopy
+    rows=[row(f'E{i:02d}',source_type='knowledge_base_document',document_id='report',
+              chunk_id=str(i),content='Delivery reach results targets progress for Mali. '+str(i)) for i in range(1,5)]
+    table=('Sector Provider response Cluster response\nIndicator Disaggregation Targets Results Progress\n'
+           'Health Total 1500000 930769 62% 1800000 - 0%\n'
+           'Nutrition Total 202575 75041 37% 180441 75041 42%\n')
+    continuation=('Secteur Reponse du partenaire Reponse du cluster\nIndicateur Cibles Resultats Progres\n'
+                  'Eau Total 376927 20977 6% 834392 18095 2%\n'
+                  'Fournitures Total 226927 20977 9% 1700000 55189 3%\n'
+                  '*Progress in reporting period 1 January to 30 June 2026. Missing result is not zero.\n')
+    rows.extend([row('E07',source_type='knowledge_base_document',document_id='report',chunk_id='table',
+                     page=8,content=table+('Methodology and population scope stay separate.\n'*100)),
+                 row('E08',source_type='knowledge_base_document',document_id='report',chunk_id='continued',
+                     page=9,content=continuation)])
+    original=deepcopy(rows)
+    for question in ('Compare delivery and reach with planned targets', 'Comparer les resultats aux cibles'):
+        selected,audit=prepare(rows,question)
+        assert audit['retained_results_table_ids']==['E07','E08']
+        for eid in ('E07','E08'):
+            source=next(e for e in rows if e['evidence_id']==eid)
+            view=next(e for e in selected if e['evidence_id']==eid)
+            assert view==source and eid not in audit['omitted_ids'] and eid not in audit['excerpt_spans']
+        assert verify('Reported health progress [E07]; reporting period [E08].',selected)[1]['valid']
+    assert rows==original
+    # No effect on unrelated narrative workflows or the protected Quick path.
+    for question,depth in [('Describe health policy priorities','balanced'),('Delivery progress','quick')]:
+        _,audit=prepare(rows,question,depth)
+        assert audit['retained_results_table_ids']==[]
+
+
+def test_narrative_figures_and_presence_counts_are_not_results_tables():
+    from synthesis_context import results_table
+    assert not results_table('Delivery results target 100, 200, 300, 400, 500, 600, 700, 800 people. Sector health.')
+    assert not results_table('Indicator Sector presence: 100 200 300 400 500 600 700 800. No targets or reach reported.')
+
+
 def test_transposed_fongim_table_selected_and_excerpts_disclose_partial_roster():
     rows=[row('E01',source_type='fongim_structured',section='Organization-sector relationships',content='Organization orientation.'),
         row('E02',source_type='fongim_structured',section='Sector-organization relationships',
