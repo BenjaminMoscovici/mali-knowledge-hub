@@ -31,9 +31,54 @@ def item(row,extra=''):
 
 from evidence_cache import snapshot_cached
 
+
+def _activity_item(row, today):
+    """Preserve the source facts, dates and limitations for every selection path."""
+    facts = row['payload']['facts']
+    flags = []
+    end = parsed_date(facts['end_date_reported'])
+    start = parsed_date(facts['start_date_reported'])
+    if end and end < today:
+        flags.append('Historical reported end date: do not describe this record as current activity or current needs alignment; mention its dates and status explicitly')
+    if end and end < today and facts['status'] == 'Implementation':
+        flags.append('Implementation status with past reported end: unresolved registry conflict')
+    if start and start > today:
+        flags.append('Future reported start: planned/actual type unavailable; not confirmed current delivery')
+    return item(row, f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
+        'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only. '
+        'Source sector codes are preserved separately from title-derived thematic relevance; a WASH title does not change a reported governance sector code.')
+
+
+def _referenced_activities(question, records):
+    """Match complete source IDs or unique complete INTPA codes, never prefixes."""
+    q = _fold(question)
+    if not re.search(r'\b(?:xi iati ec (?:intpa|echo)|\d{4} pc \d{4,8})\b', q):
+        return []
+    activities = [r for r in records if r['source_type'] == 'eu_activity']
+    codes = re.findall(r'\b\d{4} pc \d{4,8}\b', q)
+    unique_codes = {}
+    for code in codes:
+        matches = [r for r in activities if
+                   _fold(r['payload']['facts']['activity_id']).endswith(' ' + code)]
+        if len(matches) == 1:
+            unique_codes[code] = matches[0]['id']
+    return [r for r in activities if r['id'] in unique_codes.values() or re.search(
+        r'\b' + re.escape(_fold(r['payload']['facts']['activity_id'])) + r'\b', q)]
+
+
 @snapshot_cached("source_wave5.json.gz")
 def retrieve_eu_evidence(question,limit=20):
     q=_fold(question)
+    data=package()['records'];today=datetime.now(timezone.utc).date()
+    referenced = _referenced_activities(question, data)
+    broader = bool(re.search(
+        r'\b(compare\w*|compar\w*|other|autres?|priorit\w*|needs?|besoins?|'
+        r'align\w*|portfolio|portefeuille|national|ndici|team europe|echo hip)\b', q))
+    if referenced and not broader:
+        # Exact activity questions need their complete source record, not a
+        # country-programming bundle or unrelated activity examples. Other
+        # evidence families are still retrieved independently by the Hub.
+        return [_activity_item(r, today) for r in referenced][:limit]
     # Institutional names and instruments are evidence-family intent, not
     # evidence of funding, implementing roles or current local delivery.
     if not re.search(
@@ -42,8 +87,7 @@ def retrieve_eu_evidence(question,limit=20):
         r'team europe|equipe europe|intpa|echo|tei|eib|bei|capacity4dev|'
         r'kabala|t05 eutf|ndici|global gateway|eutf|european development fund|'
         r'fonds europeen de developpement)\b', q
-    ) and not re.search(r'\bDUE\b',question):return []
-    data=package()['records'];today=datetime.now(timezone.utc).date()
+    ) and not re.search(r'\bDUE\b',question) and not referenced:return []
     ending=bool(re.search(r'\b(ending|end dates?|closing|echeances?|termin\w*|finissent)\b',q))
     themes=[]
     for key,pattern in {'food_security':r'food|aliment|faim|hunger|agric','wash':r'wash|water|eau|assain|sanitation',
@@ -58,7 +102,7 @@ def retrieve_eu_evidence(question,limit=20):
         return sum(t in p['sectors'] for t in themes)*4+sum(g in text for g in wanted_geo)*3+sum(w in text for w in q.split() if len(w)>4)
     fixed=[r for r in data if r['source_type'] not in ('eu_activity','eib_project','eu_project_metadata','eu_tei')]
     fixed.sort(key=lambda r:(r['dataset_id']=='mli-eu-current-overview',score(r)),reverse=True)
-    results=[item(r) for r in fixed]
+    results=[_activity_item(r, today) for r in referenced]+[item(r) for r in fixed]
     for pub in ('XI-IATI-EC_INTPA','XI-IATI-EC_ECHO'):
         rows=[r for r in data if r['source_type']=='eu_activity' and r['payload']['facts']['publisher_ref']==pub]
         if ending:
@@ -67,14 +111,8 @@ def retrieve_eu_evidence(question,limit=20):
             rows.sort(key=lambda r:(parsed_date(r['payload']['facts']['end_date_reported'])<today,r['payload']['facts']['end_date_reported']))
         else:rows.sort(key=lambda r:(score(r),r['payload']['facts']['status']=='Implementation',r['payload']['facts']['start_date_reported'] or ''),reverse=True)
         for r in rows[:2]:
-            f=r['payload']['facts'];flags=[]
-            end=parsed_date(f['end_date_reported']);start=parsed_date(f['start_date_reported'])
-            if end and end<today:flags.append('Historical reported end date: do not describe this record as current activity or current needs alignment; mention its dates and status explicitly')
-            if end and end<today and f['status']=='Implementation':flags.append('Implementation status with past reported end: unresolved registry conflict')
-            if start and start>today:flags.append('Future reported start: planned/actual type unavailable; not confirmed current delivery')
-            results.append(item(r,f'Query date {today}; flags {flags}. Bounded selection from 134 INTPA and 172 ECHO exact-country activities; 37 ECHO multi-country records excluded. '
-                'No verified transaction money, implementers, linked documents, outcomes or local coverage in this fallback. Names in titles are geographical mentions only. '
-                'Source sector codes are preserved separately from title-derived thematic relevance; a WASH title does not change a reported governance sector code.'))
+            if r['id'] not in {x['record_id'] for x in results}:
+                results.append(_activity_item(r, today))
     other=[r for r in data if r['source_type'] in ('eu_tei','eu_project_metadata','eib_project')]
     other.sort(key=lambda r:(score(r),r['source_type']!='eib_project'),reverse=True)
     results.extend(item(r,'Selected historical project/initiative, not a complete portfolio or current actor roster.') for r in other)

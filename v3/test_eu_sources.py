@@ -28,6 +28,43 @@ def test_ambiguous_english_due_and_unrelated_europe_do_not_select_eu(question):
     assert retrieve_eu_evidence(question) == []
 
 
+@pytest.mark.parametrize('code', ['2023-PC-34274', 'XI-IATI-EC_INTPA-2023-PC-34274'])
+def test_exact_project_keeps_complete_source_record_without_unrelated_eu_bundle(code):
+    rows = retrieve_eu_evidence(f'Que sait-on du projet {code} à Mopti ? Donnez ses dates, son secteur source, ses acteurs et résultats.')
+    assert len(rows) == 1
+    row = rows[0]
+    assert row['record_id'] == '3573a0c6-a43f-5643-a19c-1934d890eca2'
+    for fact in ['2023-PC-34274', '2023-12-08', '2026-12-10',
+                 'Democratic participation and civil society',
+                 'Names in titles are geographical mentions only',
+                 'No verified transaction money, implementers']:
+        assert fact in row['content']
+    assert row['locator'] and row['release_id'] and row['source_endpoint']
+    assert 'financial_raw' not in row['content']
+
+
+def test_exact_eu_project_join_keeps_priorities_and_needs_families():
+    question = 'Compare EU project 2023-PC-34274 with EU priorities and humanitarian needs in Mopti'
+    rows = retrieve_eu_evidence(question)
+    assert rows[0]['record_id'] == '3573a0c6-a43f-5643-a19c-1934d890eca2'
+    assert {'eu_programming', 'echo_programming', 'eu_activity'} <= {r['source_type'] for r in rows}
+    assert len({r['record_id'] for r in rows}) == len(rows)
+    other = retrieve_operational_evidence(question) + retrieve_analytical_evidence(question)
+    assert {'displacement_stock', 'food_security_classification'} <= {r['source_type'] for r in other}
+
+
+def test_exact_historical_activity_retains_status_date_conflict():
+    rows = retrieve_eu_evidence('What is known about XI-IATI-EC_ECHO-ECHO/-AF/BUD/2024/91020?')
+    assert len(rows) == 1
+    assert '2026-03-31' in rows[0]['content']
+    assert 'Implementation status with past reported end: unresolved registry conflict' in rows[0]['content']
+
+
+@pytest.mark.parametrize('code', ['2023-PC-3427', '2023-PC-342740', '2023-PC-999999'])
+def test_unknown_and_prefix_project_codes_do_not_match_known_activity(code):
+    assert retrieve_eu_evidence(f'What is known about project {code}?') == []
+
+
 def test_identifier_country_deduplication_and_raw_money_exclusion():
     rows=[r for r in package()['records'] if r['source_type']=='eu_activity']
     assert len(rows)==306
