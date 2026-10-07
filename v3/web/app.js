@@ -199,14 +199,42 @@
     el['topbar-sources'].classList.toggle('hidden',!state.messages.some(m => m.role==='assistant'));
     requestAnimationFrame(() => el['conversation-scroll'].scrollTop=el['conversation-scroll'].scrollHeight);
   }
-  function renderEvidence(evidence, selected) {
+  function evidenceView(evidence, answer, selected, showAll) {
+    const mentioned = new Set(String(answer || '').match(/\bE\d{2,}\b/g) || []);
+    const cited = evidence.filter(source => mentioned.has(source.evidence_id));
+    // Keep original indices: citation buttons refer to the retrieved ledger.
+    const all = showAll || !cited.length || (selected !== undefined &&
+      !mentioned.has(evidence[selected]?.evidence_id));
+    return {citedCount: cited.length, all,
+      rows: evidence.map((source, index) => ({source, index})).filter(row =>
+        all || mentioned.has(row.source.evidence_id))};
+  }
+  function renderEvidence(evidence, selected, answer = '', showAll = false) {
     el['drawer-body'].replaceChildren();
     if (!evidence.length) {
       const p=document.createElement('p'); p.className='empty-evidence';
       p.textContent='No source passages are attached to this message.';
       el['drawer-body'].append(p); return;
     }
-    evidence.forEach((source,index) => {
+    const view = evidenceView(evidence, answer, selected, showAll);
+    if (view.citedCount) {
+      const controls=document.createElement('div'); controls.className='evidence-filters';
+      controls.setAttribute('role','group'); controls.setAttribute('aria-label','Source view');
+      for (const [all,label] of [[false,`Cited in answer (${view.citedCount})`],
+                                [true,`All retrieved (${evidence.length})`]]) {
+        const button=document.createElement('button'); button.type='button';
+        button.className='sources-button'; button.textContent=label;
+        button.setAttribute('aria-pressed',String(view.all===all));
+        button.addEventListener('click',() => renderEvidence(evidence,undefined,answer,all));
+        controls.append(button);
+      }
+      el['drawer-body'].append(controls);
+      const note=document.createElement('p'); note.className='evidence-meta';
+      note.textContent=view.all ? 'All retrieved records. Some are not cited in this answer.' :
+        'Sources cited in this answer. Check each passage supports the claim; a citation alone does not establish it.';
+      el['drawer-body'].append(note);
+    }
+    view.rows.forEach(({source,index}) => {
       const card=document.createElement('article'); card.className='evidence-item'+(index===selected?' selected':'');
       const title=document.createElement('h3');
       title.textContent=`${source.evidence_id || `Source ${index+1}`} · ${source.document_title || source.organization || source.source_family || 'Source record'}`;
@@ -242,7 +270,7 @@
   }
   async function showSources(message, selected) {
     state.sources=evidenceFor(message); state.sourcePosition=message.position;
-    renderEvidence(state.sources,selected);
+    renderEvidence(state.sources,selected,message.content);
     el['evidence-drawer'].classList.remove('hidden');
     if (mobile()) el['drawer-scrim'].classList.remove('hidden');
     if (state.user && !isGuestThread() && message.position && state.sources.some(s => s.chunk_id && !s.content)) {
@@ -251,7 +279,7 @@
         const data=await api(`conversations/${encodeURIComponent(cid)}/evidence?position=${message.position}`);
         if (state.selected!==cid || state.sourcePosition!==message.position) return;
         message.evidence_refs=data.evidence;
-        state.sources=data.evidence; renderEvidence(state.sources,selected);
+        state.sources=data.evidence; renderEvidence(state.sources,selected,message.content);
       } catch { toast('Some saved source passages could not be loaded.'); }
     }
   }

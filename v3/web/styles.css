@@ -2,3 +2,5 @@
 /* Long research titles retain room for navigation and source controls. */
 .topbar-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .nav-action:disabled,.profile:disabled{cursor:wait;opacity:.65}
+
+.evidence-filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}.evidence-filters button[aria-pressed="true"]{font-weight:650;color:#202124}
