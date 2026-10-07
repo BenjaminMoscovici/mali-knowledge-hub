@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 import re
 import unicodedata
-from synthesis_context import prepare, serialize, extract_spans, availability_note
+from synthesis_context import prepare, serialize, extract_spans, availability_note, pack_eu_qualifiers
 from citations import verify
 from routing import explicit_source_plan
 
@@ -34,6 +34,46 @@ def test_numeric_structured_rows_and_semantic_caveats_not_excerpted():
     prompt=serialize(selected)
     for value in ['13,582','7,201','6,381','2025-09-01','2025-12-31','older boundaries','CSV row 12']:
         assert value in prompt
+
+
+def test_eu_qualifier_packing_is_reversible_and_preserves_every_scope_and_fact():
+    import copy
+    from eu_sources import retrieve_eu_evidence
+    rows = [dict(r, evidence_id=f'E{i:02d}') for i, r in enumerate(
+        retrieve_eu_evidence('Compare EU priorities, needs and funding in Mopti'), 1)]
+    original = copy.deepcopy(rows)
+    contents, shared = pack_eu_qualifiers(rows)
+    assert shared and rows == original
+    for item, content in zip(rows, contents):
+        for qualifier in shared:
+            if qualifier['marker'] in content:
+                assert item['evidence_id'] in qualifier['evidence_ids']
+                content = content.replace(qualifier['marker'], qualifier['text'])
+        assert content == item['content']
+    packed = serialize(rows)
+    assert len(packed) < len(serialize([dict(r, source_family='Unfactored EU') for r in rows])) - 8000
+    for r in rows:
+        assert f"[{r['evidence_id']}] SOURCE" in packed
+        assert r['locator'] in packed and r['release_id'] in packed
+    for qualifier in shared:
+        assert packed.count(qualifier['text']) == 1
+
+
+def test_single_project_other_families_and_conflicting_eu_dates_stay_literal():
+    from eu_sources import retrieve_eu_evidence
+    single = [dict(r, evidence_id='E01') for r in retrieve_eu_evidence(
+        'What is known about XI-IATI-EC_ECHO-ECHO/-AF/BUD/2024/91020?')]
+    contents, shared = pack_eu_qualifiers(single)
+    assert not shared and contents[0] == single[0]['content']
+    assert 'Implementation status with past reported end: unresolved registry conflict' in serialize(single)
+    others = [dict(single[0], evidence_id=f'E{i:02d}', source_family='Private document') for i in range(1,4)]
+    assert not pack_eu_qualifiers(others)[1]
+    eu = [dict(single[0], evidence_id=f'E{i:02d}', content=single[0]['content'] +
+               f' Unique currency EUR {i}.10; observation date 2025-0{i}-01.') for i in range(1,4)]
+    packed = serialize(eu)
+    for i in range(1,4):
+        assert f'EUR {i}.10; observation date 2025-0{i}-01.' in packed
+    assert packed.count('Implementation status with past reported end: unresolved registry conflict') == 3
 
 
 def test_excerpts_are_exact_and_keep_negation_neighbor_and_conflict():
