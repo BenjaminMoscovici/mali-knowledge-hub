@@ -49,6 +49,9 @@ an explicit implementer and the source publisher. Attribute the role to the
 record that actually supplies it; a publisher is not automatically a funder.
 A country portfolio, matching theme or similar name establishes no project
 relationship. Keep identity/status/date conflicts visible.
+Include source/reference dates; FONGIM aggregate counts must include the
+supplied latest sync date. A title naming Mopti establishes only a title
+mention: explicitly say that local operational coverage is unverified.
 Use at most one illustrative project unless a roster is requested;
 state when examples are incomplete. Avoid dumping raw records or long lists.
 
@@ -59,6 +62,8 @@ that provides a starting point, then the decisive check and what it would
 allow the user to decide. Cite the basis; do not stop at 'coordinate/verify
 more data'. Avoid invented contacts, priorities or recommendations of funding
 amounts. Recorded presence does not establish adequate coverage or duplication.
+For closed/historical records, check continuation before proposing current
+coordination; never silently treat a past activity as a current counterpart.
 Omit this section if the evidence supports no meaningful interpretation.
 
 **Important gaps / uncertainty**
