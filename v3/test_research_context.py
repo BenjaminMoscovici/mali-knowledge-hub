@@ -3,7 +3,7 @@ import ast
 from pathlib import Path
 from types import SimpleNamespace
 import pytest
-from research_context import conversation_context, has_reference
+from research_context import conversation_context, has_reference, preserve_lookup_namespace
 
 
 @pytest.mark.parametrize('question', [
@@ -70,3 +70,22 @@ def test_rewriter_preserves_set_and_date_rules_and_context_is_not_evidence():
     assert 'fresh retrieval' in captured[0]['instructions']
     assert 'calendar period' in captured[0]['instructions']
     assert result == 'Investigate reported end dates for P144442 in 2026.'
+
+
+def test_rewrite_dropping_source_namespace_still_selects_exact_roster():
+    from project_references import fongim_project_ids
+    messages=[{'role':'assistant','content':'FONGIM records: Project ID 664; Project ID 434; Project ID 696; Project ID 32. All allegedly ended in 2099.'}]
+    rewritten='Which of those projects (IDs 664, 434, 696, 32) have a reported end date in 2026?'
+    result=preserve_lookup_namespace(rewritten,'Which of those projects have a reported end date in 2026?',messages)
+    assert fongim_project_ids(result)==(32,434,664,696)
+    assert '2099' not in result and 'allegedly' not in result
+
+
+@pytest.mark.parametrize('question,rewritten', [
+    ('Which projects end in 2026?','Which projects (IDs 32, 664) end in 2026?'),
+    ('Which of those projects end in 2026?','Which projects (IDs 32, 999) end in 2026?'),
+    ('Which of those projects end in 2026?','Which World Bank projects (IDs 32, 664) end in 2026?'),
+])
+def test_namespace_recovery_never_invents_a_source_for_unknown_or_new_sets(question,rewritten):
+    messages=[{'role':'assistant','content':'FONGIM records: Project ID 664; Project ID 32.'}]
+    assert preserve_lookup_namespace(rewritten,question,messages)==rewritten

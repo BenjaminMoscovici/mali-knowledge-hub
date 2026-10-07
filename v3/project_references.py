@@ -9,7 +9,7 @@ def fongim_project_ids(question):
     if not re.search(r'\bfongim\b', q):
         return ()
     ids = set()
-    label = r'(?:fongim\s+(?:project\s+|projet\s+)?(?:ids?|identifiants?)|project\s+ids?|projet\s+(?:ids?|identifiants?)|identifiants?\s+(?:des?\s+)?projets?)'
+    label = r'(?:fongim\s+(?:project\s+|projet\s+)?(?:ids?|identifiants?)|project\s+ids?|projet\s+(?:ids?|identifiants?)|identifiants?\s+(?:des?\s+)?projets?|ids?)'
     # Require an explicit ID label. Years, budgets and unqualified numbers
     # must not be turned into project identities. Match complete integers.
     for match in re.finditer(r'\b' + label + r'\s*[:#]?\s+(\d+(?:(?:\s*,\s*(?:(?:and|et)\s+)?|\s+(?:and|et)\s+)\d+)*)\b(?![-\w])', q):

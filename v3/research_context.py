@@ -42,3 +42,23 @@ def conversation_context(messages):
             limit = 6000 if index == last else 800
             turns.append('ASSISTANT CONTEXT ONLY: ' + str(message['content'])[:limit])
     return '\n\n'.join(turns[-8:])
+
+
+def preserve_lookup_namespace(standalone, question, messages):
+    """Keep a known source namespace when a rewrite preserves only its IDs.
+
+    The prior roster supplies lookup context, never its dates/donor/status.
+    Only an explicit reference and an exact subset of that roster qualify.
+    """
+    from project_references import fongim_project_ids
+    if not has_reference(question) or re.search(r'\bfongim\b', standalone, re.I):
+        return standalone
+    if re.search(r'\b(world bank|banque mondiale|intpa|echo|xi.iati|P\d{6})\b', standalone, re.I):
+        return standalone
+    latest = next((m.get('content','') for m in reversed(messages)
+                   if m.get('role') == 'assistant' and m.get('content')), '')
+    prior = set(fongim_project_ids(latest))
+    requested = set(fongim_project_ids('FONGIM ' + standalone))
+    if requested and requested <= prior:
+        return 'FONGIM source project IDs: ' + ', '.join(map(str,sorted(requested))) + '. ' + standalone
+    return standalone
