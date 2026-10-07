@@ -211,7 +211,6 @@
   }
   function renderEvidence(evidence, selected, answer = '', showAll = false) {
     el['drawer-body'].replaceChildren();
-    el['drawer-body'].scrollTop=0;
     if (!evidence.length) {
       const p=document.createElement('p'); p.className='empty-evidence';
       p.textContent='No source passages are attached to this message.';
@@ -268,6 +267,7 @@
       el['drawer-body'].append(card);
       if (index===selected) requestAnimationFrame(() => card.scrollIntoView({block:'nearest'}));
     });
+    if (selected===undefined) requestAnimationFrame(() => el['drawer-body'].scrollTop=0);
   }
   async function showSources(message, selected) {
     state.sources=evidenceFor(message); state.sourcePosition=message.position;
