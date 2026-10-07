@@ -337,11 +337,16 @@ def fetch_all_rows(
     table_name,
     columns="*",
     eq_filters=None,
-    page_size=1000
+    page_size=1000,
+    in_filters=None
 ):
 
     if eq_filters is None:
         eq_filters = {}
+    in_filters = in_filters or {}
+    # An explicitly empty identifier set must not widen into a table scan.
+    if any(not values for values in in_filters.values()):
+        return []
 
     rows = []
     start = 0
@@ -360,6 +365,9 @@ def fetch_all_rows(
                 key,
                 value
             )
+
+        for key, values in in_filters.items():
+            query = query.in_(key, values)
 
         response = (
             execute_read(query
@@ -1555,7 +1563,8 @@ def research_fongim(
             "commune_raw,"
             "last_synced_at"
         ),
-        eq_filters=location_filters
+        eq_filters=location_filters,
+        in_filters={"fongim_project_id":list(requested_project_ids)} if requested_project_ids else None
     )
 
     if requested_project_ids:
