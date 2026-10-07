@@ -7,7 +7,7 @@
   const ids = ['workspace','sidebar-scrim','thread-list','archived-wrap','archived-list',
     'archived-count','thread-search','search-wrap','history-label','welcome','messages',
     'conversation-scroll','prompt','send-button','analysis-mode','topbar-title',
-    'topbar-sources','evidence-drawer','drawer-scrim','drawer-body','auth-dialog',
+    'topbar-sources','topbar-export','evidence-drawer','drawer-scrim','drawer-body','auth-dialog',
     'auth-form','auth-email','auth-status','profile-menu','profile-title','profile-detail',
     'avatar','toast','text-attachment'];
   const el = Object.fromEntries(ids.map(id => [id,$(id)]));
@@ -186,25 +186,26 @@
     return blocks.join('');
   }
   function evidenceFor(message) { return message.evidence || message.evidence_refs || []; }
-  function researchBrief(message, question, exportedAt) {
+  function researchBrief(message, question, exportedAt, options={}) {
     const answer=String(message.content || '');
     const ids=new Set(answer.match(/\bE\d{2,}\b/g) || []);
     const sources=evidenceFor(message).filter(source=>ids.has(source.evidence_id));
     const present=new Set(sources.map(source=>source.evidence_id));
     const missing=[...ids].filter(id=>!present.has(id));
     const text=value=>String(value || '').replace(/[\\`*_\[\]<>]/g,'\\$&').replace(/\r?\n/g,' ');
-    const lines=['# Mali Knowledge Hub — research brief','',
+    const heading=(offset,label)=>'#'.repeat((options.level || 1)+offset)+' '+label;
+    const lines=[heading(0,options.title || 'Mali Knowledge Hub — research brief'),'',
       `Exported: ${exportedAt}`,'',
       'This is a saved research snapshot. Source dates below retain their original meaning; exporting does not refresh the evidence.','',
-      '## Research question','',...String(question || 'Question unavailable in this saved turn.').split('\n').map(line=>'> '+line),''];
+      heading(1,'Research question'),'',...String(question || 'Question unavailable in this saved turn.').split('\n').map(line=>'> '+line),''];
     if(message.standalone_question && message.standalone_question!==question) {
       lines.push('Resolved research scope:','',...String(message.standalone_question).split('\n').map(line=>'> '+line),'');
     }
     if(message.created_at) lines.push('Answer recorded: '+text(message.created_at),'');
-    lines.push('## Answer','',answer,'','## Cited source references','');
+    lines.push(heading(1,'Answer'),'',answer,'',heading(1,'Cited source references'),'');
     if(!sources.length) lines.push('No cited source references are available in this saved answer.');
     for(const source of sources) {
-      lines.push('### '+text(source.evidence_id)+' — '+text(source.document_title || source.organization || source.source_family || 'Source record'),'');
+      lines.push(heading(2,text(source.evidence_id)+' — '+text(source.document_title || source.organization || source.source_family || 'Source record')),'');
       for(const [label,value] of [['Publisher',source.organization],['Source family',source.source_family],
         ['Publication date',source.publication_date],['Source update',source.project_record?.source_updated_at || source.funding_record?.source_updated_at],
         ['Reference period', [source.reference_period_start,source.reference_period_end].filter(Boolean).join(' – ')],
@@ -221,6 +222,32 @@
     if(missing.length) lines.push('Unresolved citation identifiers in this saved answer: '+missing.join(', ')+'. Check the original conversation before relying on these claims.','');
     lines.push('References identify the records cited by this answer. They do not independently verify its claims; check the original passages before a programme or coordination decision.');
     return lines.join('\n');
+  }
+  function researchDossier(messages,title,exportedAt) {
+    const text=value=>String(value || '').replace(/[\\`*_\[\]<>]/g,'\\$&').replace(/\r?\n/g,' ');
+    const lines=['# Mali Knowledge Hub — research dossier','',
+      'Conversation: '+text(title || 'Research conversation'),'', 'Exported: '+exportedAt,'',
+      'This dossier preserves the research conversation in order. Evidence IDs belong to each answer; the same ID in another turn may refer to a different source. Exporting does not refresh the evidence.',''];
+    let question, pending=false, turn=0;
+    for(const message of messages) {
+      if(message.role==='user') {question=message.content;pending=true;}
+      if(message.role!=='assistant') continue;
+      turn+=1;
+      lines.push(researchBrief(message,question,exportedAt,{level:2,title:'Research turn '+turn}),'','---','');
+      pending=false;
+    }
+    if(pending) lines.push('## Open research question','',...String(question || '').split('\n').map(line=>'> '+line),'','No answer is recorded for this question.');
+    return lines.join('\n');
+  }
+  function exportDossier() {
+    if(state.busy)return;
+    const exportedAt=new Date().toISOString();
+    const blob=new Blob([researchDossier(state.messages,conversation()?.title,exportedAt)],{type:'text/markdown;charset=utf-8'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download=`MKH_research_dossier_${exportedAt.slice(0,10)}.md`;
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast('Research dossier exported with questions, answers and cited sources.');
   }
   function exportBrief(message) {
     const index=state.messages.indexOf(message);
@@ -266,6 +293,8 @@
     }
     el['topbar-title'].textContent = conversation()?.title || 'Mali Knowledge Hub';
     el['topbar-sources'].classList.toggle('hidden',!state.messages.some(m => m.role==='assistant'));
+    el['topbar-export'].classList.toggle('hidden',!state.messages.some(m => m.role==='assistant'));
+    el['topbar-export'].disabled=state.busy;
     requestAnimationFrame(() => el['conversation-scroll'].scrollTop=el['conversation-scroll'].scrollHeight);
   }
   function evidenceView(evidence, answer, selected, showAll) {
@@ -380,6 +409,7 @@
     const unlock = () => {
       state.busy=false; $('new-chat').disabled=false; $('profile-button').disabled=false;
       el['analysis-mode'].disabled=false; resizePrompt();
+      el['topbar-export'].disabled=false;
     };
     const mode=el['analysis-mode'].value; const current=conversation();
     if (!current) {
@@ -475,6 +505,7 @@
     state.user=null;state.threads=[];startFresh();profile();toast('Signed out.');
   }
   function wire() {
+    el['topbar-export'].addEventListener('click',exportDossier);
     $('new-chat').addEventListener('click',startFresh);
     $('search-toggle').addEventListener('click',() => {
       el['search-wrap'].classList.toggle('hidden'); el['thread-search'].focus();
