@@ -10,6 +10,7 @@ from routing import explicit_source_plan, bounded_fts_source_names, bounded_proj
  ('Quels projets de la Banque mondiale au Mali ont des dates de clôture déclarées dans les 12 prochains mois ? Donne les identifiants et les dates.','project_learning'),
  ('Which EU projects have reported end dates in 2027?','eu'),
  ('Which EU projects are closing in the next 6 months?','eu'),
+ ('Pour EU IATI, identifiants de projets XI-IATI-EC_INTPA-2023-PC-34257, quels dossiers ont une date de fin déclarée entre 2026-10-08 et 2027-10-08 ?', 'eu'),
 ])
 def test_direct_screen_keeps_only_relevant_provider_and_geographic_metadata(q,source):
  plan=explicit_source_plan(q)
@@ -30,6 +31,8 @@ def test_direct_screen_keeps_only_relevant_provider_and_geographic_metadata(q,so
  'Compare EU and World Bank closing dates in 2027.',
  'Which EU projects have end dates in 2027 alongside GIZ and FONGIM?',
  'Which World Bank projects close between 2026 and 2028?',
+ 'Compare EU IATI and other IATI projects closing in 2027.',
+ 'Which EU projects have end dates in 2027 and IATI results?',
  'Which EU projects have end dates in 2027 and successor programmes?',
  'Which World Bank projects have end dates in 2027 and sequencing opportunities?',
 ])
@@ -44,6 +47,7 @@ def test_actual_research_skips_unrelated_queries_and_preserves_loaded_study_evid
     from metering import submit
     import geographic_model
     from project_learning_sources import retrieve_project_learning
+    from eu_sources import retrieve_eu_evidence
     source=Path(__file__).with_name('analysis_core.py').read_text();tree=ast.parse(source)
     functions=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in
                {'run_four_source_research','normalize_text','build_unified_evidence','plan_sources_semantically'}]
@@ -56,6 +60,8 @@ def test_actual_research_skips_unrelated_queries_and_preserves_loaded_study_evid
     def learning(q):
         called.append('project_learning');return retrieve_project_learning(q)
     monkeypatch.setattr(geographic_model,'canonical_geography_evidence',geography)
+    def eu(q):
+        called.append('eu');return retrieve_eu_evidence(q)
     ns={'re':re,'time':time,'unicodedata':unicodedata,'defaultdict':defaultdict,
         'ThreadPoolExecutor':ThreadPoolExecutor,'submit':submit,
         'explicit_source_plan':explicit_source_plan,'bounded_fts_source_names':bounded_fts_source_names,
@@ -63,7 +69,7 @@ def test_actual_research_skips_unrelated_queries_and_preserves_loaded_study_evid
         'openai_client':None,'get_document_groups':forbidden,'resolve_geography':forbidden,
         'build_hapi_evidence':forbidden,'research_fongim':forbidden,
         'retrieve_source_evidence':forbidden,'retrieve_operational_evidence':forbidden,
-        'retrieve_analytical_evidence':forbidden,'retrieve_eu_evidence':forbidden,
+        'retrieve_analytical_evidence':forbidden,'retrieve_eu_evidence':eu,
         'retrieve_project_learning':learning,'enrich_join_evidence':lambda ledger:None,
         'build_join_context':lambda *args:{},'load_entity_decisions':lambda:({},[]),
         'OrganizationResolver':lambda *args:None}
@@ -71,15 +77,18 @@ def test_actual_research_skips_unrelated_queries_and_preserves_loaded_study_evid
     for q in [
         'Which World Bank projects in Mali have reported closing dates in the next 12 months?',
         'Quels projets de la Banque mondiale ont une date de clôture dans les 12 prochains mois ?',
-        'Which World Bank project records have reported closing dates in 2027?']:
+        'Which World Bank project records have reported closing dates in 2027?',
+        'Pour EU IATI, identifiants de projets XI-IATI-EC_INTPA-2023-PC-34257, quels dossiers ont une date de fin déclarée entre 2026-10-08 et 2027-10-08 ?']:
         called.clear()
         result=ns['run_four_source_research'](q)
-        assert set(called)=={'project_learning','geographic_model'}
-        expected=retrieve_project_learning(q)
+        provider='eu' if 'EU IATI' in q else 'project_learning'
+        assert set(called)=={provider,'geographic_model'}
+        expected=retrieve_eu_evidence(q) if provider=='eu' else retrieve_project_learning(q)
         actual=[r for r in result['ledger'] if r.get('source_family') in {e['source_family'] for e in expected}]
         assert [r['content'] for r in actual]==[r['content'] for r in expected]
         assert [r.get('project_record') for r in actual]==[r.get('project_record') for r in expected]
         from project_date_answers import answer
         text,audit=answer(q,result['ledger'])
-        assert len(audit['matching_ids'])==3
-        assert 'Bounded source examples' in text or 'Sélection bornée' in text
+        assert len(audit['matching_ids'])==(1 if provider=='eu' else 3)
+        if provider!='eu':
+            assert 'Bounded source examples' in text or 'Sélection bornée' in text

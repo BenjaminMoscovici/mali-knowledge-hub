@@ -176,7 +176,10 @@ def bounded_project_learning_source_names(question, source_plan, planner_output)
 
 def _bounded_project_dates(question):
     """Single-provider country-level date screening, not continuity analysis."""
-    q=_normal(question)
+    # Source-qualified activity identifiers and the EU IATI namespace are
+    # lookup syntax, not a request to join another generic IATI stream.
+    lookup_text=re.sub(r'\bXI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+', '', question)
+    q=re.sub(r'\beu iati\b', 'eu', _normal(lookup_text))
     from project_dates import calendar_end_year, reported_end_window
     if calendar_end_year(question) is None and reported_end_window(question) is None:
         return None
