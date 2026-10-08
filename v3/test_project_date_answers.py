@@ -87,3 +87,49 @@ def test_actual_answer_engine_retrieves_fresh_records_and_skips_only_date_synthe
     assert len(calls)==1 and result['evidence']==ledger
     assert result['synthesis_seconds']==0 and '**1 of 1 requested records**' in result['answer']
     assert result['execution_trace']['verified_calculation']['method']=='verified_project_date_filter'
+
+
+def test_rolling_window_uses_fresh_dates_and_query_date_not_sync_or_old_answer():
+    rows=[record(32,'2027-01-01','E01'),record(434,'2026-12-31','E02'),
+          record(664,'2026-11-30','E03'),record(696,'2026-12-31','E04'),
+          record(9,None,'E05'),record(10,'2026-10-07','E06')]
+    q='For FONGIM project IDs 664, 434, 696, 32, 9 and 10, which have reported end dates in the next 3 months?'
+    text,audit=answer(q,rows,asof=date(2026,10,8))
+    assert '**4 of 6 requested records**' in text
+    assert 'from 2026-10-08 through 2027-01-08 (inclusive)' in text
+    assert audit['matching_ids']==['664','434','696','32']
+    assert audit['window_end']=='2027-01-08' and audit['query_date']=='2026-10-08'
+    assert 'independently of source publication or sync dates' in text
+    assert '9 — not reported [E05]' in text
+    assert '10 — 2026-10-07 [E06]' in text and verify(text,rows)[1]['valid']
+
+
+def test_french_cloture_is_a_supported_window_and_cites_original_profiles():
+    q='Quels projets de la Banque mondiale au Mali ont des dates de clôture déclarées dans les 12 prochains mois ? Donne les identifiants et les dates.'
+    rows=[dict(row,evidence_id=f'E{i:02d}') for i,row in enumerate(retrieve_project_learning(q),1)]
+    text,audit=answer(q,rows,'French',asof=date(2026,10,8))
+    assert '**3 sur 3 exemples retournés**' in text
+    assert 'entre le 2026-10-08 et le 2027-10-08 (bornes incluses)' in text
+    assert set(audit['matching_ids'])=={'P513735','P164032','P166796'}
+    assert 'distincte de la date de publication' in text
+    assert verify(text,rows)[1]['valid']
+
+
+def test_explicit_same_year_date_interval_is_not_expanded_to_calendar_year():
+    q='For FONGIM project IDs 664 and 434, which have reported end dates between 2026-11-01 and 2026-12-01?'
+    text,audit=answer(q,[record(664,'2026-11-30','E01'),record(434,'2026-12-31','E02')])
+    assert '**1 of 2 requested records**' in text and audit['matching_ids']==['664']
+    assert audit['window_start']=='2026-11-01' and audit['window_end']=='2026-12-01'
+
+
+@pytest.mark.parametrize('q',[
+    'Which World Bank projects close in the next 12 months and what are their handover risks?',
+    'Which World Bank projects close in the next 12 months in Mopti?',
+    'Which World Bank projects close in the next 12 months and who implements them?',
+    'Which World Bank projects close in the next 12 months and what sectors do they cover?',
+    'Which World Bank and EU projects close in the next 12 months?',
+    'What funding is available for World Bank projects closing in the next 12 months?',
+])
+def test_window_shortcut_preserves_professional_analysis_and_geographic_limits(q):
+    assert answer(q,[dict(record(664,'2026-11-30','E01'),project_record={
+        'source_namespace':'World Bank','source_id':'P513735','end_date':'2027-05-01'})]) is None

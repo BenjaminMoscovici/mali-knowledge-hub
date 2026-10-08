@@ -17,7 +17,7 @@ def calendar_end_year(question, asof=None):
     q = _fold(question)
     if reported_end_window(question, asof):
         return None
-    if not re.search(r'\b(end dates?|reported end|closing|ending|ends? in|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
+    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends? in|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
         return None
     years = {int(y) for y in re.findall(r'\b(?:19|20)\d{2}\b', q)}
     if len(years) == 1:
@@ -34,7 +34,7 @@ def reported_end_window(question, asof=None):
     Unknown, conflicting and multiple periods defer to semantic analysis.
     """
     q = _fold(question)
-    if not re.search(r'\b(end dates?|reported end|closing|ending|ends?|dates? de fin|echeances?|termin\w*|finissent)\b', q):
+    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends?|dates? de fin|echeances?|termin\w*|finissent)\b', q):
         return None
     asof = asof or datetime.now(timezone.utc).date()
     relative = re.findall(r'\b(?:next|prochains?) (\d{1,2}) (days?|weeks?|months?|jours?|semaines?|mois)\b', q)
