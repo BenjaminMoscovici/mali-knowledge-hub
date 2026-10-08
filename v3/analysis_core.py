@@ -2412,6 +2412,9 @@ def run_four_source_research(question, document_count=8):
     bounded = bounded_fts_source_names(question, source_plan, planner_result.get("planner_output"))
     if bounded is None:
         bounded = bounded_project_learning_source_names(question, source_plan, planner_result.get("planner_output"))
+    if bounded is None:
+        from routing import bounded_project_date_source_names
+        bounded = bounded_project_date_source_names(question, source_plan, planner_result.get("planner_output"))
     if bounded is not None:
         packaged_retrievers = {name: retriever for name, retriever in packaged_retrievers.items() if name in bounded}
     def timed_packaged(retriever):

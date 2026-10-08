@@ -56,7 +56,7 @@ def _bounded_fts(question):
 
 def explicit_source_plan(question):
     q = _normal(question)
-    if _bounded_fts(question) or _bounded_project_learning(question):
+    if _bounded_fts(question) or _bounded_project_learning(question) or _bounded_project_dates(question):
         return {family: False for family in
                 ("government_docs", "hnrp_docs", "hapi", "fongim")}
     national = re.search(r"\b(?:national strateg\w*|government priorit\w*|"
@@ -171,4 +171,43 @@ def bounded_project_learning_source_names(question, source_plan, planner_output)
             and source_plan is not None and not any(source_plan.values())
             and _bounded_project_learning(question)):
         return {'project_learning', 'geographic_model'}
+    return None
+
+
+def _bounded_project_dates(question):
+    """Single-provider country-level date screening, not continuity analysis."""
+    q=_normal(question)
+    from project_dates import calendar_end_year, reported_end_window
+    if calendar_end_year(question) is None and reported_end_window(question) is None:
+        return None
+    providers=[name for name,pattern in [('project_learning',r'\b(world bank|banque mondiale)\b'),
+        ('eu',r'\b(eu|ue|union europeenne|european union|intpa|echo)\b')] if re.search(pattern,q)]
+    if len(providers)!=1:
+        return None
+    if re.search(r'\b(compare\w*|compar\w*|why|pourquoi|explain\w*|expliqu\w*|'
+        r'needs?|besoins?|priorit\w*|strateg\w*|plans?|fund\w*|financ\w*|budget\w*|'
+        r'donors?|bailleurs?|actors?|acteurs?|who|qui|implement\w*|agencies|agences|'
+        r'reach\w*|delivery|livraison|coverage|couverture|results?|resultats?|impact|'
+        r'evaluat\w*|learning|lessons?|enseign\w*|successor\w*|successeur\w*|'
+        r'continuity|continuit\w*|handover|sequenc\w*|risks?|risques?|'
+        r'sectors?|secteurs?|health|sante|nutrition|education|wash|water|eau|'
+        r'food|aliment\w*|agricult\w*|protection|peace|paix|'
+        r'regions?|regional\w*|cercles?|communes?|villages?|local\w*|subnational|'
+        r'fongim|fts|hnrp|hrp|hapi|hdx|dtm|iom|3w|iati|ieg|'
+        r'usaid|afd|giz|wfp|pam|who|oms|undp|pnud|afdb|bad|unicef|'
+        r'other sources|autres sources|all sources|toutes les sources|'
+        r'government|gouvernement|snedd|vision mali|cadre harmonis\w*|ipc)\b',q):
+        return None
+    from geographic_model import geographic_model
+    if geographic_model().retrieval_place_names(question):
+        return None
+    return providers[0]
+
+
+def bounded_project_date_source_names(question, source_plan, planner_output):
+    if ((planner_output or {}).get('method')=='explicit_source_rules'
+            and source_plan is not None and not any(source_plan.values())):
+        source=_bounded_project_dates(question)
+        if source:
+            return {source,'geographic_model'}
     return None
