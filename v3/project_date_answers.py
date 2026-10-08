@@ -12,6 +12,8 @@ def answer(question, ledger, language=None, asof=None):
     # assertion that a project actually completed/delivered/reached people.
     if re.search(r'\b(compare|compar\w*|why|pourquoi|needs?|besoins?|priorit\w*|fund\w*|financ\w*|budget\w*|donors?|bailleurs?|reach|delivery|results?|impact|lessons?|successors?|successeur\w*)\b', q):
         return None
+    if re.search(r'\b(inactive|inactifs?|inactives?|not active|non actifs?|non actives?|pas en cours)\b', q):
+        return None
     asof = asof or datetime.now(timezone.utc).date()
     window = reported_end_window(question, asof)
     if window:
@@ -45,7 +47,9 @@ def answer(question, ledger, language=None, asof=None):
     if requested:
         facts = {key:row for key,row in facts.items() if key in requested}
     rows = sorted(facts.values(),key=lambda e:(str(e['project_record'].get('end_date') or ''),str(e['project_record']['source_id'])))
-    matched = [e for e in rows if parsed_date(e['project_record'].get('end_date')) and (window[0] <= parsed_date(e['project_record']['end_date']).isoformat() <= window[1] if window else parsed_date(e['project_record']['end_date']).year==year)]
+    active_only = bool(re.search(r'\b(active|actifs?|actives?|en cours|ongoing)\b', q))
+    active_statuses = {'en cours','active','implementation','ongoing'}
+    matched = [e for e in rows if (not active_only or _fold(e['project_record'].get('status')) in active_statuses) and parsed_date(e['project_record'].get('end_date')) and (window[0] <= parsed_date(e['project_record']['end_date']).isoformat() <= window[1] if window else parsed_date(e['project_record']['end_date']).year==year)]
     other = [e for e in rows if e not in matched]
     missing = requested-set(facts)
     french = language=='French' or bool(re.search(r'\b(quels|quelles|dossiers|declaree|projets)\b', q))
@@ -58,6 +62,8 @@ def answer(question, ledger, language=None, asof=None):
     period_en = f'from {window[0]} through {window[1]} (inclusive)' if window else f'in **{year}**'
     opening = (f'**{len(matched)} sur {denominator} {label}** ont une date de fin/clôture déclarée {period_fr}.' if french else
                f'**{len(matched)} of {denominator} {en_label}** report an end/closing date {period_en}.')
+    if active_only:
+        opening = opening.replace('ont une date', 'portent un statut actif dans la source et ont une date') if french else opening.replace('report an end', 'are labelled active in the source and report an end')
     opening = ('Dans ' if french else 'In ')+source+', '+opening+' '+cites(matched or rows)
     lines=[opening, '', '| Identifiant source | Projet | Date déclarée | Statut déclaré | Source |' if french else '| Source identifier | Project | Reported end/closing | Reported status | Evidence |', '|---|---|---|---|---|']
     def cell(value):
@@ -72,7 +78,7 @@ def answer(question, ledger, language=None, asof=None):
         lines=lines[:1]
     if other:
         lines += ['', ('Autres dossiers retournés : ' if french else 'Other returned records: ')+ '; '.join(
-            f'{cell(e["project_record"]["source_id"])} — {cell(e["project_record"].get("end_date"))} [{e["evidence_id"]}]' for e in other)+'.']
+            f'{cell(e["project_record"]["source_id"])} — {cell(e["project_record"].get("end_date"))}'+(f' ({cell(e["project_record"].get("status"))})' if active_only else '')+f' [{e["evidence_id"]}]' for e in other)+'.']
     if missing:
         selection=[e for e in ledger if e.get('section')=='Exact requested identifiers']
         lines += ['', ('Identifiants non retournés dans cette sélection : ' if french else 'Identifiers not returned in this selection: ')+', '.join(sorted(missing))+'. '+cites(selection)]
@@ -83,6 +89,8 @@ def answer(question, ledger, language=None, asof=None):
                         f'{len(conflicts)} record(s) combine an active status with a past reported end date as of {asof}: unresolved registry conflicts.')+' '+cites(conflicts)]
     syncs=sorted({str(e['project_record'].get('source_updated_at'))[:10] for e in rows if e['project_record'].get('source_updated_at')})
     note=('Dates et statuts déclarés, sans preuve d’achèvement réel ou de livraison actuelle. ' if french else 'Reported dates and status do not establish actual completion or current delivery. ')
+    if active_only:
+        note += ('Filtre sur les statuts actifs déclarés ; les statuts absents ou différents ne sont pas classés actifs. ' if french else 'Filter uses reported active labels; missing or other statuses are not classified as active. ')
     if window:
         note += (f'Fenêtre calculée au {asof}, distincte de la date de publication ou de synchronisation. ' if french else f'Window resolved as of {asof}, independently of source publication or sync dates. ')
     if syncs:
@@ -93,4 +101,4 @@ def answer(question, ledger, language=None, asof=None):
     return '\n'.join(lines), {'method':'verified_project_date_filter','year':year,'window_start':window[0] if window else None,'window_end':window[1] if window else None,'source_namespace':source,
         'requested_ids':sorted(requested),'returned_ids':sorted(facts),
         'matching_ids':[str(e['project_record']['source_id']) for e in matched],
-        'missing_ids':sorted(missing),'query_date':str(asof)}
+        'missing_ids':sorted(missing),'active_only':active_only,'query_date':str(asof)}

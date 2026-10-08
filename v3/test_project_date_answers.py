@@ -133,3 +133,36 @@ def test_explicit_same_year_date_interval_is_not_expanded_to_calendar_year():
 def test_window_shortcut_preserves_professional_analysis_and_geographic_limits(q):
     assert answer(q,[dict(record(664,'2026-11-30','E01'),project_record={
         'source_namespace':'World Bank','source_id':'P513735','end_date':'2027-05-01'})]) is None
+
+
+@pytest.mark.parametrize('namespace,ids,question', [
+    ('FONGIM',['32','664','696'],'For FONGIM project IDs 32, 664 and 696, which active records have reported end dates in the next 12 months?'),
+    ('World Bank',['P513735','P164032','P166796'],'For World Bank project IDs P513735, P164032 and P166796, which active records have reported closing dates in 2027?'),
+    ('EU IATI',['XI-IATI-EC_INTPA-2023-PC-34257','XI-IATI-EC_ECHO-ECHO/-AF/BUD/2026/91003','XI-IATI-EC_ECHO-ECHO/-AF/BUD/2026/91032'],
+     'Pour EU IATI, identifiants de projets XI-IATI-EC_INTPA-2023-PC-34257, XI-IATI-EC_ECHO-ECHO/-AF/BUD/2026/91003 et XI-IATI-EC_ECHO-ECHO/-AF/BUD/2026/91032, quels projets en cours ont une date de fin déclarée entre 2026-10-08 et 2027-10-08 ?'),
+])
+def test_active_only_exact_ids_use_fresh_status_and_do_not_treat_unknown_as_active(namespace,ids,question):
+    rows=[dict(record(pid,'2027-05-01',f'E{i:02d}',status),project_record={
+        'source_namespace':namespace,'source_id':pid,'end_date':'2027-05-01','status':status})
+        for i,(pid,status) in enumerate(zip(ids,['Implementation','Closed',None]),1)]
+    text,audit=answer(question,rows,asof=date(2026,10,8))
+    assert audit['active_only'] and audit['matching_ids']==[ids[0]]
+    assert audit['returned_ids']==sorted(ids)
+    assert 'Closed' in text
+    assert '**1 of 3 requested records**' in text or '**1 sur 3 dossiers demandés**' in text
+    assert 'not classified as active' in text or 'ne sont pas classés actifs' in text
+    assert verify(text,rows)[1]['valid']
+
+
+def test_date_only_question_retains_closed_records_when_no_active_constraint():
+    rows=[record(664,'2026-11-30','E01','Closed')]
+    text,audit=answer('For FONGIM project ID 664, which records have reported end dates in 2026?',rows)
+    assert not audit['active_only'] and audit['matching_ids']==['664']
+
+
+@pytest.mark.parametrize('q', [
+    'For FONGIM project ID 664, which records are not active and have reported end dates in 2026?',
+    'Pour FONGIM, identifiant de projet 664, quels projets non actifs ont une date de fin en 2026 ?',
+])
+def test_negated_active_constraint_defers(q):
+    assert answer(q,[record(664,'2026-11-30','E01','Closed')]) is None
