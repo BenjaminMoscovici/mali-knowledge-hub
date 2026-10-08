@@ -178,3 +178,28 @@ def test_rolling_project_followups_freeze_query_window_not_historical_dates(rost
 ])
 def test_invalid_or_analytical_rolling_followups_defer(question):
     assert resolve_slots(question,[{'role':'assistant','content':'World Bank P144442.'}]) is None
+
+
+@pytest.mark.parametrize('namespace,keep,exclude,question', [
+    ('World Bank','P513735','P164032','Which of those projects close in the next 12 months?'),
+    ('EU IATI','XI-IATI-EC_INTPA-2023-PC-34257','XI-IATI-EC_ECHO-ECHO/-AF/BUD/2026/91003',
+     'Lesquels de ces projets ont une date de clôture dans les 3 prochains mois ?'),
+])
+def test_narrowed_date_table_does_not_reintroduce_excluded_records(namespace,keep,exclude,question):
+    from project_date_answers import answer
+    from datetime import date
+    rows=[{'evidence_id':eid,'project_record':{'source_namespace':namespace,'source_id':pid,'end_date':end}}
+          for eid,pid,end in [('E01',keep,'2026-12-07'),('E02',exclude,'2027-02-28')]]
+    previous=f'For {namespace} project IDs {keep}, {exclude}, which have reported end dates between 2026-10-08 and 2027-01-08?'
+    text,_=answer(previous,rows,asof=date(2026,10,8))
+    assert exclude in text
+    result=resolve_slots(question,[{'role':'assistant','content':text}])
+    assert result['state']['lookup_ids']==[keep]
+    assert exclude not in result['standalone_question']
+    assert '2026-12-07' not in result['standalone_question']
+
+
+def test_two_date_tables_are_ambiguous_context():
+    table='| Source identifier | Project | Reported end/closing |\n|---|---|---|\n| P513735 | A | 2027-05-01 |\n'
+    assert resolve_slots('Which of those projects close in the next 12 months?',
+                         [{'role':'assistant','content':table+'\n'+table}]) is None

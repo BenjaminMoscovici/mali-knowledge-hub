@@ -141,6 +141,27 @@ def resolve_project_end_dates(question, messages):
     if len(families) != 1 or len(families[0][1]) > 12:
         return None
     source, ids = families[0]
+    # A verified date table defines the narrowed set. Identifiers in the
+    # excluded-record note remain attribution, not members of that set.
+    if source in ('World Bank', 'EU IATI'):
+        lines = latest.splitlines()
+        headers = [i for i,line in enumerate(lines) if line.lstrip().startswith('|')
+                   and _fold(line.split('|')[1]) in ('source identifier', 'identifiant source')
+                   and re.search(r'\b(reported end closing|date declaree)\b', _fold(line))]
+        if headers:
+            if len(headers) != 1:
+                return None
+            selected = []
+            for line in lines[headers[0]+1:]:
+                if not line.lstrip().startswith('|'):
+                    break
+                identifier = line.split('|')[1].strip()
+                pattern = r'P\d{6}' if source == 'World Bank' else r'XI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+'
+                if re.fullmatch(pattern, identifier):
+                    selected.append(identifier)
+            ids = tuple(sorted(set(selected)))
+            if not ids or not set(ids).issubset(families[0][1]):
+                return None
     labels = ', '.join(map(str,ids))
     if window:
         start, end = window
