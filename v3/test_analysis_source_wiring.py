@@ -17,7 +17,7 @@ def test_fongim_research_worker_uses_defined_normalization_and_requested_scope(q
     worker=next(n for n in research.body if isinstance(n,ast.FunctionDef) and n.name=='timed_fongim')
     normalization=next(n for n in module.body if isinstance(n,ast.FunctionDef) and n.name=='normalize_text')
     calls=[]
-    def stub(geography,ending=False,requested_project_ids=(),end_year=None,active_only=False):
+    def stub(geography,ending=False,requested_project_ids=(),end_year=None,active_only=False,end_window=None):
         calls.append((geography,ending,requested_project_ids));return {'evidence':[]}
     namespace={'question':question,'geography':{'region':'Mopti','cercle':None},'research_fongim':stub,
                're':re,'time':time,'unicodedata':unicodedata}

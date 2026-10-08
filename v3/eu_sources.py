@@ -5,7 +5,7 @@ import gzip,json,logging,re
 from pathlib import Path
 from analytical_sources import evidence
 from operational_sources import publish_operational_snapshot
-from project_dates import parsed_date, calendar_end_year
+from project_dates import parsed_date, calendar_end_year, reported_end_window
 from source_wave import _fold
 
 @lru_cache(maxsize=1)
@@ -95,6 +95,7 @@ def retrieve_eu_evidence(question,limit=20):
     ) and not re.search(r'\bDUE\b',question) and not referenced:return []
     ending=bool(re.search(r'\b(ending|end dates?|closing|echeances?|termin\w*|finissent)\b',q))
     end_year=calendar_end_year(question, today)
+    end_window=reported_end_window(question, today)
     active_only=bool(re.search(r'\b(active|currently active|en cours)\b',q))
     themes=[]
     for key,pattern in {'food_security':r'food|aliment|faim|hunger|agric','wash':r'wash|water|eau|assain|sanitation',
@@ -119,7 +120,13 @@ def retrieve_eu_evidence(question,limit=20):
     results=[_activity_item(r, today) for r in referenced]+[item(r) for r in fixed]
     for pub in ('XI-IATI-EC_INTPA','XI-IATI-EC_ECHO'):
         rows=[r for r in data if r['source_type']=='eu_activity' and r['payload']['facts']['publisher_ref']==pub]
-        if end_year is not None:
+        if end_window is not None:
+            start,end=map(parsed_date,end_window)
+            rows=[r for r in rows if parsed_date(r['payload']['facts']['end_date_reported'])
+                  and start <= parsed_date(r['payload']['facts']['end_date_reported']) <= end
+                  and (not active_only or r['payload']['facts']['status']=='Implementation')]
+            rows.sort(key=lambda r:(-place_score(r),r['payload']['facts']['end_date_reported']))
+        elif end_year is not None:
             rows=[r for r in rows if parsed_date(r['payload']['facts']['end_date_reported'])
                   and parsed_date(r['payload']['facts']['end_date_reported']).year==end_year
                   and (not active_only or r['payload']['facts']['status']=='Implementation')]
@@ -134,6 +141,8 @@ def retrieve_eu_evidence(question,limit=20):
                 result=_activity_item(r, today)
                 if end_year is not None:
                     result['content']+=f' Hub retrieval filter: reported end date in calendar year {end_year}, not a rolling 180-day window; bounded source examples, not a complete portfolio.'
+                if end_window is not None:
+                    result['content']+=f' Hub retrieval filter: reported end date from {end_window[0]} through {end_window[1]}, inclusive; not the default 180-day screen. Bounded source examples, not a complete portfolio; does not prove successor funding or handover.'
                 results.append(result)
     other=[r for r in data if r['source_type'] in ('eu_tei','eu_project_metadata','eib_project')]
     other.sort(key=lambda r:(score(r),r['source_type']!='eib_project'),reverse=True)
