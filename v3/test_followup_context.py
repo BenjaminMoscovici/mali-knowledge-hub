@@ -128,7 +128,9 @@ def test_ambiguous_project_sets_and_new_operations_keep_semantic_resolver(roster
     assert resolve_slots(followup,[{'role':'assistant','content':roster}]) is None
 
 
-def test_project_filter_api_skips_rewrite_but_freshly_researches_source_ids():
+@pytest.mark.parametrize('question', ['Which of those projects have a reported end date in 2026?',
+    'Which of those projects close in the next 6 months?'])
+def test_project_filter_api_skips_rewrite_but_freshly_researches_source_ids(question):
     from project_references import fongim_project_ids
     calls=[]
     def research(question,**kwargs):
@@ -143,7 +145,7 @@ def test_project_filter_api_skips_rewrite_but_freshly_researches_source_ids():
         source_inventory_answer=lambda:'',openai_client=None)
     client=TestClient(web_api.app,base_url='http://127.0.0.1:8765')
     with patch.dict(sys.modules,{'analysis_core':engine}):
-        response=client.post('/api/chat',json={'question':'Which of those projects have a reported end date in 2026?',
+        response=client.post('/api/chat',json={'question':question,
             'prior_messages':[{'role':'assistant','content':'FONGIM records: Project ID 32; Project ID 664; Project ID 696. All ended in 2099.'}]},
             headers={'Origin':'http://127.0.0.1:8765'})
         assert response.status_code==200
@@ -152,3 +154,27 @@ def test_project_filter_api_skips_rewrite_but_freshly_researches_source_ids():
         assert body['metrics']['context_api_usage']=={}
         assert len(calls)==1 and body['evidence'][0]['content']=='Fresh lookup'
     client.close()
+
+
+@pytest.mark.parametrize('roster,question', [
+    ('FONGIM project ID 32; Project ID 664.', 'Which of those projects close in the next 6 months?'),
+    ('World Bank P144442 and P176347.', 'Which of them have reported closing dates in the next 3 weeks?'),
+    ('EU XI-IATI-EC_INTPA-2023-PC-34274.', 'Lesquels de ces projets ont une date de clôture dans les 3 prochains mois ?'),
+])
+def test_rolling_project_followups_freeze_query_window_not_historical_dates(roster,question):
+    from project_dates import reported_end_window
+    result=resolve_slots(question,[{'role':'assistant','content':roster+' End date 2099-12-31; 999 people reached.'}])
+    assert result and result['state']['context_only']
+    assert result['state']['time_period']==list(reported_end_window(question))
+    assert reported_end_window(result['standalone_question'])==reported_end_window(question)
+    assert '2099' not in result['standalone_question'] and '999' not in result['standalone_question']
+
+
+@pytest.mark.parametrize('question', [
+    'Which of those projects close in the next 0 months?',
+    'Which of those projects close in the next 99 months?',
+    'Which of those projects close in the next 3 months and have successor funding?',
+    'Lesquels de ces projets ont une date de clôture dans les 3 prochains mois et couvrent les besoins ?',
+])
+def test_invalid_or_analytical_rolling_followups_defer(question):
+    assert resolve_slots(question,[{'role':'assistant','content':'World Bank P144442.'}]) is None

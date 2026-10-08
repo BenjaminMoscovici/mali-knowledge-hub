@@ -114,11 +114,17 @@ def resolve_project_end_dates(question, messages):
     """
     q = _fold(question)
     english = re.fullmatch(r'which of (?:those projects|these projects|them) '
-                          r'(?:have (?:a )?(?:reported )?end dates?|end|are ending) '
-                          r'(?:in )?((?:19|20)\d{2}|this year)', q)
-    french = re.fullmatch(r'lesquels de ces projets ont une date de fin en ((?:19|20)\d{2})', q)
+                          r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
+                          r'(?:in )?((?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
+    french = re.fullmatch(r'lesquels de ces projets ont une date de (?:fin|cloture) '
+                         r'(?:en ((?:19|20)\d{2})|dans les \d{1,2} prochains? (?:jours?|semaines?|mois))', q)
     matched = english or french
     if not matched:
+        return None
+    from project_dates import reported_end_window
+    window = reported_end_window(question)
+    period = english[1] if english else french[1]
+    if not window and (period is None or 'next' in period):
         return None
     latest = next((m.get('content','') for m in reversed(messages)
                    if m.get('role') == 'assistant' and m.get('content')), '')
@@ -135,10 +141,17 @@ def resolve_project_end_dates(question, messages):
     if len(families) != 1 or len(families[0][1]) > 12:
         return None
     source, ids = families[0]
-    year = datetime.now(timezone.utc).year if matched[1] == 'this year' else int(matched[1])
     labels = ', '.join(map(str,ids))
-    rewritten = (f'Pour {source}, identifiants de projets {labels}, quels dossiers ont une date de fin déclarée en {year} ?'
-                 if french else f'For {source} project IDs {labels}, which records have a reported end date in {year}?')
+    if window:
+        start, end = window
+        date_filter = f'entre {start} et {end}' if french else f'between {start} and {end}'
+        time_period = list(window)
+    else:
+        year = datetime.now(timezone.utc).year if period == 'this year' else int(period)
+        date_filter = f'en {year}' if french else f'in {year}'
+        time_period = [str(year)]
+    rewritten = (f'Pour {source}, identifiants de projets {labels}, quels dossiers ont une date de fin déclarée {date_filter} ?'
+                 if french else f'For {source} project IDs {labels}, which records have a reported end date {date_filter}?')
     return {'standalone_question':rewritten, 'method':'structured_query_slots',
             'state':{'context_only':True, 'metric':'project_reported_end_date',
-                     'source':source,'lookup_ids':list(ids),'time_period':[str(year)],'last_question':rewritten}}
+                     'source':source,'lookup_ids':list(ids),'time_period':time_period,'last_question':rewritten}}
