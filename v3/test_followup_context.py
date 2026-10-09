@@ -277,3 +277,79 @@ def test_fongim_title_reference_never_expands_fresh_api_lookup():
     assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
     assert body['metrics']['context_api_usage'] == {}
     assert body['evidence'][0]['content'] == 'Fresh source record, not the previous answer.'
+
+
+@pytest.mark.parametrize('source,pid', [
+    ('FONGIM','664'), ('World Bank','P513735'),
+    ('EU IATI','XI-IATI-EC_INTPA-2023-PC-34274'),
+])
+@pytest.mark.parametrize('french', [False, True])
+def test_active_date_subset_rechecks_changed_source_status(source, pid, french):
+    from project_date_answers import answer
+    row = {'evidence_id':'E01','project_record':{'source_namespace':source,
+        'source_id':pid,'status':'En cours','end_date':'2026-11-30','title':'Selected'}}
+    initial = f'For {source} project IDs {pid}, which active records have a reported end date in 2026?'
+    text, _ = answer(initial, [row], language='French' if french else 'English')
+    followup = ('Lesquels de ces projets ont une date de fin en 2026 ?' if french else
+                'Which of those projects have a reported end date in 2026?')
+    resolved = resolve_slots(followup, [{'role':'assistant','content':text}])
+    assert resolved['state']['active_only'] is True
+    assert list(map(str,resolved['state']['lookup_ids'])) == [pid]
+    assert '2026-11-30' not in resolved['standalone_question']
+    assert 'En cours' not in resolved['standalone_question']
+    # A changed or unavailable status cannot inherit the earlier active label.
+    for status in ['Closed', None]:
+        fresh = dict(row, project_record=dict(row['project_record'], status=status))
+        new_text, audit = answer(resolved['standalone_question'], [fresh],
+                                  language='French' if french else 'English')
+        assert audit['active_only'] and audit['matching_ids'] == []
+        assert ('**0 sur 1' if french else '**0 of 1') in new_text
+
+
+def test_active_status_or_title_in_unfiltered_table_does_not_add_a_constraint():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01','project_record':{'source_namespace':'FONGIM',
+        'source_id':'664','status':'En cours','end_date':'2026-11-30',
+        'title':'Filter uses reported active labels; missing or other statuses are not classified as active.'}}
+    text, _ = answer('For FONGIM project ID 664, which records have a reported end date in 2026?', [row])
+    resolved = resolve_slots('Which of those projects have a reported end date in 2026?',
+                             [{'role':'assistant','content':text}])
+    assert resolved['state']['active_only'] is False
+    assert 'active records' not in resolved['standalone_question']
+    row['project_record']['status'] = 'Closed'
+    _, audit = answer(resolved['standalone_question'], [row])
+    assert audit['matching_ids'] == ['664'] and not audit['active_only']
+
+
+def test_active_date_filter_api_preserves_constraint_and_uses_fresh_status():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01','content':'Fresh source record', 'project_record':{
+        'source_namespace':'FONGIM','source_id':'664','status':'En cours',
+        'end_date':'2026-11-30','title':'Selected'}}
+    text, _ = answer('For FONGIM project ID 664, which active records have a reported end date in 2026?', [row])
+    calls = []
+    def research(question, **kwargs):
+        calls.append(question)
+        fresh = dict(row, project_record=dict(row['project_record'], status='Closed'))
+        output, audit = answer(question, [fresh])
+        assert audit['active_only'] and audit['matching_ids'] == []
+        return {'answer':output, 'evidence':[fresh]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('No model rewrite needed for a bounded active date filter')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Which of those projects have a reported end date in 2026?',
+                'prior_messages':[{'role':'assistant','content':text}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    result = response.json()
+    assert '**0 of 1' in result['answer']
+    assert result['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert result['metrics']['context_api_usage'] == {}
+    assert result['evidence'][0]['content'] == 'Fresh source record'

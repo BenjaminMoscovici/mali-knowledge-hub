@@ -141,6 +141,7 @@ def resolve_project_end_dates(question, messages):
     if len(families) != 1 or len(families[0][1]) > 12:
         return None
     source, ids = families[0]
+    active_only = False
     # A verified date table defines the narrowed set. Identifiers in the
     # excluded-record note remain attribution, not members of that set.
     if source in ('FONGIM', 'World Bank', 'EU IATI'):
@@ -167,6 +168,17 @@ def resolve_project_end_dates(question, messages):
             ids = tuple(sorted(set(selected)))
             if not ids or not set(ids).issubset(families[0][1]):
                 return None
+            # The deterministic filter note describes the selection operation,
+            # not a project's status. Carry that query constraint only from a
+            # recognised date table; every status must still be retrieved afresh.
+            active_notes = (
+                'Reported dates and status do not establish actual completion or current delivery. '
+                'Filter uses reported active labels; missing or other statuses are not classified as active.',
+                'Dates et statuts déclarés, sans preuve d’achèvement réel ou de livraison actuelle. '
+                'Filtre sur les statuts actifs déclarés ; les statuts absents ou différents ne sont pas classés actifs.',
+            )
+            active_only = any(line.startswith(active_notes) for line in lines[headers[0]+1:]
+                              if not line.lstrip().startswith('|'))
     labels = ', '.join(map(str,ids))
     if window:
         start, end = window
@@ -176,8 +188,11 @@ def resolve_project_end_dates(question, messages):
         year = datetime.now(timezone.utc).year if period == 'this year' else int(period)
         date_filter = f'en {year}' if french else f'in {year}'
         time_period = [str(year)]
-    rewritten = (f'Pour {source}, identifiants de projets {labels}, quels dossiers ont une date de fin déclarée {date_filter} ?'
-                 if french else f'For {source} project IDs {labels}, which records have a reported end date {date_filter}?')
+    records_fr = 'dossiers actifs' if active_only else 'dossiers'
+    records_en = 'active records' if active_only else 'records'
+    rewritten = (f'Pour {source}, identifiants de projets {labels}, quels {records_fr} ont une date de fin déclarée {date_filter} ?'
+                 if french else f'For {source} project IDs {labels}, which {records_en} have a reported end date {date_filter}?')
     return {'standalone_question':rewritten, 'method':'structured_query_slots',
             'state':{'context_only':True, 'metric':'project_reported_end_date',
-                     'source':source,'lookup_ids':list(ids),'time_period':time_period,'last_question':rewritten}}
+                     'source':source,'lookup_ids':list(ids),'active_only':active_only,
+                     'time_period':time_period,'last_question':rewritten}}
