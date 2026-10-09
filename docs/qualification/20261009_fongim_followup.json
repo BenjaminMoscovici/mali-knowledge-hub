@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-09",
+  "status": "LIVE_ACCEPTED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "source_branch": "mkh-professional-answers-20261006",
+  "recovered_base_commit": "c46a0dcd45f419b6a223d020e2e6c6c4f5bcc230",
+  "candidate_branch": "mkh-qualified-fongim-20261009",
+  "candidate_code_commit": "0e974db2e539ed2b1e43f9e381e4e8c0c7ce7e0c",
+  "published_code_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+  "published_tree": "5ad3d01c7d94e4c501e4a4778d8631d71f32de13",
+  "published_tree_matches_tested_local_commit": true,
+  "improvement": "Preserve FONGIM selected IDs from the identifier column of a reported-date table. IDs mentioned in project titles or excluded-record notes do not become selected records.",
+  "reproduction": {
+    "selected_ids": [
+      664
+    ],
+    "title": "Successor to FONGIM project ID 32",
+    "baseline_next_lookup_ids": [
+      32,
+      664
+    ],
+    "candidate_next_lookup_ids": [
+      664
+    ]
+  },
+  "qualification": {
+    "prior_baseline_checks": 102,
+    "protected_python_checks": 316,
+    "frontend_checks": 15,
+    "catalogue_checks": "Recorded separately in registry reconciliation; unrelated to code change",
+    "new_cases": "English/French, FONGIM/WB/EU, title mentions, excluded notes, ambiguous tables and fresh API retrieval without semantic rewrite",
+    "syntax_and_whitespace": "node --check v3/web/app.js and git diff --check passed",
+    "full_benchmark_rerun": false,
+    "independent_model_judge": false,
+    "scope": "Targeted/protected tests and bounded live acceptance; no independent full benchmark claim."
+  },
+  "live_acceptance": {
+    "baseline": {
+      "standalone_question": "For FONGIM project IDs 32, 664, which records have a reported end date in 2027?",
+      "answer": "In FONGIM, **1 of 2 requested records** report an end/closing date in **2027**. [E09]\n\n| Source identifier | Project | Reported end/closing | Reported status | Evidence |\n|---|---|---|---|---|\n| FONGIM project ID 32 | Programme d’appui à la construction d’un environnement propice à la paix, à la stabilité, et au développement des zones agropastorales a forte insécurité au Sah… | 2027-01-01 | En cours | [E09] |\n\nOther returned records: 664 — 2026-11-30 [E10].\n\nReported dates and status do not establish actual completion or current delivery. Source update/sync: 2026-08-28.  [E10] [E09]",
+      "hub_commit": "c46a0dcd45f419b6a223d020e2e6c6c4f5bcc230",
+      "model_calls": 0,
+      "estimated_usd": 0,
+      "context_resolution_method": "structured_query_slots"
+    },
+    "english": {
+      "standalone_question": "For FONGIM project IDs 664, which records have a reported end date in 2027?",
+      "answer": "In FONGIM, **0 of 1 requested records** report an end/closing date in **2027**. [E09]\n\nOther returned records: 664 — 2026-11-30 [E09].\n\nReported dates and status do not establish actual completion or current delivery. Source update/sync: 2026-08-28.  [E09]",
+      "hub_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+      "model_calls": 0,
+      "estimated_usd": 0,
+      "context_resolution_method": "structured_query_slots"
+    },
+    "french": {
+      "standalone_question": "Pour FONGIM, identifiants de projets 664, quels dossiers ont une date de fin déclarée en 2027 ?",
+      "answer": "Dans FONGIM, **0 sur 1 dossiers demandés** ont une date de fin/clôture déclarée en **2027**. [E09]\n\nAutres dossiers retournés : 664 — 2026-11-30 [E09].\n\nDates et statuts déclarés, sans preuve d’achèvement réel ou de livraison actuelle. Mise à jour source : 2026-08-28.  [E09]",
+      "hub_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+      "model_calls": 0,
+      "estimated_usd": 0,
+      "context_resolution_method": "structured_query_slots"
+    },
+    "excluded_note": {
+      "standalone_question": "For FONGIM project IDs 664, which records have a reported end date in 2027?",
+      "answer": "In FONGIM, **0 of 1 requested records** report an end/closing date in **2027**. [E09]\n\nOther returned records: 664 — 2026-11-30 [E09].\n\nReported dates and status do not establish actual completion or current delivery. Source update/sync: 2026-08-28.  [E09]",
+      "hub_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+      "model_calls": 0,
+      "estimated_usd": 0,
+      "context_resolution_method": "structured_query_slots"
+    },
+    "geography": {
+      "mali": {
+        "answer": "Under the INSTAT **2023 framework**, published in **January 2026**, Mali has **19 regions plus one district (Bamako), 159 cercles and 815 communes**. [E01]\n\nThe reference hierarchy is Country → Region → Cercle → Commune → Locality. Bamako follows Country → District → Arrondissement → Locality. The seven arrondissement rows cover Bamako only. These are the units in this edition, not verification of every later legal amendment. COD v03 has 20 admin1 and 160 admin2 records: Bamako is also represented at admin2; this does not add a 160th cercle to the INSTAT hierarchy. Cross-version matches remain proposals and do not establish identical boundaries. [E01, E02]",
+        "hub_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+        "model_calls": 0
+      },
+      "gao": {
+        "answer": "- Mali (country) → GAO (region). [E01]\n  44 recorded commune(s). [E01]\n\nReference: RGPH5 — Répertoire des localités du Mali en 2023, edition-2023-published-2026-01. [E01]\n\nThe reference hierarchy is Country → Region → Cercle → Commune → Locality. Bamako follows Country → District → Arrondissement → Locality. The seven arrondissement rows cover Bamako only. These are the units in this edition, not verification of every later legal amendment. COD v03 has 20 admin1 and 160 admin2 records: Bamako is also represented at admin2; this does not add a 160th cercle to the INSTAT hierarchy. Cross-version matches remain proposals and do not establish identical boundaries. [E01, E02]",
+        "hub_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+        "model_calls": 0
+      }
+    }
+  },
+  "reviewed_source": "Current FONGIM 664 record supplied reported end date 2026-11-30; previous synthetic date 2099 was not used as evidence.",
+  "deployment": "Qualified code commit manually deployed to the existing V4 test environment; response hub_commit matched published_code_commit for all five acceptance calls.",
+  "rollback_commit": "c46a0dcd45f419b6a223d020e2e6c6c4f5bcc230",
+  "preservation": "Newer accepted source, response, PADEL, dossier and date-filter code retained; existing branches updated only by leased fast-forward. No migration or administration deployment performed.",
+  "limitations": [
+    "Bounded continuity improvement; mixed-source and longer research sequences remain partial.",
+    "Startup reported a source-publication RuntimeError; this increment did not alter that source loader and does not certify all source publication.",
+    "Former-workspace uncommitted files were unavailable."
+  ]
+}
