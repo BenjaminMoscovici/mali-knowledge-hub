@@ -33,6 +33,10 @@ def ingest(base, manifest_path, pdf_path, output):
             pages=finding['pages']
             if not pages or any(not isinstance(p,int) or isinstance(p,bool) or p<1 or p>len(pdf) for p in pages):
                 raise ValueError('Finding has an invalid PDF page')
+            if finding['finding_kind'] not in (
+                    'results', 'constraints', 'recommendations',
+                    'reported_reach', 'methodology_limits'):
+                raise ValueError('Finding has an unsupported finding kind')
             if not all(isinstance(v,str) and v.strip() for v in
                        [finding['finding'],manifest['methodology'],manifest['transferability'],manifest['document_title']]):
                 raise ValueError('Finding, methodology, title and transferability are required')

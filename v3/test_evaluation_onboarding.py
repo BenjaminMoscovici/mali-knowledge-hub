@@ -82,6 +82,33 @@ def test_import_preserves_later_catalogue_review_annotations(import_inputs):
     assert catalogue[1]['integration_status']=='integrated_with_limitations'
 
 
+@pytest.mark.parametrize('kind', [
+    'results', 'constraints', 'recommendations', 'reported_reach', 'methodology_limits',
+])
+def test_reviewed_import_keeps_supported_finding_categories(import_inputs, kind):
+    base, mpath, pdf, out, manifest = import_inputs
+    manifest['findings'] = [{
+        'finding_kind': kind, 'pages': [5], 'finding': 'Reviewed historical finding.'}]
+    mpath.write_text(json.dumps(manifest))
+    ingest(base, mpath, pdf, out)
+    with gzip.open(out, 'rt') as file:
+        data = json.load(file)
+    assert data['records'][0]['payload']['finding_kind'] == kind
+    assert data['tables']['mkh_source_records'][0]['payload']['finding_kind'] == kind
+
+
+@pytest.mark.parametrize('kind', ['unsupported_kind', '', None, 'Reported_Reach'])
+def test_unknown_finding_category_cannot_create_a_release(import_inputs, kind):
+    base, mpath, pdf, out, manifest = import_inputs
+    manifest['findings'] = [{
+        'finding_kind': kind, 'pages': [5], 'finding': 'Reviewed historical finding.'}]
+    mpath.write_text(json.dumps(manifest))
+    original = base.read_bytes()
+    with pytest.raises(ValueError, match='unsupported finding kind'):
+        ingest(base, mpath, pdf, out)
+    assert base.read_bytes() == original and not out.exists()
+
+
 @pytest.mark.parametrize('change,pattern',[
     ({'sha256':'0'*64},'checksum'),({'project_id':'P513735'},'identity'),
     ({'report_number':'ICRR9999999'},'identity'),({'reference_end':'2030-01-01'},'period'),
