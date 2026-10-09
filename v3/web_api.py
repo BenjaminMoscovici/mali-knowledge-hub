@@ -446,7 +446,7 @@ async def chat(request):
                     phase = "structured_geography"
                     result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
                 elif is_source_inventory_question(standalone):
-                    result = {"answer": await asyncio.to_thread(source_inventory_answer), "evidence": [], "family_counts": {}}
+                    result = {"answer": await asyncio.to_thread(source_inventory_answer, answer_language(question)), "evidence": [], "family_counts": {}}
                 else:
                     result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
                                                  response_language=answer_language(question))

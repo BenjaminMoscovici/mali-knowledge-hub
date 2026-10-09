@@ -1,6 +1,7 @@
 import ast
 import gzip
 import json
+import unicodedata
 from pathlib import Path
 from source_catalogue import entries,answer
 
@@ -52,6 +53,43 @@ def test_document_updates_and_registry_failure_do_not_infer_old_or_absent_docume
     assert 'contents are not inferred' in failed and 'Indexed documents: 0' not in failed
 
 
+def test_french_catalogue_localises_structure_and_epistemic_limits_without_rewriting_source_metadata():
+    text=answer([{'title':'Plan national'}], language='French')
+    assert text.startswith('Le Hub combine des flux de sources')
+    assert '**Documents indexés : 1**' in text and '- Plan national' in text
+    assert '**Flux de preuves disponibles**' in text
+    assert '| Source | Période de référence / récupération | Utile pour | Limites |' in text
+    assert 'éléments de preuve' in text and 'récupéré le' in text
+    assert '; 1 élément de preuve' in text and '2026-06-01 au 2026-08-31' in text
+    assert '**Sources cataloguées en attente de preuves, d’accès ou de qualification**' in text
+    assert '| Source | État actuel | Contrainte |' in text
+    assert 'métadonnées uniquement' in text
+    assert 'Le modèle de langage n’est pas une source.' in text
+    assert 'retrieval dates do not make historical observations current' not in text
+    # Names and reviewed registry caveats remain verbatim instead of being
+    # silently machine-translated into a different evidence claim.
+    assert 'MALI 3W_Q1_2026' in text and 'Presence records only:' in text
+
+
+def test_french_catalogue_wording_is_detected_consistently_by_both_entry_points():
+    for filename in ['analysis_core.py','app.py']:
+        tree=ast.parse(Path(__file__).with_name(filename).read_text())
+        functions=[n for n in tree.body if isinstance(n,ast.FunctionDef) and
+                   n.name in {'normalize_text','is_source_inventory_question'}]
+        ns={'unicodedata':unicodedata}
+        exec(compile(ast.Module(body=functions,type_ignores=[]),'actual-inventory-routing','exec'),ns)
+        detect=ns['is_source_inventory_question']
+        assert detect('Quelles sources sont disponibles dans le Hub ?')
+        assert detect('Quel est le catalogue de sources du Hub ?')
+        assert not detect('Comparez les besoins de Gao avec les activités recensées.')
+
+
+def test_french_registry_failure_is_explicit_and_does_not_infer_zero_documents():
+    text=answer(document_registry_available=False, language='French')
+    assert 'n’a pas pu être vérifié' in text
+    assert 'Documents indexés : 0' not in text
+
+
 def test_real_inventory_entry_point_uses_current_document_registry_and_preserves_failure_scope():
     for filename in ['analysis_core.py','app.py']:
         tree=ast.parse(Path(__file__).with_name(filename).read_text())
@@ -63,3 +101,6 @@ def test_real_inventory_entry_point_uses_current_document_registry_and_preserves
         ns['get_document_groups']=failure
         result=ns[fn.name]()
         assert 'could not be checked' in result and 'MALI 3W_Q1_2026' in result
+        french=ns[fn.name]('French')
+        assert french.startswith('Le Hub combine des flux de sources')
+        assert 'Documents indexés : 0' not in french

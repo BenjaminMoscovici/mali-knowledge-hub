@@ -179,6 +179,8 @@ def is_source_inventory_question(question):
         "quelles donnees utilisez vous",
         "a quelles sources as tu acces",
         "a quelles sources avez vous acces",
+        "quelles sources sont disponibles",
+        "quel est le catalogue de sources",
         "welche quellen hast du",
         "welche quellen nutzt du",
         "auf welche quellen hast du zugriff",
@@ -228,6 +230,9 @@ def is_source_inventory_question(question):
         "utilises",
         "utilisez",
         "acces",
+        "disponible",
+        "catalogue",
+        "dans le hub",
         "hast du",
         "nutzt du",
         "zugriff",
@@ -256,13 +261,13 @@ def is_source_inventory_question(question):
     return False
 
 
-def source_inventory_answer():
+def source_inventory_answer(language='English'):
     from source_catalogue import answer
     try:
         documents=get_document_groups()["documents"]
     except Exception:
-        return answer(document_registry_available=False)
-    return answer(documents)
+        return answer(document_registry_available=False, language=language)
+    return answer(documents, language=language)
 
 
 # ============================================================
@@ -4152,7 +4157,7 @@ else:
                 ].append(
                     {
                         "role": "assistant",
-                        "content": source_inventory_answer(),
+                        "content": source_inventory_answer(answer_language(current_prompt)),
                         "analysis_mode": active_thread["depth"],
                         "result": None
                     }

@@ -113,6 +113,15 @@ class WebAPITests(unittest.TestCase):
         self.assertEqual(response.json()["standalone_question"], "Bandiagara: regional needs evidence?")
         self.assertTrue(response.json()["answer"].startswith("French:"))
 
+    def test_french_source_inventory_uses_original_question_language(self):
+        fake=sys.modules["analysis_core"]
+        with patch.object(fake, "is_source_inventory_question", return_value=True), \
+             patch.object(fake, "source_inventory_answer", side_effect=lambda language: language+": catalogue") as catalogue:
+            response=self.post("/api/chat", {"question":"Quelles sont vos sources ?"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["answer"], "French: catalogue")
+        catalogue.assert_called_once_with("French")
+
     def test_followup_usage_includes_context_rewrite_without_prompt_logging(self):
         with patch("builtins.print") as logged:
             response = self.post("/api/chat", {
