@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-09",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-empty-followup-20261009",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "cc6f1927a26034b2943d65d73b90967993113c0a",
+  "published_code_commit": "ec15d118afdee5610c5d92eff53f900f553b24cf",
+  "tested_local_commit": "1a7cc9bb7b9dd2957b88836c190abe45243299bc",
+  "tested_and_published_tree": "26256f72587ebf1e165249a25d8978e80aac2c48",
+  "tree_match": true,
+  "improvement": "Preserve a verified zero-match project-date selection as an explicit empty subset. A later recognised English or French date follow-up now returns a bounded contextual response without reintroducing excluded identifiers, inheriting earlier dates or statuses, invoking a semantic rewrite, or starting an unnecessary source lookup.",
+  "reproduced_before": "A deterministic zero-match date answer omitted its result table. The next 'those projects' date question therefore had no structured selection and fell back to semantic context resolution.",
+  "qualification": {
+    "python_tests": 500,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "git_diff_check": "passed",
+    "languages": [
+      "English",
+      "French"
+    ],
+    "source_namespaces_preserved": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "api_boundary": "The structured empty-subset response returns no evidence because it makes no source fact claim; it performs zero model calls and zero external research calls.",
+    "context_guard": "The response carries an empty identifier list and no prior project identifier, reported date or status.",
+    "full_model_benchmark": false,
+    "actual_database_checks": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service still requires a signed-in Render dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy the exact candidate code SHA from this receipt to V4 test only, then verify English and French empty-subset continuity, the prior active-only follow-up, citations on fresh source answers, FONGIM selected ID 664, and Mali 815 to Gao 44."
+  },
+  "rollback": {
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the active-only or empty-subset fixes and do not replay accepted source migrations. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue with the next independent qualified item: French source-catalogue output."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source, response, dossier and account behavior retained; no database, service configuration, access, production or administration changes.",
+  "limitations": [
+    "Only recognised bounded project-date follow-up phrasings use this structured path.",
+    "No live acceptance, full benchmark or independent model-judge claim.",
+    "An empty contextual subset is not evidence about source portfolio coverage."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
