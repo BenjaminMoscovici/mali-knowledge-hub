@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-09",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-active-followup-20261009",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_receipt": "b18f4f390f6b86ae17acf0c316f534e264cab00a",
+  "published_code_commit": "fff04efcc4fa3e46557b2e6f85c59ce9583380c6",
+  "tested_local_commit": "cafe7859c3161c68835e1607ccaa6e4e0f7d30bb",
+  "tested_and_published_tree": "6c4e3f5207b714eb6f8b2f990b8679d42b93686b",
+  "tree_match": true,
+  "improvement": "Preserve an explicit active-only selection constraint from a recognised date-filter table during later date follow-ups. Carry selected source IDs and query constraints only; source dates and statuses are retrieved anew.",
+  "reproduced_before": "A date table selecting active FONGIM 664 was rewritten as a date-only query on the next follow-up, dropping active-only filtering.",
+  "qualification": {
+    "python_tests": 497,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "node_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "source_namespaces": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "languages": [
+      "English",
+      "French"
+    ],
+    "changed_status_cases": [
+      "Closed",
+      null
+    ],
+    "api_boundary": "Fresh source evidence retrieved once; no context rewrite call. Project internals remain filtered from public API evidence.",
+    "unfiltered_table_guard": "Active status cells and title wording do not introduce an active-only constraint.",
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "The available deployment action does not accept an exact commit and the configured branch is older/divergent. The dashboard session is signed out; secure authentication is required for exact-SHA deployment.",
+    "live_baseline_request": "Timed out after 90 seconds; no response or live acceptance obtained.",
+    "next_action": "Deploy published_code_commit to the authorised V4 test only, preserving previous_accepted_code as rollback. Verify EN/FR active-only follow-ups, fresh citations, selected FONGIM ID 664, and Mali 815 to Gao 44."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild this fix or replay accepted source migrations. Reconcile the latest candidate branch and service before deployment.",
+    "if_deployment_still_blocked": "Continue independently qualified local work, starting with empty-result subset continuity or French source-catalogue output."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM ID selection, source and geography functionality retained; no schema, account, access, original production or administration changes.",
+  "limitations": [
+    "Recognised single date table and bounded supported follow-up phrasings only.",
+    "No live or broad multilingual acceptance claim.",
+    "Source active labels do not establish actual current delivery."
+  ],
+  "spending": "Local tests require no external model calls. The timed-out live request has no returned cost metrics; its actual processing/cost is unknown."
+}
