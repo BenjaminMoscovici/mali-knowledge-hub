@@ -203,3 +203,77 @@ def test_two_date_tables_are_ambiguous_context():
     table='| Source identifier | Project | Reported end/closing |\n|---|---|---|\n| P513735 | A | 2027-05-01 |\n'
     assert resolve_slots('Which of those projects close in the next 12 months?',
                          [{'role':'assistant','content':table+'\n'+table}]) is None
+
+
+@pytest.mark.parametrize('language,followup', [
+    ('English', 'Which of those projects have a reported end date in 2027?'),
+    ('French', 'Lesquels de ces projets ont une date de fin en 2027 ?'),
+])
+@pytest.mark.parametrize('namespace,keep,mentioned', [
+    ('FONGIM', '664', '32'),
+    ('World Bank', 'P513735', 'P164032'),
+    ('EU IATI', 'XI-IATI-EC_INTPA-2023-PC-34257',
+     'XI-IATI-EC_INTPA-2023-PC-34274'),
+])
+def test_date_followup_uses_identifier_column_not_references_in_project_title(
+        language, followup, namespace, keep, mentioned):
+    from project_date_answers import answer
+    from datetime import date
+    label = lambda pid: 'FONGIM project ID '+pid if namespace == 'FONGIM' else pid
+    rows = [{'evidence_id':'E01', 'project_record':{
+        'source_namespace':namespace, 'source_id':keep, 'end_date':'2026-11-30',
+        'title':'Successor to '+label(mentioned)}}]
+    text, audit = answer(
+        f'For {namespace} project IDs {keep}, which records have a reported end date in 2026?',
+        rows, language, asof=date(2026,10,9))
+    assert audit['matching_ids'] == [keep] and mentioned in text
+    result = resolve_slots(followup, [{'role':'assistant','content':text}])
+    expected = [int(keep)] if namespace == 'FONGIM' else [keep]
+    assert result['state']['lookup_ids'] == expected
+    assert result['state']['context_only']
+    assert label(mentioned) not in result['standalone_question']
+    assert '2026-11-30' not in result['standalone_question']
+
+
+def test_fongim_date_table_excludes_ids_in_notes_and_rejects_ambiguous_tables():
+    table = ('| Source identifier | Project | Reported end/closing |\n'
+             '|---|---|---|\n'
+             '| FONGIM project ID 664 | Selected | 2026-11-30 |\n')
+    question = 'Which of those projects have a reported end date in 2027?'
+    note = '\nOther returned records: FONGIM project ID 32 — 2027-01-01.\n'
+    result = resolve_slots(question, [{'role':'assistant','content':table+note}])
+    assert result['state']['lookup_ids'] == [664]
+    assert resolve_slots(question, [{'role':'assistant','content':table+'\n'+table}]) is None
+
+
+def test_fongim_title_reference_never_expands_fresh_api_lookup():
+    from project_date_answers import answer
+    from project_references import fongim_project_ids
+    rows = [{'evidence_id':'E01', 'project_record':{
+        'source_namespace':'FONGIM', 'source_id':'664', 'end_date':'2026-11-30',
+        'title':'Successor to FONGIM project ID 32'}}]
+    text, _ = answer('For FONGIM project ID 664, which records have a reported end date in 2026?', rows)
+    calls = []
+    def research(question, **kwargs):
+        calls.append(question)
+        assert fongim_project_ids(question) == (664,)
+        return {'answer':'Fresh lookup [E01]', 'evidence':[
+            {'evidence_id':'E01','content':'Fresh source record, not the previous answer.'}]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('No semantic rewrite needed for the selected ID column')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Which of those projects have a reported end date in 2027?',
+                'prior_messages':[{'role':'assistant','content':text}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    body = response.json()
+    assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert body['metrics']['context_api_usage'] == {}
+    assert body['evidence'][0]['content'] == 'Fresh source record, not the previous answer.'

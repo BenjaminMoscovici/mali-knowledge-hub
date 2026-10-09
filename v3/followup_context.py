@@ -143,7 +143,7 @@ def resolve_project_end_dates(question, messages):
     source, ids = families[0]
     # A verified date table defines the narrowed set. Identifiers in the
     # excluded-record note remain attribution, not members of that set.
-    if source in ('World Bank', 'EU IATI'):
+    if source in ('FONGIM', 'World Bank', 'EU IATI'):
         lines = latest.splitlines()
         headers = [i for i,line in enumerate(lines) if line.lstrip().startswith('|')
                    and _fold(line.split('|')[1]) in ('source identifier', 'identifiant source')
@@ -156,6 +156,11 @@ def resolve_project_end_dates(question, messages):
                 if not line.lstrip().startswith('|'):
                     break
                 identifier = line.split('|')[1].strip()
+                if source == 'FONGIM':
+                    match = re.fullmatch(r'FONGIM project ID ([1-9]\d*)', identifier)
+                    if match:
+                        selected.append(int(match[1]))
+                    continue
                 pattern = r'P\d{6}' if source == 'World Bank' else r'XI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+'
                 if re.fullmatch(pattern, identifier):
                     selected.append(identifier)
