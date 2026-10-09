@@ -38,6 +38,7 @@ def test_missing_and_invalid_dates_are_unknown_not_zero_or_completed():
     assert 'not reported [E01]' in text
     assert 'Identifiers not returned in this selection: 696. [E02]' in text
     assert audit['missing_ids']==['696'] and not audit['matching_ids']
+    assert 'Selected source identifiers for this filter: none.' in text
     assert verify(text,rows)[1]['valid']
 
 

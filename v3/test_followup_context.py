@@ -353,3 +353,61 @@ def test_active_date_filter_api_preserves_constraint_and_uses_fresh_status():
     assert result['metrics']['context_resolution_method'] == 'structured_query_slots'
     assert result['metrics']['context_api_usage'] == {}
     assert result['evidence'][0]['content'] == 'Fresh source record'
+
+
+@pytest.mark.parametrize('language,question,marker,expected', [
+    ('English', 'Which of those projects have a reported end date in 2026?',
+     'Selected source identifiers for this filter: none.', 'current project subset is empty'),
+    ('French', 'Lesquels de ces projets ont une date de fin en 2026 ?',
+     'Identifiants source sélectionnés par ce filtre : aucun.', 'sous-ensemble actuel de projets est vide'),
+])
+def test_empty_date_subset_remains_empty_without_carrying_prior_facts(
+        language, question, marker, expected):
+    from datetime import date
+    from project_date_answers import answer
+    rows = [
+        {'evidence_id':'E01', 'project_record':{'source_namespace':'FONGIM',
+         'source_id':'664', 'end_date':'2026-11-30', 'status':'En cours', 'title':'A'}},
+        {'evidence_id':'E02', 'project_record':{'source_namespace':'FONGIM',
+         'source_id':'32', 'end_date':'2027-01-01', 'status':'En cours', 'title':'B'}},
+    ]
+    previous = ('Pour FONGIM, identifiants de projets 664, 32, quels dossiers ont une date de fin déclarée en 2025 ?'
+                if language == 'French' else
+                'For FONGIM project IDs 664 and 32, which records have a reported end date in 2025?')
+    text, audit = answer(previous, rows, language=language, asof=date(2026,10,9))
+    assert audit['matching_ids'] == [] and marker in text
+    resolved = resolve_slots(question, [{'role':'assistant','content':text}])
+    assert resolved['method'] == 'structured_empty_project_subset'
+    assert resolved['state']['lookup_ids'] == []
+    assert expected in resolved['direct_answer']
+    assert '2026-11-30' not in resolved['direct_answer']
+    assert '2027-01-01' not in resolved['direct_answer']
+    assert '664' not in resolved['direct_answer'] and '32' not in resolved['direct_answer']
+
+
+def test_empty_subset_api_skips_semantic_rewrite_and_research():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01','content':'Fresh source record', 'project_record':{
+        'source_namespace':'FONGIM','source_id':'664','status':'En cours',
+        'end_date':'2026-11-30','title':'Selected'}}
+    text, _ = answer('For FONGIM project ID 664, which records have a reported end date in 2025?', [row])
+    def forbidden(*args, **kwargs):
+        raise AssertionError('An empty selected subset needs no model or source lookup')
+    engine = SimpleNamespace(generate_grounded_answer=forbidden,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=forbidden,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Which of those projects have a reported end date in 2026?',
+                'prior_messages':[{'role':'assistant','content':text}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200
+    result = response.json()
+    assert result['metrics']['context_resolution_method'] == 'structured_empty_project_subset'
+    assert result['metrics']['model_calls'] == 0
+    assert result['metrics']['external_research_calls'] == 0
+    assert result['evidence'] == []
+    assert 'current project subset is empty' in result['answer']

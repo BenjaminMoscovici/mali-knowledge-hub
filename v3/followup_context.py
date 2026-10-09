@@ -131,6 +131,23 @@ def resolve_project_end_dates(question, messages):
     # A truncated long roster cannot establish its complete lookup set.
     if not latest or len(latest) >= 5900:
         return None
+    empty_markers = {
+        'Selected source identifiers for this filter: none.': (
+            'The current project subset is empty, so there are no projects to filter by another '
+            'reported end date. Start a new filter from the original project list if you want to '
+            'change the period.\n\nSelected source identifiers for this filter: none.'),
+        'Identifiants source sélectionnés par ce filtre : aucun.': (
+            'Le sous-ensemble actuel de projets est vide ; aucun projet ne peut donc être filtré '
+            'selon une autre date de fin déclarée. Lancez un nouveau filtre à partir de la liste '
+            'initiale des projets si vous souhaitez changer la période.\n\n'
+            'Identifiants source sélectionnés par ce filtre : aucun.'),
+    }
+    marker = next((marker for marker in empty_markers if marker in latest.splitlines()), None)
+    if marker:
+        return {'standalone_question': question, 'method': 'structured_empty_project_subset',
+                'direct_answer': empty_markers[marker],
+                'state': {'context_only': True, 'metric': 'project_reported_end_date',
+                          'lookup_ids': [], 'last_question': question}}
     from project_references import fongim_roster_ids
     fongim = fongim_roster_ids(latest)
     bank = tuple(sorted(set(re.findall(r'\bP\d{6}\b', latest.upper()))))

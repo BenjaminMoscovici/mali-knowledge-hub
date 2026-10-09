@@ -75,7 +75,8 @@ def answer(question, ledger, language=None, asof=None):
         identifier=('FONGIM project ID '+str(p['source_id'])) if source=='FONGIM' else str(p['source_id'])
         lines.append(f'| {cell(identifier)} | {cell(title)} | {cell(p.get("end_date"))} | {cell(p.get("status"))} | [{e["evidence_id"]}] |')
     if not matched:
-        lines=lines[:1]
+        lines=lines[:1]+['', ('Identifiants source sélectionnés par ce filtre : aucun.' if french else
+                              'Selected source identifiers for this filter: none.')]
     if other:
         lines += ['', ('Autres dossiers retournés : ' if french else 'Other returned records: ')+ '; '.join(
             f'{cell(e["project_record"]["source_id"])} — {cell(e["project_record"].get("end_date"))}'+(f' ({cell(e["project_record"].get("status"))})' if active_only else '')+f' [{e["evidence_id"]}]' for e in other)+'.']

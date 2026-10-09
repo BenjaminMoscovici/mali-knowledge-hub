@@ -421,6 +421,10 @@ async def chat(request):
             phase = "conversation_transform"
             async with _transform_limit:
                 result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+        elif slot_context and slot_context.get('direct_answer'):
+            phase = "structured_empty_project_subset"
+            result = {"answer": slot_context['direct_answer'], "evidence": [],
+                      "family_counts": {}}
         elif route["path"] == "simple_geography":
             phase = "structured_geography"
             result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
