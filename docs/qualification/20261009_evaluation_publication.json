@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-09",
+  "status": "LIVE_ACCEPTED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "source_branch": "mkh-professional-answers-20261006",
+  "candidate_branch": "mkh-qualified-publication-20261009",
+  "previous_accepted_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+  "previous_receipt_commit": "83343d851127b5734e92c3307e38df71557297fa",
+  "published_code_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "tested_local_commit": "660fab3864cc11fb7bd9ea8572097be7425e6313",
+  "tested_and_published_tree": "e3323584f55bf90026a7617286d0326ee552d2a9",
+  "published_tree_matches_tested_local_commit": true,
+  "improvement": "Restore persistent publication of the existing reviewed PADEL finding package. Import rejects unsupported finding categories before writing a release; additive database constraint accepts reviewed reach and methodology categories while retaining all evidence guards.",
+  "root_cause": {
+    "package_categories": [
+      "reported_reach",
+      "methodology_limits",
+      "recommendations"
+    ],
+    "previous_database_categories": [
+      "results",
+      "constraints",
+      "recommendations"
+    ],
+    "baseline_padel_records": 0,
+    "baseline_padel_spans": 3,
+    "baseline_active_release": false,
+    "baseline_local_adapter": "Could already serve bundled findings; this repairs durable publication rather than claiming a newly acquired corpus."
+  },
+  "qualification": {
+    "protected_python_checks": 374,
+    "frontend_checks": 15,
+    "new_import_checks": 9,
+    "actual_database_constraint_cases": 15,
+    "database_test_method": "Before/after explicit transaction rollback: five supported kinds, six required-field omissions, four invalid payloads. All supported kinds accepted after migration; malformed payloads rejected; original findings retained.",
+    "git_diff_check": "passed",
+    "full_benchmark_rerun": false,
+    "independent_model_judge": false
+  },
+  "migration": {
+    "file": "v3/supabase/migrations/20261009174231_evaluation_finding_kinds.sql",
+    "sha256": "7e13de38e4011a9440a61ca937de755abdfdb86b0df1246e43b02c8036d2ac3f",
+    "cli_generated_version": "20261009174231",
+    "applied_history_version": "20261009174421",
+    "name": "evaluation_finding_kinds",
+    "guard": "Exact previous constraint fingerprint checked under table lock; abort on unexpected schema drift.",
+    "preservation": "RLS, grants and existing source rows unchanged; advisor finding counts unchanged."
+  },
+  "persistent_acceptance": {
+    "package_records": 257,
+    "persisted_records": 257,
+    "identical_record_payloads_and_identity_fields": 257,
+    "previous_records_retained": 254,
+    "padel_records": 3,
+    "padel_spans": 3,
+    "padel_active_release_matches_package": true,
+    "unchanged_dataset_record_counts": {
+      "mli-world-bank-v3": 215,
+      "mli-iati-worldbank": 36,
+      "mli-ieg-p144442": 3
+    },
+    "verification": "Independent SQL comparison of every package record UUID, release/span identifiers, source type, reference dates and JSONB payload."
+  },
+  "live_acceptance": {
+    "padel": {
+      "question": "For exact World Bank project P160641 (PADEL-Mali), what reported reach and methodological limitations are documented in the loaded IEG evaluation?",
+      "hub_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+      "model_calls": 2,
+      "citation_audit_valid": true,
+      "cited_ids": [
+        "E18",
+        "E19"
+      ],
+      "reported_farmers": 346465,
+      "target_farmers": 340000,
+      "reach_locator": "ICRR0024442 / P160641 / PDF page 5",
+      "methodology_locator": "ICRR0024442 / P160641 / PDF pages 12, 13",
+      "review": "Answer distinguishes historical reach, attribution limitations and current coverage; cited evidence resolves to the matching project/category/pages."
+    },
+    "protected": {
+      "mali": {
+        "answer": "Under the INSTAT **2023 framework**, published in **January 2026**, Mali has **19 regions plus one district (Bamako), 159 cercles and 815 communes**. [E01]\n\nThe reference hierarchy is Country → Region → Cercle → Commune → Locality. Bamako follows Country → District → Arrondissement → Locality. The seven arrondissement rows cover Bamako only. These are the units in this edition, not verification of every later legal amendment. COD v03 has 20 admin1 and 160 admin2 records: Bamako is also represented at admin2; this does not add a 160th cercle to the INSTAT hierarchy. Cross-version matches remain proposals and do not establish identical boundaries. [E01, E02]",
+        "standalone_question": "How many communes are there in Mali?",
+        "hub_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+        "model_calls": 0
+      },
+      "gao": {
+        "answer": "- Mali (country) → GAO (region). [E01]\n  44 recorded commune(s). [E01]\n\nReference: RGPH5 — Répertoire des localités du Mali en 2023, edition-2023-published-2026-01. [E01]\n\nThe reference hierarchy is Country → Region → Cercle → Commune → Locality. Bamako follows Country → District → Arrondissement → Locality. The seven arrondissement rows cover Bamako only. These are the units in this edition, not verification of every later legal amendment. COD v03 has 20 admin1 and 160 admin2 records: Bamako is also represented at admin2; this does not add a 160th cercle to the INSTAT hierarchy. Cross-version matches remain proposals and do not establish identical boundaries. [E01, E02]",
+        "standalone_question": "How many communes are in gao region?",
+        "hub_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+        "model_calls": 0
+      },
+      "fongim": {
+        "answer": "In FONGIM, **0 of 1 requested records** report an end/closing date in **2027**. [E09]\n\nOther returned records: 664 — 2026-11-30 [E09].\n\nReported dates and status do not establish actual completion or current delivery. Source update/sync: 2026-08-28.  [E09]",
+        "standalone_question": "For FONGIM project IDs 664, which records have a reported end date in 2027?",
+        "hub_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+        "model_calls": 0
+      }
+    },
+    "test_harness_note": "A protected request without the required Origin header was rejected with 403. Corrected same-origin requests all passed; application unchanged."
+  },
+  "deployment": "Exact tested code commit manually deployed to existing V4 test environment; all four accepted response metrics match published_code_commit.",
+  "rollback": {
+    "application_commit": "69de89b0e2e232d6f8ed86e2fa4c0af92171ae17",
+    "schema": "Retain additive compatible schema and published reviewed source facts; do not delete evidence or restore the narrower constraint."
+  },
+  "preservation": "Prior FONGIM, EU, geography, source, response, dossier and date-filter work retained. Existing branches advanced only by guarded fast-forward. Administration deployment unchanged.",
+  "limitations": [
+    "Two reviewed IEG studies and six findings remain a small historical collection.",
+    "Targeted protected qualification; no full benchmark or independent judge claim.",
+    "Historical reach is not current local coverage or causal impact."
+  ]
+}
