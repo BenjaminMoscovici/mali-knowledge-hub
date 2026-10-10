@@ -120,17 +120,17 @@ def resolve_project_end_dates(question, messages):
     english = re.fullmatch(r'which of (?:those|these) '
                           r'(?:(?P<english_source>fongim|world bank|eu) )?projects '
                           r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                          rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|this month|next month|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                          rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|this month|next month|last month|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
                           rf'(?P<english_window>{english_window}))', q)
     english_them = re.fullmatch(r'which of them '
                                r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                               rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|this month|next month|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                               rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|this month|next month|last month|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
                                rf'(?P<english_window>{english_window}))', q)
     french = re.fullmatch(r'(?:lesquels de ces projets'
                          r'(?: (?P<french_source>fongim|de la banque mondiale|de l ue|ue))?'
                          r'|lesquels d entre eux|lesquels parmi eux) '
                          r'ont une date de (?:fin|cloture) '
-                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|(?P<french_this_year>cette annee)|(?P<french_next_year>l annee prochaine|l an prochain)|(?P<french_this_month>ce mois ci)|(?P<french_next_month>le mois prochain)|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
+                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|(?P<french_this_year>cette annee)|(?P<french_next_year>l annee prochaine|l an prochain)|(?P<french_this_month>ce mois ci)|(?P<french_next_month>le mois prochain)|(?P<french_last_month>le mois dernier)|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
                          rf'(?P<french_window>{french_window}))', q)
     matched = english or english_them or french
     if not matched:

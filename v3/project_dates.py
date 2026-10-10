@@ -36,7 +36,8 @@ def calendar_end_year(question, asof=None):
 def reported_end_window(question, asof=None):
     """Unambiguous explicit end-date windows, inclusive, anchored to UTC today.
 
-    Calendar months retain the day or clamp it to the last day of the month.
+    Rolling months retain the day or clamp it to the last day of the month.
+    Named calendar months always use their exact first and last day.
     Unknown, conflicting and multiple periods defer to semantic analysis.
     """
     q = _fold(question)
@@ -49,19 +50,25 @@ def reported_end_window(question, asof=None):
     ranges = re.findall(r'\b(?:between|from|entre|du) (\d{4}-\d{2}-\d{2}) (?:and|to|et|au) (\d{4}-\d{2}-\d{2})\b', question.lower())
     this_month = bool(re.search(r'\b(?:this month|ce mois ci)\b', q))
     next_month = bool(re.search(r'\b(?:next month|(?:le )?mois prochain)\b', q))
-    if len(relative)+len(ranges)+int(this_month)+int(next_month) != 1:
+    last_month = bool(re.search(r'\b(?:last month|(?:le )?mois dernier)\b', q))
+    if len(relative)+len(ranges)+int(this_month)+int(next_month)+int(last_month) != 1:
         return None
     if ranges:
         start,end = map(parsed_date,ranges[0])
         if not start or not end or end < start or len(re.findall(r'\d{4}-\d{2}-\d{2}', question)) != 2:
             return None
-    elif this_month or next_month:
+    elif this_month or next_month or last_month:
         # Freeze a conversational calendar period to explicit bounds. A second
         # year or named period must never be silently discarded.
-        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', q):
+        other_period = re.sub(r'\b(?:last month|(?:le )?mois dernier)\b', '', q)
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', other_period):
             return None
         if next_month:
             ordinal = asof.year * 12 + asof.month
+            year, month = divmod(ordinal, 12)
+            month += 1
+        elif last_month:
+            ordinal = asof.year * 12 + asof.month - 2
             year, month = divmod(ordinal, 12)
             month += 1
         else:
@@ -70,7 +77,8 @@ def reported_end_window(question, asof=None):
         end = date(year, month, calendar.monthrange(year, month)[1])
     else:
         # A second named year/date/calendar period is not silently ignored.
-        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', q):
+        other_period = re.sub(r'\b(?:last month|(?:le )?mois dernier)\b', '', q)
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', other_period):
             return None
         n,unit=relative[0];n=int(n)
         if not 1 <= n <= 36:
