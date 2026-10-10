@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-10",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-mixed-source-followup-20261010",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "cf460bd5e0955ec8def3fe1d56dc57d57765e8ba",
+  "published_code_commit": "6269836a0773a4f997321682a39ba9d7bb1ab521",
+  "tested_local_commit": "fef5c323cfaebbf0dfed7c79e2fac0f5ba885bdc",
+  "tested_and_published_tree": "b8f1c29c9e726831300f0f9e12f3fb2b7428cfba",
+  "tree_match": true,
+  "improvement": "When a prior project roster contains multiple source families, an English or French reported-end-date follow-up that explicitly names FONGIM, World Bank or EU now carries only that source family's identifiers into a fresh lookup. A generic mixed-source follow-up remains ambiguous and continues through semantic resolution instead of silently choosing or merging families.",
+  "reproduced_before": "Explicit follow-ups such as 'Which of those FONGIM projects have a reported end date in 2026?' and 'Which of those World Bank projects end in 2027?' returned no structured resolution when the prior answer also mentioned another source family.",
+  "qualification": {
+    "python_tests": 512,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "focused_continuity_tests": 71,
+    "focused_protected_tests": 139,
+    "python_syntax_check": "passed",
+    "node_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "languages": [
+      "English",
+      "French"
+    ],
+    "source_families": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "fresh_retrieval_guard": "Only source identifiers and the requested time constraint are carried. Prior dates, statuses, reach claims and other source-family identifiers are excluded from the standalone question.",
+    "ambiguity_guard": "A mixed roster without an explicitly named source family is not resolved deterministically.",
+    "api_guard": "The explicit-source path skips semantic rewriting and invokes one fresh research lookup in the API test.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a signed-in Render dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test explicit English and French mixed-roster source selection, the generic ambiguity guard, prior catalogue and subset regressions, fresh citations, FONGIM selected ID 664, and Mali 815 to Gao 44."
+  },
+  "rollback": {
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the active-only, empty-subset, French catalogue or mixed-source disambiguation fixes. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue the next bounded Q-006 topic-change or time-filter continuity case after reproducing it."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "Only recognised reported-end-date follow-up wording and explicitly named source families use this deterministic path.",
+    "Long or truncated rosters, more than twelve identifiers, unnamed mixed-source sets and analytical cross-source questions continue through semantic resolution.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
