@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-10",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-next-month-followup-20261010",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "c4743150faf49ea05ef2ff2f5b1b038d7e8349d5",
+  "published_code_commit": "c8543104b20d2cca490cc1337ce827d11904430f",
+  "tested_local_commit": "88ef92e11598abb5e3a0a2febe67f12fa0382a74",
+  "tested_and_published_tree": "7ae1d9e51fbf2f71694f358d359923171397a5ee",
+  "tree_match": true,
+  "improvement": "English ‘next month’ and French ‘le mois prochain’ reported-end-date follow-ups now retain the selected FONGIM, World Bank or EU project identifiers before fresh source retrieval.",
+  "reproduced_before": "Both next-calendar-month forms returned no structured resolution and lost the selected project set.",
+  "qualification": {
+    "python_tests": 567,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "focused_continuity_date_api_tests": 139,
+    "python_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "languages": [
+      "English",
+      "French"
+    ],
+    "source_families": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "fresh_retrieval_guard": "Only selected source identifiers, a previously established active-only constraint and the newly requested calendar month carry forward. Prior dates, statuses, reach claims and answer facts are excluded.",
+    "period_guard": "The next UTC calendar month is frozen to exact inclusive first-day and last-day bounds, including December-to-January rollover and leap February, before fresh retrieval.",
+    "ambiguity_guard": "Named competing periods, unnamed mixed-source rosters, compound periods and analytical additions continue through semantic resolution.",
+    "api_guard": "The bounded next-calendar-month path skips semantic rewriting and invokes exactly one fresh research lookup in the API test.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a secure signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test bilingual next-month, current-month, current-year, next-year, explicit-range, mixed-roster, active-only, catalogue, empty-subset, FONGIM selected-ID and geography regressions."
+  },
+  "rollback": {
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the active-only, empty-subset, French catalogue, mixed-source, explicit-range, next-calendar-year, French current-calendar-year, French-pronoun, current-month or next-month fixes. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue the next bounded Q-006 topic-change or supported-time-filter continuity case after reproducing it."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "Only unambiguous ‘next month’ and ‘le mois prochain’ reported-end-date wording uses the new deterministic next-calendar-month path.",
+    "Long or truncated rosters, more than twelve identifiers, unnamed mixed-source sets, compound periods and analytical cross-source questions continue through semantic resolution.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
