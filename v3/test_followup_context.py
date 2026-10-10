@@ -411,3 +411,69 @@ def test_empty_subset_api_skips_semantic_rewrite_and_research():
     assert result['metrics']['external_research_calls'] == 0
     assert result['evidence'] == []
     assert 'current project subset is empty' in result['answer']
+
+
+@pytest.mark.parametrize('question,source,expected,excluded', [
+    ('Which of those FONGIM projects have a reported end date in 2026?',
+     'FONGIM', [32, 664], ['P164032', 'P513735', 'XI-IATI-EC_INTPA-2023-PC-34274']),
+    ('Which of those World Bank projects end in 2027?',
+     'World Bank', ['P164032', 'P513735'], ['XI-IATI-EC_INTPA-2023-PC-34274']),
+    ('Which of those EU projects have a reported closing date in 2026?',
+     'EU IATI', ['XI-IATI-EC_INTPA-2023-PC-34274'], ['32', '664', 'P164032', 'P513735']),
+    ('Lesquels de ces projets FONGIM ont une date de fin en 2026 ?',
+     'FONGIM', [32, 664], ['P164032', 'P513735', 'XI-IATI-EC_INTPA-2023-PC-34274']),
+    ('Lesquels de ces projets de la Banque mondiale ont une date de fin en 2027 ?',
+     'World Bank', ['P164032', 'P513735'], ['XI-IATI-EC_INTPA-2023-PC-34274']),
+    ("Lesquels de ces projets de l'UE ont une date de clôture en 2026 ?",
+     'EU IATI', ['XI-IATI-EC_INTPA-2023-PC-34274'], ['32', '664', 'P164032', 'P513735']),
+])
+def test_explicit_source_disambiguates_mixed_project_roster(
+        question, source, expected, excluded):
+    mixed = ('FONGIM records: Project ID 664; Project ID 32. '
+             'World Bank records: P513735 and P164032. '
+             'EU records: XI-IATI-EC_INTPA-2023-PC-34274. '
+             'All allegedly ended in 2099 and reached 999 people.')
+    result = resolve_slots(question, [{'role':'assistant', 'content':mixed}])
+    assert result['state']['source'] == source
+    assert result['state']['lookup_ids'] == expected
+    assert result['state']['context_only']
+    assert all(value not in result['standalone_question'] for value in excluded)
+    assert '2099' not in result['standalone_question']
+    assert '999' not in result['standalone_question']
+
+
+def test_mixed_roster_without_explicit_source_remains_ambiguous():
+    mixed = 'FONGIM records: Project ID 664. World Bank records: P513735.'
+    question = 'Which of those projects have a reported end date in 2026?'
+    assert resolve_slots(question, [{'role':'assistant', 'content':mixed}]) is None
+
+
+def test_mixed_roster_explicit_source_api_retrieves_freshly_without_rewrite():
+    calls = []
+    mixed = ('FONGIM records: Project ID 664; Project ID 32. '
+             'World Bank records: P513735 and P164032. All ended in 2099.')
+    def research(question, **kwargs):
+        calls.append(question)
+        assert 'FONGIM' in question and '32, 664' in question
+        assert 'P513735' not in question and 'P164032' not in question
+        assert '2099' not in question
+        return {'answer':'Fresh FONGIM lookup [E01]', 'evidence':[
+            {'evidence_id':'E01', 'content':'Fresh source record'}]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('An explicitly named source needs no semantic rewrite')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Which of those FONGIM projects have a reported end date in 2026?',
+                'prior_messages':[{'role':'assistant', 'content':mixed}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    body = response.json()
+    assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert body['metrics']['context_api_usage'] == {}
+    assert body['evidence'][0]['content'] == 'Fresh source record'

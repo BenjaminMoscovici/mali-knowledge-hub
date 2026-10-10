@@ -113,17 +113,32 @@ def resolve_project_end_dates(question, messages):
     identity context survives; the engine freshly retrieves every record.
     """
     q = _fold(question)
-    english = re.fullmatch(r'which of (?:those projects|these projects|them) '
+    english = re.fullmatch(r'which of (?:those|these) '
+                          r'(?:(?P<english_source>fongim|world bank|eu) )?projects '
                           r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                          r'(?:in )?((?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
-    french = re.fullmatch(r'lesquels de ces projets ont une date de (?:fin|cloture) '
-                         r'(?:en ((?:19|20)\d{2})|dans les \d{1,2} prochains? (?:jours?|semaines?|mois))', q)
-    matched = english or french
+                          r'(?:in )?(?P<english_period>(?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
+    english_them = re.fullmatch(r'which of them '
+                               r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
+                               r'(?:in )?(?P<english_period>(?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
+    french = re.fullmatch(r'lesquels de ces projets'
+                         r'(?: (?P<french_source>fongim|de la banque mondiale|de l ue|ue))? '
+                         r'ont une date de (?:fin|cloture) '
+                         r'(?:en (?P<french_period>(?:19|20)\d{2})|dans les \d{1,2} prochains? (?:jours?|semaines?|mois))', q)
+    matched = english or english_them or french
     if not matched:
         return None
+    source_labels = {
+        'fongim': 'FONGIM', 'world bank': 'World Bank',
+        'de la banque mondiale': 'World Bank', 'eu': 'EU IATI',
+        'ue': 'EU IATI', 'de l ue': 'EU IATI',
+    }
+    requested_source = source_labels.get(
+        (matched.groupdict().get('english_source') or
+         matched.groupdict().get('french_source') or ''))
     from project_dates import reported_end_window
     window = reported_end_window(question)
-    period = english[1] if english else french[1]
+    period = (matched.groupdict().get('english_period') or
+              matched.groupdict().get('french_period'))
     if not window and (period is None or 'next' in period):
         return None
     latest = next((m.get('content','') for m in reversed(messages)
@@ -155,6 +170,9 @@ def resolve_project_end_dates(question, messages):
         r'\bXI-IATI-EC_(?:INTPA|ECHO)-[^\s*;,\]\)]+', latest))))
     families = [(source, ids) for source, ids in
                 [('FONGIM',fongim),('World Bank',bank),('EU IATI',eu)] if ids]
+    if requested_source:
+        families = [(source, ids) for source, ids in families
+                    if source == requested_source]
     if len(families) != 1 or len(families[0][1]) > 12:
         return None
     source, ids = families[0]
