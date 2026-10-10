@@ -47,12 +47,20 @@ def reported_end_window(question, asof=None):
     relative += re.findall(r'\b(\d{1,2}) prochains? (jours?|semaines?|mois)\b', q)
     relative += [(n,u) for n,u in re.findall(r'\b(\d{1,2}) (jours?|semaines?|mois) (?:a venir|prochains?)\b', q)]
     ranges = re.findall(r'\b(?:between|from|entre|du) (\d{4}-\d{2}-\d{2}) (?:and|to|et|au) (\d{4}-\d{2}-\d{2})\b', question.lower())
-    if len(relative)+len(ranges) != 1:
+    this_month = bool(re.search(r'\b(?:this month|ce mois ci)\b', q))
+    if len(relative)+len(ranges)+int(this_month) != 1:
         return None
     if ranges:
         start,end = map(parsed_date,ranges[0])
         if not start or not end or end < start or len(re.findall(r'\d{4}-\d{2}-\d{2}', question)) != 2:
             return None
+    elif this_month:
+        # Freeze a conversational calendar period to explicit bounds. A second
+        # year or named period must never be silently discarded.
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', q):
+            return None
+        start = date(asof.year, asof.month, 1)
+        end = date(asof.year, asof.month, calendar.monthrange(asof.year, asof.month)[1])
     else:
         # A second named year/date/calendar period is not silently ignored.
         if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', q):

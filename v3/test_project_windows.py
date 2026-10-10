@@ -12,6 +12,8 @@ from project_dates import reported_end_window, calendar_end_year, select_example
  ('Projects ending in the next 1 month',date(2024,1,31),('2024-01-31','2024-02-29')),
  ('Projects ending in the next 12 months',date(2024,2,29),('2024-02-29','2025-02-28')),
  ('Projects ending in the next 2 weeks',date(2026,10,8),('2026-10-08','2026-10-22')),
+ ('Which projects have reported end dates this month?',date(2026,10,8),('2026-10-01','2026-10-31')),
+ ('Quels projets ont une date de fin ce mois-ci ?',date(2024,2,8),('2024-02-01','2024-02-29')),
  ('Projects closing between 2026-12-01 and 2027-07-01',date(2026,10,8),('2026-12-01','2027-07-01')),
  ('Projets avec date de fin du 2027-01-01 au 2027-12-31',date(2026,10,8),('2027-01-01','2027-12-31')),
 ])
@@ -25,6 +27,8 @@ def test_calendar_months_explicit_bounds_and_french(q,asof,wanted):
  'Projects ending in the next 0 months', 'Projects ending in the next 99 months',
  'Projects closing in the next 6 months or next 12 months',
  'Projects closing in the next 12 months and in 2028',
+ 'Projects closing this month or next year',
+ 'Projets avec une date de fin ce mois-ci ou en 2028',
  'Projects ending between 2027-01-01 and 2026-01-01',
  'Projects ending between 2026-02-30 and 2027-01-01',
 ])

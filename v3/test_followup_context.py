@@ -788,6 +788,83 @@ def test_french_pronoun_followup_api_retrieves_once_without_rewrite():
     assert body['evidence'][0]['content'] == 'Fresh source record'
 
 
+@pytest.mark.parametrize('roster,question,source,ids', [
+    ('FONGIM project ID 32; Project ID 664.',
+     'Which of those projects end this month?', 'FONGIM', [32, 664]),
+    ('World Bank P144442 and P176347.',
+     'Which of them have reported closing dates this month?',
+     'World Bank', ['P144442', 'P176347']),
+    ('EU XI-IATI-EC_INTPA-2023-PC-34274.',
+     'Lesquels d’entre eux ont une date de fin ce mois-ci ?',
+     'EU IATI', ['XI-IATI-EC_INTPA-2023-PC-34274']),
+])
+def test_current_calendar_month_followups_keep_ids_and_freeze_window(
+        roster, question, source, ids):
+    import calendar
+    from datetime import datetime, timezone
+    result = resolve_slots(question, [{'role':'assistant', 'content':
+        roster + ' End date 2099-12-31; reported reach 999.'}])
+    now = datetime.now(timezone.utc).date()
+    expected_start = now.replace(day=1).isoformat()
+    expected_end = now.replace(day=calendar.monthrange(now.year, now.month)[1]).isoformat()
+    assert result['state']['source'] == source
+    assert result['state']['lookup_ids'] == ids
+    assert result['state']['time_period'] == [expected_start, expected_end]
+    assert result['standalone_question'].endswith(
+        (f'entre {expected_start} et {expected_end} ?' if question.startswith('Lesquels')
+         else f'between {expected_start} and {expected_end}?'))
+    assert '2099' not in result['standalone_question']
+    assert '999' not in result['standalone_question']
+
+
+def test_calendar_month_followup_preserves_active_only_and_defers_compounds():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01', 'project_record':{'source_namespace':'FONGIM',
+        'source_id':'664', 'status':'En cours', 'end_date':'2026-10-30',
+        'title':'Selected'}}
+    active_table, _ = answer(
+        'For FONGIM project ID 664, which active records have a reported end date in 2026?',
+        [row], language='French')
+    active = resolve_slots(
+        'Lesquels parmi eux ont une date de fin ce mois-ci ?',
+        [{'role':'assistant', 'content':active_table}])
+    assert active['state']['active_only'] is True
+    assert active['state']['lookup_ids'] == [664]
+    assert 'dossiers actifs' in active['standalone_question']
+    assert resolve_slots(
+        'Lesquels parmi eux ont une date de fin ce mois-ci ou l’année prochaine ?',
+        [{'role':'assistant', 'content':active_table}]) is None
+
+
+def test_calendar_month_followup_api_retrieves_once_without_rewrite():
+    calls = []
+    def research(question, **kwargs):
+        calls.append(question)
+        assert 'FONGIM' in question and '32, 664' in question
+        assert '2099' not in question and 'between ' in question
+        return {'answer':'Fresh calendar-month lookup [E01]', 'evidence':[
+            {'evidence_id':'E01', 'content':'Fresh source record'}]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('A bounded calendar-month filter needs no semantic rewrite')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Which of those projects end this month?',
+                'prior_messages':[{'role':'assistant', 'content':
+                    'FONGIM project ID 32; Project ID 664. All ended in 2099.'}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    body = response.json()
+    assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert body['metrics']['context_api_usage'] == {}
+    assert body['evidence'][0]['content'] == 'Fresh source record'
+
+
 def test_french_current_calendar_year_api_retrieves_freshly_without_rewrite():
     from datetime import datetime, timezone
     calls = []
