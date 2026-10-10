@@ -665,3 +665,86 @@ def test_next_calendar_year_api_retrieves_freshly_without_rewrite():
     assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
     assert body['metrics']['context_api_usage'] == {}
     assert body['evidence'][0]['content'] == 'Fresh source record'
+
+
+@pytest.mark.parametrize('roster,question,source,ids', [
+    ('FONGIM project ID 32; Project ID 664.',
+     'Lesquels de ces projets ont une date de fin cette année ?',
+     'FONGIM', [32, 664]),
+    ('World Bank P144442 and P176347.',
+     'Lesquels de ces projets ont une date de clôture cette année ?',
+     'World Bank', ['P144442', 'P176347']),
+    ('EU XI-IATI-EC_INTPA-2023-PC-34274.',
+     'Lesquels de ces projets ont une date de fin cette année ?',
+     'EU IATI', ['XI-IATI-EC_INTPA-2023-PC-34274']),
+])
+def test_french_current_calendar_year_followups_keep_ids_and_freeze_year(
+        roster, question, source, ids):
+    from datetime import datetime, timezone
+    result = resolve_slots(question, [{'role':'assistant', 'content':
+        roster + ' End date 2099-12-31; reported reach 999.'}])
+    expected_year = str(datetime.now(timezone.utc).year)
+    assert result['state']['source'] == source
+    assert result['state']['lookup_ids'] == ids
+    assert result['state']['time_period'] == [expected_year]
+    assert result['standalone_question'].endswith(f'en {expected_year} ?')
+    assert 'cette année' not in result['standalone_question'].lower()
+    assert '2099' not in result['standalone_question']
+    assert '999' not in result['standalone_question']
+
+
+def test_french_current_calendar_year_preserves_active_only_and_named_mixed_source():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01', 'project_record':{'source_namespace':'World Bank',
+        'source_id':'P513735', 'status':'Active', 'end_date':'2026-11-30',
+        'title':'Selected'}}
+    active_table, _ = answer(
+        'For World Bank project IDs P513735, which active records have a reported end date in 2026?',
+        [row])
+    active = resolve_slots(
+        'Lesquels de ces projets ont une date de fin cette année ?',
+        [{'role':'assistant', 'content':active_table}])
+    assert active['state']['active_only'] is True
+    assert active['state']['lookup_ids'] == ['P513735']
+    assert 'dossiers actifs' in active['standalone_question']
+
+    mixed = ('FONGIM project ID 664. World Bank P513735 and P164032. '
+             'EU XI-IATI-EC_INTPA-2023-PC-34274.')
+    selected = resolve_slots(
+        'Lesquels de ces projets de la Banque mondiale ont une date de fin cette année ?',
+        [{'role':'assistant', 'content':mixed}])
+    assert selected['state']['source'] == 'World Bank'
+    assert selected['state']['lookup_ids'] == ['P164032', 'P513735']
+    assert '664' not in selected['standalone_question']
+    assert 'XI-IATI' not in selected['standalone_question']
+
+
+def test_french_current_calendar_year_api_retrieves_freshly_without_rewrite():
+    from datetime import datetime, timezone
+    calls = []
+    expected_year = str(datetime.now(timezone.utc).year)
+    def research(question, **kwargs):
+        calls.append(question)
+        assert 'FONGIM' in question and '32, 664' in question
+        assert expected_year in question and '2099' not in question
+        return {'answer':'Fresh current-year lookup [E01]', 'evidence':[
+            {'evidence_id':'E01', 'content':'Fresh source record'}]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('A bounded current-calendar-year filter needs no semantic rewrite')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':'Lesquels de ces projets ont une date de fin cette année ?',
+                'prior_messages':[{'role':'assistant', 'content':
+                    'FONGIM project ID 32; Project ID 664. All ended in 2099.'}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    body = response.json()
+    assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert body['metrics']['context_api_usage'] == {}
+    assert body['evidence'][0]['content'] == 'Fresh source record'

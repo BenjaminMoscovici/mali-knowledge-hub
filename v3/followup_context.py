@@ -129,7 +129,7 @@ def resolve_project_end_dates(question, messages):
     french = re.fullmatch(r'lesquels de ces projets'
                          r'(?: (?P<french_source>fongim|de la banque mondiale|de l ue|ue))? '
                          r'ont une date de (?:fin|cloture) '
-                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|(?P<french_next_year>l annee prochaine|l an prochain)|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
+                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|(?P<french_this_year>cette annee)|(?P<french_next_year>l annee prochaine|l an prochain)|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
                          rf'(?P<french_window>{french_window}))', q)
     matched = english or english_them or french
     if not matched:
