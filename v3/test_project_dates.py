@@ -15,6 +15,25 @@ def test_calendar_end_year_preserves_single_period(question,year):
     assert calendar_end_year(question,date(2026,10,7)) == year
 
 
+@pytest.mark.parametrize('question', [
+    'Which projects have reported end dates next year?',
+    'Quels projets ont une date de fin l’année prochaine ?',
+    'Quels projets ont une date de clôture l’an prochain ?',
+])
+def test_next_calendar_year_is_anchored_and_not_a_rolling_window(question):
+    assert calendar_end_year(question, date(2026,10,7)) == 2027
+
+
+@pytest.mark.parametrize('question', [
+    'Which projects end this year or next year?',
+    'Which projects end in 2028 or next year?',
+    'Which projects end in the next 3 months or next year?',
+    'Quels projets finissent cette année ou l’année prochaine ?',
+])
+def test_compound_calendar_periods_defer(question):
+    assert calendar_end_year(question, date(2026,10,7)) is None
+
+
 def test_calendar_dates_include_closed_and_early_year_records_without_window_leak():
     rows=[{'project_name':'Early closed','status':'Clôturé','end_date':'2026-01-01'},
           {'project_name':'Overdue active','status':'En cours','end_date':'2026-08-31'},

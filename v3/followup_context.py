@@ -1,6 +1,5 @@
 """Bounded query-slot carry-over. History is context, never factual evidence."""
 import re
-from datetime import datetime, timezone
 from query_router import classify
 from source_wave import _fold
 
@@ -121,16 +120,16 @@ def resolve_project_end_dates(question, messages):
     english = re.fullmatch(r'which of (?:those|these) '
                           r'(?:(?P<english_source>fongim|world bank|eu) )?projects '
                           r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                          rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                          rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
                           rf'(?P<english_window>{english_window}))', q)
     english_them = re.fullmatch(r'which of them '
                                r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                               rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                               rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|next year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
                                rf'(?P<english_window>{english_window}))', q)
     french = re.fullmatch(r'lesquels de ces projets'
                          r'(?: (?P<french_source>fongim|de la banque mondiale|de l ue|ue))? '
                          r'ont une date de (?:fin|cloture) '
-                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
+                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|(?P<french_next_year>l annee prochaine|l an prochain)|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
                          rf'(?P<french_window>{french_window}))', q)
     matched = english or english_them or french
     if not matched:
@@ -143,15 +142,14 @@ def resolve_project_end_dates(question, messages):
     requested_source = source_labels.get(
         (matched.groupdict().get('english_source') or
          matched.groupdict().get('french_source') or ''))
-    from project_dates import reported_end_window
+    from project_dates import calendar_end_year, reported_end_window
     window = reported_end_window(question)
-    period = (matched.groupdict().get('english_period') or
-              matched.groupdict().get('french_period'))
+    year = calendar_end_year(question)
     matched_window = (matched.groupdict().get('english_window') or
                       matched.groupdict().get('french_window'))
     if matched_window and not window:
         return None
-    if not window and (period is None or 'next' in period):
+    if not window and year is None:
         return None
     latest = next((m.get('content','') for m in reversed(messages)
                    if m.get('role') == 'assistant' and m.get('content')), '')
@@ -232,7 +230,6 @@ def resolve_project_end_dates(question, messages):
         date_filter = f'entre {start} et {end}' if french else f'between {start} and {end}'
         time_period = list(window)
     else:
-        year = datetime.now(timezone.utc).year if period == 'this year' else int(period)
         date_filter = f'en {year}' if french else f'in {year}'
         time_period = [str(year)]
     records_fr = 'dossiers actifs' if active_only else 'dossiers'

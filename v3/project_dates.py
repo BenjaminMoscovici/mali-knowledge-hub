@@ -17,14 +17,20 @@ def calendar_end_year(question, asof=None):
     q = _fold(question)
     if reported_end_window(question, asof):
         return None
-    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends? in|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
+    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends?|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
         return None
     years = {int(y) for y in re.findall(r'\b(?:19|20)\d{2}\b', q)}
+    this_year = bool(re.search(r'\b(?:this year|cette annee)\b', q))
+    next_year = bool(re.search(r'\b(?:next year|l annee prochaine|l an prochain)\b', q))
+    # Do not silently choose one period from a compound or rolling request.
+    if re.search(r'\b(?:next|prochains?) \d{1,2} (?:days?|weeks?|months?|jours?|semaines?|mois)\b', q):
+        return None
+    if len(years) + int(this_year) + int(next_year) != 1:
+        return None
     if len(years) == 1:
         return next(iter(years))
-    if not years and re.search(r'\b(this year|cette annee)\b', q):
-        return (asof or datetime.now(timezone.utc).date()).year
-    return None
+    current = (asof or datetime.now(timezone.utc).date()).year
+    return current + int(next_year)
 
 
 def reported_end_window(question, asof=None):
@@ -49,7 +55,7 @@ def reported_end_window(question, asof=None):
             return None
     else:
         # A second named year/date/calendar period is not silently ignored.
-        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|last|past|dernier\w*)\b', q):
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|last|past|dernier\w*)\b', q):
             return None
         n,unit=relative[0];n=int(n)
         if not 1 <= n <= 36:
