@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-10",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-french-current-year-followup-20261010",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "f55620a3004f4824d035e416d64396321a49413f",
+  "published_code_commit": "77dec42f901baadff2d862566a05468746614bb8",
+  "tested_local_commit": "ae8525228f9ed26d66e8f5bee34030b1e014d252",
+  "tested_and_published_tree": "e3ab3b849a132980eef3d88380d16ee1a33e71c6",
+  "tree_match": true,
+  "improvement": "French reported-end-date follow-ups using ‘cette année’ now retain selected FONGIM, World Bank or EU project identifiers. The relative period is frozen to the current UTC calendar year before fresh source retrieval.",
+  "reproduced_before": "‘Lesquels de ces projets ont une date de fin cette année ?’ and its clôture variant returned no structured resolution even though the equivalent English follow-up and the date engine already supported current-calendar-year selection.",
+  "qualification": {
+    "python_tests": 544,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "focused_continuity_date_api_tests": 111,
+    "python_syntax_check": "passed",
+    "node_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "languages": [
+      "French"
+    ],
+    "source_families": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "fresh_retrieval_guard": "Only selected source identifiers, a previously established active-only constraint, and the current UTC calendar year carry forward. Prior dates, statuses, reach claims and other source-family identifiers are excluded.",
+    "period_guard": "French current-year wording becomes one explicit UTC calendar year. Compound, conflicting and analytical periods continue through semantic resolution.",
+    "ambiguity_guard": "A mixed roster without an explicitly named source family remains ambiguous.",
+    "api_guard": "The French current-calendar-year path skips semantic rewriting and invokes one fresh research lookup in the API test.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test French current-year and English/French next-year follow-ups, explicit ranges, mixed-roster source selection, active-only continuity, fresh citations, FONGIM selected ID 664, and Mali 815 to Gao 44."
+  },
+  "rollback": {
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the active-only, empty-subset, French catalogue, mixed-source, explicit-range, next-calendar-year or French current-calendar-year fixes. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue the next bounded Q-006 topic-change or supported-time-filter continuity case after reproducing it."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "Only recognised reported-end-date follow-up wording and unambiguous French current-calendar-year forms use this deterministic path.",
+    "Long or truncated rosters, more than twelve identifiers, unnamed mixed-source sets, compound periods and analytical cross-source questions continue through semantic resolution.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
