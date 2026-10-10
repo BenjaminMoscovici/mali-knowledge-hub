@@ -113,17 +113,25 @@ def resolve_project_end_dates(question, messages):
     identity context survives; the engine freshly retrieves every record.
     """
     q = _fold(question)
+    # ``q`` is folded for language matching, so ISO punctuation appears as spaces.
+    # The original question remains authoritative for date validation below.
+    iso_date = r'(?:19|20)\d{2} \d{2} \d{2}'
+    english_window = rf'(?:between {iso_date} and {iso_date}|from {iso_date} to {iso_date})'
+    french_window = rf'(?:entre {iso_date} et {iso_date}|du {iso_date} au {iso_date})'
     english = re.fullmatch(r'which of (?:those|these) '
                           r'(?:(?P<english_source>fongim|world bank|eu) )?projects '
                           r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                          r'(?:in )?(?P<english_period>(?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
+                          rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                          rf'(?P<english_window>{english_window}))', q)
     english_them = re.fullmatch(r'which of them '
                                r'(?:have (?:a )?(?:reported )?(?:end|closing) dates?|end|are ending|close|are closing) '
-                               r'(?:in )?(?P<english_period>(?:19|20)\d{2}|this year|(?:the )?next \d{1,2} (?:days?|weeks?|months?))', q)
+                               rf'(?:(?:in )?(?P<english_period>(?:19|20)\d{{2}}|this year|(?:the )?next \d{{1,2}} (?:days?|weeks?|months?))|'
+                               rf'(?P<english_window>{english_window}))', q)
     french = re.fullmatch(r'lesquels de ces projets'
                          r'(?: (?P<french_source>fongim|de la banque mondiale|de l ue|ue))? '
                          r'ont une date de (?:fin|cloture) '
-                         r'(?:en (?P<french_period>(?:19|20)\d{2})|dans les \d{1,2} prochains? (?:jours?|semaines?|mois))', q)
+                         rf'(?:en (?P<french_period>(?:19|20)\d{{2}})|dans les \d{{1,2}} prochains? (?:jours?|semaines?|mois)|'
+                         rf'(?P<french_window>{french_window}))', q)
     matched = english or english_them or french
     if not matched:
         return None
@@ -139,6 +147,10 @@ def resolve_project_end_dates(question, messages):
     window = reported_end_window(question)
     period = (matched.groupdict().get('english_period') or
               matched.groupdict().get('french_period'))
+    matched_window = (matched.groupdict().get('english_window') or
+                      matched.groupdict().get('french_window'))
+    if matched_window and not window:
+        return None
     if not window and (period is None or 'next' in period):
         return None
     latest = next((m.get('content','') for m in reversed(messages)

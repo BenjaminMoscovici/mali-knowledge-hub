@@ -170,6 +170,43 @@ def test_rolling_project_followups_freeze_query_window_not_historical_dates(rost
     assert '2099' not in result['standalone_question'] and '999' not in result['standalone_question']
 
 
+@pytest.mark.parametrize('roster,question,source,ids', [
+    ('FONGIM project ID 32; Project ID 664.',
+     'Which of those projects have a reported end date between 2026-11-01 and 2026-12-31?',
+     'FONGIM', [32, 664]),
+    ('World Bank P144442 and P176347.',
+     'Which of them have reported closing dates from 2027-01-01 to 2027-06-30?',
+     'World Bank', ['P144442', 'P176347']),
+    ('EU XI-IATI-EC_INTPA-2023-PC-34274.',
+     'Lesquels de ces projets ont une date de clôture entre 2026-11-01 et 2027-01-31 ?',
+     'EU IATI', ['XI-IATI-EC_INTPA-2023-PC-34274']),
+    ('FONGIM project ID 664.',
+     'Lesquels de ces projets ont une date de fin du 2026-11-01 au 2026-12-31 ?',
+     'FONGIM', [664]),
+])
+def test_explicit_range_followups_keep_ids_and_fresh_date_window(
+        roster, question, source, ids):
+    from project_dates import reported_end_window
+    result = resolve_slots(question, [{'role':'assistant', 'content':
+        roster + ' End date 2099-12-31; reported reach 999.'}])
+    assert result['state']['source'] == source
+    assert result['state']['lookup_ids'] == ids
+    assert result['state']['time_period'] == list(reported_end_window(question))
+    assert reported_end_window(result['standalone_question']) == reported_end_window(question)
+    assert '2099' not in result['standalone_question']
+    assert '999' not in result['standalone_question']
+
+
+@pytest.mark.parametrize('question', [
+    'Which of those projects have a reported end date between 2027-01-01 and 2026-01-01?',
+    'Which of those projects close from 2026-02-30 to 2027-01-01?',
+    'Lesquels de ces projets ont une date de fin entre 2026-11-01 et 2026-12-31 et couvrent les besoins ?',
+])
+def test_invalid_or_analytical_explicit_range_followups_defer(question):
+    assert resolve_slots(question, [{'role':'assistant', 'content':
+        'FONGIM project ID 664.'}]) is None
+
+
 @pytest.mark.parametrize('question', [
     'Which of those projects close in the next 0 months?',
     'Which of those projects close in the next 99 months?',
@@ -304,6 +341,22 @@ def test_active_date_subset_rechecks_changed_source_status(source, pid, french):
                                   language='French' if french else 'English')
         assert audit['active_only'] and audit['matching_ids'] == []
         assert ('**0 sur 1' if french else '**0 of 1') in new_text
+
+
+def test_active_date_subset_preserves_constraint_for_explicit_range():
+    from project_date_answers import answer
+    row = {'evidence_id':'E01','project_record':{'source_namespace':'FONGIM',
+        'source_id':'664','status':'En cours','end_date':'2026-11-30','title':'Selected'}}
+    text, _ = answer(
+        'For FONGIM project ID 664, which active records have a reported end date in 2026?',
+        [row])
+    followup = ('Which of those projects have a reported end date '
+                'between 2026-11-01 and 2026-12-31?')
+    resolved = resolve_slots(followup, [{'role':'assistant','content':text}])
+    assert resolved['state']['active_only'] is True
+    assert resolved['state']['lookup_ids'] == [664]
+    assert resolved['state']['time_period'] == ['2026-11-01', '2026-12-31']
+    assert 'active records' in resolved['standalone_question']
 
 
 def test_active_status_or_title_in_unfiltered_table_does_not_add_a_constraint():
@@ -442,9 +495,12 @@ def test_explicit_source_disambiguates_mixed_project_roster(
     assert '999' not in result['standalone_question']
 
 
-def test_mixed_roster_without_explicit_source_remains_ambiguous():
+@pytest.mark.parametrize('question', [
+    'Which of those projects have a reported end date in 2026?',
+    'Which of those projects have a reported end date between 2026-11-01 and 2026-12-31?',
+])
+def test_mixed_roster_without_explicit_source_remains_ambiguous(question):
     mixed = 'FONGIM records: Project ID 664. World Bank records: P513735.'
-    question = 'Which of those projects have a reported end date in 2026?'
     assert resolve_slots(question, [{'role':'assistant', 'content':mixed}]) is None
 
 
@@ -470,6 +526,42 @@ def test_mixed_roster_explicit_source_api_retrieves_freshly_without_rewrite():
         with patch.dict(sys.modules, {'analysis_core':engine}):
             response = client.post('/api/chat', json={
                 'question':'Which of those FONGIM projects have a reported end date in 2026?',
+                'prior_messages':[{'role':'assistant', 'content':mixed}]},
+                headers={'Origin':'http://127.0.0.1:8765'})
+    assert response.status_code == 200 and len(calls) == 1
+    body = response.json()
+    assert body['metrics']['context_resolution_method'] == 'structured_query_slots'
+    assert body['metrics']['context_api_usage'] == {}
+    assert body['evidence'][0]['content'] == 'Fresh source record'
+
+
+def test_mixed_roster_explicit_source_range_api_retrieves_freshly_without_rewrite():
+    from project_dates import reported_end_window
+    from project_references import fongim_project_ids
+    calls = []
+    mixed = ('FONGIM records: Project ID 664; Project ID 32. '
+             'World Bank records: P513735 and P164032. End date 2099-12-31.')
+    question = ('Which of those World Bank projects have a reported end date '
+                'between 2026-11-01 and 2027-01-31?')
+    def research(standalone, **kwargs):
+        calls.append(standalone)
+        assert 'World Bank' in standalone and 'P164032, P513735' in standalone
+        assert fongim_project_ids(standalone) == ()
+        assert '2099' not in standalone
+        assert reported_end_window(standalone) == ('2026-11-01', '2027-01-31')
+        return {'answer':'Fresh World Bank lookup [E01]', 'evidence':[
+            {'evidence_id':'E01', 'content':'Fresh source record'}]}
+    def forbidden(*args, **kwargs):
+        raise AssertionError('An explicit source range needs no semantic rewrite')
+    engine = SimpleNamespace(generate_grounded_answer=research,
+        is_source_inventory_question=lambda q:False,
+        likely_context_dependent_followup=lambda *args:True,
+        resolve_conversational_question=forbidden,
+        source_inventory_answer=lambda:'', openai_client=None)
+    with TestClient(web_api.app, base_url='http://127.0.0.1:8765') as client:
+        with patch.dict(sys.modules, {'analysis_core':engine}):
+            response = client.post('/api/chat', json={
+                'question':question,
                 'prior_messages':[{'role':'assistant', 'content':mixed}]},
                 headers={'Origin':'http://127.0.0.1:8765'})
     assert response.status_code == 200 and len(calls) == 1
