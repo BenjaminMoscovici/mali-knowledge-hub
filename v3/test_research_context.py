@@ -65,6 +65,35 @@ def test_long_latest_answer_keeps_bounded_head_and_tail_for_late_identifiers():
     assert len(text) < 7700
 
 
+def test_long_latest_answer_keeps_only_qualified_middle_identifiers():
+    messages = [
+        {'role':'user', 'content':'List the documented projects in Gao.'},
+        {'role':'assistant', 'content':(
+            'Current Gao roster begins. ' + ('x' * 3300) +
+            ' Middle entries: FONGIM Project ID 664; World Bank project P166811; '
+            'EU activity XI-IATI-EC_INTPA-2023-PC-34274; budget 999; year 2099. ' +
+            ('y' * 3300) + ' Final context.')},
+    ]
+    text = conversation_context(messages)
+    assert 'Current Gao roster begins.' in text and 'Final context.' in text
+    assert 'FONGIM project IDs 664' in text
+    assert 'World Bank project IDs P166811' in text
+    assert 'EU IATI activity IDs XI-IATI-EC_INTPA-2023-PC-34274' in text
+    assert 'budget 999' not in text and 'year 2099' not in text
+    assert 'source-qualified identifiers retained from omitted context only' in text
+    assert len(text) < 7700
+
+
+def test_long_context_does_not_promote_unqualified_middle_numbers():
+    text = conversation_context([{'role':'assistant', 'content':(
+        'Roster begins. ' + ('x' * 3300) +
+        ' Middle values: project 664; budget 999; year 2099. ' +
+        ('y' * 3300) + ' Roster ends.')}])
+    assert '664' not in text and '999' not in text and '2099' not in text
+    assert 'source-qualified identifiers retained' not in text
+    assert len(text) < 6050
+
+
 def test_context_discards_an_obsolete_topic_after_a_substantive_change():
     messages = [
         {'role':'user', 'content':'What are the humanitarian needs in Mopti?'},

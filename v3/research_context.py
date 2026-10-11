@@ -3,14 +3,68 @@ import re
 import unicodedata
 
 
+def _qualified_context_identifiers(value):
+    """Return bounded source identifiers, never surrounding answer claims."""
+    from project_references import fongim_roster_ids
+
+    text = str(value)
+    # Conversation output should never contain enormous identifier tokens, but
+    # bound them here so malformed text cannot crowd out the retained context.
+    safe_fongim_text = re.sub(r'\d{13,}', '', text)
+    groups = (
+        ('FONGIM project IDs', tuple(map(str, fongim_roster_ids(safe_fongim_text)))),
+        ('World Bank project IDs', tuple(dict.fromkeys(
+            re.findall(r'\bP\d{6}\b', text.upper())))),
+        ('EU IATI activity IDs', tuple(dict.fromkeys(
+            re.findall(r'\bXI-IATI-EC_(?:INTPA|ECHO)-[A-Z0-9][A-Z0-9._/-]{0,119}'
+                       r'(?![A-Z0-9._/-])',
+                       text.upper())))),
+    )
+    remaining = 20
+    found = []
+    for namespace, identifiers in groups:
+        selected = identifiers[:remaining]
+        found.extend((namespace, identifier) for identifier in selected)
+        remaining -= len(selected)
+        if not remaining:
+            break
+    return tuple(found)
+
+
+def _identifier_marker(identifiers):
+    grouped = []
+    for namespace, identifier in identifiers:
+        if grouped and grouped[-1][0] == namespace:
+            grouped[-1][1].append(identifier)
+        else:
+            grouped.append([namespace, [identifier]])
+    summary = '; '.join(
+        f'{namespace} {", ".join(values)}' for namespace, values in grouped)
+    marker = '...[middle omitted; context only]...'
+    if summary:
+        marker += ('\n...[source-qualified identifiers retained from omitted context '
+                   f'only: {summary}]...')
+    return '\n' + marker + '\n'
+
+
 def _bounded_context_text(value, limit):
-    """Retain both ends of long context without increasing its token budget."""
+    """Retain both ends and omitted identifiers within the original budget."""
     text = str(value)
     if len(text) <= limit:
         return text
-    marker = '\n...[middle omitted; context only]...\n'
-    head = (limit - len(marker)) // 2
-    tail = limit - len(marker) - head
+    identifiers = _qualified_context_identifiers(text)
+    omitted = ()
+    # Adding an identifier appendix slightly widens the omitted middle. Repeat
+    # until every qualified identifier outside the retained ends is covered.
+    while True:
+        marker = _identifier_marker(omitted)
+        head = (limit - len(marker)) // 2
+        tail = limit - len(marker) - head
+        retained = set(_qualified_context_identifiers(text[:head] + text[-tail:]))
+        widened = tuple(item for item in identifiers if item not in retained)
+        if widened == omitted:
+            break
+        omitted = widened
     return text[:head] + marker + text[-tail:]
 
 
