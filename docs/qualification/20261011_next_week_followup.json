@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-11",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-next-week-followup-20261011",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "7dadb8b6902abb8b50013a7b17ca7ba87dd34529",
+  "published_code_commit": "f0d439e779781a0b5dec3118a7e6fa85a3dacf9a",
+  "tested_local_commit": "ef7376a3ac1e5034d5aec620df986d618f048fd2",
+  "tested_and_published_tree": "0604281d4feb625f27fb0962d0c85cc9e8ac15fa",
+  "tree_match": true,
+  "improvement": "English ‘next week’ and French ‘la semaine prochaine’ reported-end-date follow-ups now retain the selected FONGIM, World Bank or EU project identifiers before fresh source retrieval.",
+  "reproduced_before": "The supported English and French next-calendar-week forms returned no structured window and lost the selected project set.",
+  "qualification": {
+    "python_tests": 612,
+    "subtests": 16,
+    "frontend_tests": 15,
+    "focused_continuity_date_api_tests": 184,
+    "python_syntax_check": "passed",
+    "frontend_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "languages": [
+      "English",
+      "French"
+    ],
+    "source_families": [
+      "FONGIM",
+      "World Bank",
+      "EU IATI"
+    ],
+    "fresh_retrieval_guard": "Only selected source identifiers, a previously established active-only constraint and the newly requested next calendar week carry forward. Prior dates, statuses, reach claims and answer facts are excluded.",
+    "period_guard": "The next UTC calendar week is frozen to explicit Monday-through-Sunday inclusive bounds before fresh retrieval.",
+    "boundary_examples": [
+      "From 2026-10-08, next week resolves to 2026-10-12 through 2026-10-18 inclusive.",
+      "From 2026-12-31, la semaine prochaine resolves across the year boundary to 2027-01-04 through 2027-01-10 inclusive."
+    ],
+    "ambiguity_guard": "Named competing periods, unnamed mixed-source rosters, compound periods and analytical additions continue through semantic resolution.",
+    "api_guard": "The bounded next-calendar-week path skips semantic rewriting and invokes exactly one fresh research lookup in the API test.",
+    "selection_guard": "The tested FONGIM and World Bank selection retains identifiers 32 and 664 while excluding stale identifiers 2099 and 999.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a secure signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test bilingual next-week plus current-week, previous-year, previous-month, next-month, current-month, current-year, next-year, explicit-range, mixed-roster, active-only, catalogue, empty-subset, FONGIM selected-ID and geography regressions."
+  },
+  "rollback": {
+    "candidate_receipt": "7dadb8b6902abb8b50013a7b17ca7ba87dd34529",
+    "candidate_code": "0e622a93f8cf00771a33bf716ba1cc698a529d4a",
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the active-only, empty-subset, French catalogue, mixed-source, explicit-range, next-calendar-year, French current-calendar-year, French-pronoun, current-month, next-month, previous-month, previous-year, current-week or next-week fixes. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue the next bounded Q-006 previous-week or topic-change continuity case after reproducing it."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "Only unambiguous next-calendar-week reported-end-date wording uses the new deterministic path.",
+    "Long or truncated rosters, more than twelve identifiers, unnamed mixed-source sets, compound periods and analytical cross-source questions continue through semantic resolution.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
