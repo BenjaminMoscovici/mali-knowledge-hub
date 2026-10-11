@@ -51,10 +51,11 @@ def reported_end_window(question, asof=None):
     ranges = re.findall(r'\b(?:between|from|entre|du) (\d{4}-\d{2}-\d{2}) (?:and|to|et|au) (\d{4}-\d{2}-\d{2})\b', question.lower())
     this_week = bool(re.search(r'\b(?:this week|cette semaine)\b', q))
     next_week = bool(re.search(r'\b(?:next week|(?:la )?semaine prochaine)\b', q))
+    last_week = bool(re.search(r'\b(?:last week|(?:la )?semaine derniere)\b', q))
     this_month = bool(re.search(r'\b(?:this month|ce mois ci)\b', q))
     next_month = bool(re.search(r'\b(?:next month|(?:le )?mois prochain)\b', q))
     last_month = bool(re.search(r'\b(?:last month|(?:le )?mois dernier)\b', q))
-    if (len(relative)+len(ranges)+int(this_week)+int(next_week)+int(this_month)+
+    if (len(relative)+len(ranges)+int(this_week)+int(next_week)+int(last_week)+int(this_month)+
             int(next_month)+int(last_month) != 1):
         return None
     if ranges:
@@ -67,7 +68,7 @@ def reported_end_window(question, asof=None):
         other_period = re.sub(r'\b(?:this week|cette semaine)\b', '', q)
         if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|'
                      r'last|past|dernier\w*|this month|ce mois ci|next month|mois prochain|'
-                     r'next week|semaine prochaine)\b', other_period):
+                     r'next week|semaine prochaine|last week|semaine derniere)\b', other_period):
             return None
         start = asof - timedelta(days=asof.weekday())
         end = start + timedelta(days=6)
@@ -76,10 +77,20 @@ def reported_end_window(question, asof=None):
         # named periods must not be silently discarded from a compound request.
         other_period = re.sub(r'\b(?:next week|(?:la )?semaine prochaine)\b', '', q)
         if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|'
-                     r'last|past|dernier\w*|this week|cette semaine|this month|ce mois ci|'
+                     r'last|past|dernier\w*|this week|cette semaine|last week|semaine derniere|this month|ce mois ci|'
                      r'next month|mois prochain)\b', other_period):
             return None
         start = asof - timedelta(days=asof.weekday()) + timedelta(days=7)
+        end = start + timedelta(days=6)
+    elif last_week:
+        # Freeze the previous ISO-style calendar week to explicit bounds.
+        # Competing periods defer rather than silently changing the request.
+        other_period = re.sub(r'\b(?:last week|(?:la )?semaine derniere)\b', '', q)
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|'
+                     r'last|past|dernier\w*|this week|cette semaine|next week|semaine prochaine|'
+                     r'this month|ce mois ci|next month|mois prochain)\b', other_period):
+            return None
+        start = asof - timedelta(days=asof.weekday()) - timedelta(days=7)
         end = start + timedelta(days=6)
     elif this_month or next_month or last_month:
         # Freeze a conversational calendar period to explicit bounds. A second
