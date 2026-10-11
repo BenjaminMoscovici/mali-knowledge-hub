@@ -51,6 +51,20 @@ def test_last_roster_keeps_late_identifiers_without_unbounded_history():
     assert len(conversation_context([{'role':'assistant', 'content':'x'*50000}])) < 6050
 
 
+def test_long_latest_answer_keeps_bounded_head_and_tail_for_late_identifiers():
+    messages = [
+        {'role':'user', 'content':'List the documented projects in Gao.'},
+        {'role':'assistant', 'content':(
+            'Gao project roster begins. ' + ('x' * 6800) +
+            ' Final entries: FONGIM Project ID 664; World Bank project P166811.')},
+    ]
+    text = conversation_context(messages)
+    assert 'Gao project roster begins.' in text
+    assert 'FONGIM Project ID 664' in text and 'P166811' in text
+    assert 'middle omitted; context only' in text
+    assert len(text) < 7700
+
+
 def test_context_discards_an_obsolete_topic_after_a_substantive_change():
     messages = [
         {'role':'user', 'content':'What are the humanitarian needs in Mopti?'},

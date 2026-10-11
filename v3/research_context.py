@@ -3,6 +3,17 @@ import re
 import unicodedata
 
 
+def _bounded_context_text(value, limit):
+    """Retain both ends of long context without increasing its token budget."""
+    text = str(value)
+    if len(text) <= limit:
+        return text
+    marker = '\n...[middle omitted; context only]...\n'
+    head = (limit - len(marker)) // 2
+    tail = limit - len(marker) - head
+    return text[:head] + marker + text[-tail:]
+
+
 def has_reference(question):
     text = ''.join(c for c in unicodedata.normalize('NFKD', question.casefold())
                    if not unicodedata.combining(c))
@@ -55,7 +66,8 @@ def conversation_context(messages):
                 turns.append('USER QUESTION: ' + str(value)[:1600])
         elif message.get('role') == 'assistant' and message.get('content'):
             limit = 6000 if index == last else 800
-            turns.append('ASSISTANT CONTEXT ONLY: ' + str(message['content'])[:limit])
+            turns.append('ASSISTANT CONTEXT ONLY: ' +
+                         _bounded_context_text(message['content'], limit))
     return '\n\n'.join(turns[-8:])
 
 

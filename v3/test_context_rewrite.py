@@ -71,6 +71,28 @@ class ContextRewriteTests(unittest.TestCase):
                 self.assertIn("Current Gao roster", recorder.kwargs["input"])
                 self.assertNotIn("Old Mopti gap", recorder.kwargs["input"])
 
+    def test_rewrite_input_retains_late_ids_from_a_long_current_roster(self):
+        messages = [
+            {"role": "user", "content": "List the documented projects in Gao."},
+            {"role": "assistant", "content": (
+                "Current Gao roster begins. " + ("x" * 6800) +
+                " Final entries: FONGIM Project ID 664; World Bank project P166811.")},
+        ]
+        for filename in ("app.py", "analysis_core.py"):
+            with self.subTest(filename=filename):
+                source = ast.parse((Path(__file__).parent / filename).read_text())
+                function = next(node for node in source.body
+                                if isinstance(node, ast.FunctionDef)
+                                and node.name == "resolve_conversational_question")
+                recorder = ResponseRecorder()
+                namespace = {"openai_client": SimpleNamespace(responses=recorder)}
+                exec(compile(ast.Module(body=[function], type_ignores=[]), filename, "exec"), namespace)
+                namespace[function.name]("Which of those projects are active?", messages)
+                self.assertIn("Current Gao roster begins", recorder.kwargs["input"])
+                self.assertIn("FONGIM Project ID 664", recorder.kwargs["input"])
+                self.assertIn("P166811", recorder.kwargs["input"])
+                self.assertIn("middle omitted; context only", recorder.kwargs["input"])
+
 
 if __name__ == "__main__":
     unittest.main()
