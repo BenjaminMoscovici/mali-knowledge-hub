@@ -49,15 +49,27 @@ def reported_end_window(question, asof=None):
     relative += re.findall(r'\b(\d{1,2}) prochains? (jours?|semaines?|mois)\b', q)
     relative += [(n,u) for n,u in re.findall(r'\b(\d{1,2}) (jours?|semaines?|mois) (?:a venir|prochains?)\b', q)]
     ranges = re.findall(r'\b(?:between|from|entre|du) (\d{4}-\d{2}-\d{2}) (?:and|to|et|au) (\d{4}-\d{2}-\d{2})\b', question.lower())
+    this_week = bool(re.search(r'\b(?:this week|cette semaine)\b', q))
     this_month = bool(re.search(r'\b(?:this month|ce mois ci)\b', q))
     next_month = bool(re.search(r'\b(?:next month|(?:le )?mois prochain)\b', q))
     last_month = bool(re.search(r'\b(?:last month|(?:le )?mois dernier)\b', q))
-    if len(relative)+len(ranges)+int(this_month)+int(next_month)+int(last_month) != 1:
+    if (len(relative)+len(ranges)+int(this_week)+int(this_month)+
+            int(next_month)+int(last_month) != 1):
         return None
     if ranges:
         start,end = map(parsed_date,ranges[0])
         if not start or not end or end < start or len(re.findall(r'\d{4}-\d{2}-\d{2}', question)) != 2:
             return None
+    elif this_week:
+        # Use ISO-style calendar weeks (Monday through Sunday), frozen to
+        # explicit bounds so a later turn cannot shift the selected period.
+        other_period = re.sub(r'\b(?:this week|cette semaine)\b', '', q)
+        if re.search(r'\b(?:19|20)\d{2}\b|\b(this year|cette annee|next year|l annee prochaine|l an prochain|'
+                     r'last|past|dernier\w*|this month|ce mois ci|next month|mois prochain|'
+                     r'next week|semaine prochaine)\b', other_period):
+            return None
+        start = asof - timedelta(days=asof.weekday())
+        end = start + timedelta(days=6)
     elif this_month or next_month or last_month:
         # Freeze a conversational calendar period to explicit bounds. A second
         # year or named period must never be silently discarded.
