@@ -27,8 +27,23 @@ def has_reference(question):
 
 
 def conversation_context(messages):
-    """Keep the latest roster intact; earlier turns stay narrowly bounded."""
+    """Keep the latest topic and roster intact; older topics do not leak in."""
     recent = messages[-10:]
+    # A complete newer research question supersedes every older topic. Social
+    # acknowledgements and conversation-only transforms do not: a user may say
+    # thanks, then continue filtering the latest evidence set. Stored
+    # standalone questions make resolved follow-ups safe topic boundaries too.
+    from query_router import classify
+    starts = []
+    for index, message in enumerate(recent):
+        if message.get('role') != 'user':
+            continue
+        value = message.get('standalone_question') or message.get('content')
+        if isinstance(value, str) and value.strip() and classify(value)['path'] not in {
+                'conversational', 'conversation_only'}:
+            starts.append(index)
+    if starts:
+        recent = recent[starts[-1]:]
     assistants = [i for i, row in enumerate(recent)
                   if row.get('role') == 'assistant' and row.get('content')]
     last = assistants[-1] if assistants else None

@@ -51,6 +51,26 @@ class ContextRewriteTests(unittest.TestCase):
         self.assertIn("fresh retrieval", recorder.kwargs["instructions"])
         self.assertEqual(answer, "What evidence supports the reported gap in Mopti?")
 
+    def test_rewrite_input_excludes_a_superseded_topic(self):
+        messages = [
+            {"role": "user", "content": "What are the humanitarian needs in Mopti?"},
+            {"role": "assistant", "content": "Old Mopti gap [E01]."},
+            {"role": "user", "content": "Which organisations operate in Gao?"},
+            {"role": "assistant", "content": "Current Gao roster [E02]."},
+        ]
+        for filename in ("app.py", "analysis_core.py"):
+            with self.subTest(filename=filename):
+                source = ast.parse((Path(__file__).parent / filename).read_text())
+                function = next(node for node in source.body
+                                if isinstance(node, ast.FunctionDef)
+                                and node.name == "resolve_conversational_question")
+                recorder = ResponseRecorder()
+                namespace = {"openai_client": SimpleNamespace(responses=recorder)}
+                exec(compile(ast.Module(body=[function], type_ignores=[]), filename, "exec"), namespace)
+                namespace[function.name]("What about that result?", messages)
+                self.assertIn("Current Gao roster", recorder.kwargs["input"])
+                self.assertNotIn("Old Mopti gap", recorder.kwargs["input"])
+
 
 if __name__ == "__main__":
     unittest.main()

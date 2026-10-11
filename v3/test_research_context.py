@@ -51,6 +51,45 @@ def test_last_roster_keeps_late_identifiers_without_unbounded_history():
     assert len(conversation_context([{'role':'assistant', 'content':'x'*50000}])) < 6050
 
 
+def test_context_discards_an_obsolete_topic_after_a_substantive_change():
+    messages = [
+        {'role':'user', 'content':'What are the humanitarian needs in Mopti?'},
+        {'role':'assistant', 'content':'Mopti context reports a gap [E01].'},
+        {'role':'user', 'content':'Which organisations operate in Gao?'},
+        {'role':'assistant', 'content':'Gao organisation roster [E02].'},
+    ]
+    text = conversation_context(messages)
+    assert 'Gao' in text and 'organisation roster' in text
+    assert 'Mopti' not in text and '[E01]' not in text
+
+
+def test_social_turns_do_not_hide_the_latest_substantive_topic():
+    messages = [
+        {'role':'user', 'content':'What are the humanitarian needs in Mopti?'},
+        {'role':'assistant', 'content':'Old Mopti context [E01].'},
+        {'role':'user', 'content':'List the documented FONGIM projects in Gao.'},
+        {'role':'assistant', 'content':'FONGIM project ID 32; Project ID 664. [E02]'},
+        {'role':'user', 'content':'Thanks!'},
+        {'role':'assistant', 'content':'You are welcome.'},
+    ]
+    text = conversation_context(messages)
+    assert 'FONGIM project ID 32' in text and 'Thanks!' in text
+    assert 'Old Mopti context' not in text and '[E01]' not in text
+
+
+def test_resolved_followup_standalone_question_is_a_new_topic_boundary():
+    messages = [
+        {'role':'user', 'content':'What are the humanitarian needs in Mopti?'},
+        {'role':'assistant', 'content':'Old Mopti context [E01].'},
+        {'role':'user', 'content':'And there?',
+         'standalone_question':'Which organisations operate in Gao?'},
+        {'role':'assistant', 'content':'Gao organisation roster [E02].'},
+    ]
+    text = conversation_context(messages)
+    assert 'Which organisations operate in Gao?' in text
+    assert 'Old Mopti context' not in text
+
+
 def test_rewriter_preserves_set_and_date_rules_and_context_is_not_evidence():
     captured = []
     def create(**kwargs):
