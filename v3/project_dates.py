@@ -17,20 +17,21 @@ def calendar_end_year(question, asof=None):
     q = _fold(question)
     if reported_end_window(question, asof):
         return None
-    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends?|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
+    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closed|closure|clotur\w*|ending|ends?|ended|dates? de fin|fin en|echeances?|termin\w*|finissent)\b', q):
         return None
     years = {int(y) for y in re.findall(r'\b(?:19|20)\d{2}\b', q)}
     this_year = bool(re.search(r'\b(?:this year|cette annee)\b', q))
     next_year = bool(re.search(r'\b(?:next year|l annee prochaine|l an prochain)\b', q))
+    last_year = bool(re.search(r'\b(?:last year|l annee derniere|l an dernier)\b', q))
     # Do not silently choose one period from a compound or rolling request.
     if re.search(r'\b(?:next|prochains?) \d{1,2} (?:days?|weeks?|months?|jours?|semaines?|mois)\b', q):
         return None
-    if len(years) + int(this_year) + int(next_year) != 1:
+    if len(years) + int(this_year) + int(next_year) + int(last_year) != 1:
         return None
     if len(years) == 1:
         return next(iter(years))
     current = (asof or datetime.now(timezone.utc).date()).year
-    return current + int(next_year)
+    return current + int(next_year) - int(last_year)
 
 
 def reported_end_window(question, asof=None):
@@ -41,7 +42,7 @@ def reported_end_window(question, asof=None):
     Unknown, conflicting and multiple periods defer to semantic analysis.
     """
     q = _fold(question)
-    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closure|clotur\w*|ending|ends?|dates? de fin|echeances?|termin\w*|finissent)\b', q):
+    if not re.search(r'\b(end dates?|reported end|closing|close|closes|closed|closure|clotur\w*|ending|ends?|ended|dates? de fin|echeances?|termin\w*|finissent)\b', q):
         return None
     asof = asof or datetime.now(timezone.utc).date()
     relative = re.findall(r'\b(?:next|prochains?) (\d{1,2}) (days?|weeks?|months?|jours?|semaines?|mois)\b', q)

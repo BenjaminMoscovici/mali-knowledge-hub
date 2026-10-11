@@ -44,6 +44,25 @@ def test_ambiguous_or_invalid_period_is_not_invented(q):
  assert reported_end_window(q,date(2026,10,8)) is None
 
 
+@pytest.mark.parametrize('q,wanted',[
+ ('Which projects have reported closing dates last year?',2025),
+ ('Quels projets ont des dates de fin l’année dernière ?',2025),
+ ('Quels projets ont des dates de clôture l’an dernier ?',2025),
+])
+def test_previous_calendar_year_is_frozen_without_reusing_other_periods(q,wanted):
+ assert calendar_end_year(q,date(2026,10,8))==wanted
+
+
+@pytest.mark.parametrize('q',[
+ 'Projects closing last year or next year',
+ 'Projects closing in 2024 or last year',
+ 'Projects closing in the next 3 months or last year',
+ 'Projets avec une date de fin l’année dernière ou cette année',
+])
+def test_ambiguous_previous_calendar_year_is_not_invented(q):
+ assert calendar_end_year(q,date(2026,10,8)) is None
+
+
 def test_explicit_window_does_not_include_overdue_or_silently_require_active_status():
  rows=[{'project_name':x,'end_date':d,'status':s} for x,d,s in [
   ('Past','2026-10-07','En cours'),('First','2026-10-08','Clôturé'),
