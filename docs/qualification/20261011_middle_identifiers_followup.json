@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-11",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-middle-identifiers-followup-20261011",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "3cd9ea4ae62be995e2a2ffd52b73bc5f31571422",
+  "published_code_commit": "fe3e9c67b66b74c025f71263c70f865c0552ba95",
+  "tested_local_commit": "43641902b12db1d8c6aa4bd9e830742a29915b61",
+  "tested_and_published_tree": "f8314048785fe8b669d7fef0f5874d79440749ed",
+  "tree_match": true,
+  "improvement": "A long latest assistant answer now retains source-qualified identifiers located only in its omitted middle through an identifier-only context appendix. The appendix stays inside the existing 6000-character assistant budget and carries only labelled FONGIM project IDs, exact World Bank P-number IDs and exact EU IATI activity IDs; it does not carry surrounding dates, budgets, status or result claims.",
+  "reproduced_before": "With a current roster whose middle contained FONGIM Project ID 664 and World Bank project P166811 between 3300-character head and tail segments, the prior bounded context kept the head, tail and omission marker but dropped both identifiers. The nearby budget 999 and year 2099 were also absent.",
+  "qualification": {
+    "python_tests": 630,
+    "subtests": 22,
+    "frontend_tests": 15,
+    "focused_context_tests": 30,
+    "focused_subtests": 8,
+    "python_syntax_check": "passed",
+    "frontend_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "bounded_context_guard": "The latest assistant context remains exactly capped at 6000 characters when truncated; older assistant context remains capped at 800 characters.",
+    "identifier_guard": "The appendix retains at most 20 source-qualified identifiers across FONGIM, World Bank and EU IATI namespaces; unqualified numbers, years and budgets are not promoted.",
+    "omission_guard": "The head and tail remain separated by an explicit middle-omitted context marker, and the identifier appendix is explicitly labelled context only.",
+    "topic_boundary_guard": "The previously qualified latest-substantive-topic boundary remains active before bounded context assembly.",
+    "evidence_guard": "Retained identifiers and assistant text are query context only and never evidence; the rewritten question still proceeds through fresh research and citation generation.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a secure signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test a long answer whose middle-only identifiers are needed by a follow-up, plus topic-change, late-identifier, temporal, mixed-roster, active-only, catalogue, empty-subset, selected-ID and geography regressions."
+  },
+  "rollback": {
+    "candidate_receipt": "3cd9ea4ae62be995e2a2ffd52b73bc5f31571422",
+    "candidate_code": "94ea1ff04622dd2d607da73bc309063c578428cf",
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild accepted source publication or replay qualified follow-up filters. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue with the next bounded Q-006 context-selection case only after reproducing a specific remaining failure."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "The identifier-only appendix is capped at 20 identifiers across its supported source namespaces.",
+    "Semantic follow-up rewriting remains model-mediated after context selection.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
