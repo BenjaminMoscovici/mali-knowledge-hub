@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-11",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-long-context-tail-followup-20261011",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "5766da788bb86904ed7a3ad875e8f9b1a197de5c",
+  "published_code_commit": "94ea1ff04622dd2d607da73bc309063c578428cf",
+  "tested_local_commit": "5b934918f44f931193cd485d0e197dbdad1f328c",
+  "tested_and_published_tree": "be2b9eebe03c744766ccc8f1e7c3b4aea6542bee",
+  "tree_match": true,
+  "improvement": "The latest long assistant answer now contributes a fixed-size head-and-tail context window to semantic follow-up rewriting, retaining final roster and project identifiers without increasing the 6000-character budget. Any omitted middle is marked explicitly, and the existing latest-topic boundary remains in force.",
+  "reproduced_before": "With an early context prefix, a 6800-character middle and a final roster containing FONGIM Project ID 664 and World Bank project P166811, the previous first-6000-character slice retained the prefix but dropped both final identifiers.",
+  "qualification": {
+    "python_tests": 627,
+    "subtests": 20,
+    "frontend_tests": 15,
+    "focused_followup_context_api_tests": 176,
+    "focused_subtests": 6,
+    "python_syntax_check": "passed",
+    "frontend_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "bounded_context_guard": "The latest assistant context remains capped at 6000 characters; older assistant context remains capped at 800 characters.",
+    "omission_guard": "When truncation is required, the retained head and tail are separated by an explicit middle-omitted context marker.",
+    "topic_boundary_guard": "The previously qualified latest-substantive-topic boundary remains active before bounded context assembly.",
+    "evidence_guard": "Retained assistant text is context only and never evidence; the rewritten question still proceeds through fresh research and citation generation.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a secure signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy published_code_commit to V4 test only, then live-test a long answer whose final roster identifiers are needed by a follow-up, plus topic-change, temporal, mixed-roster, active-only, catalogue, empty-subset, selected-ID and geography regressions."
+  },
+  "rollback": {
+    "candidate_receipt": "5766da788bb86904ed7a3ad875e8f9b1a197de5c",
+    "candidate_code": "06995504fda54bd9b2e4fa708464c5ebb381b066",
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild the accepted source publication or the qualified deterministic follow-up filters. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Continue the next bounded Q-006 case for identifiers located only in the omitted middle of an exceptionally long roster, after reproducing it."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "Identifiers located only in an omitted middle segment can still be absent from the bounded context.",
+    "Semantic follow-up rewriting remains model-mediated after context selection.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
