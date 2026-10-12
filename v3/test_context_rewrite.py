@@ -145,6 +145,30 @@ class ContextRewriteTests(unittest.TestCase):
                 self.assertNotIn("budget 999", recorder.kwargs["input"])
                 self.assertNotIn("year 2099", recorder.kwargs["input"])
 
+    def test_rewrite_input_keeps_late_ids_from_an_over_cap_single_source_roster(self):
+        fongim_ids = ", ".join(map(str, range(1, 31)))
+        messages = [
+            {"role": "user", "content": "List the documented FONGIM projects."},
+            {"role": "assistant", "content": (
+                "FONGIM roster begins. " + ("x" * 3300) +
+                f" FONGIM project IDs: {fongim_ids}; budget 999; year 2099. " +
+                ("y" * 3300) + " FONGIM roster ends.")},
+        ]
+        for filename in ("app.py", "analysis_core.py"):
+            with self.subTest(filename=filename):
+                source = ast.parse((Path(__file__).parent / filename).read_text())
+                function = next(node for node in source.body
+                                if isinstance(node, ast.FunctionDef)
+                                and node.name == "resolve_conversational_question")
+                recorder = ResponseRecorder()
+                namespace = {"openai_client": SimpleNamespace(responses=recorder)}
+                exec(compile(ast.Module(body=[function], type_ignores=[]), filename, "exec"), namespace)
+                namespace[function.name]("Which of those projects are active?", messages)
+                self.assertIn("FONGIM project IDs 1", recorder.kwargs["input"])
+                self.assertIn(", 30", recorder.kwargs["input"])
+                self.assertNotIn("budget 999", recorder.kwargs["input"])
+                self.assertNotIn("year 2099", recorder.kwargs["input"])
+
 
 if __name__ == "__main__":
     unittest.main()

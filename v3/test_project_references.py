@@ -14,6 +14,12 @@ def test_roster_labels_support_fresh_lookup_without_turning_years_and_counts_int
     assert fongim_roster_ids('FONGIM has 664 projects in 2026. Funding requirements are 32 million.')==()
 
 
+def test_context_parser_can_inspect_a_complete_roster_without_widening_lookup_cap():
+    roster = 'FONGIM project IDs: ' + ', '.join(map(str, range(1, 31)))
+    assert fongim_roster_ids(roster) == tuple(range(1, 21))
+    assert fongim_roster_ids(roster, limit=None) == tuple(range(1, 31))
+
+
 @pytest.mark.parametrize('question,expected', [
     ('Which FONGIM records — Project ID 664, Project ID 434, Project ID 696 and Project ID 32 — end in 2026?', (32,434,664,696)),
     ('Compare FONGIM project IDs: 664, 434, 696 and 32.', (32,434,664,696)),

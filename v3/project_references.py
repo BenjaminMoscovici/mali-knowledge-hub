@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 
-def fongim_project_ids(question):
+def fongim_project_ids(question, limit=20):
     q = ''.join(c for c in unicodedata.normalize('NFKD', question.casefold())
                 if not unicodedata.combining(c))
     if not re.search(r'\bfongim\b', q):
@@ -14,7 +14,8 @@ def fongim_project_ids(question):
     # must not be turned into project identities. Match complete integers.
     for match in re.finditer(r'\b' + label + r'\s*[:#]?\s+(\d+(?:(?:\s*,\s*(?:(?:and|et)\s+)?|\s+(?:and|et)\s+)\d+)*)\b(?![-\w])', q):
         ids.update(int(x) for x in re.findall(r'\d+', match.group(1)))
-    return tuple(sorted(x for x in ids if x > 0))[:20]
+    found = tuple(sorted(x for x in ids if x > 0))
+    return found if limit is None else found[:limit]
 
 
 def selection_evidence(requested, projects, geographic_scope):
@@ -30,7 +31,7 @@ def selection_evidence(requested, projects, geographic_scope):
             "Prior answer text supplied lookup identifiers only; all dates, status, donor and actor claims require the fresh project records."}
 
 
-def fongim_roster_ids(text):
+def fongim_roster_ids(text, limit=20):
     """Accept a source-qualified roster's labelled Project 32: convention.
 
     This is history lookup context only. Research queries still require ID
@@ -38,4 +39,4 @@ def fongim_roster_ids(text):
     """
     labelled=re.sub(r'\b(Project|Projet)\s+(\d+)(?=\s*(?:\*\*)?\s*[:—–])',
                     r'\1 ID \2',text,flags=re.I)
-    return fongim_project_ids(labelled)
+    return fongim_project_ids(labelled, limit=limit)

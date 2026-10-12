@@ -12,7 +12,8 @@ def _qualified_context_identifiers(value):
     # bound them here so malformed text cannot crowd out the retained context.
     safe_fongim_text = re.sub(r'\d{13,}', '', text)
     groups = (
-        ('FONGIM project IDs', tuple(map(str, fongim_roster_ids(safe_fongim_text)))),
+        ('FONGIM project IDs', tuple(map(
+            str, fongim_roster_ids(safe_fongim_text, limit=None)))),
         ('World Bank project IDs', tuple(dict.fromkeys(
             re.findall(r'\bP\d{6}\b', text.upper())))),
         ('EU IATI activity IDs', tuple(dict.fromkeys(
@@ -21,23 +22,32 @@ def _qualified_context_identifiers(value):
                        text.upper())))),
     )
     # Keep the global ceiling, but allocate it across every namespace that is
-    # present. Otherwise a long FONGIM roster can consume all 20 slots and
-    # erase equally qualified World Bank or EU identifiers from a mixed-source
-    # follow-up. Round-robin allocation preserves each namespace without
-    # promoting any surrounding claims or unqualified numbers.
-    selected = [[] for _ in groups]
+    # present. Within each namespace, sample the complete ordered roster from
+    # first to last rather than always taking its first IDs. This preserves
+    # early and late lookup context when a single source alone exceeds the cap,
+    # without promoting surrounding claims or widening fresh lookup limits.
+    allocated = [0 for _ in groups]
     remaining = 20
-    offset = 0
-    while remaining and any(offset < len(identifiers)
-                            for _, identifiers in groups):
+    while remaining and any(allocated[index] < len(identifiers)
+                            for index, (_, identifiers) in enumerate(groups)):
         for index, (_, identifiers) in enumerate(groups):
-            if remaining and offset < len(identifiers):
-                selected[index].append(identifiers[offset])
+            if remaining and allocated[index] < len(identifiers):
+                allocated[index] += 1
                 remaining -= 1
-        offset += 1
+
+    def spread(identifiers, count):
+        if count >= len(identifiers):
+            return identifiers
+        if count <= 1:
+            return identifiers[:count]
+        last = len(identifiers) - 1
+        return tuple(identifiers[(offset * last) // (count - 1)]
+                     for offset in range(count))
+
     found = []
-    for (namespace, _), identifiers in zip(groups, selected):
-        found.extend((namespace, identifier) for identifier in identifiers)
+    for (namespace, identifiers), count in zip(groups, allocated):
+        found.extend((namespace, identifier)
+                     for identifier in spread(identifiers, count))
     return tuple(found)
 
 
