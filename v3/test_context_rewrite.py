@@ -117,6 +117,34 @@ class ContextRewriteTests(unittest.TestCase):
                 self.assertNotIn("year 2099", recorder.kwargs["input"])
                 self.assertIn("source-qualified identifiers retained", recorder.kwargs["input"])
 
+    def test_rewrite_input_keeps_each_middle_identifier_namespace(self):
+        fongim_ids = ", ".join(map(str, range(1, 21)))
+        messages = [
+            {"role": "user", "content": "List the documented projects across all three sources."},
+            {"role": "assistant", "content": (
+                "Mixed-source roster begins. " + ("x" * 3300) +
+                f" FONGIM project IDs: {fongim_ids}; "
+                "World Bank project P166811; "
+                "EU activity XI-IATI-EC_INTPA-2023-PC-34274; "
+                "budget 999; year 2099. " +
+                ("y" * 3300) + " Mixed-source roster ends.")},
+        ]
+        for filename in ("app.py", "analysis_core.py"):
+            with self.subTest(filename=filename):
+                source = ast.parse((Path(__file__).parent / filename).read_text())
+                function = next(node for node in source.body
+                                if isinstance(node, ast.FunctionDef)
+                                and node.name == "resolve_conversational_question")
+                recorder = ResponseRecorder()
+                namespace = {"openai_client": SimpleNamespace(responses=recorder)}
+                exec(compile(ast.Module(body=[function], type_ignores=[]), filename, "exec"), namespace)
+                namespace[function.name]("Which of those projects are active?", messages)
+                self.assertIn("FONGIM project IDs 1", recorder.kwargs["input"])
+                self.assertIn("World Bank project IDs P166811", recorder.kwargs["input"])
+                self.assertIn("EU IATI activity IDs XI-IATI-EC_INTPA-2023-PC-34274", recorder.kwargs["input"])
+                self.assertNotIn("budget 999", recorder.kwargs["input"])
+                self.assertNotIn("year 2099", recorder.kwargs["input"])
+
 
 if __name__ == "__main__":
     unittest.main()

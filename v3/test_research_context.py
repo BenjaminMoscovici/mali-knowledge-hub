@@ -84,6 +84,27 @@ def test_long_latest_answer_keeps_only_qualified_middle_identifiers():
     assert len(text) < 7700
 
 
+def test_long_mixed_roster_reserves_middle_identifier_slots_per_source():
+    fongim_ids = ', '.join(map(str, range(1, 21)))
+    messages = [
+        {'role':'user', 'content':'List the documented projects across all three sources.'},
+        {'role':'assistant', 'content':(
+            'Mixed-source roster begins. ' + ('x' * 3300) +
+            f' FONGIM project IDs: {fongim_ids}; '
+            'World Bank project P166811; '
+            'EU activity XI-IATI-EC_INTPA-2023-PC-34274; '
+            'budget 999; year 2099. ' +
+            ('y' * 3300) + ' Mixed-source roster ends.')},
+    ]
+    text = conversation_context(messages)
+    assert 'FONGIM project IDs 1' in text
+    assert 'World Bank project IDs P166811' in text
+    assert 'EU IATI activity IDs XI-IATI-EC_INTPA-2023-PC-34274' in text
+    assert 'budget 999' not in text and 'year 2099' not in text
+    assert 'source-qualified identifiers retained from omitted context only' in text
+    assert len(text) < 7700
+
+
 def test_long_context_does_not_promote_unqualified_middle_numbers():
     text = conversation_context([{'role':'assistant', 'content':(
         'Roster begins. ' + ('x' * 3300) +

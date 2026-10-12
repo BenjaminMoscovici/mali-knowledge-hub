@@ -20,14 +20,24 @@ def _qualified_context_identifiers(value):
                        r'(?![A-Z0-9._/-])',
                        text.upper())))),
     )
+    # Keep the global ceiling, but allocate it across every namespace that is
+    # present. Otherwise a long FONGIM roster can consume all 20 slots and
+    # erase equally qualified World Bank or EU identifiers from a mixed-source
+    # follow-up. Round-robin allocation preserves each namespace without
+    # promoting any surrounding claims or unqualified numbers.
+    selected = [[] for _ in groups]
     remaining = 20
+    offset = 0
+    while remaining and any(offset < len(identifiers)
+                            for _, identifiers in groups):
+        for index, (_, identifiers) in enumerate(groups):
+            if remaining and offset < len(identifiers):
+                selected[index].append(identifiers[offset])
+                remaining -= 1
+        offset += 1
     found = []
-    for namespace, identifiers in groups:
-        selected = identifiers[:remaining]
-        found.extend((namespace, identifier) for identifier in selected)
-        remaining -= len(selected)
-        if not remaining:
-            break
+    for (namespace, _), identifiers in zip(groups, selected):
+        found.extend((namespace, identifier) for identifier in identifiers)
     return tuple(found)
 
 
