@@ -13,7 +13,8 @@ def _qualified_context_identifiers(value):
     safe_fongim_text = re.sub(r'\d{13,}', '', text)
     groups = (
         ('FONGIM project IDs', tuple(map(
-            str, fongim_roster_ids(safe_fongim_text, limit=None)))),
+            str, fongim_roster_ids(safe_fongim_text, limit=None,
+                                   preserve_order=True)))),
         ('World Bank project IDs', tuple(dict.fromkeys(
             re.findall(r'\bP\d{6}\b', text.upper())))),
         ('EU IATI activity IDs', tuple(dict.fromkeys(

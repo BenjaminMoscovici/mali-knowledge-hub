@@ -169,6 +169,32 @@ class ContextRewriteTests(unittest.TestCase):
                 self.assertNotIn("budget 999", recorder.kwargs["input"])
                 self.assertNotIn("year 2099", recorder.kwargs["input"])
 
+    def test_rewrite_input_keeps_actual_last_id_from_non_monotonic_roster(self):
+        ids = list(range(1, 21)) + list(range(22, 31)) + [21]
+        messages = [
+            {"role": "user", "content": "List the documented FONGIM projects in source order."},
+            {"role": "assistant", "content": (
+                "FONGIM roster begins. " + ("x" * 3300) +
+                f" FONGIM project IDs: {', '.join(map(str, ids))}; "
+                "budget 999; year 2099. " +
+                ("y" * 3300) + " FONGIM roster ends.")},
+        ]
+        for filename in ("app.py", "analysis_core.py"):
+            with self.subTest(filename=filename):
+                source = ast.parse((Path(__file__).parent / filename).read_text())
+                function = next(node for node in source.body
+                                if isinstance(node, ast.FunctionDef)
+                                and node.name == "resolve_conversational_question")
+                recorder = ResponseRecorder()
+                namespace = {"openai_client": SimpleNamespace(responses=recorder)}
+                exec(compile(ast.Module(body=[function], type_ignores=[]), filename, "exec"), namespace)
+                namespace[function.name]("Which of those projects are active?", messages)
+                appendix = recorder.kwargs["input"].split(
+                    "source-qualified identifiers retained", 1)[-1]
+                self.assertIn(" 21", appendix)
+                self.assertNotIn("budget 999", recorder.kwargs["input"])
+                self.assertNotIn("year 2099", recorder.kwargs["input"])
+
 
 if __name__ == "__main__":
     unittest.main()

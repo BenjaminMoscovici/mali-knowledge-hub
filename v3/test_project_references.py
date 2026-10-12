@@ -20,6 +20,14 @@ def test_context_parser_can_inspect_a_complete_roster_without_widening_lookup_ca
     assert fongim_roster_ids(roster, limit=None) == tuple(range(1, 31))
 
 
+def test_context_parser_can_preserve_non_monotonic_roster_order():
+    ids = list(range(1, 21)) + list(range(22, 31)) + [21]
+    roster = 'FONGIM project IDs: ' + ', '.join(map(str, ids))
+    assert fongim_roster_ids(roster, limit=None, preserve_order=True) == tuple(ids)
+    # Ordinary lookup remains stable, sorted and capped.
+    assert fongim_roster_ids(roster) == tuple(range(1, 21))
+
+
 @pytest.mark.parametrize('question,expected', [
     ('Which FONGIM records — Project ID 664, Project ID 434, Project ID 696 and Project ID 32 — end in 2026?', (32,434,664,696)),
     ('Compare FONGIM project IDs: 664, 434, 696 and 32.', (32,434,664,696)),

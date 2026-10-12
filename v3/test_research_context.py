@@ -122,6 +122,24 @@ def test_long_single_source_roster_spreads_middle_identifier_slots():
     assert len(text) < 7700
 
 
+def test_long_non_monotonic_roster_keeps_actual_last_listed_identifier():
+    ids = list(range(1, 21)) + list(range(22, 31)) + [21]
+    messages = [
+        {'role':'user', 'content':'List the documented FONGIM projects in source order.'},
+        {'role':'assistant', 'content':(
+            'FONGIM roster begins. ' + ('x' * 3300) +
+            f' FONGIM project IDs: {", ".join(map(str, ids))}; '
+            'budget 999; year 2099. ' +
+            ('y' * 3300) + ' FONGIM roster ends.')},
+    ]
+    text = conversation_context(messages)
+    appendix = text.split('source-qualified identifiers retained', 1)[-1]
+    assert ' 21' in appendix
+    assert 'budget 999' not in text and 'year 2099' not in text
+    assert 'source-qualified identifiers retained from omitted context only' in text
+    assert len(text) < 7700
+
+
 def test_long_context_does_not_promote_unqualified_middle_numbers():
     text = conversation_context([{'role':'assistant', 'content':(
         'Roster begins. ' + ('x' * 3300) +
