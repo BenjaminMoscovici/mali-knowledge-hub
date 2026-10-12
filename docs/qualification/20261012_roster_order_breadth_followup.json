@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-12",
+  "status": "TESTED_NOT_DEPLOYED",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "candidate_branch": "mkh-qualified-roster-order-breadth-followup-20261012",
+  "previous_accepted_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "previous_candidate_receipt": "f3c78a87accb70c9f719bb28539f560ebdf0535b",
+  "published_code_commit": "aa4d00b38ab53e70c17a56f233c7f1df58443034",
+  "tested_local_commit": "4bef288f1688a4f7b6a9748c50ca7b560e8f3658",
+  "tested_and_published_tree": "91f39a20b49065181be12e921330fa1b651679f2",
+  "tree_match": true,
+  "improvement": "The bounded identifier-only context sampler now follows the displayed order of a FONGIM roster before selecting representative entries across the existing 20-slot cap. A non-monotonic over-cap roster therefore retains its actual last-listed identifier rather than treating the numerically largest identifier as the roster endpoint. Ordinary FONGIM lookup remains sorted and capped.",
+  "reproduced_before": "A long answer listed 30 FONGIM project IDs in the order 1 through 20, 22 through 30, then 21. The prior complete-roster parser sorted those IDs numerically before sampling, so the appendix retained numeric maximum 30 but omitted the actual last-listed ID 21. Nearby budget 999 and year 2099 remained excluded.",
+  "qualification": {
+    "python_tests": 638,
+    "subtests": 28,
+    "frontend_tests": 15,
+    "focused_tests": 51,
+    "focused_subtests": 14,
+    "python_syntax_check": "passed",
+    "frontend_syntax_check": "passed",
+    "git_diff_check": "passed",
+    "pre_fix_reproduction": "Four assertions failed and one passed across the parser, context assembly and both rewrite implementations.",
+    "post_fix_selection": "For the reproduced non-monotonic roster, the appendix retained exactly 20 FONGIM IDs: 1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 19, 20, 23, 24, 26, 27, 29 and the actual last-listed ID 21.",
+    "bounded_context_guard": "The reproduced assembled context was 6093 characters including wrappers; the 6000-character latest-assistant content budget and global 20-identifier appendix cap remain unchanged.",
+    "lookup_guard": "Ordinary FONGIM query and roster parsing remains sorted and capped at 20 identifiers. Only the internal context sampler requests first-seen roster order before bounded selection.",
+    "namespace_guard": "The existing cross-namespace round-robin allocation remains unchanged; World Bank and EU identifier handling is unchanged.",
+    "evidence_guard": "The appendix contains identifiers only, is marked context only, and excludes nearby budget, year, status, result and other answer claims. Fresh retrieval and citations remain required.",
+    "model_calls": 0,
+    "research_calls": 0,
+    "actual_database_checks": false,
+    "full_model_benchmark": false
+  },
+  "deployment": {
+    "changed": false,
+    "blocker": "Exact-SHA deployment to the authorised V4 test service requires a secure signed-in dashboard session. Generic deployment remains unsafe because the configured source branch is older and divergent.",
+    "next_action": "Deploy the exact published code commit to V4 test only, then live-test a non-monotonic single-source roster exceeding the identifier cap together with the single-source breadth, mixed-source, middle-only, late-identifier, topic-change, temporal, active-only, catalogue, empty-subset, selected-ID and geography regressions."
+  },
+  "rollback": {
+    "candidate_receipt": "f3c78a87accb70c9f719bb28539f560ebdf0535b",
+    "candidate_code": "f73935b13319ba12b4336705c5042277e8b1a369",
+    "application_commit": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+    "database": "No schema or data change. Retain the existing additive evaluation schema and reviewed source facts."
+  },
+  "continuity": {
+    "state": "IDLE_WITH_TESTED_INCREMENT",
+    "running_operation": null,
+    "do_not_repeat": "Do not rebuild accepted source publication or repeat qualified context repairs. Reconcile the latest candidate branch and service before exact-SHA deployment.",
+    "if_deployment_still_blocked": "Reproduce a specific remaining Q-006 context-selection failure before changing code."
+  },
+  "preservation": "Accepted PADEL publication, FONGIM selection, geography, source catalogue, response, dossier and account behavior retained; no database, source record, service configuration, access, production or administration change.",
+  "limitations": [
+    "The appendix remains capped at 20 identifiers. It preserves displayed-order breadth across a larger qualified roster but cannot retain every identifier when the roster exceeds the cap.",
+    "Semantic follow-up rewriting remains model-mediated after context selection.",
+    "No live acceptance, actual-database qualification or full model benchmark was performed."
+  ],
+  "spending": "All qualification was local and made no external model or research calls."
+}
