@@ -9,7 +9,9 @@
     'conversation-scroll','prompt','send-button','analysis-mode','topbar-title',
     'topbar-sources','topbar-export','evidence-drawer','drawer-scrim','drawer-body','auth-dialog',
     'auth-form','auth-email','auth-status','profile-menu','profile-title','profile-detail',
-    'avatar','toast','text-attachment'];
+    'avatar','toast','text-attachment','auth-title','auth-description','auth-login','auth-signup',
+    'auth-username','auth-username-wrap','auth-email-wrap','auth-password','auth-password-wrap',
+    'auth-confirm','auth-confirm-wrap','auth-password-help','auth-submit','auth-recover','auth-link'];
   const el = Object.fromEntries(ids.map(id => [id,$(id)]));
   const escaped = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const identifier = () => crypto.randomUUID();
@@ -45,9 +47,9 @@
   }
   function profile() {
     if (state.user) {
-      el['profile-title'].textContent = state.user.email || 'Your research';
+      el['profile-title'].textContent = state.user.username || state.user.email || 'Your research';
       el['profile-detail'].textContent = 'Research history saved privately';
-      el.avatar.textContent = (state.user.email || 'A')[0].toUpperCase();
+      el.avatar.textContent = (state.user.username || state.user.email || 'A')[0].toUpperCase();
     } else {
       el['profile-title'].textContent = 'Guest research';
       el['profile-detail'].textContent = 'Sign in to save your work';
@@ -61,8 +63,9 @@
     };
     if (state.user) {
       if (isGuestThread() && state.messages.length) add('Save this guest chat', importCurrentGuest);
+      add('Set / change password', () => openAuth('password'));
       add('Sign out', logout);
-    } else add('Sign in to save chats', () => el['auth-dialog'].showModal());
+    } else add('Sign in / create account', () => openAuth('login'));
   }
   function threadElement(thread, archived=false) {
     const row = document.createElement('div');
@@ -504,6 +507,79 @@
     try {await send('auth/logout',{});} catch {}
     state.user=null;state.threads=[];startFresh();profile();toast('Signed out.');
   }
+  let authMode = 'login', authBusy = false;
+  function setAuthMode(mode) {
+    authMode = mode;
+    const creating = mode === 'signup', choosing = creating || mode === 'password';
+    const credentials = mode === 'login' || choosing;
+    for (const [id, visible] of [['auth-username',creating],['auth-email',mode !== 'password'],
+        ['auth-password',credentials],['auth-confirm',choosing]]) {
+      el[id+'-wrap'].classList.toggle('hidden',!visible);
+      el[id].disabled = !visible; el[id].required = visible;
+    }
+    el['auth-password'].value = ''; el['auth-confirm'].value = '';
+    el['auth-confirm'].setCustomValidity('');
+    el['auth-password'].minLength = choosing ? 12 : 1;
+    el['auth-password'].maxLength = choosing ? 256 : 1024;
+    el['auth-password'].autocomplete = choosing ? 'new-password' : 'current-password';
+    el['auth-password-help'].classList.toggle('hidden',!choosing);
+    const titles = {login:'Sign in',signup:'Create your account',recover:'Reset your password',
+      password:'Choose your password',link:'Email sign-in link'};
+    const descriptions = {
+      login:'Sign in with your personal email and password to reopen your private research.',
+      signup:'Choose a username and password. Verify your personal email before signing in.',
+      recover:'We’ll email a reset link. Existing email-link accounts keep the same saved research.',
+      password:'Set a password for your verified account. Your email and saved research stay the same.',
+      link:'Use an email link for an existing account, then choose “Set / change password” in your profile.'};
+    el['auth-title'].textContent = titles[mode]; el['auth-description'].textContent = descriptions[mode];
+    el['auth-submit'].textContent = {login:'Sign in',signup:'Create account',recover:'Email password reset link',
+      password:'Save password',link:'Email sign-in link'}[mode];
+    el['auth-login'].setAttribute('aria-pressed',String(mode==='login'));
+    el['auth-signup'].setAttribute('aria-pressed',String(creating));
+    el['auth-status'].textContent = '';
+  }
+  function openAuth(mode) { setAuthMode(mode); el['auth-dialog'].showModal(); }
+  async function submitAuth(event) {
+    event.preventDefault(); if(authBusy)return;
+    const mode = authMode;
+    if ((mode==='signup' || mode==='password') && el['auth-password'].value !== el['auth-confirm'].value) {
+      el['auth-status'].textContent = 'The passwords do not match.'; el['auth-confirm'].focus(); return;
+    }
+    const payload = mode==='password' ? {} : {email:el['auth-email'].value};
+    if (mode==='login' || mode==='signup' || mode==='password') payload.password=el['auth-password'].value;
+    if (mode==='signup') payload.username=el['auth-username'].value;
+    authBusy=true;el['auth-submit'].disabled=true;
+    el['auth-status'].textContent = 'Please wait…';
+    try {
+      const data=await send('auth/'+({link:'email'}[mode] || mode),payload);
+      if(data.user) {
+        state.user=data.user;profile();el['auth-dialog'].close();
+        await loadAccountThreads();renderThreads();
+        toast(data.message || 'Signed in.');
+      } else el['auth-status'].textContent=data.message;
+    } catch(err) { el['auth-status'].textContent=err.message; }
+    finally {
+      // Credentials never enter guest storage, history or analytics.
+      el['auth-password'].value='';el['auth-confirm'].value='';delete payload.password;
+      authBusy=false;el['auth-submit'].disabled=false;
+    }
+  }
+  async function acceptAuthCallback() {
+    const hash=new URLSearchParams(location.hash.slice(1));
+    const hasAuth=hash.has('access_token') || hash.has('refresh_token') || hash.has('error');
+    if(!hasAuth)return;
+    const access_token=hash.get('access_token'),refresh_token=hash.get('refresh_token'),type=hash.get('type');
+    // Scrub credentials and provider errors before any network request or rendering.
+    history.replaceState(null,'',location.pathname+location.search);
+    if(hash.has('error') || !access_token || !refresh_token) {
+      openAuth('recover');el['auth-status'].textContent='This account link has expired or is incomplete. Request a fresh email.';return;
+    }
+    try {
+      const result=await send('auth/session',{access_token,refresh_token});state.user=result.user;
+      if(type==='recovery')openAuth('password');
+      else toast('Email verified. You are signed in.');
+    } catch(err) {openAuth('recover');el['auth-status'].textContent=err.message;}
+  }
   function wire() {
     el['topbar-export'].addEventListener('click',exportDossier);
     $('new-chat').addEventListener('click',startFresh);
@@ -555,23 +631,15 @@
       if(!e.target.closest('.profile-menu,.profile'))el['profile-menu'].classList.add('hidden');
       if(!e.target.closest('.thread-menu,.thread-menu-button'))document.querySelectorAll('.thread-menu').forEach(m=>m.classList.add('hidden'));
     });
-    el['auth-form'].addEventListener('submit',async e=>{
-      e.preventDefault();el['auth-status'].textContent='Sending a sign-in link…';
-      try {const data=await send('auth/email',{email:el['auth-email'].value});el['auth-status'].textContent=data.message;}
-      catch(err){el['auth-status'].textContent=err.message;}
-    });
+    el['auth-form'].addEventListener('submit',submitAuth);
+    for(const mode of ['login','signup','recover'])el['auth-'+mode].addEventListener('click',()=>{if(!authBusy)setAuthMode(mode);});
+    el['auth-link'].addEventListener('click',()=>{if(!authBusy)setAuthMode('link');});
+    el['auth-dialog'].addEventListener('close',()=>{el['auth-password'].value='';el['auth-confirm'].value='';});
     addEventListener('resize',()=> {if(mobile())closeSidebar();});
   }
   async function init() {
     wire();loadGuest();if(mobile())closeSidebar();resizePrompt();
-    const hash=new URLSearchParams(location.hash.slice(1));
-    if(hash.has('access_token') && hash.has('refresh_token')) {
-      // Clear URL fragments before any other network request or interaction.
-      const access_token=hash.get('access_token'),refresh_token=hash.get('refresh_token');
-      history.replaceState(null,'',location.pathname+location.search);
-      try {const result=await send('auth/session',{access_token,refresh_token});state.user=result.user;toast('Signed in.');}
-      catch(err){toast(err.message);}
-    }
+    await acceptAuthCallback();
     if(!state.user) {
       try {state.user=(await api('me')).user;}catch {state.user=null;}
     }

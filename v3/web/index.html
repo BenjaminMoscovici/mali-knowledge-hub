@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>Mali Knowledge Hub</title>
-  <link rel="stylesheet" href="/assets/styles.css?v=readable-tables-20261007">
-  <script src="/assets/app.js?v=research-dossiers-20261007" defer></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=password-accounts-20261013">
+  <script src="/assets/app.js?v=password-accounts-20261013" defer></script>
 </head>
 <body>
   <div class="workspace" id="workspace">
@@ -94,9 +94,18 @@
 
   <dialog id="auth-dialog" class="auth-dialog">
     <form method="dialog"><button class="icon-button modal-close" aria-label="Close sign-in"><svg viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg></button></form>
-    <div class="modal-mark">M</div><h2>Save your research</h2>
-    <p>Use the Hub immediately as a guest, or sign in with an email link to reopen conversations later.</p>
-    <form id="auth-form"><label for="auth-email">Email address</label><input id="auth-email" type="email" autocomplete="email" required placeholder="you@example.org"><button type="submit" class="primary-button">Email me a sign-in link</button></form>
+    <div class="modal-mark">M</div><h2 id="auth-title">Sign in</h2>
+    <p id="auth-description">Sign in with your personal email and password to reopen your private research.</p>
+    <div class="auth-tabs" aria-label="Account access"><button type="button" id="auth-login" aria-pressed="true">Sign in</button><button type="button" id="auth-signup" aria-pressed="false">Create account</button></div>
+    <form id="auth-form">
+      <div id="auth-username-wrap" class="hidden"><label for="auth-username">Username</label><input id="auth-username" autocomplete="nickname" minlength="2" maxlength="60" disabled><small>Your display name. Sign in using your email address.</small></div>
+      <div id="auth-email-wrap"><label for="auth-email">Personal email address</label><input id="auth-email" type="email" autocomplete="email" maxlength="254" required placeholder="you@example.org"></div>
+      <div id="auth-password-wrap"><label for="auth-password">Password</label><input id="auth-password" type="password" autocomplete="current-password" maxlength="256" required></div>
+      <div id="auth-confirm-wrap" class="hidden"><label for="auth-confirm">Confirm password</label><input id="auth-confirm" type="password" autocomplete="new-password" maxlength="256" disabled></div>
+      <small id="auth-password-help" class="hidden">Use at least 12 characters. You choose and keep your own password.</small>
+      <button id="auth-submit" type="submit" class="primary-button">Sign in</button>
+    </form>
+    <div class="auth-links"><button type="button" id="auth-recover">Forgot password / existing account?</button><button type="button" id="auth-link">Use an existing account’s email sign-in link</button></div>
     <div class="modal-status" id="auth-status" role="status"></div>
   </dialog>
   <div id="toast" class="toast hidden" role="status"></div>

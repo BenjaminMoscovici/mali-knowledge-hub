@@ -13,6 +13,7 @@ import traceback
 import os
 import re
 import uuid
+import requests
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
@@ -23,7 +24,7 @@ from starlette.requests import Request
 from starlette.responses import FileResponse, JSONResponse, RedirectResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
-from supabase import create_client
+from supabase import create_client, ClientOptions
 
 from language import answer_language
 from user_research import (REFERENCE_FIELDS, ResearchStore, ResearchStoreError,
@@ -48,6 +49,7 @@ MAX_GUEST_CONTEXT = 10
 _analysis_limit = asyncio.Semaphore(8)
 _transform_limit = asyncio.Semaphore(8)
 _attachment_limit = asyncio.Semaphore(2)
+_auth_limit = asyncio.Semaphore(4)
 
 
 async def extract_attachment(request):
@@ -93,7 +95,63 @@ def setting(name):
 def auth_client():
     if not setting("SUPABASE_URL") or not setting("SUPABASE_PUBLISHABLE_KEY"):
         raise RuntimeError("Account sign-in is not configured.")
-    return create_client(setting("SUPABASE_URL"), setting("SUPABASE_PUBLISHABLE_KEY"))
+    return create_client(setting("SUPABASE_URL"), setting("SUPABASE_PUBLISHABLE_KEY"),
+                         options=ClientOptions(auto_refresh_token=False, persist_session=False))
+
+
+def verified_email_user(user):
+    return bool(user and getattr(user, "id", None) and getattr(user, "email", None)
+                and getattr(user, "email_confirmed_at", None))
+
+
+def account_view(user):
+    # Editable profile metadata is display-only, never a source of permissions.
+    metadata = getattr(user, "user_metadata", None) or {}
+    username = metadata.get("username", "") if isinstance(metadata, dict) else ""
+    return {"id": user.id, "email": user.email,
+            "username": username[:60] if isinstance(username, str) else ""}
+
+
+def auth_redirect():
+    return (setting("MKH_PUBLIC_ORIGIN") or
+            "https://mali-knowledge-hub.onrender.com").rstrip("/") + "/"
+
+
+def signup_settings():
+    """Fail closed before creating an account if email verification is disabled."""
+    url, key = setting("SUPABASE_URL"), setting("SUPABASE_PUBLISHABLE_KEY")
+    if not url or not key:
+        raise RuntimeError("Account sign-in is not configured")
+    response = requests.get(url.rstrip("/") + "/auth/v1/settings",
+                            headers={"apikey": key}, timeout=10)
+    response.raise_for_status()
+    config = response.json()
+    return (config.get("mailer_autoconfirm") is False
+            and config.get("disable_signup") is False
+            and config.get("external", {}).get("email") is True)
+
+
+def account_email(payload):
+    value = payload.get("email")
+    email = value.strip().casefold() if isinstance(value, str) else ""
+    return email if len(email) <= 254 and re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email) else None
+
+
+def valid_new_password(value):
+    return isinstance(value, str) and 12 <= len(value) <= 256 and len(value.encode("utf-8")) <= 1024
+
+
+def valid_username(value):
+    return (isinstance(value, str) and 2 <= len(value.strip()) <= 60
+            and not any(ord(c) < 32 or ord(c) == 127 for c in value))
+
+
+def provider_failure(exc, message):
+    if getattr(exc, "status", None) == 429 or str(getattr(exc, "code", "")).startswith("over_"):
+        return error("Too many attempts. Please wait before trying again.", 429)
+    if getattr(exc, "code", "") in {"weak_password", "same_password"}:
+        return error("Choose a stronger new password that differs from your current password.")
+    return error(message, 503)
 
 
 def set_auth_cookies(response, access, refresh):
@@ -146,18 +204,21 @@ async def actor(request):
     refresh = request.cookies.get(REFRESH_COOKIE)
     if not access and not refresh:
         return None, None, None
-    client = auth_client()
+    try:
+        client = auth_client()
+    except Exception:
+        return None, None, None
     if access:
         try:
             user = (await asyncio.to_thread(client.auth.get_user, access)).user
-            if user and user.id:
+            if verified_email_user(user):
                 return user, access, None
         except Exception:
             pass
     if refresh:
         try:
             session = (await asyncio.to_thread(client.auth.refresh_session, refresh)).session
-            if session and session.user and session.user.id:
+            if session and verified_email_user(session.user):
                 return session.user, session.access_token, session
         except Exception:
             pass
@@ -211,23 +272,127 @@ async def health(request):
 
 async def me(request):
     user, _, refreshed = await actor(request)
-    response = JSONResponse({"user": {"id": user.id, "email": user.email} if user else None})
+    response = JSONResponse({"user": account_view(user) if user else None})
     return with_session(response, refreshed) if user else clear_auth_cookies(response)
+
+
+async def auth_status(request):
+    try:
+        enabled = await asyncio.to_thread(signup_settings)
+    except Exception:
+        return error("Account signup is temporarily unavailable.", 503)
+    return JSONResponse({"signup_enabled": enabled, "email_confirmation_required": True})
+
+
+async def signup(request):
+    payload = await body(request)
+    if payload is None:
+        return error("Invalid request.", 403)
+    email, password, username = account_email(payload), payload.get("password"), payload.get("username")
+    if not email:
+        return error("Enter a valid email address.")
+    if not valid_username(username):
+        return error("Choose a username of 2–60 characters.")
+    if not valid_new_password(password):
+        return error("Use a password of 12–256 characters.")
+    async with _auth_limit:
+        try:
+            if not await asyncio.to_thread(signup_settings):
+                return error("Verified-email signup is not available right now.", 503)
+            result = await asyncio.to_thread(auth_client().auth.sign_up, {
+                "email": email, "password": password,
+                "options": {"data": {"username": username.strip()},
+                            "email_redirect_to": auth_redirect()},
+            })
+            # Never establish a session from signup, including provider misconfiguration.
+            if result.session:
+                return error("Email verification is required. Contact the Hub administrator.", 503)
+        except Exception as exc:
+            if getattr(exc, "code", "") not in {"user_already_exists", "email_exists"}:
+                return provider_failure(exc, "Your account could not be created right now. Try again later.")
+    return JSONResponse({"message": "Check your personal email to verify your account before signing in. "
+                         "If you already have an account, sign in or reset your password."})
+
+
+async def password_login(request):
+    payload = await body(request)
+    if payload is None:
+        return error("Invalid request.", 403)
+    email, password = account_email(payload), payload.get("password")
+    # Legacy passwords remain usable; stronger limits apply only to newly chosen passwords.
+    if not email or not isinstance(password, str) or not 1 <= len(password) <= 1024:
+        return error("Enter your email address and password.")
+    async with _auth_limit:
+        try:
+            result = await asyncio.to_thread(auth_client().auth.sign_in_with_password,
+                                             {"email": email, "password": password})
+            if (not result.session or not verified_email_user(result.user)
+                    or not verified_email_user(result.session.user)
+                    or result.session.user.id != result.user.id):
+                return error("Sign-in failed. Check your email verification and credentials.", 401)
+        except Exception as exc:
+            if getattr(exc, "code", "") in {"invalid_credentials", "email_not_confirmed"}:
+                return error("Sign-in failed. Check your email verification and credentials.", 401)
+            return provider_failure(exc, "Sign-in is temporarily unavailable.")
+    return with_session(JSONResponse({"user": account_view(result.user)}), result.session)
+
+
+async def recover_password(request):
+    payload = await body(request)
+    if payload is None:
+        return error("Invalid request.", 403)
+    email = account_email(payload)
+    if not email:
+        return error("Enter a valid email address.")
+    async with _auth_limit:
+        try:
+            await asyncio.to_thread(auth_client().auth.reset_password_for_email,
+                                    email, {"redirect_to": auth_redirect()})
+        except Exception as exc:
+            return provider_failure(exc, "A password reset email could not be sent right now.")
+    return JSONResponse({"message": "If this address has an account, a password reset link is on its way. "
+                         "Use it to set a password for your existing account and saved research."})
+
+
+async def update_password(request):
+    payload = await body(request)
+    if payload is None:
+        return error("Invalid request.", 403)
+    if not valid_new_password(payload.get("password")):
+        return error("Use a password of 12–256 characters.")
+    user, access, refreshed = await actor(request)
+    if not user:
+        return error("Open a fresh password reset email or sign in first.", 401)
+    refresh = refreshed.refresh_token if refreshed else request.cookies.get(REFRESH_COOKIE)
+    if not refresh:
+        return error("Open a fresh password reset email or sign in again.", 401)
+    async with _auth_limit:
+        try:
+            client = auth_client()
+            session = (await asyncio.to_thread(client.auth.set_session, access, refresh)).session
+            if not session or not verified_email_user(session.user) or session.user.id != user.id:
+                raise ValueError("Session identity mismatch")
+            result = await asyncio.to_thread(client.auth.update_user, {"password": payload["password"]})
+            if not verified_email_user(result.user) or result.user.id != user.id:
+                raise ValueError("Account identity mismatch")
+        except Exception as exc:
+            return provider_failure(exc, "Your password could not be changed. Open a fresh reset email and try again.")
+    return with_session(JSONResponse({"user": account_view(result.user),
+                                      "message": "Password saved. Use your email address and password to sign in."}), session)
 
 
 async def email_link(request):
     payload = await body(request)
     if payload is None:
         return error("Invalid request.", 403)
-    email = str(payload.get("email") or "").strip().casefold()
-    if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+    email = account_email(payload)
+    if not email:
         return error("Enter a valid email address.")
     try:
         client = auth_client()
-        redirect = setting("MKH_PUBLIC_ORIGIN") or "https://mali-knowledge-hub.onrender.com"
         await asyncio.to_thread(client.auth.sign_in_with_otp, {
-            "email": email, "options": {"should_create_user": True,
-                                         "email_redirect_to": redirect.rstrip("/") + "/"},
+            "email": email, "options": {"should_create_user": False,
+                                         "email_redirect_to": auth_redirect()},
         })
     except Exception:
         return error("A sign-in link could not be sent right now.", 503)
@@ -239,23 +404,33 @@ async def accept_link(request):
     if payload is None:
         return error("Invalid request.", 403)
     access, refresh = payload.get("access_token"), payload.get("refresh_token")
-    if not isinstance(access, str) or not isinstance(refresh, str) or len(access) > 8000 or len(refresh) > 8000:
+    if not isinstance(access, str) or not isinstance(refresh, str) or not access or not refresh or len(access) > 8000 or len(refresh) > 8000:
         return error("This sign-in link is incomplete.")
     try:
         client = auth_client()
         user = (await asyncio.to_thread(client.auth.get_user, access)).user
-        if not user or not user.id:
+        if not verified_email_user(user):
             raise ValueError("Invalid account")
+        session = (await asyncio.to_thread(client.auth.refresh_session, refresh)).session
+        if not session or not verified_email_user(session.user) or session.user.id != user.id:
+            raise ValueError("Session identity mismatch")
     except Exception:
         return error("This sign-in link has expired. Request a new one.", 401)
-    return set_auth_cookies(JSONResponse({"user": {"id": user.id, "email": user.email}}),
-                            access, refresh)
+    return with_session(JSONResponse({"user": account_view(user)}), session)
 
 
 async def logout(request):
     if await body(request) is None:
         return error("Invalid request.", 403)
-    # The browser loses both credentials even when the provider is unreachable.
+    # Revoke the current refresh session where possible, and always clear browser credentials.
+    access, refresh = request.cookies.get(ACCESS_COOKIE), request.cookies.get(REFRESH_COOKIE)
+    if access and refresh:
+        try:
+            client = auth_client()
+            await asyncio.to_thread(client.auth.set_session, access, refresh)
+            await asyncio.to_thread(client.auth.sign_out, {"scope": "local"})
+        except Exception:
+            pass
     return clear_auth_cookies(JSONResponse({"ok": True}))
 
 
@@ -584,6 +759,11 @@ routes = [
     Route("/api/health", health),
     Route("/api/geography", geography),
     Route("/api/me", me),
+    Route("/api/auth/status", auth_status),
+    Route("/api/auth/signup", signup, methods=["POST"]),
+    Route("/api/auth/login", password_login, methods=["POST"]),
+    Route("/api/auth/recover", recover_password, methods=["POST"]),
+    Route("/api/auth/password", update_password, methods=["POST"]),
     Route("/api/auth/email", email_link, methods=["POST"]),
     Route("/api/auth/session", accept_link, methods=["POST"]),
     Route("/api/auth/logout", logout, methods=["POST"]),
