@@ -3,15 +3,15 @@ import re
 import unicodedata
 
 
-def _qualified_context_identifiers(value):
-    """Return bounded source identifiers, never surrounding answer claims."""
+def _context_identifier_groups(value):
+    """Read source-qualified identifiers without surrounding answer claims."""
     from project_references import fongim_roster_ids
 
     text = str(value)
     # Conversation output should never contain enormous identifier tokens, but
     # bound them here so malformed text cannot crowd out the retained context.
     safe_fongim_text = re.sub(r'\d{13,}', '', text)
-    groups = (
+    return (
         ('FONGIM project IDs', tuple(map(
             str, fongim_roster_ids(safe_fongim_text, limit=None,
                                    preserve_order=True)))),
@@ -22,6 +22,11 @@ def _qualified_context_identifiers(value):
                        r'(?![A-Z0-9._/-])',
                        text.upper())))),
     )
+
+
+def _qualified_context_identifiers(value):
+    """Return bounded source identifiers, never surrounding answer claims."""
+    groups = _context_identifier_groups(value)
     # Keep the global ceiling, but allocate it across every namespace that is
     # present. Within each namespace, sample the complete ordered roster from
     # first to last rather than always taking its first IDs. This preserves
@@ -112,8 +117,8 @@ def has_reference(question):
     return any(re.search(pattern, text) for pattern in patterns)
 
 
-def conversation_context(messages):
-    """Keep the latest topic and roster intact; older topics do not leak in."""
+def _latest_topic_messages(messages):
+    """Exclude exchanges superseded by a newer substantive question."""
     recent = messages[-10:]
     # A complete newer research question supersedes every older topic. Social
     # acknowledgements and conversation-only transforms do not: a user may say
@@ -130,6 +135,12 @@ def conversation_context(messages):
             starts.append(index)
     if starts:
         recent = recent[starts[-1]:]
+    return recent
+
+
+def conversation_context(messages):
+    """Keep the latest topic and roster intact; older topics do not leak in."""
+    recent = _latest_topic_messages(messages)
     assistants = [i for i, row in enumerate(recent)
                   if row.get('role') == 'assistant' and row.get('content')]
     last = assistants[-1] if assistants else None
@@ -144,6 +155,87 @@ def conversation_context(messages):
             turns.append('ASSISTANT CONTEXT ONLY: ' +
                          _bounded_context_text(message['content'], limit))
     return '\n\n'.join(turns[-8:])
+
+
+def preserve_project_selection(standalone, question, messages):
+    """Prevent a semantic selector from replacing its complete bounded roster.
+
+    Only source IDs survive. When a rewrite changes the set, the original
+    user question supplies every criterion; model-added claims are discarded.
+    Unnamed mixed sets, explicit new IDs and incomplete rosters remain outside
+    this guard rather than being treated as a complete selection.
+    """
+    q = ''.join(c for c in unicodedata.normalize('NFKD', question.casefold())
+                if not unicodedata.combining(c))
+    q = ' '.join(re.sub(r'[^\w\s]', ' ', q).split())
+    en = re.match(r'which of (?:those|these) '
+                  r'(?:(?P<source>fongim|world bank|eu) )?projects\b', q)
+    fr = re.match(r'lesquels de ces projets'
+                  r'(?: (?P<source>fongim|de la banque mondiale|de l ue|ue))?\b', q)
+    pronoun = re.match(r'(?:which of them|lesquels d entre eux|lesquels parmi eux)\b', q)
+    if not (en or fr or pronoun):
+        return standalone
+    # A user-authored explicit identity is a new constraint, not a pronoun
+    # selection that can be replaced by the preceding complete roster.
+    if (any(ids for _, ids in _context_identifier_groups(question)) or
+            re.search(r'\b(?:ids?|identifiants?)\s+\d+\b', q)):
+        return standalone
+    from query_router import classify
+    recent = _latest_topic_messages(messages)
+    latest = ''
+    social_exchange = False
+    for row in recent:
+        if row.get('role') == 'user':
+            value = row.get('standalone_question') or row.get('content', '')
+            social_exchange = classify(value)['path'] in {
+                'conversational', 'conversation_only'}
+        elif row.get('role') == 'assistant' and row.get('content') and not social_exchange:
+            latest = row['content']
+    if (not latest or len(latest) >= 5900
+            or 'Selected source identifiers for this filter: none.' in latest
+            or 'Identifiants source sélectionnés par ce filtre : aucun.' in latest):
+        return standalone
+    # Canonical result tables supply only their identifier column. Titles and
+    # excluded-record notes must not enlarge the selected set.
+    lines = latest.splitlines()
+    headers = [i for i, line in enumerate(lines)
+               if line.lstrip().startswith('|') and re.search(
+                   r'^\|\s*(?:Source identifier|Identifiant source)\s*\|', line.lstrip(),
+                   re.I)]
+    if headers:
+        if len(headers) != 1:
+            return standalone
+        columns = []
+        for line in lines[headers[0] + 1:]:
+            if not line.lstrip().startswith('|'):
+                break
+            columns.append(line.split('|')[1].strip())
+        latest = '\n'.join(columns)
+    groups = [(namespace, tuple(value.rstrip('.:') for value in ids)) for namespace, ids in
+              _context_identifier_groups(latest) if ids]
+    source_labels = {'fongim': 'FONGIM project IDs',
+                     'world bank': 'World Bank project IDs',
+                     'de la banque mondiale': 'World Bank project IDs',
+                     'eu': 'EU IATI activity IDs', 'ue': 'EU IATI activity IDs',
+                     'de l ue': 'EU IATI activity IDs'}
+    match = en or fr
+    named = source_labels.get(match.groupdict().get('source')) if match else None
+    if named:
+        groups = [(namespace, ids) for namespace, ids in groups if namespace == named]
+    if len(groups) != 1 or len(groups[0][1]) > 12:
+        return standalone
+    namespace, ids = groups[0]
+    rewritten = [(family, tuple(value.rstrip('.:') for value in values)) for family, values in
+                 _context_identifier_groups(standalone) if values]
+    if len(rewritten) == 1 and rewritten[0][0] == namespace and set(rewritten[0][1]) == set(ids):
+        return standalone
+    labels = ', '.join(ids)
+    french_names = {'FONGIM project IDs': 'FONGIM',
+                    'World Bank project IDs': 'World Bank',
+                    'EU IATI activity IDs': 'EU IATI'}
+    prefix = (f'Pour {french_names[namespace]}, identifiants de projets {labels} : '
+              if fr or q.startswith('lesquels ') else f'For {namespace} {labels}: ')
+    return prefix + question.strip()
 
 
 def preserve_lookup_namespace(standalone, question, messages):

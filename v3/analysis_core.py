@@ -3068,7 +3068,8 @@ def resolve_conversational_question(
 ):
     """Convert a follow-up into a standalone research question."""
 
-    from research_context import conversation_context, preserve_lookup_namespace
+    from research_context import (conversation_context, preserve_lookup_namespace,
+                                  preserve_project_selection)
     from datetime import datetime, timezone
     context_text = conversation_context(messages)
     if not context_text:
@@ -3133,4 +3134,5 @@ NEW USER QUESTION
         response.output_text
         or question
     ).strip()
-    return preserve_lookup_namespace(standalone, question, messages)
+    standalone = preserve_lookup_namespace(standalone, question, messages)
+    return preserve_project_selection(standalone, question, messages)
