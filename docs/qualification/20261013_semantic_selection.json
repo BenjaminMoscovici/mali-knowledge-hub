@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-13",
+  "status": "LIVE_ACCEPTED",
+  "scope": "Complete bounded source-qualified project selection after semantic rewriting; overall conversation continuity remains PARTIAL.",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "published_code": "5d16c7f995119f6cc173cb23541349769ef51c23",
+  "tested_local_code": "daf5b7ba8f75cc5e313dd3372c508c07c017ec38",
+  "tested_and_published_tree": "c123b3885a126efeb9a7e82a1e14b48745a27729",
+  "deployed_at_utc": "2026-10-13T13:30:00.405666Z",
+  "reproduction": "Four assertions reproduced selected FONGIM ID 664 being omitted or substituted in both resolvers. The actual deployed EU-donor query previously widened to a Gao roster.",
+  "qualification": {
+    "python_tests": 662,
+    "subtests": 28,
+    "frontend_tests": 15,
+    "syntax_checks": true,
+    "diff_check": true,
+    "remote_tree_match": true,
+    "full_model_benchmark": false
+  },
+  "live": {
+    "successful_isolated_cases": 11,
+    "cases": [
+      "catalogue-en",
+      "fongim-eu-donor-en",
+      "fongim-eu-donor-fr",
+      "canonical-title-semantic",
+      "world-bank-semantic",
+      "eu-semantic",
+      "social-acknowledgement",
+      "catalogue-fr",
+      "protected-date",
+      "mali",
+      "gao"
+    ],
+    "all_response_shas_verified": true,
+    "actual_case": "Only FONGIM ID 664 is requested and returned. Fresh donor field GIZ - GERMAN FEDERAL FOREIGN OFFICE is cited; the explicit EU-donor question returns no explicit EU donor. French, canonical-title/note, WB, EU, social-acknowledgement, catalogue, date and Mali/Gao cases pass.",
+    "successful_request_estimated_usd": 0.0370482,
+    "startup_failed_request_cost": "Not established; no zero-cost claim."
+  },
+  "guard_boundaries": [
+    "Complete unambiguous source-qualified set with at most 12 IDs.",
+    "Explicit family selects only that family from a mixed roster.",
+    "Canonical identifier columns exclude project-title IDs and excluded-record notes.",
+    "If rewrite changes identities, restore original user criteria anchored to IDs.",
+    "Already-correct exact rewrites remain unchanged.",
+    "Ambiguous, truncated, empty, over-cap and explicit-new-identity questions defer."
+  ],
+  "known_limitations": [
+    "Initial concurrent startup checks returned seven HTTP 502s and a process restart was observed; the provider did not supply a classified cause. Isolated warm checks pass. Cold/parallel reliability is not accepted and remains Q-034.",
+    "Signed-in long-answer/omitted-middle/fairness/displayed-order acceptance remains Q-026–030.",
+    "Model-mediated semantic rewriting and synthesis can still have other errors outside this bounded ID guard."
+  ],
+  "rollback_code": "aa4d00b38ab53e70c17a56f233c7f1df58443034",
+  "preservation": "V4 test only. No schema, account permissions, V3 or original production change. Previous code and records retained.",
+  "next": "Q-031 verified-email/password user accounts; Q-032 invited administrators. Retain open signed-in and startup acceptance work."
+}
