@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-13",
+  "repository": "BenjaminMoscovici/mali-knowledge-hub",
+  "deployed_code": "aa4d00b38ab53e70c17a56f233c7f1df58443034",
+  "deployed_tree": "91f39a20b49065181be12e921330fa1b651679f2",
+  "deployed_at_utc": "2026-10-13T12:49:19.102357Z",
+  "status": "DEPLOYED_NOT_VERIFIED",
+  "verified_scope": "Core source-catalogue and structured project/date follow-ups live accepted. Broader semantic and signed-in long-answer acceptance remains open.",
+  "included_increments": 21,
+  "previous_qualification": {
+    "python_tests": 638,
+    "subtests": 28,
+    "frontend_tests": 15,
+    "rerun_this_checkpoint": false,
+    "exact_tree_rechecked": true,
+    "source_archives_checked": true
+  },
+  "live_checks": {
+    "core_unique_cases_accepted": 25,
+    "request_count": 28,
+    "response_commit_verified": true,
+    "cases": [
+      "next-year-en",
+      "range-fr",
+      "range-en",
+      "current-month-fr",
+      "current-year-fr",
+      "previous-year-fr",
+      "next-month-fr",
+      "current-week-en",
+      "previous-month-en",
+      "next-week-fr",
+      "mixed-fongim-en",
+      "previous-week-fr",
+      "mixed-wb-fr",
+      "mixed-eu-en",
+      "catalogue-en",
+      "catalogue-fr",
+      "active-en-base",
+      "active-en-followup",
+      "active-fr-base",
+      "active-fr-followup",
+      "empty-base",
+      "empty-followup",
+      "mali",
+      "gao",
+      "title-selection"
+    ],
+    "harness_corrections": [
+      "The EU path may use one research-model call. It used no context-rewrite call and returned the exact selected activity, fresh reported date and citation.",
+      "A hand-written table used unsupported column headings. Repeating the test with the canonical emitted table headings retained only FONGIM ID 664 and excluded title/note ID 32."
+    ],
+    "extra_semantic_case": {
+      "latest_topic_isolated": true,
+      "selected_id_preserved": false,
+      "expected_id": "664",
+      "actual_standalone_question": "Which FONGIM projects listed for Gao have an explicitly reported EU donor?",
+      "outcome": "Open Q-006/Q-025 gap: semantic rewrite broadened the selected project to the wider geographic roster. This is not accepted."
+    }
+  },
+  "source_publication": {
+    "startup_eu_publisher_timeout": true,
+    "all_10_active_eu_releases_match_package_checksums": true,
+    "all_322_existing_eu_record_counts_match_package": true,
+    "eu_cited_lookup_passed": true,
+    "data_republished": false
+  },
+  "rollback_application_code": "03ff30e5b752e7f01533e03004f1b76eecc43251",
+  "changes": {
+    "service": "V4 test only",
+    "database_schema_changed": false,
+    "account_permissions_changed": false,
+    "admin_or_original_production_changed": false
+  },
+  "remaining_acceptance": [
+    "Signed-in long-answer, omitted-middle, namespace fairness and displayed-order continuity (Q-026 through Q-030). Guest API truncates submitted messages at 6000 characters.",
+    "Semantic rewrite must retain selected source project IDs on non-date follow-ups (Q-006/Q-025).",
+    "EU startup publisher ReadTimeout is documented. Persisted release pointers, package checksums and counts are intact; bounded EU retrieval works."
+  ],
+  "queued_user_requirements": [
+    "Q-031: username, personal email verification and own-password signup; subsequent email/password login.",
+    "Q-032: administrator email invitations, own-password invitation acceptance, email/password login and server-enforced rights to add documents/data streams and invite administrators."
+  ],
+  "continuity": "No deployment or test operation remains active after this checkpoint. New account requirements are queued, not implemented."
+}
