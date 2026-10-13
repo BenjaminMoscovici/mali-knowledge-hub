@@ -147,6 +147,10 @@ def valid_username(value):
 
 
 def provider_failure(exc, message):
+    if getattr(exc, "code", "") == "email_address_not_authorized":
+        return error("Confirmation emails are not enabled for this address yet. Please contact the Hub administrator.", 503)
+    if getattr(exc, "code", "") == "email_send_failed":
+        return error("The email service could not send your message. Please try again later or contact the Hub administrator.", 503)
     if getattr(exc, "status", None) == 429 or str(getattr(exc, "code", "")).startswith("over_"):
         return error("Too many attempts. Please wait before trying again.", 429)
     if getattr(exc, "code", "") in {"weak_password", "same_password"}:
@@ -310,8 +314,28 @@ async def signup(request):
         except Exception as exc:
             if getattr(exc, "code", "") not in {"user_already_exists", "email_exists"}:
                 return provider_failure(exc, "Your account could not be created right now. Try again later.")
-    return JSONResponse({"message": "Check your personal email to verify your account before signing in. "
-                         "If you already have an account, sign in or reset your password."})
+    return JSONResponse({"message": "Signup request accepted. If this is a new account, check your personal email "
+                         "and spam folder for a confirmation link. Already registered? Sign in or reset your password. "
+                         "If a confirmation is missing, use Resend confirmation email below."})
+
+
+async def resend_confirmation(request):
+    payload = await body(request)
+    if payload is None:
+        return error("Invalid request.", 403)
+    email = account_email(payload)
+    if not email:
+        return error("Enter a valid email address.")
+    async with _auth_limit:
+        try:
+            await asyncio.to_thread(auth_client().auth.resend, {
+                "type": "signup", "email": email,
+                "options": {"email_redirect_to": auth_redirect()},
+            })
+        except Exception as exc:
+            return provider_failure(exc, "A confirmation email could not be requested right now. Try again later.")
+    return JSONResponse({"message": "Confirmation requested. If this account still needs verification, "
+                         "check your inbox and spam folder for a fresh link. Already verified? Sign in or reset your password."})
 
 
 async def password_login(request):
@@ -761,6 +785,7 @@ routes = [
     Route("/api/me", me),
     Route("/api/auth/status", auth_status),
     Route("/api/auth/signup", signup, methods=["POST"]),
+    Route("/api/auth/resend", resend_confirmation, methods=["POST"]),
     Route("/api/auth/login", password_login, methods=["POST"]),
     Route("/api/auth/recover", recover_password, methods=["POST"]),
     Route("/api/auth/password", update_password, methods=["POST"]),

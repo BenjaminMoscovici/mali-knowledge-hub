@@ -11,7 +11,7 @@
     'auth-form','auth-email','auth-status','profile-menu','profile-title','profile-detail',
     'avatar','toast','text-attachment','auth-title','auth-description','auth-login','auth-signup',
     'auth-username','auth-username-wrap','auth-email-wrap','auth-password','auth-password-wrap',
-    'auth-confirm','auth-confirm-wrap','auth-password-help','auth-submit','auth-recover','auth-link'];
+    'auth-confirm','auth-confirm-wrap','auth-password-help','auth-submit','auth-recover','auth-link','auth-resend'];
   const el = Object.fromEntries(ids.map(id => [id,$(id)]));
   const escaped = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const identifier = () => crypto.randomUUID();
@@ -508,6 +508,13 @@
     state.user=null;state.threads=[];startFresh();profile();toast('Signed out.');
   }
   let authMode = 'login', authBusy = false;
+  function setAuthStatus(message, kind='info') {
+    el['auth-status'].textContent=message;
+    el['auth-status'].setAttribute('data-kind',kind);
+    el['auth-status'].setAttribute('role',kind==='error'?'alert':'status');
+    el['auth-status'].classList.toggle('hidden',!message);
+    if(message)el['auth-status'].scrollIntoView({block:'nearest'});
+  }
   function setAuthMode(mode) {
     authMode = mode;
     const creating = mode === 'signup', choosing = creating || mode === 'password';
@@ -524,40 +531,44 @@
     el['auth-password'].autocomplete = choosing ? 'new-password' : 'current-password';
     el['auth-password-help'].classList.toggle('hidden',!choosing);
     const titles = {login:'Sign in',signup:'Create your account',recover:'Reset your password',
-      password:'Choose your password',link:'Email sign-in link'};
+      password:'Choose your password',link:'Email sign-in link',confirm:'Verify your email'};
     const descriptions = {
       login:'Sign in with your personal email and password to reopen your private research.',
       signup:'Choose a username and password. Verify your personal email before signing in.',
       recover:'We’ll email a reset link. Existing email-link accounts keep the same saved research.',
       password:'Set a password for your verified account. Your email and saved research stay the same.',
-      link:'Use an email link for an existing account, then choose “Set / change password” in your profile.'};
+      link:'Use an email link for an existing account, then choose “Set / change password” in your profile.',
+      confirm:'Check your inbox and spam folder. You can request a fresh confirmation below. Already verified? Sign in or reset your password.'};
     el['auth-title'].textContent = titles[mode]; el['auth-description'].textContent = descriptions[mode];
     el['auth-submit'].textContent = {login:'Sign in',signup:'Create account',recover:'Email password reset link',
-      password:'Save password',link:'Email sign-in link'}[mode];
+      password:'Save password',link:'Email sign-in link',confirm:'Resend confirmation email'}[mode];
     el['auth-login'].setAttribute('aria-pressed',String(mode==='login'));
     el['auth-signup'].setAttribute('aria-pressed',String(creating));
-    el['auth-status'].textContent = '';
+    setAuthStatus('');
   }
   function openAuth(mode) { setAuthMode(mode); el['auth-dialog'].showModal(); }
   async function submitAuth(event) {
     event.preventDefault(); if(authBusy)return;
     const mode = authMode;
     if ((mode==='signup' || mode==='password') && el['auth-password'].value !== el['auth-confirm'].value) {
-      el['auth-status'].textContent = 'The passwords do not match.'; el['auth-confirm'].focus(); return;
+      setAuthStatus('The passwords do not match.','error'); el['auth-confirm'].focus(); return;
     }
     const payload = mode==='password' ? {} : {email:el['auth-email'].value};
     if (mode==='login' || mode==='signup' || mode==='password') payload.password=el['auth-password'].value;
     if (mode==='signup') payload.username=el['auth-username'].value;
     authBusy=true;el['auth-submit'].disabled=true;
-    el['auth-status'].textContent = 'Please wait…';
+    setAuthStatus(mode==='signup'?'Creating your account…':mode==='confirm'?'Requesting a confirmation email…':'Please wait…');
     try {
-      const data=await send('auth/'+({link:'email'}[mode] || mode),payload);
+      const data=await send('auth/'+({link:'email',confirm:'resend'}[mode] || mode),payload);
       if(data.user) {
         state.user=data.user;profile();el['auth-dialog'].close();
         await loadAccountThreads();renderThreads();
         toast(data.message || 'Signed in.');
-      } else el['auth-status'].textContent=data.message;
-    } catch(err) { el['auth-status'].textContent=err.message; }
+      } else {
+        if(mode==='signup')setAuthMode('confirm');
+        setAuthStatus(data.message,'success');
+      }
+    } catch(err) { setAuthStatus(err.message,'error'); }
     finally {
       // Credentials never enter guest storage, history or analytics.
       el['auth-password'].value='';el['auth-confirm'].value='';delete payload.password;
@@ -572,13 +583,13 @@
     // Scrub credentials and provider errors before any network request or rendering.
     history.replaceState(null,'',location.pathname+location.search);
     if(hash.has('error') || !access_token || !refresh_token) {
-      openAuth('recover');el['auth-status'].textContent='This account link has expired or is incomplete. Request a fresh email.';return;
+      openAuth('confirm');setAuthStatus('This account link has expired or is incomplete. Request a fresh confirmation or password reset email.','error');return;
     }
     try {
       const result=await send('auth/session',{access_token,refresh_token});state.user=result.user;
       if(type==='recovery')openAuth('password');
       else toast('Email verified. You are signed in.');
-    } catch(err) {openAuth('recover');el['auth-status'].textContent=err.message;}
+    } catch(err) {openAuth('confirm');setAuthStatus(err.message,'error');}
   }
   function wire() {
     el['topbar-export'].addEventListener('click',exportDossier);
@@ -634,6 +645,7 @@
     el['auth-form'].addEventListener('submit',submitAuth);
     for(const mode of ['login','signup','recover'])el['auth-'+mode].addEventListener('click',()=>{if(!authBusy)setAuthMode(mode);});
     el['auth-link'].addEventListener('click',()=>{if(!authBusy)setAuthMode('link');});
+    el['auth-resend'].addEventListener('click',()=>{if(!authBusy)setAuthMode('confirm');});
     el['auth-dialog'].addEventListener('close',()=>{el['auth-password'].value='';el['auth-confirm'].value='';});
     addEventListener('resize',()=> {if(mobile())closeSidebar();});
   }

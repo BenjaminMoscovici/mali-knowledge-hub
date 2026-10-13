@@ -181,7 +181,7 @@ class PasswordAccountTests(unittest.TestCase):
         self.assertTrue(all("Max-Age=0" in c for c in response.headers.get_list("set-cookie")))
 
     def test_all_auth_mutations_reject_cross_origin_and_wrong_body(self):
-        for name in ["signup","login","recover","password","session","email","logout"]:
+        for name in ["signup","resend","login","recover","password","session","email","logout"]:
             with self.subTest(name=name):
                 self.assertEqual(self.post(name,self.signup_data(),"https://attacker.example").status_code,403)
                 self.assertEqual(self.client.post("/api/auth/"+name,content="wrong",headers={"Origin":ORIGIN}).status_code,403)
@@ -214,6 +214,29 @@ class PasswordAccountTests(unittest.TestCase):
         self.provider.sign_up.side_effect=AuthApiError("private password content",422,"weak_password")
         response=self.post("signup",self.signup_data())
         self.assertEqual(response.status_code,400);self.assertNotIn("private",response.text)
+
+    def test_confirmation_resend_uses_signup_type_without_password_or_new_account(self):
+        response=self.post("resend",{"email":" Person@Example.org ","password":"ignored"})
+        self.assertEqual(response.status_code,200)
+        self.provider.resend.assert_called_once_with({"type":"signup","email":"person@example.org",
+            "options":{"email_redirect_to":ORIGIN+"/"}})
+        self.assertNotIn("set-cookie",response.headers);self.provider.sign_up.assert_not_called()
+
+    def test_invalid_confirmation_email_does_not_reach_provider(self):
+        self.assertEqual(self.post("resend",{"email":"invalid"}).status_code,400)
+        self.provider.resend.assert_not_called()
+
+    def test_mail_configuration_and_delivery_errors_are_actionable_without_details(self):
+        for code in ["email_address_not_authorized","email_send_failed"]:
+            self.provider.resend.side_effect=AuthApiError("secret recipient and SMTP detail",422,code)
+            response=self.post("resend",{"email":"person@example.org"})
+            self.assertEqual(response.status_code,503);self.assertNotIn("secret",response.text)
+            self.assertIn("administrator",response.json()["error"])
+
+    def test_confirmation_rate_limit_is_reported_without_retrying(self):
+        self.provider.resend.side_effect=AuthApiError("private",429,"over_email_send_rate_limit")
+        response=self.post("resend",{"email":"person@example.org"})
+        self.assertEqual(response.status_code,429);self.provider.resend.assert_called_once()
 
 
 class SignupConfigurationTests(unittest.TestCase):

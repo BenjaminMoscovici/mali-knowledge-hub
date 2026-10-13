@@ -12,6 +12,7 @@ function harness(send=async()=>({message:'Check your email.'}),hash='') {
     el[id]={value:'',disabled:false,required:false,textContent:'',attrs:{},hidden:false,
       classList:{toggle(name,flag){el[id].hidden=flag;}},
       setAttribute(name,value){this.attrs[name]=value;},setCustomValidity(){},focus(){},
+      scrollIntoView(){this.scrolled=true;},
       showModal(){events.push('show');},close(){events.push('close');}};
   }
   const location={hash,pathname:'/',search:''};
@@ -58,6 +59,33 @@ test('failed request clears passwords, releases button and keeps the dialog erro
   h.el['auth-password'].value=h.el['auth-confirm'].value='test long passphrase';await h.submitAuth(event);
   assert.equal(h.el['auth-password'].value,'');assert.equal(h.el['auth-confirm'].value,'');
   assert.equal(h.el['auth-submit'].disabled,false);assert.equal(h.el['auth-status'].textContent,'Try again later.');
+  assert.equal(h.el['auth-status'].hidden,false);assert.equal(h.el['auth-status'].scrolled,true);
+  assert.equal(h.el['auth-status'].attrs.role,'alert');
+});
+test('accepted signup shows verification outcome and preserves email for explicit resend',async()=>{
+  const sent=[];const h=harness(async(path,payload)=>{sent.push({path,payload:{...payload}});return {message:'Signup request accepted. Check your email.'};});
+  h.setAuthMode('signup');h.el['auth-email'].value='person@example.org';h.el['auth-username'].value='Researcher';
+  h.el['auth-password'].value=h.el['auth-confirm'].value='test long passphrase';
+  await h.submitAuth(event);
+  assert.equal(h.el['auth-title'].textContent,'Verify your email');
+  assert.equal(h.el['auth-password'].disabled,true);assert.equal(h.el['auth-email'].value,'person@example.org');
+  assert.equal(h.el['auth-submit'].textContent,'Resend confirmation email');
+  assert.equal(h.el['auth-status'].hidden,false);assert.equal(h.el['auth-status'].attrs['data-kind'],'success');
+  assert.equal(sent.length,1);assert.equal(sent[0].path,'auth/signup');
+  await h.submitAuth(event);
+  assert.deepEqual(sent[1],{path:'auth/resend',payload:{email:'person@example.org'}});
+});
+test('confirmation mode never requires or transmits a password',async()=>{
+  let received;const h=harness(async(path,payload)=>{received={path,payload:{...payload}};return {message:'Confirmation requested.'};});
+  h.setAuthMode('confirm');h.el['auth-email'].value='person@example.org';await h.submitAuth(event);
+  assert.equal(h.el['auth-password'].required,false);assert.equal(h.el['auth-confirm'].required,false);
+  assert.equal(h.el['auth-username'].disabled,true);
+  assert.deepEqual(received,{path:'auth/resend',payload:{email:'person@example.org'}});
+});
+test('feedback is placed before credential fields and announced accessibly',()=>{
+  const html=fs.readFileSync(`${__dirname}/index.html`,'utf8');
+  assert.ok(html.indexOf('id="auth-status"')<html.indexOf('id="auth-form"'));
+  assert.ok(html.includes('aria-live="polite"'));assert.ok(html.includes('id="auth-resend"'));
 });
 test('in-flight submission cannot send the same credentials twice',async()=>{
   let finish;const h=harness(()=>new Promise(resolve=>{finish=resolve;}));h.setAuthMode('login');
