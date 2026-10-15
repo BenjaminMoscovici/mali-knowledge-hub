@@ -28,13 +28,14 @@
     "sender_name": "Mali Knowledge Hub",
     "sender_address": "Requires an approved custom SMTP sender; none invented.",
     "provider_links": "Preserved unchanged",
-    "blocker": "Custom SMTP is disabled. Signed-in free-plan dashboard locks email subject/body editing until SMTP setup (or paid email-service customization). User selected reuse of an existing approved sender; address/domain and provider still needed."
+    "blocker": "Branding deferred by owner; retain integrated Supabase email. No SMTP/domain/provider setup requested. Branding is not a gate for test onboarding.",
+    "owner_decision": "Keep integrated email; prioritize end-to-end onboarding."
   },
   "admin_access": "Existing server-side allowlist retained; public signup/profile metadata grants no rights.",
   "limitations": [
     "Actual verified-account completion, password recovery and owner-isolated saved-history acceptance remain open.",
-    "Hosted subjects/content and sender identity require authenticated settings access and actual mailbox validation.",
-    "No real emails, accounts, passwords, admin grants or schema changes were performed."
+    "No real emails, accounts, passwords, admin grants or schema changes were performed.",
+    "Integrated mail has documented recipient and rate limits; general public signup delivery is not established."
   ],
   "authentication_configuration": {
     "v4_redirect_url": "https://mali-knowledge-hub-v4-test.onrender.com/",
