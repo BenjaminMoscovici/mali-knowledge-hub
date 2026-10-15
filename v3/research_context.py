@@ -103,6 +103,12 @@ def has_reference(question):
              r'organisations?|organizations?|records?|findings?|needs?|priorities|'
              r'allocations?|transactions?|sources?|figures?|results?|options?')
     patterns = (
+        # Practical follow-ups can place their reference inside the sentence,
+        # beyond the short-question and opening-marker gates. This only opts
+        # into the existing bounded rewrite; prior text never becomes evidence.
+        r'\b(?:use|apply|interpret|explain|understand)\s+(?:that|this|it|those|these)\b',
+        r'\b(?:utiliser|interpreter|appliquer|expliquer)\s+(?:cela|ceci|ca)\b',
+        r'\b(?:das|dies|dieses)\b.{0,80}\b(?:nutzen|verwenden|einordnen|anwenden|verstehen)\b',
         rf'\b(?:those|these|the above|previously listed)\s+(?:{nouns})\b',
         r'\b(?:of|among|from)\s+(?:them|those|these)\b',
         r'\b(?:mentioned|listed|discussed)\s+(?:above|earlier|previously)\b',

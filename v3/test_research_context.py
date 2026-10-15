@@ -227,3 +227,29 @@ def test_rewrite_dropping_source_namespace_still_selects_exact_roster():
 def test_namespace_recovery_never_invents_a_source_for_unknown_or_new_sets(question,rewritten):
     messages=[{'role':'assistant','content':'FONGIM records: Project ID 664; Project ID 32.'}]
     assert preserve_lookup_namespace(rewritten,question,messages)==rewritten
+
+
+@pytest.mark.parametrize('question', [
+    'How should I use that in a planning discussion?',
+    'How can we apply it when discussing the response?',
+    'Comment utiliser cela dans une discussion de planification ?',
+    'Wie kann ich das für eine Planungsentscheidung nutzen?',
+])
+def test_practical_reference_mid_sentence_reaches_existing_context_resolver(question):
+    assert has_reference(question)
+    tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
+    fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='likely_context_dependent_followup')
+    ns={'normalize_text':lambda s:s.casefold()}
+    exec(compile(ast.Module(body=[fn],type_ignores=[]),'real-context-gate','exec'),ns)
+    assert ns[fn.name](question,[{'role':'user','content':'What does the Mali 3W establish?'}])
+    assert not ns[fn.name](question,[])
+
+
+@pytest.mark.parametrize('question', [
+    'How should I use the Mali DTM in a planning discussion?',
+    'Comment utiliser les données DTM pour la planification ?',
+    'Wie kann ich DTM für eine Planungsentscheidung nutzen?',
+    'What is the role of education in Mali?',
+])
+def test_explicit_new_topic_is_not_promoted_to_a_reference(question):
+    assert not has_reference(question)
