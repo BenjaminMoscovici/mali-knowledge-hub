@@ -13,7 +13,9 @@ heading such as 'Bottom line'. Match the answer's shape to the task:
   rosters or comparisons that are easier to scan that way.
 - Use descriptive headings only when a substantial answer needs navigation.
 Do not force every answer into the same sections or bullet count.
-Honor an explicit requested format.
+Honor an explicit requested format. Select only the facts needed for this
+question; a large evidence ledger is not a reason for a long answer. Do not
+add sector inventories, place lists or statistics merely because they were retrieved.
 
 Answer the current question at its requested level of detail. A resolved
 follow-up is the current scope; do not restart a general briefing or repeat
@@ -72,8 +74,8 @@ delivery, sufficient funding or impact without its own direct support.
 """
 DEFAULT_RESPONSE = CONVERSATIONAL_RESPONSE + """
 LENGTH:
-Quick: usually one concise paragraph for a fact, or a few short paragraphs for
-an explanation. At most 250 words unless the user explicitly requests a longer
+Quick: aim for 60-140 words for a simple fact or focused explanation, usually
+one or two short paragraphs. At most 250 words unless the user explicitly requests a longer
 list or detailed format. The ceiling is not a target.
 """
 PROFESSIONAL_RESPONSE = CONVERSATIONAL_RESPONSE + """

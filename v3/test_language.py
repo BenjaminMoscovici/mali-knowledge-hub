@@ -21,3 +21,18 @@ class LanguageRegression(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SynthesisLanguageRegression(unittest.TestCase):
+    def test_clear_german_research_and_followup_requests(self):
+        from language import synthesis_language
+        for question in ['Welche Rolle kann die DTM spielen?', 'Wie unterscheiden sich Bedarf und Reichweite?', 'Und was bedeutet das für Gao?', 'Was lässt sich daraus ableiten?', 'Bitte kürzer erklären.']:
+            with self.subTest(question=question):self.assertEqual(synthesis_language(question), 'German')
+
+    def test_existing_english_and_french_and_ambiguous_short_text(self):
+        from language import synthesis_language
+        for question, expected in [('What does the 3W establish?', 'English'), ('Was this project active?', 'English'), ('And in Gao?', 'English'), ('Et à Gao ?', 'French'), ('Quels besoins sont documentés ?', 'French'), ('DTM', 'English')]:
+            with self.subTest(question=question):self.assertEqual(synthesis_language(question), expected)
+
+    def test_deterministic_language_contract_is_preserved(self):
+        self.assertEqual(answer_language('Welche Rolle kann die DTM spielen?'), 'English')

@@ -26,7 +26,7 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from supabase import create_client, ClientOptions
 
-from language import answer_language
+from language import answer_language, synthesis_language
 from user_research import (REFERENCE_FIELDS, ResearchStore, ResearchStoreError,
                            evidence_references, hydrate_saved_evidence)
 from source_wave import publish_snapshot_logged
@@ -649,7 +649,7 @@ async def chat(request):
                     result = {"answer": await asyncio.to_thread(source_inventory_answer, answer_language(question)), "evidence": [], "family_counts": {}}
                 else:
                     result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
-                                                 response_language=answer_language(question))
+                                                 response_language=synthesis_language(question))
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
         print("MKH_API_FAILURE " + json.dumps({
