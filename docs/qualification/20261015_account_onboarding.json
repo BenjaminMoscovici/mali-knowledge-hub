@@ -8,11 +8,16 @@
     "python_subtests": 42,
     "frontend_tests": 30,
     "syntax_diff_checks": "passed",
-    "remote_tree_match": true
+    "remote_tree_match": true,
+    "serial_live_http_research_checks": 7,
+    "live_checks_passed": 7,
+    "tracked_estimated_model_cost_usd": 0,
+    "browser": "Account/Email progress, confirmation guidance, resend navigation and corrected-address return verified. No real email sent."
   },
-  "deployment_status": "QUALIFIED_NOT_DEPLOYED",
-  "deployment_blocker": "Exact-commit Render dashboard deployment requires renewed secure sign-in. No generic branch deploy.",
-  "current_live_code": "352f49ffb0f70f07f7095ee2946e4a3ac4e2732c",
+  "deployment_status": "DEPLOYED_NOT_FULLY_ACCEPTED",
+  "deployed_at_utc": "2026-10-15T08:08:48.550965Z",
+  "rollback_code": "352f49ffb0f70f07f7095ee2946e4a3ac4e2732c",
+  "runtime": "V4 test only; original production and V3 Administration unchanged.",
   "email_templates": {
     "prepared": [
       "confirmation",
@@ -21,12 +26,13 @@
     ],
     "hosted_settings_applied": false,
     "sender_name": "Mali Knowledge Hub",
-    "sender_address": "Requires an existing approved custom SMTP sender; none invented.",
-    "provider_links": "Preserved unchanged"
+    "sender_address": "Requires an approved custom SMTP sender; none invented.",
+    "provider_links": "Preserved unchanged",
+    "blocker": "Supabase sign-in requires user completion of an interactive CAPTCHA."
   },
   "admin_access": "Existing server-side allowlist retained; public signup/profile metadata grants no rights.",
   "limitations": [
-    "New UI has local qualification, not live acceptance.",
+    "Actual verified-account completion, password recovery and owner-isolated saved-history acceptance remain open.",
     "Hosted subjects/content and sender identity require authenticated settings access and actual mailbox validation.",
     "No real emails, accounts, passwords, admin grants or schema changes were performed."
   ]
