@@ -40,6 +40,17 @@ def entries(root=None):
                     if isinstance(quality,dict) and quality.get('limitations'):row['limitations']=quality['limitations']
                 loaded[key]=row['records']>0
             by_name[key]=row
+    country=root/'country_indicators.json.gz'
+    if country.exists():
+        with gzip.open(country,'rt',encoding='utf-8') as file:package=json.load(file)
+        count=sum(o['value'] is not None for s in package['series'] for o in s['observations'])
+        row={'provider':'World Bank WDI','source_name':'Mali Country Foundation — national development indicators',
+             'source_type':'official_country_indicator','integration_status':'integrated_with_limitations',
+             'analytical_use':'national economy, livelihoods, environment, infrastructure and public services',
+             'historical_coverage':f"{package['reference_window'][0]}–{package['reference_window'][1]}; observation-specific years",
+             'last_successful_retrieval':package['retrieved_at'],'update_frequency':'Reviewed WDI snapshot; no automatic refresh',
+             'access_route':'https://data.worldbank.org/country/mali','records':count,'limitations':package['limitations']}
+        key=(row['provider'],row['source_name']);by_name[key]=row;loaded[key]=count>0
     result=[]
     for key,row in by_name.items():
         row['evidence_available']=loaded.get(key, row.get('records') is None and

@@ -2,6 +2,7 @@
 import re
 from source_wave import _fold
 from geographic_model import simple_geography_question
+from country_foundation import country_plan
 
 SIMPLIFY = {"can you explain that more simply", "explain that more simply", "explain it more simply",
     "simplify that", "simplify it", "summarize that", "summarise that", "summarize your answer",
@@ -28,6 +29,8 @@ def classify(question, mode="balanced"):
             "I can research Mali’s needs, plans, actors, projects and financing, compare sources and explain their limits. I can also look up administrative counts and a place’s parent hierarchy."}
     if q in SIMPLIFY:
         return {"path": "conversation_only"}
+    if country_plan(question):
+        return {"path": "country_fact"}
     if simple_geography_question(question):
         return {"path": "simple_geography"}
     return {"path": "deep_research" if mode == "deep" else "complex_research"}

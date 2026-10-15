@@ -1,0 +1,3 @@
+# Offline overlay builder only. Runtime serving uses the standard library.
+shapely==2.2.0
+pyproj==3.8.0

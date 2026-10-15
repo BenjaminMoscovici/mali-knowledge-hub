@@ -36,6 +36,7 @@ from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
 from query_router import classify
 from geographic_model import geographic_model
+from country_foundation import country_foundation, resolve_country_followup
 from geography_context import resolve_count_followup, resolve_hierarchy_followup
 from followup_context import resolve_slots
 
@@ -599,8 +600,11 @@ async def chat(request):
     slot_context = None
     try:
         if route["path"] not in {"conversational", "conversation_only"}:
-            resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
-            geography_method = 'structured_geographic_count'
+            resolved = await asyncio.to_thread(resolve_country_followup, question, prior)
+            geography_method = 'structured_country_fact'
+            if not resolved:
+                resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
+                geography_method = 'structured_geographic_count'
             if not resolved:
                 resolved = await asyncio.to_thread(resolve_hierarchy_followup, question, prior)
                 geography_method = 'structured_geographic_hierarchy'
@@ -625,6 +629,9 @@ async def chat(request):
             phase = "structured_empty_project_subset"
             result = {"answer": slot_context['direct_answer'], "evidence": [],
                       "family_counts": {}}
+        elif route["path"] == "country_fact":
+            phase = "structured_country_fact"
+            result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, synthesis_language(question)))
         elif route["path"] == "simple_geography":
             phase = "structured_geography"
             result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
@@ -641,7 +648,11 @@ async def chat(request):
                     finally:
                         context_usage = openai_client.finish(context_token, context_id)
                 phase = "research"
-                if classify(standalone, mode)["path"] == "simple_geography":
+                if classify(standalone, mode)["path"] == "country_fact":
+                    route = {"path": "country_fact"}
+                    phase = "structured_country_fact"
+                    result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, synthesis_language(question)))
+                elif classify(standalone, mode)["path"] == "simple_geography":
                     route = {"path": "simple_geography"}
                     phase = "structured_geography"
                     result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
@@ -701,6 +712,59 @@ async def chat(request):
                              "metrics": metrics,
                              "geography": (result.get("geography") or {}).get("assumption")})
     return with_session(response, refreshed)
+
+
+async def country(request):
+    params=request.query_params
+    question=params.get('q')
+    if question:
+        if len(question)>MAX_QUESTION:return error('Country question is too long.')
+        result=await asyncio.to_thread(lambda:country_foundation().answer(question,synthesis_language(question)))
+        if result is None:return error('Use a supported population, area or border question.',422)
+        return JSONResponse(result)
+    metric=params.get('metric')
+    foundation=await asyncio.to_thread(country_foundation)
+    if not metric:
+        report={k:v for k,v in foundation.validation.items() if k!='population_rollups'}
+        from country_indicators import indicator_package
+        indicators=indicator_package()
+        return JSONResponse({'validation':report,'metrics':['population','ranking','area','neighbours','residence','indicator','geometry'],
+            'indicators':[{'id':s['indicator_id'],'name':s['metadata']['name'],'unit':s['unit'],'domain':s['domain']} for s in indicators['series']]})
+    if metric=='indicator':
+        from country_indicators import indicator_query,indicator_evidence
+        code=params.get('indicator')
+        if not code:return error('Specify an indicator code.')
+        try:
+            year=int(params['year']) if params.get('year') else None
+            if year and not 1900<=year<=2100:raise ValueError()
+            data=indicator_query([code],[year] if year else None,params.get('series')=='true')
+        except ValueError:return error('Unknown indicator or invalid year.')
+        return JSONResponse({'country':data,'evidence':indicator_evidence(data)})
+    if metric not in {'population','ranking','area','neighbours','residence','geometry'}:
+        return error('Unknown country metric.')
+    level=params.get('level');scope_level=params.get('scope_level')
+    if any(v and v not in {'country','region','cercle','commune','arrondissement','locality'} for v in (level,scope_level)):
+        return error('Unknown geographic level.')
+    name=params.get('name');scope=params.get('scope')
+    if any(v and len(v)>200 for v in (name,scope)):return error('Place name is too long.')
+    try:
+        limit=int(params.get('limit','20'))
+        if not 1<=limit<=50:raise ValueError()
+    except ValueError:return error('Choose a limit from 1 to 50.')
+    order=params.get('order','desc')
+    if order not in {'asc','desc'}:return error('Choose asc or desc.')
+    if not level:return error('Specify an administrative level.')
+    if metric=='geometry':
+        data=await asyncio.to_thread(foundation.geometry,level,name)
+        return JSONResponse(data,media_type='application/geo+json')
+    if metric in ('population','ranking'):
+        data=await asyncio.to_thread(foundation.population_rows,level,name,scope_level,scope,order,limit,metric=='ranking')
+    elif metric=='residence':
+        data=await asyncio.to_thread(foundation.residence,name or 'Mali',level)
+    else:
+        data=await asyncio.to_thread(foundation.spatial_rows,metric,level,name)
+    evidence=[foundation.evidence(data,metric)] if data['status']=='ok' else []
+    return JSONResponse({'country':data,'evidence':evidence})
 
 
 async def geography(request):
@@ -996,6 +1060,7 @@ routes = [
     Route("/api/sources", sources),
     Route("/sources", source_page),
     Route("/api/geography", geography),
+    Route("/api/country", country),
     Route("/api/me", me),
     Route("/api/auth/status", auth_status),
     Route("/api/auth/signup", signup, methods=["POST"]),
