@@ -2855,9 +2855,10 @@ in a different language; translate faithfully while retaining citations.
         word_budget = 350 if depth == "balanced" else 450
         user_prompt += (
             f"\nComplete-answer budget: at most {word_budget} words. "
-            "Use 3-4 brief findings, one conditional decision implication, "
-            "one brief material-gap paragraph and, only if useful, one "
-            "non-conclusion. Each fact appears once. Cite the opening "
+            "Answer the current question directly in natural prose. Use only "
+            "the structure and detail it needs; a focused follow-up may "
+            "need just a short paragraph. Put material limits beside the "
+            "claims they qualify. Each fact appears once. Cite the opening "
             "answer as well as findings with the 1-4 most direct evidence "
             "IDs per claim. No record dumps, actor rosters or extra examples."
             " Prefer one project with an explicitly documented funder and "

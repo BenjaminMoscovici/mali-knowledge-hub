@@ -12,7 +12,7 @@ from synthesis_context import prepare, serialize
 from hapi_cardinality import sector_citation_index
 
 
-def invoke(depth, text, extra_evidence=()):
+def invoke(depth, text, extra_evidence=(), question="Quel budget est prévu ?"):
     source = ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
     fn = next(n for n in source.body if isinstance(n, ast.FunctionDef)
               and n.name == '_generate_grounded_answer')
@@ -40,7 +40,7 @@ def invoke(depth, text, extra_evidence=()):
           'verify_citations': verify,
           'openai_client': SimpleNamespace(responses=SimpleNamespace(create=create))}
     exec(compile(ast.Module(body=[fn], type_ignores=[]), 'synthesis-contract', 'exec'), ns)
-    result = ns['_generate_grounded_answer']('Quel budget est prévu ?', depth=depth)
+    result = ns['_generate_grounded_answer'](question, depth=depth)
     return calls, result, ledger
 
 
@@ -86,17 +86,17 @@ def test_professional_synthesis_keeps_conflicting_roles_and_missing_values(depth
     assert instructions('quick') not in calls[0]['instructions']
 
 
-def test_quick_presentation_unchanged_from_accepted_baseline():
-    import subprocess
-    baseline = subprocess.check_output(
-        ['git', 'show', 'd7484a66248171180d0ad43e10b5fea461f6668f:v3/answer_presentation.py'],
-        cwd=Path(__file__).parent, text=True)
-    tree = ast.parse(baseline)
-    original = next(ast.literal_eval(n.value) for n in tree.body
-                    if isinstance(n, ast.Assign)
-                    and any(isinstance(t, ast.Name) and t.id == 'DEFAULT_RESPONSE'
-                            for t in n.targets))
-    assert instructions('quick') == original
+@pytest.mark.parametrize('depth', ['quick', 'balanced', 'deep'])
+@pytest.mark.parametrize('question', ['What does this figure mean?', 'Et à Gao ?', 'Und was lässt sich daraus ableiten?'])
+def test_natural_presentation_reaches_actual_synthesis_without_losing_question_or_adding_a_pass(depth, question):
+    calls, result, ledger = invoke(depth, 'Supported answer [E01].', question=question)
+    assert len(calls) == 1
+    assert question in calls[0]['input']
+    assert instructions(depth) in calls[0]['instructions']
+    assert 'Do not force every answer into the same sections or bullet count' in calls[0]['instructions']
+    assert 'Use 3-4 brief findings' not in calls[0]['input']
+    assert result['evidence'] == ledger
+    assert result['answer'] == 'Supported answer [E01].'
 
 
 @pytest.mark.parametrize('depth', ['quick', 'balanced', 'deep'])
