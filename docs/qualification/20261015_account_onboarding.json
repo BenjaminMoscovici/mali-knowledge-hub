@@ -1,0 +1,33 @@
+{
+  "change": "Account verification progress and explicit completion; prepared Hub email branding",
+  "code_commit": "a71c7b7773e07433b5624e6fba6a2905049561c9",
+  "tested_local_commit": "3d9ab512368041f2cb59cd8da1faa9937ec22944",
+  "tested_published_tree": "16e49e30ac1c619dac54fd69c9acb57219dbbd1b",
+  "qualification": {
+    "python_tests": 693,
+    "python_subtests": 42,
+    "frontend_tests": 30,
+    "syntax_diff_checks": "passed",
+    "remote_tree_match": true
+  },
+  "deployment_status": "QUALIFIED_NOT_DEPLOYED",
+  "deployment_blocker": "Exact-commit Render dashboard deployment requires renewed secure sign-in. No generic branch deploy.",
+  "current_live_code": "352f49ffb0f70f07f7095ee2946e4a3ac4e2732c",
+  "email_templates": {
+    "prepared": [
+      "confirmation",
+      "recovery",
+      "magic_link"
+    ],
+    "hosted_settings_applied": false,
+    "sender_name": "Mali Knowledge Hub",
+    "sender_address": "Requires an existing approved custom SMTP sender; none invented.",
+    "provider_links": "Preserved unchanged"
+  },
+  "admin_access": "Existing server-side allowlist retained; public signup/profile metadata grants no rights.",
+  "limitations": [
+    "New UI has local qualification, not live acceptance.",
+    "Hosted subjects/content and sender identity require authenticated settings access and actual mailbox validation.",
+    "No real emails, accounts, passwords, admin grants or schema changes were performed."
+  ]
+}
