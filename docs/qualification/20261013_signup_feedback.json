@@ -1,0 +1,25 @@
+{
+  "change": "Signup feedback and confirmation resend",
+  "code_commit": "352f49ffb0f70f07f7095ee2946e4a3ac4e2732c",
+  "tested_local_commit": "9cb43571eb336082fece2b726ffdddb22ccb0f2f",
+  "tested_published_tree": "5447d6e34187d3d2421efac8b14ce7987ee05047",
+  "deployment": {
+    "target": "V4 test",
+    "status": "live",
+    "finished_at": "2026-10-13T14:49:46.676938Z"
+  },
+  "qualification": {
+    "python_tests": 691,
+    "python_subtests": 42,
+    "frontend_tests": 26,
+    "isolated_live_http_checks": 9,
+    "all_passed": true
+  },
+  "scope": "Prominent pending/success/error feedback, explicit confirmation resend and existing-account guidance.",
+  "limitations": [
+    "Mailbox receipt and complete signup/recovery acceptance were unverified at deployment.",
+    "SMTP dashboard inspection required sign-in; interrupted sign-in did not establish success.",
+    "No account, email, password or permission action was performed by the agent."
+  ],
+  "reconciled_on": "2026-10-15"
+}
