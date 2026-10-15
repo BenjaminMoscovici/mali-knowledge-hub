@@ -28,12 +28,19 @@
     "sender_name": "Mali Knowledge Hub",
     "sender_address": "Requires an approved custom SMTP sender; none invented.",
     "provider_links": "Preserved unchanged",
-    "blocker": "Supabase sign-in requires user completion of an interactive CAPTCHA."
+    "blocker": "Custom SMTP is disabled. Signed-in free-plan dashboard locks email subject/body editing until SMTP setup (or paid email-service customization). User selected reuse of an existing approved sender; address/domain and provider still needed."
   },
   "admin_access": "Existing server-side allowlist retained; public signup/profile metadata grants no rights.",
   "limitations": [
     "Actual verified-account completion, password recovery and owner-isolated saved-history acceptance remain open.",
     "Hosted subjects/content and sender identity require authenticated settings access and actual mailbox validation.",
     "No real emails, accounts, passwords, admin grants or schema changes were performed."
-  ]
+  ],
+  "authentication_configuration": {
+    "v4_redirect_url": "https://mali-knowledge-hub-v4-test.onrender.com/",
+    "saved_verified": true,
+    "existing_redirects_preserved": true,
+    "site_url_preserved": true,
+    "v4_public_origin_verified": true
+  }
 }
