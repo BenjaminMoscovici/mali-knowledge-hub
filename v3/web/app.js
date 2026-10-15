@@ -313,6 +313,90 @@
       rows: evidence.map((source, index) => ({source, index})).filter(row =>
         all || mentioned.has(row.source.evidence_id))};
   }
+  function evidencePresentation(source, answer) {
+    const original=String(source.content || source.source_excerpt || '');
+    let passage=original;
+    const notes=[];
+    const label='Geography validation: ';
+    const start=original.indexOf(label);
+    if(start>=0 && original[start+label.length]==='{') {
+      // Only separate a complete, valid, explicitly labelled JSON object.
+      // Everything else, especially source caveats, remains verbatim.
+      let depth=0, quoted=false, escaped=false, end=-1;
+      for(let i=start+label.length;i<original.length;i++) {
+        const c=original[i];
+        if(quoted){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c==='"')quoted=false;}
+        else if(c==='"')quoted=true;
+        else if(c==='{')depth++;
+        else if(c==='}' && --depth===0){end=i+1;break;}
+      }
+      if(end>0) {
+        try {
+          const validation=JSON.parse(original.slice(start+label.length,end));
+          const issues=Array.isArray(validation.issues)?validation.issues:[];
+          if(issues.length) notes.push(issues.some(i=>i?.reason==='source_label_only_no_approved_commune_crosswalk') ?
+            'Commune labels are not verified against an approved crosswalk.' :
+            'Geographic matching has unresolved issues; inspect the technical details before using place relationships.');
+          passage=original.slice(0,start)+'[Geographic matching metadata is in Technical details.]'+original.slice(end);
+        } catch { /* Keep incomplete or unfamiliar records fully visible. */ }
+      }
+    }
+    const readingNotes={
+      displacement_stock:'Stock observations are not movement flows or evidence of durable return.',
+      operational_presence:'Reported presence does not establish services delivered or people reached.',
+      fongim_structured:'A recorded project does not establish delivery, funding adequacy or impact.'
+    };
+    if(readingNotes[source.source_type])notes.unshift(readingNotes[source.source_type]);
+    const id=String(source.evidence_id||'');
+    const claim=id && String(answer||'').split(/\n/).find(line=>
+      [...line.matchAll(/\[(E\d{2,}(?:\s*,\s*E\d{2,})*)\]/g)].some(m=>m[1].split(/\s*,\s*/).includes(id)));
+    return {original,passage,notes,claim:claim||''};
+  }
+  function evidenceSourceURL(value) {
+    try {
+      const url=new URL(value);
+      if(!['https:','http:'].includes(url.protocol)||url.username||url.password ||
+         /\/storage\/v1\/object\/sign\//i.test(url.pathname) ||
+         [...url.searchParams.keys()].some(k=>/token|secret|signature|authorization|api.?key|jwt/i.test(k)))return null;
+      return url.href;
+    } catch { return null; }
+  }
+  function renderEvidenceCard(source,index,selected,answer) {
+    const item=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);if(cls)n.className=cls;return n;};
+    const card=item('article',undefined,'evidence-item'+(index===selected?' selected':''));
+    const id=source.evidence_id||`Source ${index+1}`;
+    card.tabIndex=-1;card.setAttribute('aria-label',id+' source passage');
+    const presentation=evidencePresentation(source,answer);
+    card.append(item('p',id,'evidence-id'),item('h3',source.document_title||source.organization||source.source_family||'Source record'));
+    const facts=item('dl',undefined,'source-facts');
+    const fact=(label,value)=>{if(!value)return;const pair=item('div');pair.append(item('dt',label),item('dd',value));facts.append(pair);};
+    fact('Publisher / organisation',source.organization||source.source_family||'Not reported');
+    const bounds=(start,end)=>(start||end)?`${start?String(start).slice(0,10):'Start not reported'} – ${end?String(end).slice(0,10):'End not reported'}`:'';
+    const period=bounds(source.reference_period_start,source.reference_period_end);
+    fact('Reference period',period||'Not reported');
+    fact('Published',source.publication_date&&String(source.publication_date).slice(0,10));
+    fact('Retrieved',source.retrieved_at&&String(source.retrieved_at).slice(0,10));
+    if(!period)fact('Document validity',bounds(source.valid_from,source.valid_until));
+    fact('Place / scope',source.geographic_scope);
+    fact('Find it in the source',[source.page&&`Page ${source.page}`,source.locator||source.section].filter(Boolean).join(' · ')||'Locator not reported');
+    card.append(facts);
+    if(presentation.claim){const context=item('details',undefined,'answer-source-context');context.append(item('summary','Where this citation is used'),item('p','Exact excerpt from the answer; check it against the passage below.','evidence-meta'),item('blockquote',presentation.claim,'answer-claim'));card.append(context);}
+    if(source.source_excerpt&&!source.content)card.append(item('p','Saved evidence snapshot from this answer; later research checks sources again.','evidence-meta'));
+    if(presentation.notes.length){const note=item('div',undefined,'source-reading-note');note.append(item('strong','Hub reading note'));for(const text of presentation.notes)note.append(item('p',text));card.append(note);}
+    card.append(item('h4','Source passage'));
+    if(presentation.passage){const passage=item('blockquote',presentation.passage,'source-passage');passage.tabIndex=0;passage.setAttribute('aria-label',id+' supplied passage');card.append(passage);}
+    else card.append(item('p','The source passage is not available here. The reference alone does not establish the answer’s claim.','evidence-meta'));
+    const url=evidenceSourceURL(source.source_endpoint);
+    if(url){const link=item('a','Open original source ↗','source-original-link');link.href=url;link.target='_blank';link.rel='noopener noreferrer';card.append(link);}
+    const details=item('details',undefined,'source-technical');details.append(item('summary','Technical details & original supplied text'));
+    const provenance=item('dl',undefined,'source-facts');
+    for(const[key,label]of [['source_type','Record type'],['source_family','Source family'],['version','Version'],['document_id','Document ID'],['chunk_id','Passage ID'],['release_id','Release ID'],['record_id','Record ID'],['project_id','Project ID']]){
+      if(source[key]!==undefined&&source[key]!==null){const pair=item('div');pair.append(item('dt',label),item('dd',source[key]));provenance.append(pair);}
+    }
+    details.append(provenance,item('p','Original text supplied to this view, unchanged. It may be an excerpt rather than the complete document.','evidence-meta'));
+    details.append(item('pre',presentation.original||'No passage supplied.','source-original-text'));card.append(details);
+    return card;
+  }
   function renderEvidence(evidence, selected, answer = '', showAll = false) {
     el['drawer-body'].replaceChildren();
     if (!evidence.length) {
@@ -339,37 +423,9 @@
       el['drawer-body'].append(note);
     }
     view.rows.forEach(({source,index}) => {
-      const card=document.createElement('article'); card.className='evidence-item'+(index===selected?' selected':'');
-      const title=document.createElement('h3');
-      title.textContent=`${source.evidence_id || `Source ${index+1}`} · ${source.document_title || source.organization || source.source_family || 'Source record'}`;
-      card.append(title);
-      const period = [source.reference_period_start,source.reference_period_end]
-        .filter(Boolean).map(date => String(date).slice(0,10)).join(' – ');
-      const parts=[source.organization,source.publication_date,source.page && `Page ${source.page}`,
-        source.geographic_scope,period && `Period ${period}`,
-        source.retrieved_at && `Retrieved ${String(source.retrieved_at).slice(0,10)}`].filter(Boolean);
-      const meta=document.createElement('div'); meta.className='evidence-meta';
-      meta.textContent=parts.join(' · '); card.append(meta);
-      if (source.locator || source.section) {
-        const locator=document.createElement('div'); locator.className='evidence-meta';
-        locator.textContent=source.locator || source.section; card.append(locator);
-      }
-      if (source.source_endpoint && /^https?:\/\//i.test(source.source_endpoint)) {
-        const link=document.createElement('a'); link.href=source.source_endpoint;
-        link.target='_blank'; link.rel='noopener noreferrer'; link.textContent='Open original source';
-        card.append(link);
-      }
-      const excerpt=source.content || source.source_excerpt;
-      if (source.source_excerpt && !source.content) {
-        const note=document.createElement('p'); note.className='evidence-meta';
-        note.textContent='Saved evidence snapshot from this answer; later research checks sources again.';
-        card.append(note);
-      }
-      if (excerpt) {
-        const block=document.createElement('blockquote'); block.textContent=excerpt; card.append(block);
-      }
+      const card=renderEvidenceCard(source,index,selected,answer);
       el['drawer-body'].append(card);
-      if (index===selected) requestAnimationFrame(() => card.scrollIntoView({block:'nearest'}));
+      if (index===selected) requestAnimationFrame(() => {card.scrollIntoView({block:'start'});card.focus({preventScroll:true});});
     });
     if (selected===undefined) requestAnimationFrame(() => el['drawer-body'].scrollTop=0);
   }
