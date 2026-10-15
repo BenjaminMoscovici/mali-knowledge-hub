@@ -775,6 +775,22 @@ async def index(request):
     return FileResponse(WEB / "index.html", headers={"Cache-Control": "no-store"})
 
 
+async def source_page(request):
+    return FileResponse(WEB / "sources.html", headers={"Cache-Control": "no-store"})
+
+
+def source_inventory_db():
+    if not setting('SUPABASE_URL') or not setting('SUPABASE_SECRET_KEY'):
+        raise RuntimeError('Document registry is not configured')
+    return create_client(setting('SUPABASE_URL'), setting('SUPABASE_SECRET_KEY'),
+                         options=ClientOptions(auto_refresh_token=False, persist_session=False))
+
+
+async def sources(request):
+    from source_inventory import inventory
+    return JSONResponse(await asyncio.to_thread(inventory, source_inventory_db))
+
+
 async def admin(request):
     return FileResponse(WEB / "admin.html", headers={"Cache-Control": "no-store"})
 
@@ -977,6 +993,8 @@ routes = [
     Route('/api/admin/documents/{job_id}/reprocess',admin_reprocess,methods=['POST']),
     Route('/api/admin/source-requests',admin_source_request,methods=['POST']),
     Route("/api/health", health),
+    Route("/api/sources", sources),
+    Route("/sources", source_page),
     Route("/api/geography", geography),
     Route("/api/me", me),
     Route("/api/auth/status", auth_status),
