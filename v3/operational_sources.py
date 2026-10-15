@@ -1,6 +1,6 @@
 """Citable operational presence and displacement, with bounded retrieval."""
 from collections import Counter
-from functools import lru_cache
+from evidence_cache import package_cached
 import gzip
 import json
 import logging
@@ -14,7 +14,7 @@ from source_wave import _fold, _batches
 SNAPSHOT = Path(__file__).with_name("source_wave2.json.gz")
 
 
-@lru_cache(maxsize=1)
+@package_cached
 def package():
     with gzip.open(SNAPSHOT, "rt", encoding="utf-8") as file:
         return json.load(file)

@@ -7,11 +7,35 @@ Live providers retain their existing, shorter TTL policies.
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timezone
-from functools import wraps
+from functools import lru_cache, wraps
 from pathlib import Path
 from threading import Lock
 import json
 import time
+
+
+def package_cached(fn):
+    """Decode one immutable package at a time, including during a cold miss.
+
+    lru_cache protects its mapping but permits overlapping initializers. The
+    outer lock keeps startup publishers and request workers on one decoded
+    object. Clear waits for an in-progress load, so it cannot repopulate a
+    revision that was just invalidated. Failed loads remain retryable.
+    """
+    load = lru_cache(maxsize=1)(fn)
+    lock = Lock()
+
+    @wraps(fn)
+    def cached():
+        with lock:
+            return load()
+
+    def clear():
+        with lock:
+            load.cache_clear()
+
+    cached.cache_clear = clear
+    return cached
 
 
 def snapshot_cached(filename, seconds=900, maxsize=64):

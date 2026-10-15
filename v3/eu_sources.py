@@ -1,6 +1,6 @@
 """Cited EU evidence: programming, commitment, signature and status stay distinct."""
 from datetime import datetime,timedelta,timezone
-from functools import lru_cache
+from evidence_cache import package_cached
 import gzip,json,logging,re
 from pathlib import Path
 from analytical_sources import evidence
@@ -8,7 +8,7 @@ from operational_sources import publish_operational_snapshot
 from project_dates import parsed_date, calendar_end_year, reported_end_window
 from source_wave import _fold
 
-@lru_cache(maxsize=1)
+@package_cached
 def package():
     with gzip.open(Path(__file__).with_name('source_wave5.json.gz'),'rt',encoding='utf-8') as f:return json.load(f)
 

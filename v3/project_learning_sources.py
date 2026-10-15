@@ -1,6 +1,6 @@
 """Exact project-ID joins across WB profiles, WB IATI and historical IEG."""
 from datetime import datetime, timedelta, timezone
-from functools import lru_cache
+from evidence_cache import package_cached
 import gzip
 import json
 import logging
@@ -13,7 +13,7 @@ from project_dates import parsed_date, calendar_end_year, reported_end_window
 from source_wave import _fold
 
 
-@lru_cache(maxsize=1)
+@package_cached
 def package():
     with gzip.open(Path(__file__).with_name('source_wave4.json.gz'),'rt',encoding='utf-8') as file:
         return json.load(file)
