@@ -66,6 +66,7 @@
     if (state.user) {
       if (isGuestThread() && state.messages.length) add('Save this guest chat', importCurrentGuest);
       add('Set / change password', () => openAuth('password'));
+      if(state.adminAccess || state.adminInvitation)add('Administration',()=>location.assign('/admin'));
       add('Sign out', logout);
     } else add('Sign in / create account', () => openAuth('login'));
   }
@@ -509,7 +510,13 @@
     try {await send('auth/logout',{});} catch {}
     state.user=null;state.threads=[];startFresh();profile();toast('Signed out.');
   }
-  let authMode = 'login', authBusy = false;
+  let authMode = 'login', authBusy = false, completedAccountLink = false;
+  async function loadAdminAccess() {
+    try {
+      const a=await api('admin/status');state.adminAccess=a.is_admin;state.adminInvitation=!!a.pending_invitation;
+      if(completedAccountLink && (state.adminAccess || state.adminInvitation))location.assign('/admin');
+    } catch {state.adminAccess=false;state.adminInvitation=false;}
+  }
   function setAuthStatus(message, kind='info') {
     el['auth-status'].textContent=message;
     el['auth-status'].setAttribute('data-kind',kind);
@@ -576,7 +583,7 @@
     try {
       const data=await send('auth/'+({link:'email',confirm:'resend'}[mode] || mode),payload);
       if(data.user) {
-        state.user=data.user;profile();el['auth-dialog'].close();
+        state.user=data.user;await loadAdminAccess();profile();el['auth-dialog'].close();
         await loadAccountThreads();renderThreads();
         toast(data.message || 'Signed in.');
       } else {
@@ -602,6 +609,8 @@
     }
     try {
       const result=await send('auth/session',{access_token,refresh_token});state.user=result.user;
+      completedAccountLink=type!=='recovery';
+      if(type==='invite'){location.assign('/admin');return;}
       if(type==='recovery')openAuth('password');
       else if(type==='signup') {
         openAuth('complete');el['auth-complete-email'].textContent=state.user.email;
@@ -675,10 +684,12 @@
     if(!state.user) {
       try {state.user=(await api('me')).user;}catch {state.user=null;}
     }
+    if(state.user)await loadAdminAccess();
     profile();renderThreads();renderConversation();
     if(state.user)await loadAccountThreads();
     const requested=new URLSearchParams(location.search).get('chat');
     if(requested && conversationById(requested))await openThread(requested);
+    if(new URLSearchParams(location.search).get('recover')==='1')openAuth('recover');
   }
   function conversationById(id){return [...state.threads,...state.guest].some(t=>t.id===id);}
   init();

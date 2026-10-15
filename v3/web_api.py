@@ -50,6 +50,7 @@ _analysis_limit = asyncio.Semaphore(8)
 _transform_limit = asyncio.Semaphore(8)
 _attachment_limit = asyncio.Semaphore(2)
 _auth_limit = asyncio.Semaphore(4)
+_admin_limit = asyncio.Semaphore(2)
 
 
 async def extract_attachment(request):
@@ -775,11 +776,206 @@ async def index(request):
 
 
 async def admin(request):
-    target = setting("MKH_ADMIN_URL")
-    return RedirectResponse(target, status_code=302) if target else error("Administration is on a separate service.", 404)
+    return FileResponse(WEB / "admin.html", headers={"Cache-Control": "no-store"})
+
+
+def admin_store():
+    from admin_accounts import AdminStore
+    if not setting('SUPABASE_URL') or not setting('SUPABASE_SECRET_KEY'):
+        raise RuntimeError('Administration is not configured')
+    db = create_client(setting('SUPABASE_URL'), setting('SUPABASE_SECRET_KEY'),
+                       options=ClientOptions(auto_refresh_token=False, persist_session=False))
+    bootstrap = {e.strip().casefold() for e in setting('MKH_ADMIN_EMAILS').split(',') if e.strip()}
+    return AdminStore(db, bootstrap)
+
+
+async def admin_actor(request):
+    user, token, refreshed = await actor(request)
+    if not verified_email_user(user):
+        return None, None, refreshed, error('Sign in with a verified email account.', 401)
+    try:
+        store = admin_store()
+        if not await asyncio.to_thread(store.is_admin, user.id):
+            return None, None, refreshed, error('Administrator access is required.', 403)
+    except Exception:
+        return None, None, refreshed, error('Administrator access could not be checked. Try again later.', 503)
+    return user, store, refreshed, None
+
+
+async def admin_status(request):
+    user, _, refreshed = await actor(request)
+    if not verified_email_user(user):
+        return JSONResponse({'authenticated': False, 'is_admin': False})
+    try:
+        store = admin_store()
+        allowed = await asyncio.to_thread(store.is_admin, user.id)
+        pending = None if allowed else await asyncio.to_thread(store.pending, user.email)
+        return with_session(JSONResponse({'authenticated': True, 'is_admin': allowed,
+                'email': user.email, 'pending_invitation': pending}), refreshed)
+    except Exception:
+        return error('Administration is temporarily unavailable.', 503)
+
+
+async def admin_overview(request):
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    try:
+        result = await asyncio.to_thread(store.overview)
+        return with_session(JSONResponse(result), refreshed)
+    except Exception:
+        return error('The administration registry is unavailable.', 503)
+
+
+async def admin_invite(request):
+    payload = await body(request)
+    if payload is None: return error('Invalid request.',403)
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    email = account_email(payload)
+    if not email: return error('Enter a valid email address.')
+    async with _admin_limit:
+        try:
+            invitation = await asyncio.to_thread(store.create, user.id, email)
+        except Exception:
+            return error('An invitation already exists, the recipient is already an admin, or the invitation could not be created.',409)
+        try:
+            if not invitation['existing']:
+                await asyncio.to_thread(store.db.auth.admin.invite_user_by_email, email,
+                                        {'redirect_to': auth_redirect()})
+            elif invitation['confirmed']:
+                await asyncio.to_thread(auth_client().auth.sign_in_with_otp, {'email': email,
+                    'options': {'should_create_user': False, 'email_redirect_to': auth_redirect()}})
+            else:
+                await asyncio.to_thread(auth_client().auth.resend, {'type':'signup','email':email,
+                    'options': {'email_redirect_to': auth_redirect()}})
+            await asyncio.to_thread(store.delivered, invitation['id'], True)
+        except Exception as exc:
+            try: await asyncio.to_thread(store.delivered, invitation['id'], False)
+            except Exception: pass
+            return provider_failure(exc, 'The invitation email could not be sent. No administrator rights were granted. Revoke any pending invitation before trying again.')
+    return with_session(JSONResponse({'message':'Invitation email requested. The recipient must verify their email, choose a password and accept before administrator access is granted.'},status_code=201),refreshed)
+
+
+def valid_id(value):
+    try: return str(uuid.UUID(str(value))) == value
+    except (ValueError, TypeError, AttributeError): return False
+
+
+async def admin_accept(request):
+    payload = await body(request)
+    if payload is None: return error('Invalid request.',403)
+    user, _, _ = await actor(request)
+    if not verified_email_user(user): return error('Sign in with the invited email first.',401)
+    invite_id = payload.get('invitation_id')
+    if not valid_id(invite_id) or not valid_new_password(payload.get('password')):
+        return error('Choose a password of 12–256 characters and open a valid invitation.')
+    async with _admin_limit:
+        try:
+            store = admin_store()
+            if await asyncio.to_thread(store.check, user.id, invite_id) is not True:
+                return error('This invitation has expired, was revoked, was already used or belongs to another account.',403)
+        except Exception:
+            return error('This invitation could not be checked.',503)
+        saved = await update_password(request)
+        if saved.status_code != 200: return saved
+        try:
+            if await asyncio.to_thread(store.accept, user.id, invite_id) is not True:
+                raise ValueError('No grant')
+            result = JSONResponse({'message':'Your administrator account is ready. Sign in next time using your email and password.'})
+        except Exception:
+            result = error('Your password was saved, but the invitation is no longer available. Ask an administrator for a new invitation.',409)
+        for cookie in saved.headers.getlist('set-cookie'):
+            result.headers.append('set-cookie',cookie)
+        return result
+
+
+async def admin_revoke(request):
+    if await body(request) is None: return error('Invalid request.',403)
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    iid = request.path_params['invitation_id']
+    if not valid_id(iid): return error('Invalid invitation.')
+    try:
+        await asyncio.to_thread(store.revoke, user.id, iid)
+        return with_session(JSONResponse({'message':'Invitation revoked.'}),refreshed)
+    except Exception:
+        return error('This invitation is no longer pending.',409)
+
+
+async def admin_upload(request):
+    if not same_origin(request): return error('Invalid request.',403)
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    if request.headers.get('content-type','').split(';',1)[0]!='application/octet-stream':
+        return error('Send a binary document.',415)
+    filename = unquote(request.headers.get('x-mkh-filename',''))
+    if not filename or len(filename)>250: return error('Enter a supported filename.')
+    if not setting('OPENAI_API_KEY'): return error('Document processing is not configured.',503)
+    from ingestion import create_job, DuplicateDocumentError, MAX_BYTES
+    from ingestion_worker import schedule_job
+    async with _admin_limit:
+        raw = bytearray()
+        try:
+            async for part in request.stream():
+                if len(raw)+len(part)>MAX_BYTES: return error('Documents must be smaller than 20 MB.',413)
+                raw.extend(part)
+            job_id = await asyncio.to_thread(create_job, store.db, filename, bytes(raw), user.id)
+            await asyncio.to_thread(store.audit,user.id,'document_uploaded',job_id)
+            schedule_job(setting('SUPABASE_URL'),setting('SUPABASE_SECRET_KEY'),setting('OPENAI_API_KEY'),job_id)
+            return with_session(JSONResponse({'job_id':job_id,'message':'Original stored privately. Processing queued; it becomes searchable only when ready.'},status_code=202),refreshed)
+        except DuplicateDocumentError as exc: return error(str(exc),409)
+        except ValueError as exc: return error(str(exc),422)
+        except Exception: return error('The document could not be queued. Check the registry before retrying.',503)
+        finally: raw.clear()
+
+
+async def admin_reprocess(request):
+    payload = await body(request)
+    if payload is None: return error('Invalid request.',403)
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    job_id = request.path_params['job_id']
+    if not valid_id(job_id): return error('Invalid job.')
+    if not setting('OPENAI_API_KEY'): return error('Document processing is not configured.',503)
+    from ingestion import reviewed_metadata
+    from ingestion_worker import schedule_job
+    corrections = payload.get('corrections')
+    if corrections is not None and not isinstance(corrections,dict): return error('Invalid metadata corrections.')
+    try: reviewed_metadata({}, {}, corrections)
+    except (ValueError,TypeError): return error('Enter valid metadata corrections.')
+    try:
+        job = await asyncio.to_thread(lambda: store.db.table('ingestion_jobs').select('id,status').eq('id',job_id).limit(1).execute().data)
+        if not job: return error('Job not found.',404)
+        if job[0]['status'] not in ('ready','failed','partially processed','queued'): return error('This job is already processing.',409)
+        await asyncio.to_thread(store.audit,user.id,'document_reprocess_requested',job_id)
+        started = schedule_job(setting('SUPABASE_URL'),setting('SUPABASE_SECRET_KEY'),setting('OPENAI_API_KEY'),job_id,corrections=corrections)
+        return with_session(JSONResponse({'message':'Processing requested.' if started else 'This job is already processing.'},status_code=202 if started else 409),refreshed)
+    except Exception: return error('Processing could not be requested.',503)
+
+
+async def admin_source_request(request):
+    payload = await body(request)
+    if payload is None: return error('Invalid request.',403)
+    user, store, refreshed, denied = await admin_actor(request)
+    if denied: return denied
+    from admin_accounts import source_request
+    try: data = source_request(payload)
+    except ValueError as exc: return error(str(exc))
+    try:
+        rid = await asyncio.to_thread(store.source_request,user.id,data)
+        return with_session(JSONResponse({'id':rid,'message':'Source registered for connector review. No data has been fetched or published.'},status_code=201),refreshed)
+    except Exception: return error('The source request could not be saved.',503)
 
 
 routes = [
+    Route('/api/admin/status',admin_status),
+    Route('/api/admin/overview',admin_overview),
+    Route('/api/admin/invitations',admin_invite,methods=['POST']),
+    Route('/api/admin/invitations/accept',admin_accept,methods=['POST']),
+    Route('/api/admin/invitations/{invitation_id}',admin_revoke,methods=['DELETE']),
+    Route('/api/admin/documents',admin_upload,methods=['POST']),
+    Route('/api/admin/documents/{job_id}/reprocess',admin_reprocess,methods=['POST']),
+    Route('/api/admin/source-requests',admin_source_request,methods=['POST']),
     Route("/api/health", health),
     Route("/api/geography", geography),
     Route("/api/me", me),

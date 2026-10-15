@@ -16,7 +16,7 @@ function harness(send=async()=>({message:'Check your email.'}),hash='') {
       scrollIntoView(){this.scrolled=true;},
       showModal(){events.push('show');},close(){events.push('close');}};
   }
-  const location={hash,pathname:'/',search:''};
+  const location={hash,pathname:'/',search:'',assign(path){events.push('navigate:'+path);}};
   const history={replaceState(){events.push('scrub');}};
   const api=new Function('el','state','send','toast','profile','loadAccountThreads','renderThreads','location','history',
     `${implementation};return {setAuthMode,submitAuth,acceptAuthCallback};`)(el,state,
@@ -131,6 +131,13 @@ test('existing-account email links sign in without claiming new-account creation
     '#access_token=a&refresh_token=r&type=magiclink');
   await h.acceptAuthCallback();assert.ok(h.events.includes('Signed in.'));
   assert.ok(!h.events.includes('show'));assert.equal(h.state.user.id,'existing-id');
+});
+test('verified invitation callback opens administration without granting rights in the browser',async()=>{
+  const h=harness(async()=>({user:{id:'invited-id',email:'recipient@example.org'}}),
+    '#access_token=a&refresh_token=r&type=invite');
+  await h.acceptAuthCallback();
+  assert.deepEqual(h.events,['scrub','auth/session','navigate:/admin']);
+  assert.equal(h.state.user.id,'invited-id');
 });
 test('confirmation recipient text cannot inject HTML and survives mode changes',()=>{
   const h=harness();h.el['auth-email'].value='  <img src=x onerror=alert(1)>  ';
