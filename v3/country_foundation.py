@@ -27,6 +27,9 @@ STOP_NAMES = {'mali','what','which','there','here','are','the','and','how','full
 
 def country_plan(question):
     """Bounded factual intents only; mixed analytical questions retain research."""
+    from country_climate import climate_plan
+    climate=climate_plan(question)
+    if climate:return climate
     from country_indicators import indicator_plan
     indicator=indicator_plan(question)
     if indicator:return indicator
@@ -254,6 +257,9 @@ class CountryFoundation:
     def answer(self,question,language='English'):
         plan=country_plan(question)
         if not plan:return None
+        if plan['metric']=='climate':
+            from country_climate import climate_answer
+            return climate_answer(question,language)
         if plan['metric']=='indicator':
             from country_indicators import indicator_answer
             return indicator_answer(question,language)

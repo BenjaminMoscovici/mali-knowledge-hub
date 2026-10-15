@@ -720,16 +720,30 @@ async def country(request):
     if question:
         if len(question)>MAX_QUESTION:return error('Country question is too long.')
         result=await asyncio.to_thread(lambda:country_foundation().answer(question,synthesis_language(question)))
-        if result is None:return error('Use a supported population, area or border question.',422)
+        if result is None:return error('Use a supported population, area, border, indicator or climate question.',422)
         return JSONResponse(result)
     metric=params.get('metric')
     foundation=await asyncio.to_thread(country_foundation)
     if not metric:
         report={k:v for k,v in foundation.validation.items() if k!='population_rollups'}
         from country_indicators import indicator_package
+        from country_climate import climate_package
         indicators=indicator_package()
-        return JSONResponse({'validation':report,'metrics':['population','ranking','area','neighbours','residence','indicator','geometry'],
+        climate=climate_package()
+        return JSONResponse({'validation':report,'metrics':['population','ranking','area','neighbours','residence','indicator','geometry','climate'],
+            'climate':{k:climate[k] for k in ('dataset_id','source_version','reference_period','geographic_framework','variables','quality_checks','limitations')},
             'indicators':[{'id':s['indicator_id'],'name':s['metadata']['name'],'unit':s['unit'],'domain':s['domain']} for s in indicators['series']]})
+    if metric=='climate':
+        from country_climate import climate_query,climate_evidence
+        if (any(params.get(k) for k in ('year','scope','scope_level'))
+                or params.get('level','country')!='country' or params.get('name','Mali').casefold()!='mali'):
+            return error('Climate normals cover national Mali, 1991–2020 only; no single-year or administrative allocation.')
+        try:
+            variables=params['variables'].split(',') if params.get('variables') else None
+            month=int(params['month']) if params.get('month') else None
+            data=climate_query(variables,params.get('aggregation','both'),params.get('period','1991-2020'),month)
+        except ValueError:return error('Choose valid climate variables, annual/monthly/both, period 1991-2020 and optional monthly month 1–12.')
+        return JSONResponse({'country':data,'evidence':climate_evidence(data)})
     if metric=='indicator':
         from country_indicators import indicator_query,indicator_evidence
         code=params.get('indicator')

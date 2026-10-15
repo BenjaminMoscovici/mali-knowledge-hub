@@ -35,6 +35,7 @@ def catalogue(root=None):
     root = Path(root) if root else _ROOT
     paths = [root/'source_registry.json', *sorted(root.glob('source_wave*.json.gz'))]
     if (root/'country_indicators.json.gz').exists():paths.append(root/'country_indicators.json.gz')
+    if (root/'country_climate.json.gz').exists():paths.append(root/'country_climate.json.gz')
     revision = tuple((str(p), p.stat().st_mtime_ns, p.stat().st_size) for p in paths)
     with _lock:
         if _catalogue and _catalogue[0] == revision:

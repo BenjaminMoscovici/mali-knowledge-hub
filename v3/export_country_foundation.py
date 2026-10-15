@@ -12,6 +12,7 @@ import sqlite3
 
 from country_foundation import OVERLAY,country_foundation
 from country_indicators import indicator_package
+from country_climate import climate_package
 from source_wave import snapshot_path
 
 
@@ -47,6 +48,27 @@ def export(directory):
           indicator_id text not null references foundation_indicator_series(indicator_id),
           year integer not null,value real,status text not null,
           primary key(indicator_id,year));
+        create table foundation_climate_datasets(
+          dataset_id text primary key,country_iso3 text not null,source_version text not null,
+          reference_start text not null,reference_end text not null,retrieved_at text not null,
+          geographic_framework text not null,source_page text not null,provenance_json text not null);
+        create table foundation_climate_variables(
+          dataset_id text not null references foundation_climate_datasets(dataset_id),
+          variable text not null,label text not null,unit text not null,definition text not null,
+          primary key(dataset_id,variable));
+        create table foundation_climate_observations(
+          dataset_id text not null,variable text not null,aggregation text not null,
+          month integer not null,source_coordinate text not null,value real not null,status text not null,
+          foreign key(dataset_id,variable) references foundation_climate_variables(dataset_id,variable),
+          primary key(dataset_id,variable,aggregation,month),
+          check((aggregation='annual' and month=0) or (aggregation='monthly' and month between 1 and 12)));
+        create view country_climate as
+          select d.dataset_id,d.country_iso3,d.source_version,d.reference_start,d.reference_end,
+            v.variable,v.label,v.unit,v.definition,o.aggregation,o.month,o.source_coordinate,o.value,o.status,
+            d.geographic_framework,d.source_page,d.retrieved_at
+          from foundation_climate_datasets d
+          join foundation_climate_variables v on v.dataset_id=d.dataset_id
+          join foundation_climate_observations o on o.dataset_id=v.dataset_id and o.variable=v.variable;
         create view country_population as
           select u.id unit_id,u.parent_id,u.name,u.level,
             case when u.level='region' and lower(u.name)='bamako' then 'district' else u.level end unit_type,
@@ -82,12 +104,22 @@ def export(directory):
             [(series['indicator_id'],o['year'],o['value'],o['status']) for o in series['observations']])
     out.execute('insert into foundation_metadata values (?,?)',
                 ('national_indicator_provenance',json.dumps({k:v for k,v in package.items() if k!='series'},ensure_ascii=False)))
+    climate=climate_package();dataset=climate['dataset_id']
+    out.execute('insert into foundation_climate_datasets values (?,?,?,?,?,?,?,?,?)',
+        (dataset,'MLI',climate['source_version'],climate['reference_start'],climate['reference_end'],
+         climate['retrieved_at'],climate['geographic_framework'],climate['source_page'],
+         json.dumps({k:v for k,v in climate.items() if k not in ('variables','observations')},ensure_ascii=False)))
+    out.executemany('insert into foundation_climate_variables values (?,?,?,?,?)',
+        [(dataset,v,m['label'],m['unit'],m['info']) for v,m in climate['variables'].items()])
+    out.executemany('insert into foundation_climate_observations values (?,?,?,?,?,?,?)',
+        [(dataset,o['variable'],o['aggregation'],o['month'],o['source_coordinate'],o['value'],o['status']) for o in climate['observations']])
     out.commit()
     out.execute('vacuum')  # Remove deleted non-country source bytes from the export.
     if out.execute('pragma integrity_check').fetchone()[0]!='ok' or out.execute('pragma foreign_key_check').fetchall():
         raise ValueError('Standalone database integrity failure')
     for view,filename in [('country_population','Administrative_Population_2023.csv'),
-                          ('country_boundaries','Boundary_Metrics_COD_v03.csv')]:
+                          ('country_boundaries','Boundary_Metrics_COD_v03.csv'),
+                          ('country_climate','National_Climate_Normals_1991-2020.csv')]:
         cursor=out.execute('select * from '+view)
         columns=[c[0] for c in cursor.description]
         if view=='country_boundaries':
@@ -100,6 +132,7 @@ def export(directory):
         (directory/f'Boundaries_COD_v03_{level}.geojson').write_text(
             json.dumps(foundation.geometry(level),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     (directory/'National_Indicators_WDI.json').write_text(json.dumps(package,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    (directory/'National_Climate_Normals_CRU_TS4.09.json').write_text(json.dumps(climate,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     (directory/'Source_Validation.json').write_text(json.dumps(foundation.validation,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     out.close()
     return path

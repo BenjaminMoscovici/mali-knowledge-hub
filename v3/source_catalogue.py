@@ -51,6 +51,17 @@ def entries(root=None):
              'last_successful_retrieval':package['retrieved_at'],'update_frequency':'Reviewed WDI snapshot; no automatic refresh',
              'access_route':'https://data.worldbank.org/country/mali','records':count,'limitations':package['limitations']}
         key=(row['provider'],row['source_name']);by_name[key]=row;loaded[key]=count>0
+    climate=root/'country_climate.json.gz'
+    if climate.exists():
+        with gzip.open(climate,'rt',encoding='utf-8') as file:package=json.load(file)
+        count=sum(o['status']=='reported' for o in package['observations'])
+        row={'provider':'World Bank CCKP / CRU','source_name':'Mali Country Foundation — national climate normals',
+             'source_type':'official_climate_climatology','integration_status':'integrated_with_limitations',
+             'analytical_use':'national monthly and annual precipitation and temperature normals',
+             'historical_coverage':package['reference_period']+' climate normals; '+package['source_version'],
+             'last_successful_retrieval':package['retrieved_at'],'update_frequency':'Pinned climatology snapshot; no automatic refresh',
+             'access_route':package['source_page'],'records':count,'limitations':package['limitations']}
+        key=(row['provider'],row['source_name']);by_name[key]=row;loaded[key]=count>0
     result=[]
     for key,row in by_name.items():
         row['evidence_available']=loaded.get(key, row.get('records') is None and
