@@ -8,7 +8,8 @@ function harness(send=async()=>({message:'Check your email.'}),hash='') {
   const events=[];const state={user:null};const el={};
   const names=[...implementation.matchAll(/el\['([^']+)'\]/g)].map(m=>m[1]);
   for(const id of [...names,'auth-username','auth-email','auth-password','auth-confirm',
-      'auth-username-wrap','auth-email-wrap','auth-password-wrap','auth-confirm-wrap']) {
+      'auth-username-wrap','auth-email-wrap','auth-password-wrap','auth-confirm-wrap',
+      'auth-step-1','auth-step-2','auth-step-3']) {
     el[id]={value:'',disabled:false,required:false,textContent:'',attrs:{},hidden:false,
       classList:{toggle(name,flag){el[id].hidden=flag;}},
       setAttribute(name,value){this.attrs[name]=value;},setCustomValidity(){},focus(){},
@@ -67,7 +68,9 @@ test('accepted signup shows verification outcome and preserves email for explici
   h.setAuthMode('signup');h.el['auth-email'].value='person@example.org';h.el['auth-username'].value='Researcher';
   h.el['auth-password'].value=h.el['auth-confirm'].value='test long passphrase';
   await h.submitAuth(event);
-  assert.equal(h.el['auth-title'].textContent,'Verify your email');
+  assert.equal(h.el['auth-title'].textContent,'Check your email');
+  assert.equal(h.el['auth-recipient'].textContent,'person@example.org');
+  assert.equal(h.el['auth-step-2'].attrs['aria-current'],'step');
   assert.equal(h.el['auth-password'].disabled,true);assert.equal(h.el['auth-email'].value,'person@example.org');
   assert.equal(h.el['auth-submit'].textContent,'Resend confirmation email');
   assert.equal(h.el['auth-status'].hidden,false);assert.equal(h.el['auth-status'].attrs['data-kind'],'success');
@@ -104,4 +107,34 @@ test('expired or incomplete callback scrubs credentials without sending them',as
     assert.deepEqual(h.events,['scrub','show']);assert.ok(h.el['auth-status'].textContent.includes('expired'));
     assert.ok(!h.el['auth-status'].textContent.includes('private'));
   }
+});
+test('verified signup has a persistent ready screen with the verified account identity',async()=>{
+  const h=harness(async()=>({user:{id:'same-id',email:'verified@example.org'}}),
+    '#access_token=a&refresh_token=r&type=signup');
+  await h.acceptAuthCallback();
+  assert.deepEqual(h.events,['scrub','auth/session','show']);
+  assert.equal(h.el['auth-title'].textContent,'Your account is ready');
+  assert.equal(h.el['auth-complete-email'].textContent,'verified@example.org');
+  assert.equal(h.el['auth-complete'].hidden,false);assert.equal(h.el['auth-form'].hidden,true);
+  assert.equal(h.el['auth-tabs'].hidden,true);assert.equal(h.el['auth-links'].hidden,true);
+  assert.equal(h.el['auth-email'].disabled,true);assert.equal(h.el['auth-step-3'].attrs['aria-current'],'step');
+});
+test('failed verification cannot show a successful-account screen',async()=>{
+  const h=harness(async()=>{throw new Error('This link has expired.');},
+    '#access_token=a&refresh_token=r&type=signup');
+  await h.acceptAuthCallback();assert.equal(h.state.user,null);
+  assert.equal(h.el['auth-complete'].hidden,true);assert.equal(h.el['auth-status'].attrs.role,'alert');
+  assert.equal(h.el['auth-title'].textContent,'Check your email');
+});
+test('existing-account email links sign in without claiming new-account creation',async()=>{
+  const h=harness(async()=>({user:{id:'existing-id',email:'existing@example.org'}}),
+    '#access_token=a&refresh_token=r&type=magiclink');
+  await h.acceptAuthCallback();assert.ok(h.events.includes('Signed in.'));
+  assert.ok(!h.events.includes('show'));assert.equal(h.state.user.id,'existing-id');
+});
+test('confirmation recipient text cannot inject HTML and survives mode changes',()=>{
+  const h=harness();h.el['auth-email'].value='  <img src=x onerror=alert(1)>  ';
+  h.setAuthMode('confirm');assert.equal(h.el['auth-recipient'].textContent,'<img src=x onerror=alert(1)>');
+  h.setAuthMode('signup');assert.equal(h.el['auth-confirm-help'].hidden,true);
+  assert.equal(h.el['auth-complete'].hidden,true);assert.equal(h.el['auth-form'].hidden,false);
 });

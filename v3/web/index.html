@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>Mali Knowledge Hub</title>
-  <link rel="stylesheet" href="/assets/styles.css?v=signup-feedback-20261013">
-  <script src="/assets/app.js?v=signup-feedback-20261013" defer></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=account-onboarding-20261015">
+  <script src="/assets/app.js?v=account-onboarding-20261015" defer></script>
 </head>
 <body>
   <div class="workspace" id="workspace">
@@ -96,8 +96,11 @@
     <form method="dialog"><button class="icon-button modal-close" aria-label="Close sign-in"><svg viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg></button></form>
     <div class="modal-mark">M</div><h2 id="auth-title">Sign in</h2>
     <p id="auth-description">Sign in with your personal email and password to reopen your private research.</p>
-    <div class="auth-tabs" aria-label="Account access"><button type="button" id="auth-login" aria-pressed="true">Sign in</button><button type="button" id="auth-signup" aria-pressed="false">Create account</button></div>
+    <div class="auth-tabs" id="auth-tabs" aria-label="Account access"><button type="button" id="auth-login" aria-pressed="true">Sign in</button><button type="button" id="auth-signup" aria-pressed="false">Create account</button></div>
+    <ol class="auth-progress hidden" id="auth-progress" aria-label="Account setup"><li id="auth-step-1">1 · Account</li><li id="auth-step-2">2 · Email</li><li id="auth-step-3">3 · Ready</li></ol>
     <div class="modal-status hidden" id="auth-status" role="status" aria-live="polite" tabindex="-1"></div>
+    <div class="auth-confirm-help hidden" id="auth-confirm-help"><p>Look for the account confirmation email for <strong id="auth-recipient"></strong>. Open it and select the confirmation button.</p><small>Check your spam folder if it is missing. Once verified, you’ll see “Your account is ready”. If you already have an account, sign in or reset your password.</small><button type="button" class="auth-text-button" id="auth-change-email">Use a different email address</button></div>
+    <div class="auth-complete hidden" id="auth-complete"><strong id="auth-complete-email"></strong><p>You can now save and reopen private research. Next time, sign in using your email address and personal password.</p><button type="button" class="primary-button" id="auth-continue">Continue to the Hub</button></div>
     <form id="auth-form">
       <div id="auth-username-wrap" class="hidden"><label for="auth-username">Username</label><input id="auth-username" autocomplete="nickname" minlength="2" maxlength="60" disabled><small>Your display name. Sign in using your email address.</small></div>
       <div id="auth-email-wrap"><label for="auth-email">Personal email address</label><input id="auth-email" type="email" autocomplete="email" maxlength="254" required placeholder="you@example.org"></div>
@@ -106,7 +109,7 @@
       <small id="auth-password-help" class="hidden">Use at least 12 characters. You choose and keep your own password.</small>
       <button id="auth-submit" type="submit" class="primary-button">Sign in</button>
     </form>
-    <div class="auth-links"><button type="button" id="auth-resend">Resend account confirmation</button><button type="button" id="auth-recover">Forgot password / existing account?</button><button type="button" id="auth-link">Use an existing account’s email sign-in link</button></div>
+    <div class="auth-links" id="auth-links"><button type="button" id="auth-resend">Resend account confirmation</button><button type="button" id="auth-recover">Forgot password / existing account?</button><button type="button" id="auth-link">Use an existing account’s email sign-in link</button></div>
   </dialog>
   <div id="toast" class="toast hidden" role="status"></div>
 </body>
