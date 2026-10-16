@@ -12,6 +12,8 @@ Queries use the existing geographic UUIDs and original page evidence.
 | OCHA COD-AB | v03, its own validity metadata; country/admin1/admin2 polygons | Same original store; computed area and adjacency belong only to this release |
 | World Bank WDI | National MLI series; explicit 2015–2026 request window; each observation has its own year | `country_indicators.json.gz`; original definitions, underlying providers, API update dates and missing values |
 | World Bank CCKP / CRU | National MLI climatology, CRU TS 4.09, 1991–2020 normal period | `country_climate.json.gz`; four variables × twelve monthly normals plus one annual normal, original API responses, units, checksums and attribution |
+| Natural Earth / NACIS | Layer 5.0.0, pinned source revision 2 June 2022; survey dates unspecified | Ten clipped source features, nine river IDs and eight name labels; generalized cartography, not an official hydrographic census |
+| NOAA NCEI ETOPO | ETOPO2022 v1, 60 arc-second surface derivative, EGM2008 heights; publication 1 October 2022; inputs vary | Country and twenty COD admin1 terrain summaries, original source metadata/checksums and masked GeoTIFF; no population join |
 
 `country_foundation.sqlite.gz` is a small derived overlay. It contains printed
 urban/rural and locality-count attributes, polygon metrics, adjacency and source
@@ -68,6 +70,10 @@ polygons while crosswalks are unapproved.
 - `What is the climate of Mali?`
 - `Which month is wettest in Mali?`
 - `Average daily maximum temperature in Mali`
+- `What are the major rivers in Mali?`
+- `Niger river in Mali`
+- `What is the mean elevation of Gao region?`
+- `Compare mean elevation in Gao and Mopti regions`
 - `Quelle est la population de la commune de Gao ?`
 - `Wie viele Einwohner hat die Gemeinde Gao?`
 
@@ -96,6 +102,11 @@ Examples (query parameters shown without URL encoding):
 /api/country?metric=indicator&indicator=EG.ELC.ACCS.ZS&series=true
 /api/country?metric=climate&variables=pr,tas&aggregation=both&period=1991-2020
 /api/country?metric=climate&variables=pr&aggregation=monthly&month=8
+/api/country?metric=physical_rivers
+/api/country?metric=physical_rivers&name=Baoulé&river_id=499
+/api/country?metric=river_geometry&name=Niger
+/api/country?metric=terrain&level=region&name=Gao
+/api/country?metric=terrain_raster
 ```
 
 Limits are 1–50 records per population/ranking selection. Geometry exports are
@@ -113,18 +124,71 @@ python v3/build_country_foundation.py --source SOURCE.sqlite \
   --output v3/country_foundation.sqlite.gz --report VALIDATION.json
 python v3/import_country_indicators.py --output v3/country_indicators.json.gz
 python v3/import_country_climate.py --output v3/country_climate.json.gz
+python v3/build_country_physical.py --inputs NEW_SOURCE_DIRECTORY --fetch \
+  --output v3/country_physical.json.gz --raster v3/country_terrain.tif
 python v3/export_country_foundation.py --output NEW_EXPORT_DIRECTORY
-python -m pytest -q v3/test_country_foundation.py v3/test_country_indicators.py v3/test_country_climate.py
+python -m pytest -q v3/test_country_foundation.py v3/test_country_indicators.py v3/test_country_climate.py v3/test_country_physical.py
 ```
 
-Only the WDI and climate importers make network requests. Refreshing an immutable snapshot
+Only the WDI/climate importers and the explicit physical-builder `--fetch` step make network requests. Omit `--fetch` to rebuild physical layers offline from the retained input files and manifest. Refreshing an immutable snapshot
 requires review and a code release; no automatic feed is enabled. The builder's
 Shapely/pyproj dependencies are not needed by the serving process.
 
 The standalone export includes normalized SQLite views `country_population`
-and `country_boundaries`, normalized climate tables and `country_climate`, country-only sources, national indicators, CSVs,
+and `country_boundaries`, normalized climate tables and `country_climate`, normalized physical tables and `country_rivers`/`country_terrain`, national indicators, CSVs,
 GeoJSON and a validation report. It excludes operational and humanitarian
 observations. Deleted source bytes are removed by VACUUM.
+
+## Physical geography and spatial provenance
+
+`country_physical.json.gz` retains source identities, source bytes' checksums,
+selected original river features, the NOAA metadata response, methods and
+quality results. River and terrain queries cite both their physical source and
+the COD release used as the spatial mask. INSTAT population identities are not
+joined to this overlay. The original source geometry is not silently repaired.
+
+Natural Earth 5.0.0 is pinned to source revision
+`ca96624a56bd078437bca8184e78163e5039ad19`, rather than a changing master URL.
+The source revision date is not a survey date or an exact layer publication
+date. The ten country-intersecting features retain their global source-row
+occurrence and Natural Earth `rivernum`. Two Niger features are respectively a
+river and lake centerline, sharing one river ID. Both Baoulé rivers retain
+distinct IDs499 and816; no destructive deduplication by name is applied.
+
+This is 1:10-million cartographic context: names, generalized traces and source
+attributes, not a complete watercourse inventory, present flow, navigability or
+an official river length. The GeoJSON clips these traces to the COD country
+outline. No commune/settlement crossings or links to HydroRIVERS are inferred.
+Stored trace lengths describe those clipped line geometries only.
+
+The NOAA ETOPO2022 v1 surface product is a composite global relief model. This
+increment uses its **60-arc-second derivative**, approximately1.85km north–south,
+not the original15-arc-second grid. Heights are metres relative to EGM2008
+(EPSG:3855), with WGS84 longitude/latitude (EPSG:4326). The source catalogue
+global input range1998–2022 does not date each Mali cell. Publication2022-10-01
+is stored separately from retrieval; no current/single-year measure is claimed.
+
+The NOAA service uses0–360° longitude. Two native-resolution subsets are joined
+at360°/0°, transformed to−180–180° and validated for equal latitude axes,
+uniform spacing, no duplicated/missing seam columns, dimensions, units, datum,
+finite values and NoData. No resampling or interpolation occurs. The north-up
+GeoTIFF is masked to Mali; outside-country cells are NoData, not zero. Exact
+raster round-trip and pixel-data checksum are checked.
+
+Terrain summaries select grid-cell centres strictly inside COD polygons and
+weight the mean by each cell's WGS84 ellipsoidal area. All384,668 selected Mali
+cells belong to exactly one of the20 COD admin1 units; there are no unassigned
+or multiply assigned selected centres. National plus20 admin1 summaries are
+stored. Bamako is identified as a district. Selected whole-cell area approximates
+the boundary and is not an official or surveyed area. Grid minima/maxima are
+**not surveyed extrema or peaks**; the coarse grid smooths local relief.
+
+Raster and vector processing dependencies are builder-only. Runtime queries
+read precomputed data; the fixed GeoTIFF download verifies its checksum and
+does not accept a caller-supplied filesystem path. The standalone database
+includes normalized physical-source, river, terrain and raster-asset tables,
+with original geographic/release IDs and foreign keys. The separate GeoTIFF
+and river GeoJSON are usable in GIS software.
 
 ## Climate interpretation and validation
 
@@ -185,7 +249,11 @@ Source screening for subsequent layers (checked 15 October 2026):
 | [HOT health facilities](https://data.humdata.org/dataset/hotosm_mli_health_facilities) | OpenStreetMap extract dated 5 October 2026; ODbL | Same mapped-feature limitations. No inference of staffing, services, opening status or facility coverage. |
 
 These candidate rows are research metadata, not loaded evidence. No facility
-or road observations were imported in this climate increment. The remaining
+or road observations were imported in these country increments. HydroSHEDS v1
+river/terrain products remain deferred for a separate redistribution review:
+the v1.4 technical documentation Appendix A, clauses2.1.2–2.1.3, contains
+distribution/sublicensing conditions. This increment uses NOAA CC0 and Natural
+Earth public-domain data instead. No HydroSHEDS data is packaged. The remaining
 commune-boundary gap is a qualification gap, not a claim that such data does
 not exist. Civil administrative and health-reporting boundaries are not
 interchangeable.
@@ -207,3 +275,7 @@ licence de données ouvertes de l’INSTAT.
   https://crudata.uea.ac.uk/cru/data/hrg/cru_ts_4.09/
   and https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
   CCKP source: https://climateknowledgeportal.worldbank.org/country/mali/climate-data-historical
+- Rivers: Made with Natural Earth. https://www.naturalearthdata.com/about/terms-of-use/
+- Terrain: NOAA National Centers for Environmental Information (2022), ETOPO2022,
+  https://doi.org/10.25921/fd45-gt74. CC0-1.0;60-arc-second derivative accessed
+  through NOAA OceanWatch ERDDAP. https://www.ncei.noaa.gov/products/etopo-global-relief-model

@@ -1,3 +1,6 @@
 # Offline overlay builder only. Runtime serving uses the standard library.
 shapely==2.2.0
 pyproj==3.8.0
+numpy==2.3.5
+scipy==1.17.0
+rasterio==1.5.0

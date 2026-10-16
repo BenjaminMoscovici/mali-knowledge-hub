@@ -720,7 +720,7 @@ async def country(request):
     if question:
         if len(question)>MAX_QUESTION:return error('Country question is too long.')
         result=await asyncio.to_thread(lambda:country_foundation().answer(question,synthesis_language(question)))
-        if result is None:return error('Use a supported population, area, border, indicator or climate question.',422)
+        if result is None:return error('Use a supported country population, geography, indicator or climate question.',422)
         return JSONResponse(result)
     metric=params.get('metric')
     foundation=await asyncio.to_thread(country_foundation)
@@ -728,11 +728,30 @@ async def country(request):
         report={k:v for k,v in foundation.validation.items() if k!='population_rollups'}
         from country_indicators import indicator_package
         from country_climate import climate_package
+        from country_physical import physical_package
         indicators=indicator_package()
         climate=climate_package()
-        return JSONResponse({'validation':report,'metrics':['population','ranking','area','neighbours','residence','indicator','geometry','climate'],
+        physical=physical_package()
+        return JSONResponse({'validation':report,'metrics':['population','ranking','area','neighbours','residence','indicator','geometry','climate','terrain','physical_rivers','river_geometry','terrain_raster'],
+            'physical':{'sources':{k:{field:s[field] for field in ('dataset_id','provider','version','source_page','license','limitations')} for k,s in physical['sources'].items()},'quality':physical['quality']},
             'climate':{k:climate[k] for k in ('dataset_id','source_version','reference_period','geographic_framework','variables','quality_checks','limitations')},
             'indicators':[{'id':s['indicator_id'],'name':s['metadata']['name'],'unit':s['unit'],'domain':s['domain']} for s in indicators['series']]})
+    if metric in ('terrain','physical_rivers','river_geometry','terrain_raster'):
+        from country_physical import physical_query,physical_evidence,river_geometry,raster_path
+        if any(params.get(k) for k in ('year','period','scope','scope_level')):
+            return error('Physical sources have fixed versions and geography; no temporal substitution or administrative allocation.')
+        name=params.get('name');level=params.get('level','country');river_id=params.get('river_id')
+        if name and len(name)>200:return error('Place/river name is too long.')
+        if level not in ('country','region'):return error('Physical summaries support country/region only.')
+        if metric!='terrain' and level!='country':return error('River/raster selection supports national context only.')
+        try:
+            if metric=='river_geometry':return JSONResponse(river_geometry(name,river_id),media_type='application/geo+json')
+            if metric=='terrain_raster':
+                if name or river_id:return error('Raster is the fixed country-only terrain subset.')
+                return FileResponse(raster_path(),media_type='image/tiff',filename='Mali_ETOPO2022_60s_COD_v03.tif')
+            data=physical_query(metric,[name] if name else None,level,river_id)
+        except ValueError:return error('Unsupported physical source selection.')
+        return JSONResponse({'country':data,'evidence':physical_evidence(data) if data['rows'] else []})
     if metric=='climate':
         from country_climate import climate_query,climate_evidence
         if (any(params.get(k) for k in ('year','scope','scope_level'))

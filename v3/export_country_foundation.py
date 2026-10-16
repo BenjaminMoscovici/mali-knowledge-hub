@@ -9,10 +9,12 @@ import gzip
 import json
 from pathlib import Path
 import sqlite3
+import shutil
 
 from country_foundation import OVERLAY,country_foundation
 from country_indicators import indicator_package
 from country_climate import climate_package
+from country_physical import physical_package,river_geometry,raster_path
 from source_wave import snapshot_path
 
 
@@ -113,16 +115,69 @@ def export(directory):
         [(dataset,v,m['label'],m['unit'],m['info']) for v,m in climate['variables'].items()])
     out.executemany('insert into foundation_climate_observations values (?,?,?,?,?,?,?)',
         [(dataset,o['variable'],o['aggregation'],o['month'],o['source_coordinate'],o['value'],o['status']) for o in climate['observations']])
+    physical=physical_package()
+    out.executescript('''
+        create table foundation_physical_sources(
+          source_id text primary key,kind text not null,version text not null,publication_date text,
+          retrieved_at text not null,source_url text not null,metadata_json text not null);
+        create table foundation_rivers(
+          source_record_id text primary key,source_id text not null references foundation_physical_sources(source_id),
+          river_id text not null,name text not null,source_row integer not null,feature_class text not null,
+          source_properties_json text not null,source_feature_json text not null,geometry_json text not null,
+          clipped_cartographic_line_km real not null,
+          boundary_release_id text not null references mkh_source_releases(id));
+        create table foundation_terrain(
+          unit_id text primary key references mkh_geo_units(id),
+          source_id text not null references foundation_physical_sources(source_id),
+          boundary_release_id text not null references mkh_source_releases(id),
+          cell_count integer not null,cell_area_weighted_mean_m real not null,
+          minimum_grid_value_m real not null,maximum_grid_value_m real not null,
+          selected_grid_area_km2 real not null,nodata_cells integer not null);
+        create table foundation_raster_assets(
+          filename text primary key,source_id text not null references foundation_physical_sources(source_id),
+          sha256 text not null,metadata_json text not null);
+        create view country_rivers as
+          select r.source_record_id,r.river_id,r.name,r.source_row,r.feature_class,
+            r.clipped_cartographic_line_km,r.geometry_json,r.boundary_release_id,
+            s.version,s.source_url,s.publication_date,s.retrieved_at
+          from foundation_rivers r join foundation_physical_sources s on s.source_id=r.source_id;
+        create view country_terrain as
+          select t.*,u.name,u.level,s.version,s.source_url,s.publication_date,s.retrieved_at
+          from foundation_terrain t join mkh_geo_units u on u.id=t.unit_id
+          join foundation_physical_sources s on s.source_id=t.source_id;
+    ''')
+    for key,source in physical['sources'].items():
+        metadata={**source,'source_manifest':physical['source_manifest'],'boundary_release_id':physical['boundary_release_id'],
+                  'boundary_checksum':physical['boundary_checksum']}
+        out.execute('insert into foundation_physical_sources values (?,?,?,?,?,?,?)',
+            (source['dataset_id'],key,source['version'],source['publication_date'],physical['retrieved_at'],
+             source['source_page'],json.dumps(metadata,ensure_ascii=False)))
+    out.executemany('insert into foundation_rivers values (?,?,?,?,?,?,?,?,?,?,?)',
+        [(r['source_record_id'],physical['sources']['rivers']['dataset_id'],r['river_id'],r['name'],r['source_row'],
+          r['source_properties']['featurecla'],json.dumps(r['source_properties'],ensure_ascii=False),
+          json.dumps(r['source_feature'],ensure_ascii=False),json.dumps(r['geometry'],ensure_ascii=False),
+          r['clipped_line_km'],r['clip_boundary_release_id']) for r in physical['rivers']])
+    out.executemany('insert into foundation_terrain values (?,?,?,?,?,?,?,?,?)',
+        [(r['unit_id'],physical['sources']['terrain']['dataset_id'],r['boundary_release_id'],r['cell_count'],
+          r['cell_area_weighted_mean_m'],r['minimum_grid_value_m'],r['maximum_grid_value_m'],
+          r['selected_grid_area_km2'],r['nodata_cells']) for r in physical['terrain']])
+    raster_name='Mali_ETOPO2022_60s_COD_v03.tif'
+    shutil.copyfile(raster_path(),directory/raster_name)
+    out.execute('insert into foundation_raster_assets values (?,?,?,?)',
+        (raster_name,physical['sources']['terrain']['dataset_id'],physical['raster']['sha256'],json.dumps(physical['raster'])))
+    out.execute('insert into foundation_metadata values (?,?)',('physical_validation',json.dumps(physical['quality'])))
     out.commit()
     out.execute('vacuum')  # Remove deleted non-country source bytes from the export.
     if out.execute('pragma integrity_check').fetchone()[0]!='ok' or out.execute('pragma foreign_key_check').fetchall():
         raise ValueError('Standalone database integrity failure')
     for view,filename in [('country_population','Administrative_Population_2023.csv'),
                           ('country_boundaries','Boundary_Metrics_COD_v03.csv'),
-                          ('country_climate','National_Climate_Normals_1991-2020.csv')]:
+                          ('country_climate','National_Climate_Normals_1991-2020.csv'),
+                          ('country_rivers','Named_Rivers_Natural_Earth_5.0.0.csv'),
+                          ('country_terrain','Terrain_ETOPO2022_COD_v03.csv')]:
         cursor=out.execute('select * from '+view)
         columns=[c[0] for c in cursor.description]
-        if view=='country_boundaries':
+        if 'geometry_json' in columns:
             columns.remove('geometry_json')
         with (directory/filename).open('w',newline='',encoding='utf-8-sig') as file:
             writer=csv.DictWriter(file,fieldnames=columns);writer.writeheader()
@@ -133,6 +188,8 @@ def export(directory):
             json.dumps(foundation.geometry(level),ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     (directory/'National_Indicators_WDI.json').write_text(json.dumps(package,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     (directory/'National_Climate_Normals_CRU_TS4.09.json').write_text(json.dumps(climate,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    (directory/'Named_Rivers_Natural_Earth_5.0.0.geojson').write_text(json.dumps(river_geometry(),ensure_ascii=False)+'\n',encoding='utf-8')
+    (directory/'Physical_Geography_Provenance.json').write_text(json.dumps(physical,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     (directory/'Source_Validation.json').write_text(json.dumps(foundation.validation,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     out.close()
     return path

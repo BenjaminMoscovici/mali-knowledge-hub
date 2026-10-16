@@ -62,6 +62,22 @@ def entries(root=None):
              'last_successful_retrieval':package['retrieved_at'],'update_frequency':'Pinned climatology snapshot; no automatic refresh',
              'access_route':package['source_page'],'records':count,'limitations':package['limitations']}
         key=(row['provider'],row['source_name']);by_name[key]=row;loaded[key]=count>0
+    physical=root/'country_physical.json.gz'
+    if physical.exists():
+        with gzip.open(physical,'rt',encoding='utf-8') as file:package=json.load(file)
+        for key,count,title,use,period in [
+            ('rivers',len(package['rivers']),'named river cartography','national generalized river/lake centerlines',
+             'Natural Earth5.0.0; source revision2022; observation dates not supplied'),
+            ('terrain',len(package['terrain']),'modeled terrain summaries','coarse country/region elevation summaries over COD v03',
+             'ETOPO2022 v1, 60 arc-second; composite global input dates1998–2022; individual cell dates not supplied')]:
+            source=package['sources'][key]
+            row={'provider':source['provider'],'source_name':'Mali Country Foundation — '+title,
+                 'source_type':'cartographic_reference' if key=='rivers' else 'official_elevation_model',
+                 'integration_status':'integrated_with_limitations','analytical_use':use,
+                 'historical_coverage':period,'last_successful_retrieval':package['retrieved_at'],
+                 'update_frequency':'Pinned reviewed snapshot; no automatic refresh','access_route':source['source_page'],
+                 'records':count,'limitations':source['limitations']}
+            identity=(row['provider'],row['source_name']);by_name[identity]=row;loaded[identity]=count>0
     result=[]
     for key,row in by_name.items():
         row['evidence_available']=loaded.get(key, row.get('records') is None and

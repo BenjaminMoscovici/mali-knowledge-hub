@@ -27,6 +27,9 @@ STOP_NAMES = {'mali','what','which','there','here','are','the','and','how','full
 
 def country_plan(question):
     """Bounded factual intents only; mixed analytical questions retain research."""
+    from country_physical import physical_plan
+    physical=physical_plan(question)
+    if physical:return physical
     from country_climate import climate_plan
     climate=climate_plan(question)
     if climate:return climate
@@ -257,6 +260,9 @@ class CountryFoundation:
     def answer(self,question,language='English'):
         plan=country_plan(question)
         if not plan:return None
+        if plan['metric'] in ('terrain','physical_rivers'):
+            from country_physical import physical_answer
+            return physical_answer(question,language)
         if plan['metric']=='climate':
             from country_climate import climate_answer
             return climate_answer(question,language)
