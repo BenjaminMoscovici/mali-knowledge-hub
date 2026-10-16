@@ -104,3 +104,19 @@ def test_real_inventory_entry_point_uses_current_document_registry_and_preserves
         french=ns[fn.name]('French')
         assert french.startswith('Le Hub combine des flux de sources')
         assert 'Documents indexés : 0' not in french
+
+
+def test_substantive_documented_needs_do_not_match_inventory_pronoun_substrings():
+    tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
+    functions=[n for n in tree.body if isinstance(n,ast.FunctionDef) and
+               n.name in {'normalize_text','is_source_inventory_question'}]
+    ns={'unicodedata':unicodedata}
+    exec(compile(ast.Module(body=functions,type_ignores=[]),'actual-inventory-routing','exec'),ns)
+    detect=ns['is_source_inventory_question']
+    for q in ['Quels besoins sectoriels sont documentés à Gao ?',
+              'What evidence documents humanitarian needs in Gao?',
+              'Quels besoins sont documentés dans les sources à Mopti ?']:
+        assert not detect(q)
+    for q in ['Quelles sont tes sources ?', 'What sources are available?',
+              'Quels documents sont disponibles dans le Hub ?']:
+        assert detect(q)

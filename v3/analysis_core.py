@@ -282,15 +282,13 @@ def is_source_inventory_question(question):
         "verfugbar"
     ]
 
-    has_source_term = any(
-        term in q
-        for term in source_terms
-    )
+    # Match complete terms: French "tes" must not match "documentés".
+    import re
+    def contains_term(term):
+        return bool(re.search(r"(?<!\w)" + re.escape(term.strip()) + r"(?!\w)", q))
 
-    has_inventory_term = any(
-        term in q
-        for term in inventory_terms
-    )
+    has_source_term = any(contains_term(term) for term in source_terms)
+    has_inventory_term = any(contains_term(term) for term in inventory_terms)
 
     # Keep this deliberately limited to short questions so that
     # substantive research questions mentioning "sources" are not hijacked.
