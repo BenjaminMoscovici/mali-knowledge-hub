@@ -59,6 +59,12 @@ def explicit_source_plan(question):
     if _bounded_fts(question) or _bounded_project_learning(question) or _bounded_project_dates(question):
         return {family: False for family in
                 ("government_docs", "hnrp_docs", "hapi", "fongim")}
+    # Named 3W is an unambiguous packaged presence source, not a live
+    # needs API or proof that a separate 5W release exists.
+    if re.search(r"\b(?:3w|5w|hno)\b", q) and not re.search(r"\b(?:snedd|mali kura|fts|world bank|iati|eu|ue)\b", q):
+        needs = bool(re.search(r"\b(?:needs?|besoins?|hno|hnrp|pin)\b", q))
+        return {"government_docs": False, "hnrp_docs": needs and 'hno' not in q,
+                "hapi": needs and 'hno' not in q, "fongim": 'fongim' in q or (needs and bool(re.search(r"\b(?:compare|comparer|coverage|couverture)\b", q)))}
     national = re.search(r"\b(?:national strateg\w*|government priorit\w*|"
                          r"national priorit\w*|strategie nationale|"
                          r"priorites nationales)\b", q)

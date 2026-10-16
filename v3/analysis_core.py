@@ -1609,12 +1609,22 @@ def research_fongim(
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         projects_job = submit(executor, get_rows_for_project_ids,
-            "fongim_projects", "fongim_project_id,project_name,start_date,end_date,status,project_type,beneficiaries,donor,funding_amount_raw,last_synced_at", project_ids)
+            "fongim_projects", "fongim_project_id,project_name,start_date,end_date,status,project_type,beneficiaries,donor,funding_amount_raw,last_synced_at,last_seen_sync_id", project_ids)
         sectors_job = submit(executor, get_rows_for_project_ids,
             "fongim_project_sectors", "fongim_project_id,sector,sector_other_raw", project_ids)
         project_orgs_job = submit(executor, get_rows_for_project_ids,
             "fongim_project_organizations", "fongim_project_id,fongim_organization_id", project_ids)
         projects, sectors, project_orgs = (projects_job.result(), sectors_job.result(), project_orgs_job.result())
+
+    snapshot_sync = max((str(p.get("last_synced_at")) for p in projects if p.get("last_synced_at")), default=None)
+    snapshot_ids = sorted({str(p["last_seen_sync_id"]) for p in projects if p.get("last_seen_sync_id")})
+    from integration_policy import select_reported_active
+    projects, status_selection = select_reported_active(projects, active_only)
+    selected_ids = {p["fongim_project_id"] for p in projects}
+    project_ids = sorted(selected_ids)
+    locations = [r for r in locations if r.get("fongim_project_id") in selected_ids]
+    sectors = [r for r in sectors if r.get("fongim_project_id") in selected_ids]
+    project_orgs = [r for r in project_orgs if r.get("fongim_project_id") in selected_ids]
 
     organization_ids = sorted({
         row.get("fongim_organization_id")
@@ -1858,6 +1868,7 @@ def research_fongim(
             f"{len(locations)} project-location records. "
             f"Latest synchronization timestamp among "
             f"these project records: {latest_sync}. "
+            f"Status filter: {status_selection or 'all source-reported statuses, including closed projects'}. "
             f"These counts describe recorded project presence; "
             f"they do not demonstrate funding adequacy, "
             f"population coverage, implementation quality "
@@ -2168,6 +2179,13 @@ def research_fongim(
         })
 
 
+    for item in evidence:
+        item.update({"source_updated_at": snapshot_sync, "snapshot_ids": snapshot_ids,
+                     "version": "FONGIM synchronized snapshot " + str(snapshot_sync),
+                     "publication_date": None, "status_selection": status_selection,
+                     "source_record_ids": [str(pid) for pid in project_ids],
+                     "locator": "FONGIM project IDs " + ",".join(map(str, project_ids))})
+
     return {
         "project_count": len(project_ids),
         "location_count": len(locations),
@@ -2263,7 +2281,9 @@ def run_four_source_research(question, document_count=8):
 
     planner_result = plan_sources_semantically(question)
 
-    source_plan = planner_result["source_plan"]
+    source_plan = dict(planner_result["source_plan"])
+    from integration_policy import integration_intent, bounded_integration_sources, reported_active_requested
+    source_plan["ocha_3w"] = integration_intent(question)["ocha_3w"]
     routing_seconds = planner_result["seconds"]
     needs_geo_inventory = (not any(source_plan.values()) and bool(re.search(
         r"\b(region|cercle|commune|administrative level|geograph)",
@@ -2392,6 +2412,7 @@ def run_four_source_research(question, document_count=8):
         return value, time.perf_counter() - started
 
     def timed_fongim():
+        from integration_policy import reported_active_requested
         started = time.perf_counter()
         from project_references import fongim_project_ids
         from project_dates import calendar_end_year, reported_end_window
@@ -2401,7 +2422,7 @@ def run_four_source_research(question, document_count=8):
                                  "cercle": geography.get("cercle")},
                                 ending=bool(re.search(r"\b(ending|end dates?|closing|close|expire|expiration|echeances?|termin\w*|finissent|finissant)\b", normalize_text(question))),
                                 requested_project_ids=fongim_project_ids(question), end_year=calendar_end_year(question), end_window=reported_end_window(question),
-                                active_only=bool(re.search(r"\b(active|en cours)\b", normalize_text(question))))
+                                active_only=reported_active_requested(question))
         return value, time.perf_counter() - started
 
     from geographic_model import canonical_geography_evidence
@@ -2414,7 +2435,9 @@ def run_four_source_research(question, document_count=8):
         "eu": retrieve_eu_evidence,
         "geographic_model": canonical_geography_evidence,
     }
-    bounded = bounded_fts_source_names(question, source_plan, planner_result.get("planner_output"))
+    bounded = bounded_integration_sources(question)
+    if bounded is None:
+        bounded = bounded_fts_source_names(question, source_plan, planner_result.get("planner_output"))
     if bounded is None:
         bounded = bounded_project_learning_source_names(question, source_plan, planner_result.get("planner_output"))
     if bounded is None:
@@ -2458,9 +2481,16 @@ def run_four_source_research(question, document_count=8):
             document_result = jobs["documents"].result()
 
         if "hapi" in jobs:
-            hapi_result, hapi_seconds = jobs["hapi"].result()
+            try:
+                hapi_result, hapi_seconds = jobs["hapi"].result()
+            except Exception as error:
+                # Independent stored evidence survives provider unavailability.
+                hapi_seconds = 0.0
+                hapi_result = {"raw_count": 0, "evidence": [], "unavailable": True}
+                source_trace["hapi"]["error_class"] = type(error).__name__
             source_trace["hapi"].update({
                 "status": (
+                    "UNAVAILABLE_STORED_EVIDENCE_RETAINED" if hapi_result.get("unavailable") else
                     "SUCCESS_WITH_RESULTS"
                     if hapi_result.get("evidence")
                     else "SUCCESS_ZERO_RESULTS"
@@ -2481,7 +2511,9 @@ def run_four_source_research(question, document_count=8):
                 "records": int(fongim_result.get("project_count", 0)),
                 "location_records": int(
                     fongim_result.get("location_count", 0)
-                )
+                ),
+                "status_filter": "source-reported ongoing" if reported_active_requested(question) else "all source-reported statuses",
+                "last_synced_at": next((e.get("source_updated_at") for e in fongim_result.get("evidence", []) if e.get("source_updated_at")), None),
             })
         elif count_method_question:
             source_trace["fongim"].update({
@@ -2499,6 +2531,14 @@ def run_four_source_research(question, document_count=8):
             packaged_results[family] = values
             source_trace[family] = {"status": "SUCCESS_WITH_RESULTS" if values else "SUCCESS_ZERO_RESULTS",
                                     "seconds": round(seconds,3), "records": len(values)}
+            if family == "operational":
+                presence = [v for v in values if v.get("source_type") == "operational_presence"]
+                source_trace["ocha_3w"] = {"requested": source_plan["ocha_3w"],
+                    "status": "SUCCESS_WITH_RESULTS" if presence else "SUCCESS_ZERO_RESULTS",
+                    "evidence_items": len(presence), "separate_5w_verified": False,
+                    "releases": sorted({v["release_id"] for v in presence}),
+                    "selected_source_rows": max((v.get("source_record_count", 0) for v in presence), default=0),
+                    "reference_periods": sorted({str(v.get("reference_period_start"))+"/"+str(v.get("reference_period_end")) for v in presence})}
 
     reduction_started = time.perf_counter()
 
@@ -2559,6 +2599,11 @@ def run_four_source_research(question, document_count=8):
                         "that no local plan exists outside the Hub.")
         })
 
+    if hapi_result.get("unavailable"):
+        inventory_evidence.append({"source_type": "source_availability", "source_family": "HDX HAPI availability",
+            "document_title": "Hub retrieval status (not a needs observation)", "organization": "Mali Knowledge Hub",
+            "page": None, "section": "This request", "content": "Live HDX HAPI was unavailable for this request. No live needs figures were obtained. Independently retrieved stored HNO, DTM or Cadre Harmonise evidence may be used only within its own indicator, period, population category and geography. National HNO is not a substitute for local sector needs. Missing records do not mean zero needs or no assistance."})
+
     ledger = build_unified_evidence(
         document_result["evidence"],
         hapi_result["evidence"],
@@ -2609,7 +2654,8 @@ def run_four_source_research(question, document_count=8):
             ],
             "hapi": source_trace["hapi"],
             "fongim": source_trace["fongim"],
-            **{family:source_trace[family] for family in packaged_retrievers}
+            **{family:source_trace[family] for family in packaged_retrievers},
+            **({"ocha_3w": source_trace["ocha_3w"]} if "ocha_3w" in source_trace else {})
         },
         "document_bundle_seconds": document_result["trace"].get(
             "total_seconds",

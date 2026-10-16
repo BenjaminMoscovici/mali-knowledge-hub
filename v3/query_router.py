@@ -29,6 +29,12 @@ def classify(question, mode="balanced"):
             "I can research Mali’s needs, plans, actors, projects and financing, compare sources and explain their limits. I can also look up administrative counts and a place’s parent hierarchy."}
     if q in SIMPLIFY:
         return {"path": "conversation_only"}
+    # A place name is context for these questions, not their requested answer.
+    # In particular French "région de Mopti" must not turn an NGO query into
+    # an administrative hierarchy lookup before the source planner runs.
+    if re.search(r"\b(?:fongim|3w|5w|hno|hnrp|hapi|dtm|humanitarian|humanitaire|"
+                 r"besoins?|needs?|ongs?|ngos?|interventions?)\b", q):
+        return {"path": "deep_research" if mode == "deep" else "complex_research"}
     if country_plan(question):
         return {"path": "country_fact"}
     if simple_geography_question(question):

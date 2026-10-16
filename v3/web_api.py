@@ -699,6 +699,13 @@ async def chat(request):
         "estimated_usd": round((context_usage.get("estimated_usd") or 0)
                                + (research_usage.get("estimated_usd") or 0), 8),
         "synthesis_context": result.get("execution_trace", {}).get("synthesis_context", {}),
+        "source_selection": result.get("source_plan", {}),
+        "source_execution": {name: {key: value for key, value in trace.items()
+            if key in {"requested", "status", "records", "location_records", "evidence_items",
+                       "releases", "selected_source_rows", "reference_periods", "status_filter",
+                       "last_synced_at", "separate_5w_verified", "error_class"}}
+            for name, trace in result.get("execution_trace", {}).get("sources", {}).items()
+            if isinstance(trace, dict)},
         "research_seconds": result.get("research_seconds", 0),
         "synthesis_seconds": result.get("synthesis_seconds", 0),
         "unpriced_calls": (context_usage.get("unpriced_calls") or 0)

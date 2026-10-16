@@ -20,7 +20,7 @@ def package():
         return json.load(file)
 
 
-def _scope(question, records):
+def _scope(question, records, strict=False):
     folded = _fold(question)
     matches = []
     for level in ("region", "cercle", "commune"):
@@ -31,6 +31,8 @@ def _scope(question, records):
                 explicit = bool(re.search(r"\b" + level + r" (?:de |of )?" + re.escape(name) + r"\b|\b" + re.escape(name) + " " + level + r"\b", folded))
                 matches.append((explicit, len(name), level, name, raw))
     if not matches:
+        if strict and re.search(r"\b(?:region|cercle|commune)\s+(?:de\s+|of\s+)?\w+", folded):
+            return [], "Unmatched requested administrative label; no national substitution", "unresolved"
         return records, "Mali; source-reported locations", "country"
     explicit = [m for m in matches if m[0]]
     candidates = explicit or matches
@@ -75,6 +77,9 @@ def _evidence(rows, scope, content, title):
             "retrieved_at": first["retrieved_at"], "source_endpoint": first["source_url"],
             "geographic_scope": scope, "page": None, "section": _locator(rows),
             "record_id": first["id"], "release_id": first["release_id"], "locator": _locator(rows),
+            "source_record_count": len(rows), "source_record_ids": [r["id"] for r in rows[:100]],
+            "source_record_ids_truncated": len(rows) > 100,
+            "span_ids": [r.get("span_id") for r in rows[:100]],
             "geographic_precision": "source labels; validated COD region/cercle where stated; commune unverified",
             "content": content + f" HDX resource creation date {metadata_date} is file metadata, not a verified original publication or collection date; those dates are unavailable in the ingested workbook."}
 
@@ -91,7 +96,12 @@ def retrieve_operational_evidence(question, limit=10):
     evidence = []
     if presence:
         source_rows = [r for r in package()["records"] if r["source_type"] == "operational_presence"]
-        selected, scope, level = _scope(question, source_rows)
+        if not source_rows:
+            return [{"source_type": "source_availability", "source_family": "OCHA 3W availability",
+                     "document_title": "Hub retrieval status (not a presence observation)",
+                     "organization": "Mali Knowledge Hub", "page": None,
+                     "content": "No stored OCHA 3W records are available. This does not establish absence of actors or assistance; no separate 5W feed is verified."}]
+        selected, scope, level = _scope(question, source_rows, strict=True)
         # Filter only explicit lexical sectors, keeping the curated term mapping inspectable.
         sectors = {"health": ("health", "sante"), "protection": ("protection",), "nutrition": ("nutrition",),
                    "food_security": ("food security", "securite alimentaire"), "wash": ("wash", "eha", "eau"),
@@ -109,7 +119,7 @@ def retrieve_operational_evidence(question, limit=10):
                        f"Actor labels: {'; '.join(actors[:35])}. "
                        f"{'Actor list truncated to 35; counts use all selected rows. ' if len(actors) > 35 else ''}"
                        f"All recorded sectors (rows/actor-label counts, not beneficiaries or projects): {json.dumps(sector_counts)}. "
-                       "These are PRESENCE ONLY. Every activity description, project title, start/end date, target and reached field is blank in this release; missing is not zero. "
+                       "This verified source is 3W only; no separate 5W feed is verified. The reference period is Q1 2026 only, not current activity or another quarter/year. These are PRESENCE ONLY. Every activity description, project title, start/end date, target and reached field is blank in this release; missing is not zero. "
                        "No active delivery, completed delivery, reach, coverage or ending intervention can be established from this workbook. "
                        f"Geography issues across selected rows: {dict(issues)}. Source commune labels remain unverified. "
                        "No records is not evidence of no activity. Different reference periods and geography vintages prevent a direct needs-coverage ratio.")
@@ -127,7 +137,7 @@ def retrieve_operational_evidence(question, limit=10):
             evidence.append(_evidence(source_rows[:1], scope, "The selected source labels/sector filter have no matching rows in OCHA Q1 2026. This is absence of records in this release, not evidence of absence of actors, activities or services.", "OCHA 3W — retrieval limitation"))
     if displacement:
         rows = [r for r in package()["records"] if r["source_type"] == "displacement_stock"]
-        selected, scope, level = _scope(question, rows)
+        selected, scope, level = _scope(question, rows, strict=True)
         categories = ["internally_displaced", "returned_idps", "repatriated_persons"]
         if re.search(r"\b(return\w*|retour\w*)\b", folded) and not re.search(r"\b(displace\w*|deplace\w*)\b", folded):
             categories = ["returned_idps", "repatriated_persons"]
