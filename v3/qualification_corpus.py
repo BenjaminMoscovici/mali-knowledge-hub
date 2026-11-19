@@ -2,6 +2,8 @@
 from dataclasses import dataclass, field
 import json
 import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from uuid import UUID
 
@@ -158,5 +160,15 @@ def from_environment():
     # hosted builds. Give it the installed CA bundle explicitly.
     if options.get("sslrootcert") == "system":
         import certifi
-        dsn = make_conninfo(dsn, sslrootcert=certifi.where())
+        ca_path = certifi.where()
+        if options.get("host") == "aws-0-eu-west-2.pooler.supabase.com":
+            # Official Supabase database CA from supabase-downloads (prod/ssl).
+            trust_directory = TemporaryDirectory(prefix="mkh-corpus-tls-")
+            bundle = Path(trust_directory.name) / "ca-bundle.pem"
+            supabase_ca = Path(__file__).with_name("supabase-prod-ca-2021.crt")
+            bundle.write_bytes(Path(ca_path).read_bytes() + b"\n" + supabase_ca.read_bytes())
+            corpus = QualificationCorpus(make_conninfo(dsn, sslrootcert=str(bundle)))
+            corpus.trust_directory = trust_directory
+            return corpus
+        dsn = make_conninfo(dsn, sslrootcert=ca_path)
     return QualificationCorpus(dsn)
