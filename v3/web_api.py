@@ -6,6 +6,8 @@ owner-scoped RLS tables.
 """
 
 import asyncio
+import base64
+import hmac
 from contextlib import asynccontextmanager
 import json
 import time
@@ -174,9 +176,37 @@ def clear_auth_cookies(response):
     return response
 
 
+
+def preview_enabled():
+    return setting("MKH_HOSTED_PREVIEW") == "1"
+
+
+def preview_credentials_valid(request):
+    expected = setting("MKH_PREVIEW_PASSWORD")
+    header = request.headers.get("authorization", "")
+    scheme, _, value = header.partition(" ")
+    if not expected or scheme.casefold() != "basic":
+        return False
+    try:
+        actual = base64.b64decode(value, validate=True)
+    except ValueError:
+        return False
+    return hmac.compare_digest(actual, ("reviewer:" + expected).encode())
+
+
+def preview_preflight():
+    from openai import OpenAI
+    from qualification_corpus import from_environment
+
+    from_environment().verify_role()
+    with OpenAI(api_key=setting("MKH_QUALIFICATION_MODEL_KEY"), timeout=10, max_retries=0) as client:
+        for model in ("gpt-5.6-luna", "gpt-5-mini", "text-embedding-3-small"):
+            client.models.retrieve(model)
+
 def same_origin(request):
     origin = request.headers.get("origin", "")
-    expected = setting("MKH_PUBLIC_ORIGIN") or "https://mali-knowledge-hub.onrender.com"
+    expected = (setting("MKH_PUBLIC_ORIGIN") or (setting("RENDER_EXTERNAL_URL") if preview_enabled() else "")
+                or "https://mali-knowledge-hub.onrender.com")
     if origin == expected.rstrip("/"):
         return True
     # The local preview is intentionally limited to loopback.
@@ -1172,6 +1202,20 @@ routes = [
 ]
 @asynccontextmanager
 async def lifespan(app):
+    if preview_enabled():
+        app.state.preview_ready = False
+        required = ("MKH_QUALIFICATION_CORPUS_DSN", "MKH_QUALIFICATION_MODEL_KEY",
+                    "HDX_HAPI_APP_IDENTIFIER", "MKH_PREVIEW_PASSWORD")
+        if (setting("MKH_READ_ONLY_QUALIFICATION") == "1" and all(setting(key) for key in required)
+                and len(setting("MKH_PREVIEW_PASSWORD")) >= 20
+                and not any(setting(key) for key in ("SUPABASE_SECRET_KEY", "OPENAI_API_KEY"))):
+            try:
+                await asyncio.to_thread(preview_preflight)
+                app.state.preview_ready = True
+            except Exception as exc:
+                print(f"MKH_PREVIEW_PREFLIGHT_FAILED {type(exc).__name__}", flush=True)
+        yield
+        return
     if os.environ.get("MKH_READ_ONLY_QUALIFICATION") == "1":
         yield
         return
@@ -1189,6 +1233,19 @@ app = Starlette(routes=routes, lifespan=lifespan)
 
 
 async def security_headers(request, call_next):
+    if preview_enabled():
+        ready = getattr(request.app.state, "preview_ready", False)
+        if request.url.path == "/api/health":
+            return JSONResponse({"status": "ready" if ready else "setup_pending",
+                                 "hub_commit": setting("RENDER_GIT_COMMIT") or None},
+                                headers={"Cache-Control": "no-store"})
+        if not ready:
+            return JSONResponse({"error": "Evaluation preview setup is pending."},
+                                status_code=503, headers={"Cache-Control": "no-store"})
+        if not preview_credentials_valid(request):
+            return JSONResponse({"error": "Reviewer access is required."}, status_code=401,
+                                headers={"WWW-Authenticate": 'Basic realm="MKH evaluation preview"',
+                                         "Cache-Control": "no-store"})
     if (setting("MKH_READ_ONLY_QUALIFICATION") == "1"
             and request.method not in {"GET", "HEAD", "OPTIONS"}
             and request.url.path != "/api/chat"):
