@@ -6,7 +6,7 @@ V2.1 adds registry-driven discovery to ordinary chat, more precise document and 
 
 ## Build and access
 
-The pinned preview application revision is `c6a0a9cae24170a6055f4370281affb475322095`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers enter the separately supplied password on the preview sign-in page.
+The pinned preview application revision is `08b4cbeb48dc2e5155c711c45241b32c84c4369f`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers enter the separately supplied password on the preview sign-in page.
 
 The application packages are pinned by its Git revision. The preview passed startup checks for live model access and the restricted read-only corpus login. Chromium smoke testing confirmed live model answers, the inline citation drawer, and context retention across a geographic follow-up. Record the source release and reference period shown on each answer, especially for sources retrieved live.
 
