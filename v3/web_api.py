@@ -221,7 +221,7 @@ def preview_sign_in(failed=False):
         "autocomplete='current-password' maxlength='1024' required> "
         "<button type='submit'>Sign in</button></form></main></html>",
         status_code=401 if failed else 200,
-        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
+        headers={"Cache-Control": "no-store", "Referrer-Policy": "same-origin",
                  "Content-Security-Policy": "default-src 'none'; form-action 'self'; frame-ancestors 'none'"},
     )
 

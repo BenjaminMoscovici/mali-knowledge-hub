@@ -36,6 +36,7 @@ def test_ready_preview_uses_browser_access_gate_and_ordinary_guest_chat(monkeypa
         landing = client.get("/")
         assert landing.status_code == 200
         assert 'Reviewer password' in landing.text
+        assert landing.headers['referrer-policy'] == 'same-origin'
         assert client.post("/api/chat", json={"question": "Hello"}).status_code == 401
         assert client.post("/preview/login", data={"password": password}).status_code == 403
         rejected = client.post("/preview/login", data={"password": "wrong"}, headers={"Origin": origin})
