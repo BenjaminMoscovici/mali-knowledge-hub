@@ -67,10 +67,25 @@ def test_unfamiliar_releases_need_only_registry_data(tmp_path, monkeypatch):
     assert 'Année sans observation dans ce registre : 2023' in missing['answer']
     assert len(missing['evidence']) == 1
 
+    followup = client.post('/api/chat', headers={'Origin': ORIGIN}, json={
+        'question': 'Et en 2022 ?',
+        'prior_messages': [
+            {'role': 'user', 'content': 'Donnez les forages fonctionnels à Dara District en 2021 ?'},
+            {'role': 'assistant', 'content': 'Valeur non vérifiée : 999 [E99]'},
+        ],
+    }).json()
+    assert '**58 sites**' in followup['answer'] and '999' not in followup['answer']
+    assert [item['record_id'] for item in followup['evidence']] == ['row-2022']
+    assert followup['metrics']['context_resolution_method'] == 'registry_reference_year'
+    assert followup['metrics']['model_calls'] == 0
+
+
     entries[1]['annual_observations'][0]['definition'] = 'operator estimates'
     registry.write_text(json.dumps(entries))
     assert registry_observations.answer(
         'Compare functional boreholes in Dara District in 2021 and 2022', 'English') is None
+    assert '**41 sites**' in chat(client, 'How many functional boreholes in Dara District in 2021?')['answer']
+
     assert registry_observations.answer(
         'Functional boreholes in Dara District in 2021 adjusted for population', 'English') is None
 

@@ -599,9 +599,18 @@ async def chat(request):
     context_method = "existing_resolver"
     slot_context = None
     try:
-        from registry_observations import answer as registry_answer
+        from registry_observations import answer as registry_answer, resolve_year_followup
+        from followup_context import previous_question
         try:
-            registered = await asyncio.to_thread(registry_answer, question, synthesis_language(question))
+            language = synthesis_language(question)
+            registered = await asyncio.to_thread(registry_answer, question, language)
+            if registered is None and prior:
+                revised = resolve_year_followup(question, previous_question(prior))
+                if revised:
+                    registered = await asyncio.to_thread(registry_answer, revised, language)
+                    if registered is not None:
+                        standalone = revised
+                        context_method = "registry_reference_year"
         except (OSError, ValueError, KeyError, TypeError) as exc:
             print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
             registered = None

@@ -27,6 +27,15 @@ def _read(path, revision):
                  and public_url(source.get("access_route")))
 
 
+
+def resolve_year_followup(question, previous):
+    """Carry forward an explicit registry subject when only the year changes."""
+    year = re.fullmatch(r"(?:and in|what about|et en|et pour) ((?:19|20)\d{2})", _fold(question))
+    match = LOOKUP.fullmatch(_fold(previous or ""))
+    if not year or not match or match["compare"] or len(match["years"]) != 4:
+        return None
+    return match["subject"] + " " + year[1]
+
 def answer(question, language, registry=None):
     """Return a cited result for exact measure, geography and reference-year requests."""
     match = LOOKUP.fullmatch(_fold(question))
@@ -44,16 +53,14 @@ def answer(question, language, registry=None):
         }
         if subject in subjects:
             selections.append((source, capability))
-    if not selections:
+    selected = [(source, capability, row) for source, capability in selections
+                for row in capability["records"] if row["year"] in years]
+    if not selected:
         return None
     # Identical wording can describe different measures or boundary vintages.
     identities = {(c["measure"], c["geography_id"], c["definition"], c["unit"])
-                  for _, c in selections}
+                  for _, c, _ in selected}
     if len(identities) != 1:
-        return None
-    selected = [(source, c, row) for source, c in selections
-                for row in c["records"] if row["year"] in years]
-    if not selected:
         return None
     fr = language == "French"
     if language not in {"English", "French"}:
@@ -90,7 +97,7 @@ def answer(question, language, registry=None):
         difference = f'{later["value"] - earlier["value"]:+,}'
         if fr:
             difference = difference.replace(",", "\u202f")
-        unit = selections[0][1]["unit_labels"]["fr" if fr else "en"]
+        unit = selected[0][1]["unit_labels"]["fr" if fr else "en"]
         period = f'{earlier["year"]}–{later["year"]}'
         lines.append(f"Écart {period} : **{difference} {unit}**. [E01, E02]" if fr else
                      f"Change {period}: **{difference} {unit}**. [E01, E02]")
