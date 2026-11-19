@@ -2602,11 +2602,21 @@ def run_four_source_research(question, document_count=8):
             "document_title": "Hub retrieval status (not a needs observation)", "organization": "Mali Knowledge Hub",
             "page": None, "section": "This request", "content": "Live HDX HAPI was unavailable for this request. No live needs figures were obtained. Independently retrieved stored HNO, DTM or Cadre Harmonise evidence may be used only within its own indicator, period, population category and geography. National HNO is not a substitute for local sector needs. Missing records do not mean zero needs or no assistance."})
 
+    legacy_evidence = (fongim_result["evidence"] + inventory_evidence +
+                       [item for family in packaged_retrievers for item in packaged_results[family]])
+    from registry_research import retrieve as retrieve_registered
+    registered_evidence, registry_gaps = retrieve_registered(question)
+    legacy_records = {(item.get("release_id"), item.get("record_id")) for item in legacy_evidence}
+    registered_evidence = [item for item in registered_evidence
+                           if (item["release_id"], item["record_id"]) not in legacy_records]
+    if registered_evidence or registry_gaps:
+        source_trace["registry"] = {
+            "records": len(registered_evidence),
+            "status": "SUCCESS_WITH_RESULTS" if registered_evidence else "SUCCESS_ZERO_RESULTS",
+            "releases": sorted({item["release_id"] for item in registered_evidence}),
+        }
     ledger = build_unified_evidence(
-        document_result["evidence"],
-        hapi_result["evidence"],
-        fongim_result["evidence"] + inventory_evidence +
-        [item for family in packaged_retrievers for item in packaged_results[family]]
+        document_result["evidence"], hapi_result["evidence"], legacy_evidence + registered_evidence
     )
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
@@ -2653,7 +2663,7 @@ def run_four_source_research(question, document_count=8):
             "hapi": source_trace["hapi"],
             "fongim": source_trace["fongim"],
             **{family:source_trace[family] for family in packaged_retrievers},
-            **({"ocha_3w": source_trace["ocha_3w"]} if "ocha_3w" in source_trace else {})
+            **{name: source_trace[name] for name in ("ocha_3w", "registry") if name in source_trace}
         },
         "document_bundle_seconds": document_result["trace"].get(
             "total_seconds",
@@ -2926,6 +2936,11 @@ in a different language; translate faithfully while retaining citations.
     if table_guard:
         user_prompt += '\n' + table_guard
 
+    if any(item.get("source_type") in {"registry_record", "registry_document"} for item in synthesis_ledger):
+        user_prompt += ("\nFor registry evidence, cite each quantitative claim with the direct source record "
+                        "or page. Use supplied values and labelled calculations. Do not derive population "
+                        "coverage, per-person ratios or other new figures across unlike sources.")
+
     synthesis_started = time.perf_counter()
 
     PHASE.set("synthesis")
@@ -2944,6 +2959,16 @@ in a different language; translate faithfully while retaining citations.
     answer, prompt_citation_audit = verify_citations(response.output_text, synthesis_ledger)
     if not prompt_citation_audit["valid"]:
         answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."
+    elif answer:
+        from citations import unsupported_registry_quantities
+        unsupported = unsupported_registry_quantities(answer, synthesis_ledger)
+        if unsupported:
+            prompt_citation_audit["unsupported_registry_quantities"] = unsupported
+            selected_language = response_language or answer_language(question)
+            answer = {
+                "French": "Les sources citées ne confirment pas tous les chiffres générés. Les preuves disponibles restent consultables.",
+                "German": "Die zitierten Quellen belegen nicht alle erzeugten Zahlen. Die verfügbaren Belege bleiben einsehbar.",
+            }.get(selected_language, "The cited sources do not support every generated figure. The retrieved evidence is available for inspection.")
     context_audit["citation_audit"] = prompt_citation_audit
 
     return {
@@ -3030,7 +3055,11 @@ def generate_grounded_answer(question, model="gpt-5.6-luna", depth=None, respons
     result["depth"] = depth
     result["answer"], result["citation_audit"] = verify_citations(
         result["answer"], result["evidence"])
-    if not result["citation_audit"]["valid"]:
+    prompt_audit = result.get("execution_trace", {}).get("synthesis_context", {}).get("citation_audit", {})
+    if prompt_audit.get("unsupported_registry_quantities"):
+        result["citation_audit"]["valid"] = False
+        result["citation_audit"]["unsupported_registry_quantities"] = prompt_audit["unsupported_registry_quantities"]
+    elif not result["citation_audit"]["valid"]:
         result["answer"] = (
             "I could not verify the generated answer's evidence citations. "
             "Please retry the question; no uncited factual answer is shown."

@@ -110,6 +110,42 @@
   {
     "provider": "OCHA Financial Tracking System (FTS)",
     "source_name": "Mali FTS plan requirements and reported funding",
+    "research": {
+      "adapter": "packaged_records",
+      "package": "source_wave3.json.gz",
+      "dataset_id": "mli-fts-requirements-funding",
+      "release_id": "102af467-5265-5ba2-9e3a-e3ea40bb50a7",
+      "aliases": [
+        "ocha fts",
+        "financial tracking system",
+        "fts export",
+        "registre fts"
+      ],
+      "scope": "Mali; national plan/year only",
+      "topics": ["humanitarian funding requirements", "besoins de financement humanitaire"],
+      "geographic_level": "country",
+      "differences": [
+        {
+          "left": "requirements",
+          "right": "funding",
+          "unit_field": "currency",
+          "label": "Reported financing gap"
+        }
+      ],
+      "identifier_field": "plan_code",
+      "identifier_pattern": "\\b[a-z]{3,8}[0-9]{2}\\b",
+      "fields": {
+        "name": "Reported plan",
+        "plan_code": "Plan code",
+        "year": "Funding usage year",
+        "currency": "Currency",
+        "requirements": "Requirements",
+        "funding": "Reported funding",
+        "percent_funded_reported": "Publisher-rounded funded percentage",
+        "funding_definition": "Funding definition",
+        "provider_updated_at": "Provider record updated"
+      }
+    },
     "analytical_use": "funding_aggregate",
     "authoritative_status": "original provider / attributed provider export",
     "access_route": "https://data.humdata.org/dataset/1a1e4b16-727c-410c-9814-af63728505e6/resource/4010184f-a633-47bb-98bb-00d5497a00db/download/fts_requirements_funding_mli.csv",
@@ -265,6 +301,23 @@
   {
     "provider": "INSTAT Mali / BCR",
     "source_name": "INSTAT official census publications / RGPH5-2022-preliminaire-2023-11",
+    "research": {
+      "adapter": "document_pages",
+      "dataset_id": "mli-instat-rgph5-global-2022",
+      "release_id": "2e9759a0-ca06-54aa-8a3b-f05fe11d89b8",
+      "term_aliases": {
+        "methodology": ["methodologie", "collecte", "denombrement"],
+        "population": ["population", "habitants", "effectif"]
+      },
+      "aliases": [
+        "RGPH5 preliminary report",
+        "2022 census report",
+        "rapport préliminaire du RGPH5",
+        "résultats globaux du RGPH5"
+      ],
+      "scope": "Mali; source report",
+      "topics": ["census methodology", "méthodologie du recensement"]
+    },
     "analytical_use": "administrative geography/population",
     "authoritative_status": "official provider",
     "access_route": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-resultats-globaux-rgph5_rgph.pdf",
@@ -333,6 +386,32 @@
   {
     "provider": "OCHA HPC / HDX",
     "source_name": "Global Humanitarian Programme Cycle, Humanitarian Needs / HPC-HNO-2026",
+    "research": {
+      "adapter": "humanitarian_observations",
+      "dataset_id": "mli-hpc-hno-2026",
+      "release_id": "4abb7248-ca4e-57d9-a396-3d5ea42e4d26",
+      "aliases": [
+        "global hpc hno",
+        "hpc hno",
+        "hpc needs snapshot"
+      ],
+      "scope": "Mali; national intersectoral estimates",
+      "topics": ["humanitarian planning figures", "chiffres de planification humanitaire"],
+      "geographic_level": "country",
+      "fields": {
+        "population_status": "Measure",
+        "value": "Reported estimate",
+        "unit": "Unit",
+        "methodology": "Methodology"
+      },
+      "value_labels": {
+        "population_status": {
+          "all": "Total population estimate",
+          "INN": "People in need",
+          "TGT": "People targeted"
+        }
+      }
+    },
     "analytical_use": "national HPC planning observations",
     "authoritative_status": "official provider",
     "access_route": "https://data.humdata.org/dataset/8326ed53-8f3a-47f9-a2aa-83ab4ecee476/resource/edb91329-0e6b-4ebc-b6cb-051b2a11e536/download/hpc_hno_2026.csv",

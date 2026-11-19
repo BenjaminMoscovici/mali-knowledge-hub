@@ -602,10 +602,24 @@ async def chat(request):
         from registry_observations import answer as registry_answer, resolve_year_followup
         from followup_context import previous_question
         try:
+            from registry_research import (answer as registry_evidence_answer,
+                                           resolve_year_followup as resolve_evidence_year)
             language = synthesis_language(question)
             registered = await asyncio.to_thread(registry_answer, question, language)
+            evidence_brief = None
+            if registered is None:
+                evidence_brief = await asyncio.to_thread(registry_evidence_answer, question, language)
+                registered = evidence_brief
             if registered is None and prior:
-                revised = resolve_year_followup(question, previous_question(prior))
+                previous = previous_question(prior)
+                evidence_question = resolve_evidence_year(question, previous)
+                if evidence_question:
+                    evidence_brief = await asyncio.to_thread(registry_evidence_answer, evidence_question, language)
+                    if evidence_brief is not None:
+                        registered = evidence_brief
+                        standalone = evidence_question
+                        context_method = "registry_evidence_reference_year"
+                revised = resolve_year_followup(question, previous) if registered is None else None
                 if revised:
                     registered = await asyncio.to_thread(registry_answer, revised, language)
                     if registered is not None:
@@ -634,7 +648,7 @@ async def chat(request):
                     route = classify(standalone, mode)
                     context_method = slot_context['method']
         if registered is not None:
-            route = {"path": "registry_observation"}
+            route = {"path": "registry_evidence" if evidence_brief is not None else "registry_observation"}
             result = registered
         elif route["path"] == "conversational":
             result = {"answer": route["reply"], "evidence": []}
