@@ -156,3 +156,12 @@ def test_cold_geographic_initialization_is_shared_across_workers(monkeypatch):
         results=list(pool.map(lambda _:module.geographic_model(),range(6)))
     assert all(r is shared for r in results)
     assert len(calls)==1
+
+
+@pytest.mark.parametrize('question', [
+    'Combien de ménages ont reçu une aide EHA dans la commune de Koutiala en 2027 ?',
+    'Which villages reported flooded wells in the commune of Socoura?',
+    'What were school enrolments in the cercle of Bla in 2024?',
+])
+def test_geography_as_context_does_not_override_requested_measure(question):
+    assert classify(question)['path'] == 'complex_research'

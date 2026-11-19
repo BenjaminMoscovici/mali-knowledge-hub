@@ -278,8 +278,18 @@ def simple_geography_question(question):
     if re.search(r"\b(needs?|besoins?|population|people|habitants?|projects?|projets?|actors?|acteurs?|fund\w*|financ\w*|coverage|couverture|sectors?|secteurs?|displace\w*|deplace\w*|food|security|sante|health|priorit\w*|risk|risque|conflict|conflit|delivery|reach|livraison)\b", q):
         return False
     place_term = re.search(r"\b(regions?|cercles?|communes?|municipalities|municipality|administrativ\w*|hierarch\w*|parent|p codes?|pcode|localit\w*|geograph\w*|homonyms?|homonymes?)\b", q)
-    lookup_intent = re.search(r"\b(how many|combien|which|what|quels?|quelles?|belong|appartien\w*|structure\w*|hierarch\w*|path|parent|same|identical\w*|homonym\w*|list|liste\w*|version\w*|reference|referentiel|unresolved|disputed|conflicts?|conflits?|aliases|alternative|historical|historique|pcode)\b", q)
-    return bool(place_term and lookup_intent)
+    if not place_term:
+        return False
+    # Generic question words plus a place mention establish context only.
+    # Require an administrative operation or a count/list of units themselves.
+    if re.search(r"\b(?:belong|appartien\w*|administratively structured|structure administrative|"
+                 r"hierarch\w*|administrative path|parent|p codes?|pcode|homonyms?|homonymes?|"
+                 r"aliases|unresolved|disputed|conflicts?|conflits?)\b", q):
+        return True
+    units = r"(?:regions?|cercles?|communes?|municipalities|municipality|arrondissements?|localit\w*|villages?)"
+    return bool(re.search(rf"\b(?:how many|combien (?:de|d)|list(?: the)?|liste(?: des)?|"
+                          rf"which|what|quels?|quelles?) (?:administrative )?{units}\b"
+                          rf"(?: (?:and|et|de|du|d|in|of|are (?:there|in|of)|sont (?:au|dans)|there|au|dans|compte)\b|$)", q))
 
 
 def canonical_geography_evidence(question):
