@@ -194,6 +194,26 @@ def preview_credentials_valid(request):
     return hmac.compare_digest(actual, ("reviewer:" + expected).encode())
 
 
+def preview_preflight_reason(exc):
+    # Classify connection failures without logging the provider exception,
+    # which can include addresses, usernames or connection settings.
+    message = str(exc).casefold()
+    reasons = (
+        ("tenant or user not found", "pooler_tenant_or_user"),
+        ("password authentication failed", "database_authentication"),
+        ("certificate", "database_certificate"),
+        ("network is unreachable", "network_unreachable"),
+        ("connection refused", "connection_refused"),
+        ("timeout", "connection_timeout"),
+        ("closed the connection", "connection_closed"),
+        ("no pg_hba", "database_access_rule"),
+        ("write privileges", "database_write_grants"),
+        ("no visible qualification rows", "database_row_visibility"),
+        ("permission denied", "database_permission"),
+    )
+    return next((reason for fragment, reason in reasons if fragment in message), "unclassified")
+
+
 def preview_preflight():
     from openai import OpenAI
     from qualification_corpus import from_environment
@@ -1214,7 +1234,7 @@ async def lifespan(app):
                 await asyncio.to_thread(preview_preflight)
                 app.state.preview_ready = True
             except Exception as exc:
-                print(f"MKH_PREVIEW_PREFLIGHT_FAILED {type(exc).__name__}", flush=True)
+                print(f"MKH_PREVIEW_PREFLIGHT_FAILED {type(exc).__name__} {preview_preflight_reason(exc)}", flush=True)
         elif missing:
             print("MKH_PREVIEW_CONFIGURATION_MISSING " + ",".join(missing), flush=True)
         else:
