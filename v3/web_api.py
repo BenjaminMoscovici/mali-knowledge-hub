@@ -1206,7 +1206,8 @@ async def lifespan(app):
         app.state.preview_ready = False
         required = ("MKH_QUALIFICATION_CORPUS_DSN", "MKH_QUALIFICATION_MODEL_KEY",
                     "HDX_HAPI_APP_IDENTIFIER", "MKH_PREVIEW_PASSWORD")
-        if (setting("MKH_READ_ONLY_QUALIFICATION") == "1" and all(setting(key) for key in required)
+        missing = [key for key in required if not setting(key)]
+        if (setting("MKH_READ_ONLY_QUALIFICATION") == "1" and not missing
                 and len(setting("MKH_PREVIEW_PASSWORD")) >= 20
                 and not any(setting(key) for key in ("SUPABASE_SECRET_KEY", "OPENAI_API_KEY"))):
             try:
@@ -1214,6 +1215,10 @@ async def lifespan(app):
                 app.state.preview_ready = True
             except Exception as exc:
                 print(f"MKH_PREVIEW_PREFLIGHT_FAILED {type(exc).__name__}", flush=True)
+        elif missing:
+            print("MKH_PREVIEW_CONFIGURATION_MISSING " + ",".join(missing), flush=True)
+        else:
+            print("MKH_PREVIEW_CONFIGURATION_REJECTED", flush=True)
         yield
         return
     if os.environ.get("MKH_READ_ONLY_QUALIFICATION") == "1":
