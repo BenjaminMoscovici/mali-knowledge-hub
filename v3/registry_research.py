@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 import sqlite3
 
-from source_inventory import public_url
+from source_inventory import public_research_capability
 from source_wave import _fold, snapshot_path
 from synthesis_context import extract_spans, terms
 
@@ -25,10 +25,7 @@ EVIDENCE_REQUEST = re.compile(
 @lru_cache(maxsize=4)
 def _catalogue(path, revision):
     rows = json.loads(path.read_text())
-    return tuple((row, row["research"]) for row in rows
-                 if row.get("research")
-                 and row.get("integration_status") in {"integrated", "integrated_with_limitations"}
-                 and public_url(row.get("access_route")))
+    return tuple((row, capability) for row in rows if (capability := public_research_capability(row)))
 
 
 def _phrase(text, phrase):

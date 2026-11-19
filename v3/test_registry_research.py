@@ -116,6 +116,7 @@ def test_valid_id_alone_does_not_verify_generated_registry_quantities():
     claim = "The 2026 plan records 5.1 million people in need [E01] and USD 135,628,821 [E02]."
     assert verify(claim, evidence)[1]["valid"]
     assert not unsupported_registry_quantities(claim, evidence)
+    assert unsupported_registry_quantities("The funding was USD −135,628,821 [E02].", evidence)
     swapped = claim.replace("[E01]", "[E02]")
     assert verify(swapped, evidence)[1]["valid"]
     assert unsupported_registry_quantities(swapped, evidence) == [

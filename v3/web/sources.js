@@ -6,7 +6,7 @@
   const el = (tag, text, cls) => {const node=document.createElement(tag); if(text!==undefined) node.textContent=String(text); if(cls) node.className=cls; return node;};
   const date = value => {if(!value) return 'Not reported'; const d=new Date(value); return Number.isNaN(d.getTime())?'Not reported':d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});};
   const safeURL = value => {try {const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!u.search&&!u.hash&&!u.pathname.includes('/storage/v1/')&&!/\.supabase\.(co|in)$/.test(u.hostname)?u.href:null;} catch{return null;}};
-  const matches = (row, query, state) => (state==='all'||row.state===state) && [row.title,row.provider,row.use,row.period,row.publication_date,...(row.limitations||[])].join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+  const matches = (row, query, state) => (state==='all'||row.state===state) && [row.title,row.provider,row.use,row.period,row.publication_date,...(row.research_terms||[]),...(row.limitations||[])].join(' ').toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
   function fact(list, label, value) {const group=el('div');group.append(el('dt',label),el('dd',value||'Not reported'));list.append(group);}
   function card(row) {
     const article=el('article',undefined,'source-card'), top=el('div',undefined,'card-top');
@@ -22,6 +22,7 @@
       fact(facts,'Reference period',row.period);fact(facts,'Last recorded retrieval',date(row.retrieved_at));
       fact(facts,'Evidence records',Number.isInteger(row.records)?row.records.toLocaleString('en-GB'):'Not verified on this page');
       fact(facts,'Reported update frequency',row.update_frequency);
+      if(row.research_terms?.length) fact(facts,'Search terms for chat',row.research_terms.join(' · '));
     }
     article.append(facts);
     const details=el('details',undefined,'limits');

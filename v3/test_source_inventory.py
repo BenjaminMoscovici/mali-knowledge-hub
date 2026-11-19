@@ -77,3 +77,11 @@ def test_public_page_and_api_have_security_headers_and_no_auth_dependency():
         assert 'What the Hub knows' in client.get('/').text
         actor.assert_not_called()
     client.close()
+
+
+def test_capability_terms_survive_packaged_catalogue_metadata_and_keep_mapping_private():
+    rows = inventory.catalogue()
+    source = next(row for row in rows if row["title"] == "Mali FTS plan requirements and reported funding")
+    assert "humanitarian funding requirements" in source["research_terms"]
+    assert "ocha fts" in source["research_terms"]
+    assert "research" not in source and "release_id" not in source and "package" not in source

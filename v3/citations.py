@@ -26,7 +26,7 @@ def verify(answer, evidence):
 # A conservative witness check for numbers in claims citing only registry sources.
 # Mixed legacy evidence stays on its existing verification path.
 _QUANTITY = re.compile(
-    r"(?<![\w])(?P<number>\d{1,3}(?:[ ,\u00a0\u202f]\d{3})+(?:\.\d+)?|\d+(?:[.,]\d+)?)"
+    r"(?<![\w])(?P<sign>[-−])?(?P<number>\d{1,3}(?:[ ,\u00a0\u202f]\d{3})+(?:\.\d+)?|\d+(?:[.,]\d+)?)"
     r"(?:\s*(?P<scale>millions?|billions?|milliards?))?(?![\w])", re.I
 )
 _CITATION = re.compile(r"\[(E\d{2,}(?:\s*[,;]\s*E\d{2,})*)\]")
@@ -42,7 +42,7 @@ def _quantities(text):
             raw = raw.replace(",", "") if re.fullmatch(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?", raw) else raw.replace(",", ".")
         scale = (match["scale"] or "").lower()
         factor = 10**9 if scale.startswith(("billion", "milliard")) else 10**6 if scale else 1
-        values.add(Decimal(raw) * factor)
+        values.add(Decimal(raw) * factor * (-1 if match["sign"] else 1))
     return values
 
 

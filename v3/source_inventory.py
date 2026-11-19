@@ -1,6 +1,7 @@
 """Public, allowlisted catalogue. Never reads accounts, admin requests or originals."""
 from copy import deepcopy
 from datetime import datetime, timezone
+import json
 from pathlib import Path
 from threading import Lock
 import time
@@ -30,6 +31,15 @@ def public_url(value):
         return None
 
 
+
+def public_research_capability(row):
+    capability = row.get("research")
+    if (isinstance(capability, dict)
+            and row.get("integration_status") in {"integrated", "integrated_with_limitations"}
+            and public_url(row.get("access_route"))):
+        return capability
+    return {}
+
 def catalogue(root=None):
     global _catalogue
     root = Path(root) if root else _ROOT
@@ -42,11 +52,17 @@ def catalogue(root=None):
         if _catalogue and _catalogue[0] == revision:
             return deepcopy(_catalogue[1])
         result = []
+        registry = json.loads((root/'source_registry.json').read_text())
+        capabilities = {(row['provider'], row['source_name']): public_research_capability(row)
+                        for row in registry}
         for row in entries(root):
             # Loaded row counts come from decoded packages. Legacy connected
             # sources retain their declared integration, without a live claim.
             state = ('loaded' if row['evidence_available'] and row.get('records') is not None
                      else 'connected' if row['evidence_available'] else 'pending')
+            capability = capabilities.get((row['provider'], row['source_name']), {})
+            terms = [term for term in (*capability.get('aliases', ()), *capability.get('topics', ()))
+                     if isinstance(term, str)]
             result.append({
                 'title': row['source_name'], 'provider': row['provider'], 'kind': 'dataset',
                 'state': state, 'status': str(row.get('integration_status') or 'not integrated').replace('_', ' '),
@@ -56,6 +72,7 @@ def catalogue(root=None):
                 'records': row.get('records') if state == 'loaded' else None,
                 'limitations': row.get('limitations') or [],
                 'url': public_url(row.get('access_route')),
+                **({'research_terms': terms} if terms else {}),
             })
         _catalogue = (revision, result)
         return deepcopy(result)
