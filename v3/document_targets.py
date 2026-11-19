@@ -1,4 +1,4 @@
-"""Find individually named government documents for balanced retrieval."""
+"""Find individually named government documents for focused retrieval."""
 
 import re
 import unicodedata
@@ -14,13 +14,13 @@ def named_targets(question, documents):
     requested = set()
     if re.search(r"\b(?:vision mali 2063|mali kura 2063)\b", q):
         requested.add("vision")
-    if "snedd" in q:
+    if re.search(r"\bsnedd\b", q):
         requested.add("snedd")
     if re.search(r"\b(?:phasage|phasing|implementation phases?)\b", q):
         requested.add("phasage")
     elif re.search(r"\b(?:priority.project portfolio|priority projects|projets structurants prioritaires)\b", q):
         requested.add("portfolio")
-    if len(requested) < 2:
+    if not requested:
         return []
 
     def kind(title):
@@ -37,10 +37,11 @@ def named_targets(question, documents):
 
     matches = [(str(doc["id"]), doc["title"]) for doc in documents
                if kind(doc.get("title")) in requested]
-    return matches if len(matches) == len(requested) else []
+    matched_kinds = [kind(title) for _, title in matches]
+    return matches if len(matches) == len(requested) and set(matched_kinds) == requested else []
 
 
-def explicit_title_targets(question, documents):
+def explicit_title_targets(question, documents, *, leading_only=False):
     """Find documents whose distinctive four-word title phrase was asked for."""
     question_words = re.findall(r"[a-z0-9]+", normal(question))
     question_fourgrams = {tuple(question_words[i:i + 4])
@@ -51,8 +52,8 @@ def explicit_title_targets(question, documents):
         words = re.findall(r"[a-z0-9]+", normal(title))
         if len(words) < 4:
             continue
-        if any(tuple(words[i:i + 4]) in question_fourgrams
-               for i in range(len(words) - 3)):
+        starts = range(1 if leading_only else len(words) - 3)
+        if any(tuple(words[i:i + 4]) in question_fourgrams for i in starts):
             matches.append((str(doc["id"]), title))
     return matches
 

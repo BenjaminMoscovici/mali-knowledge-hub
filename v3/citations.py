@@ -46,7 +46,7 @@ def _quantities(text):
     return values
 
 
-def unsupported_registry_quantities(answer, evidence):
+def unsupported_registry_quantities(answer, evidence, *, check_all_cited=False):
     by_id = {item["evidence_id"]: item for item in evidence}
     problems = []
     for line in answer.splitlines():
@@ -56,7 +56,7 @@ def unsupported_registry_quantities(answer, evidence):
             cursor = match.end()
             ids = re.findall(r"E\d{2,}", match[1])
             cited = [by_id.get(eid, {}) for eid in ids]
-            if not all(item.get("source_type") in {"registry_record", "registry_document", "registry_observation"}
+            if not check_all_cited and not all(item.get("source_type") in {"registry_record", "registry_document", "registry_observation"}
                        for item in cited):
                 continue
             available = set()

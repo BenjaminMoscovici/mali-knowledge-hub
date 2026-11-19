@@ -131,6 +131,26 @@ def extract_spans(content, wanted, budget=2200, separator=None):
     return '\n[... exact excerpt; intervening text omitted ...]\n'.join(content[a:b] for a,b in spans), spans
 
 
+
+def commune_only(question):
+    text = fold(question)
+    if not re.search(r"\bcommune\b", text):
+        return False
+    other_level = r"\b(?:region|cercle|national|nationwide|admin1|admin2)\b"
+    explicit_context = r"\b(?:compare|compar\w*|versus|vs|context|contexte)\b"
+    if re.search(other_level, text) and re.search(explicit_context, text):
+        return False
+    explicitly_only = re.search(r"\b(?:only|solely|exclusively|seulement|uniquement|exclusivement)\b", text)
+    return bool(explicitly_only or not re.search(other_level, text))
+
+
+def unverified_hapi_for_commune(question, ledger):
+    if not commune_only(question):
+        return set()
+    # HAPI callers use a provider Admin1/Admin2/locality vintage. An identical
+    # label cannot prove an approved match to the requested commune boundary.
+    return {item["evidence_id"] for item in ledger if item.get("source_type") == "hdx_hapi"}
+
 def prepare(ledger, question, depth='balanced'):
     """Create an auditable prompt subset without changing/reassigning original IDs."""
     wanted = terms(question)
@@ -171,8 +191,12 @@ def prepare(ledger, question, depth='balanced'):
                if quantitative_workflow and item.get('source_type')=='knowledge_base_document'
                and results_table(item.get('content',''))}
     doc_ids.update(table_ids)
+    withheld = unverified_hapi_for_commune(question, deduplicated)
     selected, excerpts, omitted = [], {}, []
     for item in deduplicated:
+        if item["evidence_id"] in withheld:
+            omitted.append(item["evidence_id"])
+            continue
         if item.get('source_type') == 'knowledge_base_document' and item['evidence_id'] not in doc_ids:
             omitted.append(item['evidence_id']); continue
         # These are two transposes of the same project-ID relationship, not extra facts.
@@ -195,7 +219,7 @@ def prepare(ledger, question, depth='balanced'):
                 excerpts[item['evidence_id']] = spans
         selected.append(view)
     return selected, {'retrieved_items':len(ledger), 'synthesis_items':len(selected),
-        'duplicate_ids':duplicates, 'omitted_ids':omitted, 'excerpt_spans':excerpts,
+        'duplicate_ids':duplicates, 'omitted_ids':omitted, 'scope_withheld_ids':sorted(withheld), 'excerpt_spans':excerpts,
         'retained_results_table_ids':sorted(table_ids),
         'original_content_chars':sum(len(str(e.get('content') or '')) for e in ledger),
         'synthesis_content_chars':sum(len(str(e.get('content') or '')) for e in selected)}

@@ -956,10 +956,18 @@ def build_document_evidence(
 
     government_document_ids = document_groups["government"]
     hnrp_document_ids = document_groups["hnrp"]
-    targeted_documents = list(dict.fromkeys(
-        named_targets(question, document_groups["documents"])
-        + explicit_title_targets(question, document_groups["documents"])
-    ))
+    named = named_targets(question, document_groups["documents"])
+    explicit = explicit_title_targets(question, document_groups["documents"])
+    # A secondary document often includes the strategy name at the end of
+    # its title. When one strategy was named, require the distinctive start
+    # of another government title before using that title to override it.
+    if len(named) == 1:
+        leading = explicit_title_targets(question, document_groups["documents"], leading_only=True)
+        government_titles = [item for item in leading if item[0] in government_document_ids]
+        if government_titles:
+            named = government_titles
+        explicit = [item for item in explicit if item[0] not in government_document_ids]
+    targeted_documents = list(dict.fromkeys(named + explicit))
     government_targets = [(doc_id, title) for doc_id, title in targeted_documents
                           if doc_id in government_document_ids]
     humanitarian_targets = [(doc_id, title) for doc_id, title in targeted_documents
@@ -2647,6 +2655,19 @@ def run_four_source_research(question, document_count=8):
         source_trace["registry"]["coverage_gaps"] = [
             {"source": source, "reason": reason} for source, reason in registry_gaps
         ]
+    from synthesis_context import unverified_hapi_for_commune
+    if unverified_hapi_for_commune(question, ledger):
+        ledger.append({
+            "evidence_id": f"E{len(ledger) + 1:02d}",
+            "source_type": "source_availability",
+            "source_family": "MKH geographic scope check",
+            "document_title": "Commune-level evidence check",
+            "section": "Requested commune only",
+            "content": ("The retrieved HAPI data use source-reported geography without an approved "
+                        "crosswalk to the requested commune. These observations cannot support a "
+                        "needs figure for that commune. Other source-reported presence labels "
+                        "remain evidence of recorded presence only, subject to their own geography limits."),
+        })
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
     _, decisions = load_entity_decisions()
@@ -3001,6 +3022,26 @@ in a different language; translate faithfully while retaining citations.
     elif answer:
         from citations import unsupported_registry_quantities
         unsupported = unsupported_registry_quantities(answer, synthesis_ledger)
+        if unsupported and depth != "quick":
+            context_audit["citation_repair"] = "rejected"
+            try:
+                repaired = openai_client.responses.create(
+                    model=model,
+                    reasoning={"effort": "none"},
+                    max_output_tokens=min(configuration["max_output_tokens"], 1000),
+                    instructions=system_prompt,
+                    input=(user_prompt + "\nThe previous draft included numbers that could not be "
+                           "verified against the citations. Write a fresh answer using exact supplied "
+                           "values and direct citations. Omit unsupported claims while answering the "
+                           "remaining parts. Keep the same language and decision focus.")
+                )
+                proposed, proposed_audit = verify_citations(repaired.output_text, synthesis_ledger)
+                if proposed_audit["valid"] and proposed and not unsupported_registry_quantities(proposed, synthesis_ledger, check_all_cited=True):
+                    answer, prompt_citation_audit, unsupported = proposed, proposed_audit, []
+                    context_audit["citation_repair"] = "accepted"
+            except Exception as exc:
+                context_audit["citation_repair"] = "unavailable"
+                context_audit["citation_repair_error"] = type(exc).__name__
         if unsupported:
             prompt_citation_audit["unsupported_registry_quantities"] = unsupported
             selected_language = response_language or answer_language(question)

@@ -17,6 +17,7 @@ def invoke(depth, text, extra_evidence=(), question="Quel budget est prévu ?"):
     fn = next(n for n in source.body if isinstance(n, ast.FunctionDef)
               and n.name == '_generate_grounded_answer')
     calls = []
+    outputs = iter(text) if isinstance(text, tuple) else None
     ledger = [{'evidence_id': 'E01', 'source_type': 'knowledge_base_document',
                'document_title': 'Synthetic source', 'document_id': 'qa',
                'publication_date': '2026-10-06', 'section': 'Body paragraph 4', 'locator': 'Body paragraph 4',
@@ -25,7 +26,7 @@ def invoke(depth, text, extra_evidence=(), question="Quel budget est prévu ?"):
     ledger.extend(extra_evidence)
     def create(**kwargs):
         calls.append(kwargs)
-        return SimpleNamespace(output_text=text)
+        return SimpleNamespace(output_text=next(outputs) if outputs is not None else text)
     research = {'ledger': ledger, 'joined': {}, 'geography': {}, 'source_plan': {},
                 'family_counts': {}, 'hapi_raw_count': 0, 'fongim_project_count': 0,
                 'research_seconds': 0, 'execution_trace': {}}
@@ -135,3 +136,30 @@ def test_results_table_interpretation_preserves_missing_results_and_column_group
         assert 'claim zero people only if Total results explicitly contains numeric zero' in prompt
         assert 'do not claim all are absent' in prompt
         assert prompt.index('RESULTS TABLE INTERPRETATION CHECK')>prompt.index('FINAL CITATION CHECK')
+
+
+def test_registry_quantity_failure_repairs_once_and_retains_a_useful_answer():
+    row = {"evidence_id": "E02", "source_type": "registry_record",
+           "document_title": "Planning estimate", "content": "Estimated need: 5,100,000 people."}
+    calls, result, _ = invoke(
+        "balanced",
+        ("The planning estimate is 6 million people [E02].",
+         "The planning estimate is 5.1 million people [E02]."),
+        [row], "What is the planning estimate?",
+    )
+    assert len(calls) == 2 and "5.1 million" in result["answer"]
+    audit = result["execution_trace"]["synthesis_context"]
+    assert audit["citation_repair"] == "accepted" and audit["citation_audit"]["valid"]
+
+
+def test_bad_registry_answer_repair_cannot_bypass_checks():
+    row = {"evidence_id": "E02", "source_type": "registry_record",
+           "document_title": "Planning estimate", "content": "Estimated need: 5,100,000 people."}
+    calls, result, _ = invoke(
+        "balanced",
+        ("The planning estimate is 6 million people [E02].",
+         "The planning estimate is 7 million people [E02]."),
+        [row], "What is the planning estimate?",
+    )
+    assert len(calls) == 2 and "million" not in result["answer"]
+    assert result["execution_trace"]["synthesis_context"]["citation_repair"] == "rejected"

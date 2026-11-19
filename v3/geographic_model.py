@@ -190,9 +190,15 @@ class GeographyModel:
                     level = "locality" if label == "localite" else label
                     break
         candidates = []
+        alternatives = alternative_geographic_levels(question)
         if names:
             target = max(names, key=len)
-            candidates = self.lookup(target, level=level, release=self.preferred)
+            if alternatives:
+                children_level = None
+                candidates = [unit for unit in self.lookup(target, release=self.preferred)
+                              if unit["level"] in alternatives]
+            else:
+                candidates = self.lookup(target, level=level, release=self.preferred)
             # Named ancestors narrow scope only within this same release.
             parents = [n for n in names if n != target]
             if parents:
@@ -270,6 +276,21 @@ def geographic_model():
         return _load_geographic_model()
 
 
+
+def alternative_geographic_levels(question):
+    q = _fold(question)
+    level = r"(?:region|cercle|commune|localite|locality)"
+    alternatives = re.search(
+        rf"\b{level}(?: (?:a |an |une |un )?{level})* (?:or|ou) "
+        rf"(?:a |an |une |un )?{level}\b",
+        q,
+    )
+    if not alternatives:
+        return set()
+    return {"locality" if term == "localite" else term
+            for term in re.findall(level, alternatives[0])}
+
+
 def simple_geography_question(question):
     q = _fold(question)
     if re.search(r"\b(in there|over there|here|that place|this place|la bas|cette zone)\b", q) or re.match(r"^(and|et)\b", q) or q.endswith("belong there"):
@@ -280,6 +301,8 @@ def simple_geography_question(question):
     place_term = re.search(r"\b(regions?|cercles?|communes?|municipalities|municipality|administrativ\w*|hierarch\w*|parent|p codes?|pcode|localit\w*|geograph\w*|homonyms?|homonymes?)\b", q)
     if not place_term:
         return False
+    if alternative_geographic_levels(question):
+        return True
     # Generic question words plus a place mention establish context only.
     # Require an administrative operation or a count/list of units themselves.
     if re.search(r"\b(?:belong|appartien\w*|administratively structured|structure administrative|"

@@ -62,7 +62,7 @@ def test_actual_document_search_keeps_filters_counts_government_query_and_origin
     ns={'time':time,'ThreadPoolExecutor':ThreadPoolExecutor,'submit':lambda ex,fn,*args:ex.submit(fn,*args),
         'get_document_groups':lambda:{'government':['g'],'hnrp':['h'],'documents':documents},
         'named_targets':lambda *args: [('h','Activity report')] if targeted else [],
-        'explicit_title_targets':lambda *args:[], 'search_knowledge_base':search,
+        'explicit_title_targets':lambda *args, **kwargs:[], 'search_knowledge_base':search,
         'classify_document_family':lambda item:'Humanitarian planning'}
     exec(compile(ast.Module(body=[fn],type_ignores=[]),'coverage-document-path','exec'),ns)
     result=ns[fn.name]('For Agency Alpha, compare response coverage of needs with government priorities.',hnrp_count=4)
