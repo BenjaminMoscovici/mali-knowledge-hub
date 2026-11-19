@@ -18,12 +18,12 @@ import uuid
 import requests
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlsplit, unquote
+from urllib.parse import parse_qs, urlsplit, unquote
 
 from starlette.applications import Starlette
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import FileResponse, JSONResponse, RedirectResponse
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 from supabase import create_client, ClientOptions
@@ -181,17 +181,68 @@ def preview_enabled():
     return setting("MKH_HOSTED_PREVIEW") == "1"
 
 
+PREVIEW_COOKIE = "__Host-mkh-reviewer"
+PREVIEW_SESSION_SECONDS = 12 * 60 * 60
+
+
+def preview_session_signature(password, expires):
+    return hmac.digest(password.encode(), f"mkh-reviewer-session:{expires}".encode(), "sha256").hex()
+
+
 def preview_credentials_valid(request):
     expected = setting("MKH_PREVIEW_PASSWORD")
+    if not expected:
+        return False
+    expires, _, signature = request.cookies.get(PREVIEW_COOKIE, "").partition(".")
+    if re.fullmatch(r"[0-9]{10}", expires) and int(expires) > time.time():
+        if hmac.compare_digest(signature.encode(), preview_session_signature(expected, expires).encode()):
+            return True
     header = request.headers.get("authorization", "")
     scheme, _, value = header.partition(" ")
-    if not expected or scheme.casefold() != "basic":
+    if scheme.casefold() != "basic":
         return False
     try:
         actual = base64.b64decode(value, validate=True)
     except ValueError:
         return False
     return hmac.compare_digest(actual, ("reviewer:" + expected).encode())
+
+
+def preview_sign_in(failed=False):
+    message = "<p role='alert'>Incorrect preview password. Try again.</p>" if failed else ""
+    return HTMLResponse(
+        "<!doctype html><html lang='en'><meta charset='utf-8'>"
+        "<meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "<title>MKH evaluation preview</title><main><h1>MKH evaluation preview</h1>"
+        "<p>Enter the reviewer password to open the preview.</p>"
+        f"{message}<form action='/preview/login' method='post'>"
+        "<label for='password'>Reviewer password</label> "
+        "<input id='password' name='password' type='password' "
+        "autocomplete='current-password' maxlength='1024' required> "
+        "<button type='submit'>Sign in</button></form></main></html>",
+        status_code=401 if failed else 200,
+        headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
+                 "Content-Security-Policy": "default-src 'none'; form-action 'self'; frame-ancestors 'none'"},
+    )
+
+
+async def preview_login(request):
+    if not same_origin(request):
+        return error("Invalid request.", 403)
+    body = bytearray()
+    async for chunk in request.stream():
+        if len(body) + len(chunk) > 4096:
+            return error("Invalid request.", 400)
+        body.extend(chunk)
+    password = parse_qs(body.decode("ascii", errors="replace")).get("password", [""])[0]
+    expected = setting("MKH_PREVIEW_PASSWORD")
+    if not expected or not hmac.compare_digest(password.encode(), expected.encode()):
+        return preview_sign_in(failed=True)
+    expires = str(int(time.time()) + PREVIEW_SESSION_SECONDS)
+    response = RedirectResponse("/", status_code=303, headers={"Cache-Control": "no-store"})
+    response.set_cookie(PREVIEW_COOKIE, f"{expires}.{preview_session_signature(expected, expires)}",
+                        max_age=PREVIEW_SESSION_SECONDS, secure=True, httponly=True, samesite="strict")
+    return response
 
 
 def preview_preflight_reason(exc):
@@ -1267,7 +1318,11 @@ async def security_headers(request, call_next):
         if not ready:
             return JSONResponse({"error": "Evaluation preview setup is pending."},
                                 status_code=503, headers={"Cache-Control": "no-store"})
+        if request.url.path == "/preview/login" and request.method == "POST":
+            return await preview_login(request)
         if not preview_credentials_valid(request):
+            if request.url.path == "/" and request.method in {"GET", "HEAD"}:
+                return preview_sign_in()
             return JSONResponse({"error": "Reviewer access is required."}, status_code=401,
                                 headers={"WWW-Authenticate": 'Basic realm="MKH evaluation preview"',
                                          "Cache-Control": "no-store"})
@@ -1276,7 +1331,7 @@ async def security_headers(request, call_next):
             and request.url.path != "/api/chat"):
         return error("Only guest research is enabled in qualification.", 403)
     response = await call_next(request)
-    if request.url.path.startswith("/api/"):
+    if preview_enabled() or request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "no-referrer"

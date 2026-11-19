@@ -33,9 +33,26 @@ def test_ready_preview_uses_browser_access_gate_and_ordinary_guest_chat(monkeypa
     monkeypatch.setattr(web_api, "preview_preflight", lambda: None)
     with TestClient(web_api.app, base_url=origin) as client:
         assert client.get("/api/health").json()["status"] == "ready"
-        assert client.get("/").status_code == 401
+        landing = client.get("/")
+        assert landing.status_code == 200
+        assert 'Reviewer password' in landing.text
+        assert client.post("/api/chat", json={"question": "Hello"}).status_code == 401
+        assert client.post("/preview/login", data={"password": password}).status_code == 403
+        rejected = client.post("/preview/login", data={"password": "wrong"}, headers={"Origin": origin})
+        assert rejected.status_code == 401
+        assert "Incorrect preview password" in rejected.text
         headers = {"Authorization": "Basic " + base64.b64encode(f"reviewer:{password}".encode()).decode(),
                    "Origin": origin}
         assert client.get("/", headers=headers).status_code == 200
         assert client.post("/api/auth/signup", json={}, headers=headers).status_code == 403
         assert client.post("/api/chat", json={"question": "Hello"}, headers=headers).json()["saved"] is False
+        login = client.post("/preview/login", data={"password": password},
+                            headers={"Origin": origin}, follow_redirects=False)
+        assert login.status_code == 303
+        assert login.headers["location"] == "/"
+        cookie = login.headers["set-cookie"]
+        assert "HttpOnly" in cookie and "Secure" in cookie and "SameSite=strict" in cookie
+        assert "Reviewer password" not in client.get("/").text
+        assert client.post("/api/chat", json={"question": "Hello"}, headers={"Origin": origin}).json()["saved"] is False
+        monkeypatch.setenv("MKH_PREVIEW_PASSWORD", "rotated-fixture-password")
+        assert "Reviewer password" in client.get("/").text
