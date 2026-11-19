@@ -6,7 +6,7 @@ V2.1 adds registry-driven discovery to ordinary chat, more precise document and 
 
 ## Build and access
 
-The pinned preview application revision is `08b4cbeb48dc2e5155c711c45241b32c84c4369f`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers enter the separately supplied password on the preview sign-in page.
+The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Record both deployed revisions before beginning an evaluation.
 
 The application packages are pinned by its Git revision. The preview passed startup checks for live model access and the restricted read-only corpus login. Chromium smoke testing confirmed live model answers, the inline citation drawer, and context retention across a geographic follow-up. Record the source release and reference period shown on each answer, especially for sources retrieved live.
 
@@ -18,6 +18,6 @@ The application packages are pinned by its Git revision. The preview passed star
 - Record what you could use in a briefing as written, what you had to verify or rewrite, and what you could not establish. Retain the exact prompt and any follow-ups. Report correctness and usefulness ahead of latency and cost.
 - Exercise the ordinary chat interface and inline citation drawer. Record whether the linked passage or source row supports the material finding. Use public professional scenarios and keep private notes outside the product.
 
-The preview uses reviewer access at the browser gate, then ordinary guest chat inside the application. The operator should convey access credentials separately. Account features are disabled while evaluating. Free hosting can introduce a cold start. An imported release's reference period and retrieval date have different meanings.
+The preview opens directly to guest chat. Account features are disabled while evaluating. Free hosting can introduce a cold start. An imported release's reference period and retrieval date have different meanings.
 
 No expected answers or selected successful demonstrations are included. The benchmark and held-out cases remain unchanged.

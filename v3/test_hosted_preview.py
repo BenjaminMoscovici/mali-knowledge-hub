@@ -1,5 +1,3 @@
-import base64
-
 from starlette.testclient import TestClient
 
 import web_api
@@ -8,7 +6,7 @@ import web_api
 def test_unconfigured_preview_has_commit_and_blocks_access_and_publication(monkeypatch):
     monkeypatch.setenv("MKH_HOSTED_PREVIEW", "1")
     monkeypatch.setenv("RENDER_GIT_COMMIT", "fixture-commit")
-    monkeypatch.delenv("MKH_PREVIEW_PASSWORD", raising=False)
+    monkeypatch.delenv("MKH_QUALIFICATION_MODEL_KEY", raising=False)
     def forbidden():
         raise AssertionError("A preview cannot publish")
     monkeypatch.setattr(web_api, "publish_snapshot_logged", forbidden)
@@ -18,13 +16,12 @@ def test_unconfigured_preview_has_commit_and_blocks_access_and_publication(monke
         assert client.post("/api/chat", json={"question": "Hello"}).status_code == 503
 
 
-def test_ready_preview_uses_browser_access_gate_and_ordinary_guest_chat(monkeypatch):
+def test_ready_preview_opens_ordinary_guest_chat_without_credentials(monkeypatch):
     origin = "https://preview.example.org"
-    password = "fixture-only-strong-password"
     for key, value in {
         "MKH_HOSTED_PREVIEW": "1", "MKH_READ_ONLY_QUALIFICATION": "1",
         "MKH_QUALIFICATION_CORPUS_DSN": "fixture", "MKH_QUALIFICATION_MODEL_KEY": "fixture",
-        "HDX_HAPI_APP_IDENTIFIER": "fixture", "MKH_PREVIEW_PASSWORD": password,
+        "HDX_HAPI_APP_IDENTIFIER": "fixture",
         "RENDER_EXTERNAL_URL": origin,
     }.items():
         monkeypatch.setenv(key, value)
@@ -35,25 +32,8 @@ def test_ready_preview_uses_browser_access_gate_and_ordinary_guest_chat(monkeypa
         assert client.get("/api/health").json()["status"] == "ready"
         landing = client.get("/")
         assert landing.status_code == 200
-        assert 'Reviewer password' in landing.text
-        assert landing.headers['referrer-policy'] == 'same-origin'
-        assert client.post("/api/chat", json={"question": "Hello"}).status_code == 401
-        assert client.post("/preview/login", data={"password": password}).status_code == 403
-        rejected = client.post("/preview/login", data={"password": "wrong"}, headers={"Origin": origin})
-        assert rejected.status_code == 401
-        assert "Incorrect preview password" in rejected.text
-        headers = {"Authorization": "Basic " + base64.b64encode(f"reviewer:{password}".encode()).decode(),
-                   "Origin": origin}
-        assert client.get("/", headers=headers).status_code == 200
+        assert 'id="prompt"' in landing.text
+        assert "set-cookie" not in landing.headers
+        headers = {"Origin": origin}
         assert client.post("/api/auth/signup", json={}, headers=headers).status_code == 403
         assert client.post("/api/chat", json={"question": "Hello"}, headers=headers).json()["saved"] is False
-        login = client.post("/preview/login", data={"password": password},
-                            headers={"Origin": origin}, follow_redirects=False)
-        assert login.status_code == 303
-        assert login.headers["location"] == "/"
-        cookie = login.headers["set-cookie"]
-        assert "HttpOnly" in cookie and "Secure" in cookie and "SameSite=strict" in cookie
-        assert "Reviewer password" not in client.get("/").text
-        assert client.post("/api/chat", json={"question": "Hello"}, headers={"Origin": origin}).json()["saved"] is False
-        monkeypatch.setenv("MKH_PREVIEW_PASSWORD", "rotated-fixture-password")
-        assert "Reviewer password" in client.get("/").text
