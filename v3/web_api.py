@@ -206,6 +206,8 @@ async def body(request):
 
 async def actor(request):
     """Return a verified user, usable JWT, and refreshed session if needed."""
+    if setting("MKH_READ_ONLY_QUALIFICATION") == "1":
+        return None, None, None
     access = request.cookies.get(ACCESS_COOKIE)
     refresh = request.cookies.get(REFRESH_COOKIE)
     if not access and not refresh:
@@ -1187,6 +1189,10 @@ app = Starlette(routes=routes, lifespan=lifespan)
 
 
 async def security_headers(request, call_next):
+    if (setting("MKH_READ_ONLY_QUALIFICATION") == "1"
+            and request.method not in {"GET", "HEAD", "OPTIONS"}
+            and request.url.path != "/api/chat"):
+        return error("Only guest research is enabled in qualification.", 403)
     response = await call_next(request)
     if request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
