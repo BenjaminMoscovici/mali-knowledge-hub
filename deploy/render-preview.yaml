@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: mali-knowledge-hub-v21-preview
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: v2.1-development
+    autoDeployTrigger: "off"
+    buildCommand: pip install -r v3/requirements-qualification.txt
+    startCommand: cd v3 && uvicorn web_api:app --host 0.0.0.0 --port $PORT --proxy-headers
+    healthCheckPath: /api/health
+    envVars:
+      - key: MKH_HOSTED_PREVIEW
+        value: "1"
+      - key: MKH_READ_ONLY_QUALIFICATION
+        value: "1"
+      - key: MKH_QUALIFICATION_MODEL_KEY
+        fromService:
+          type: web
+          name: mali-knowledge-hub-v4-test
+          envVarKey: OPENAI_API_KEY
+      - key: HDX_HAPI_APP_IDENTIFIER
+        fromService:
+          type: web
+          name: mali-knowledge-hub-v4-test
+          envVarKey: HDX_HAPI_APP_IDENTIFIER
