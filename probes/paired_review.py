@@ -5,7 +5,7 @@ import csv
 import hashlib
 import json
 from pathlib import Path
-from statistics import median
+from statistics import mean, median
 import time
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -110,6 +110,52 @@ def prepare(benchmark, ids, baseline, candidate, baseline_commit, candidate_comm
 
 
 
+
+def summarize_ratings(review_directory, ratings):
+    """Join completed ratings to the exact answer evidence and show paired deltas."""
+    review = json.loads((review_directory / "review.json").read_text())
+    key = json.loads((review_directory / "review-key.json").read_text())
+    expected = {(pair["case_id"], label): pair[label]
+                for pair in review["pairs"] for label in ("A", "B")}
+    by_case = {}
+    seen = set()
+    with ratings.open(newline="") as stream:
+        for row in csv.DictReader(stream):
+            identity = (row["case_id"], row["label"])
+            if identity in seen or identity not in expected:
+                raise ValueError("Unknown or duplicate paired rating")
+            seen.add(identity)
+            if row["answer_evidence_sha256"] != expected[identity]["answer_evidence_sha256"]:
+                raise ValueError("Rating is bound to a different answer or evidence ledger")
+            if any(row[dimension] not in {"1", "2", "3", "4", "5", "NA"} for dimension in DIMENSIONS):
+                raise ValueError("Use scores 1–5 or NA for every rating dimension")
+            if row["critical_error"] not in {"yes", "no", "NA"}:
+                raise ValueError("Mark each critical error as yes, no or NA")
+            build = key["order"][row["case_id"]][row["label"]]
+            by_case.setdefault(row["case_id"], {})[build] = row
+    if set(expected) != seen:
+        raise ValueError("Both ratings are required for every case")
+
+    quality = {}
+    for dimension in DIMENSIONS:
+        paired = [(int(row["baseline"][dimension]), int(row["candidate"][dimension]))
+                  for row in by_case.values()
+                  if all(row[build][dimension] != "NA" for build in ("baseline", "candidate"))]
+        quality[dimension] = {
+            "assessable_pairs": len(paired),
+            "baseline_mean": mean(a for a, _ in paired) if paired else None,
+            "candidate_mean": mean(b for _, b in paired) if paired else None,
+            "mean_change": mean(b - a for a, b in paired) if paired else None,
+            "candidate_better": sum(b > a for a, b in paired),
+            "candidate_worse": sum(b < a for a, b in paired),
+        }
+    errors = {build: {
+        "critical_errors": sum(row[build]["critical_error"] == "yes" for row in by_case.values()),
+        "unassessed": sum(row[build]["critical_error"] == "NA" for row in by_case.values()),
+    } for build in ("baseline", "candidate")}
+    return {"reviewed_pairs": len(by_case), "quality": quality, "critical_errors": errors,
+            "measurements": key["measurements"]}
+
 def capture_balanced(benchmark, ids, base, commit, output):
     cases = {case["id"]: case for case in json.loads(benchmark.read_text())["cases"]}
     if not ids or len(set(ids)) != len(ids) or any(cases[cid].get("prior_messages") for cid in ids):
@@ -139,15 +185,21 @@ def capture_balanced(benchmark, ids, base, commit, output):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--benchmark", type=Path, required=True)
+    parser.add_argument("--benchmark", type=Path)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--ids", required=True)
-    parser.add_argument("--candidate-commit", required=True)
+    parser.add_argument("--ids")
+    parser.add_argument("--candidate-commit")
     parser.add_argument("--capture-base", help="Capture a new candidate run at this isolated service URL")
     parser.add_argument("--baseline", type=Path)
     parser.add_argument("--candidate", type=Path)
     parser.add_argument("--baseline-commit")
+    parser.add_argument("--ratings", type=Path, help="Summarize a completed blinded review")
     args = parser.parse_args()
+    if args.ratings:
+        print(json.dumps(summarize_ratings(args.output, args.ratings), indent=2))
+        raise SystemExit(0)
+    if not args.benchmark or not args.ids or not args.candidate_commit:
+        parser.error("Capture and preparation require --benchmark, --ids and --candidate-commit")
     ids = args.ids.split(",")
     if args.capture_base:
         capture_balanced(args.benchmark, ids, args.capture_base, args.candidate_commit, args.output)

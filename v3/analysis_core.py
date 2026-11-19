@@ -81,20 +81,27 @@ def get_secret(name):
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_SECRET_KEY = get_secret("SUPABASE_SECRET_KEY")
 SUPABASE_PUBLISHABLE_KEY = get_secret("SUPABASE_PUBLISHABLE_KEY")
-OPENAI_API_KEY = get_secret("OPENAI_API_KEY")
+QUALIFICATION_DSN = get_secret("MKH_QUALIFICATION_CORPUS_DSN")
+OPENAI_API_KEY = get_secret("MKH_QUALIFICATION_MODEL_KEY" if QUALIFICATION_DSN else "OPENAI_API_KEY")
 HDX_HAPI_APP_IDENTIFIER = get_secret(
     "HDX_HAPI_APP_IDENTIFIER"
 )
 
-if not all((SUPABASE_URL, SUPABASE_SECRET_KEY, OPENAI_API_KEY,
-            HDX_HAPI_APP_IDENTIFIER)):
-    raise RuntimeError("Mali Knowledge Hub server configuration is incomplete.")
+if not OPENAI_API_KEY or not HDX_HAPI_APP_IDENTIFIER:
+    raise RuntimeError("Mali Knowledge Hub model or HAPI configuration is incomplete.")
 
-
-supabase = create_client(
-    SUPABASE_URL,
-    SUPABASE_SECRET_KEY
-)
+if QUALIFICATION_DSN:
+    if os.environ.get("MKH_READ_ONLY_QUALIFICATION") != "1":
+        raise RuntimeError("The dedicated corpus adapter requires qualification mode.")
+    from qualification_corpus import from_environment
+    supabase = from_environment()
+    supabase.verify_role()
+else:
+    if os.environ.get("MKH_READ_ONLY_QUALIFICATION") == "1":
+        raise RuntimeError("Qualification cannot use the ordinary Supabase runtime credential.")
+    if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
+        raise RuntimeError("Mali Knowledge Hub corpus configuration is incomplete.")
+    supabase = create_client(SUPABASE_URL, SUPABASE_SECRET_KEY)
 
 openai_client = MeteredOpenAI(OpenAI(api_key=OPENAI_API_KEY))
 
