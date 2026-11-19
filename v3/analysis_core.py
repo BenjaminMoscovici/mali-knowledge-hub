@@ -766,6 +766,17 @@ RULES:
 10. Return JSON only, matching the requested schema.
 """
 
+    from registry_research import planner_capabilities
+    registered = planner_capabilities()
+    families = [*PLANNER_SOURCE_ENUM, *registered]
+    if registered:
+        system_prompt += (
+            "\nRegistered capabilities are additional source choices. Select them only when their "
+            "evidence would materially help, without dropping applicable legacy families. "
+            "A national capability cannot answer a local estimate.\n" +
+            json.dumps(registered, ensure_ascii=False)
+        )
+
     schema = {
         "type": "object",
         "properties": {
@@ -779,7 +790,7 @@ RULES:
                             "type": "array",
                             "items": {
                                 "type": "string",
-                                "enum": PLANNER_SOURCE_ENUM
+                                "enum": families
                             }
                         }
                     },
@@ -2605,7 +2616,11 @@ def run_four_source_research(question, document_count=8):
     legacy_evidence = (fongim_result["evidence"] + inventory_evidence +
                        [item for family in packaged_retrievers for item in packaged_results[family]])
     from registry_research import retrieve as retrieve_registered
-    registered_evidence, registry_gaps = retrieve_registered(question)
+    planner_output = planner_result.get("planner_output") or {}
+    registry_ids = {family for intent in planner_output.get("intents", [])
+                    for family in intent.get("source_families", [])
+                    if family.startswith("registry:")}
+    registered_evidence, registry_gaps = retrieve_registered(question, planned_ids=registry_ids)
     legacy_records = {(item.get("release_id"), item.get("record_id")) for item in legacy_evidence}
     registered_evidence = [item for item in registered_evidence
                            if (item["release_id"], item["record_id"]) not in legacy_records]
@@ -2615,9 +2630,23 @@ def run_four_source_research(question, document_count=8):
             "status": "SUCCESS_WITH_RESULTS" if registered_evidence else "SUCCESS_ZERO_RESULTS",
             "releases": sorted({item["release_id"] for item in registered_evidence}),
         }
+    registry_status = [{
+        "source_type": "source_availability",
+        "source_family": "MKH registry retrieval status",
+        "document_title": "Registry lookup status",
+        "section": source,
+        "content": (f"Reviewed source: {source}. Lookup status for this request: {reason}. "
+                    "This records what the requested release lookup returned. "
+                    "It is not a factual observation or proof that no relevant evidence exists elsewhere."),
+    } for source, reason in registry_gaps if reason != "excerpted_selection"]
     ledger = build_unified_evidence(
-        document_result["evidence"], hapi_result["evidence"], legacy_evidence + registered_evidence
+        document_result["evidence"], hapi_result["evidence"],
+        legacy_evidence + registered_evidence + registry_status
     )
+    if registry_gaps:
+        source_trace["registry"]["coverage_gaps"] = [
+            {"source": source, "reason": reason} for source, reason in registry_gaps
+        ]
     enrich_join_evidence(ledger)
     joined = build_join_context(ledger, geography, document_registry)
     _, decisions = load_entity_decisions()
@@ -2734,11 +2763,15 @@ def _generate_grounded_answer(
         "ledger"
     ]
 
-    from project_date_answers import answer as verified_date_answer
-    verified = verified_date_answer(question, ledger, response_language)
-    if verified is None:
-        from funding_answers import answer as verified_funding_answer
-        verified = verified_funding_answer(question, ledger, response_language)
+    from registry_research import named_registry_sources
+    verified = None
+    # A single-family calculation cannot complete an explicitly multi-source request.
+    if len(named_registry_sources(question, include_topics=True)) < 2:
+        from project_date_answers import answer as verified_date_answer
+        verified = verified_date_answer(question, ledger, response_language)
+        if verified is None:
+            from funding_answers import answer as verified_funding_answer
+            verified = verified_funding_answer(question, ledger, response_language)
     if verified:
         answer, audit = verified
         research['execution_trace']['verified_calculation'] = audit
@@ -2940,6 +2973,12 @@ in a different language; translate faithfully while retaining citations.
         user_prompt += ("\nFor registry evidence, cite each quantitative claim with the direct source record "
                         "or page. Use supplied values and labelled calculations. Do not derive population "
                         "coverage, per-person ratios or other new figures across unlike sources.")
+
+    registry_gaps = research.get("execution_trace", {}).get("sources", {}).get("registry", {}).get("coverage_gaps", [])
+    relevant_gaps = [gap for gap in registry_gaps if gap["reason"] != "excerpted_selection"]
+    if relevant_gaps:
+        user_prompt += ("\nRegistry source coverage gaps (retrieval status, not real-world absence). Do not replace an explicitly requested identifier, geography or period with another record: "
+                        + json.dumps(relevant_gaps, ensure_ascii=False))
 
     synthesis_started = time.perf_counter()
 

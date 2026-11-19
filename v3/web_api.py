@@ -559,6 +559,15 @@ async def saved_evidence(request):
     return with_session(response, refreshed)
 
 
+
+def conversational_route(question, mode):
+    route = classify(question, mode)
+    if route["path"] in {"country_fact", "simple_geography"}:
+        from registry_research import named_registry_sources
+        if named_registry_sources(question):
+            return {"path": "deep_research" if mode == "deep" else "complex_research"}
+    return route
+
 async def chat(request):
     request_started = time.perf_counter()
     payload = await body(request)
@@ -572,7 +581,7 @@ async def chat(request):
         return error("Choose a valid analysis depth.")
     question = question.strip()
     route_started = time.perf_counter()
-    route = classify(question, mode)
+    route = conversational_route(question, mode)
     routing_seconds = time.perf_counter() - route_started
     user, token, refreshed = await actor(request)
     store = store_for(user, token) if user else None
@@ -639,13 +648,13 @@ async def chat(request):
                 geography_method = 'structured_geographic_hierarchy'
             if resolved:
                 standalone = resolved
-                route = classify(standalone, mode)
+                route = conversational_route(standalone, mode)
                 context_method = geography_method
             else:
                 slot_context = await asyncio.to_thread(resolve_slots, question, prior)
                 if slot_context:
                     standalone = slot_context['standalone_question']
-                    route = classify(standalone, mode)
+                    route = conversational_route(standalone, mode)
                     context_method = slot_context['method']
         if registered is not None:
             route = {"path": "registry_evidence" if evidence_brief is not None else "registry_observation"}
@@ -672,7 +681,11 @@ async def chat(request):
                                    likely_context_dependent_followup, resolve_conversational_question,
                                    source_inventory_answer, openai_client)
             async with _analysis_limit:
-                if not slot_context and likely_context_dependent_followup(question, prior):
+                scoped_followup = resolve_evidence_year(question, previous_question(prior), evidence_only=False)
+                if not slot_context and scoped_followup:
+                    standalone = scoped_followup
+                    context_method = "registry_research_reference_year"
+                elif not slot_context and likely_context_dependent_followup(question, prior):
                     phase = "context_rewrite"
                     context_token, context_id = openai_client.begin()
                     try:
@@ -680,11 +693,11 @@ async def chat(request):
                     finally:
                         context_usage = openai_client.finish(context_token, context_id)
                 phase = "research"
-                if classify(standalone, mode)["path"] == "country_fact":
+                if conversational_route(standalone, mode)["path"] == "country_fact":
                     route = {"path": "country_fact"}
                     phase = "structured_country_fact"
                     result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, synthesis_language(question)))
-                elif classify(standalone, mode)["path"] == "simple_geography":
+                elif conversational_route(standalone, mode)["path"] == "simple_geography":
                     route = {"path": "simple_geography"}
                     phase = "structured_geography"
                     result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
@@ -1157,6 +1170,9 @@ routes = [
 ]
 @asynccontextmanager
 async def lifespan(app):
+    if os.environ.get("MKH_READ_ONLY_QUALIFICATION") == "1":
+        yield
+        return
     # Publication is idempotent and runs after the server has bound its port,
     # so a large first load cannot make the health check fail.
     asyncio.create_task(asyncio.to_thread(publish_snapshot_logged))

@@ -133,40 +133,85 @@ def _evidence(source, spec, row, content):
     }
 
 
-def retrieve(question, registry=None, limit=8):
-    """Return evidence and source-specific gaps for explicitly named capabilities."""
+def _active_registry(path):
+    try:
+        return _catalogue(path, path.stat().st_mtime_ns)
+    except (OSError, TypeError, ValueError, KeyError):
+        LOG.warning("Registry discovery unavailable")
+        return ()
+
+
+def planner_capabilities():
+    """Advertise reviewed capabilities to the existing planner without extra calls."""
+    return {
+        "registry:" + spec["dataset_id"]: {
+            "source": source["source_name"],
+            "scope": spec["scope"],
+            "period": source.get("historical_coverage"),
+            "topics": spec.get("topics", []),
+        }
+        for source, spec in _active_registry(REGISTRY)
+    }
+
+
+def _cues(text, spec):
+    names = [alias for alias in spec["aliases"] if _phrase(text, alias)]
+    return names or [topic for topic in spec.get("topics", ()) if _phrase(text, topic)]
+
+
+
+def named_registry_sources(question, *, include_topics=False):
+    folded = _fold(question)
+    return {spec["dataset_id"] for _, spec in _active_registry(REGISTRY)
+            if (include_topics and _cues(folded, spec))
+            or any(_phrase(folded, alias) for alias in spec["aliases"])}
+
+
+def _scoped_query(text, spec, catalogue):
+    # A shared trailing year applies to a single request. Separate clauses
+    # only when each names a source and has its own year or administrative level.
+    clauses = re.split(r"\s+(?:and|et|versus|vs|tandis que|whereas)\s+", text)
+    if len(clauses) < 2 or not all(
+        any(_cues(clause, other) for _, other in catalogue)
+        and re.search(r"\b(?:(?:19|20)\d{2}|cercle|commune|district|region)\b", clause)
+        for clause in clauses
+    ):
+        return text
+    matches = [clause for clause in clauses if _cues(clause, spec)]
+    return matches[0] if len(matches) == 1 else text
+
+
+def retrieve(question, registry=None, limit=8, planned_ids=()):
+    """Retrieve named, topic-matched and planner-selected reviewed evidence."""
     path = registry or REGISTRY
     folded = _fold(question)
     if not folded:
         return [], []
-    years = set(re.findall(r"\b(?:19|20)\d{2}\b", folded))
+    all_years = set(re.findall(r"\b(?:19|20)\d{2}\b", folded))
     selected = []
-    try:
-        catalogue = _catalogue(path, path.stat().st_mtime_ns)
-    except (OSError, TypeError, ValueError, KeyError):
-        LOG.warning("Registry discovery unavailable")
-        return [], []
+    catalogue = _active_registry(path)
     for source, spec in catalogue:
-        cues = [alias for alias in spec["aliases"] if _phrase(folded, alias)]
-        if not cues and years:
-            cues = [topic for topic in spec.get("topics", ()) if _phrase(folded, topic)]
-        if cues:
-            selected.append((source, spec, cues))
+        scoped = _scoped_query(folded, spec, catalogue)
+        names = [alias for alias in spec["aliases"] if _phrase(scoped, alias)]
+        cues = names or (_cues(scoped, spec) if all_years else [])
+        # In a compound request, model-only matches must not borrow another
+        # clause's incompatible date or geography.
+        if cues or (len(all_years) <= 1 and "registry:" + spec["dataset_id"] in planned_ids):
+            selected.append((source, spec, cues, scoped))
     if not selected:
         return [], []
     if len(selected) > limit:
-        return [], [(source["source_name"], "too_many_sources") for source, _, _ in selected]
+        return [], [(source["source_name"], "too_many_sources") for source, _, _, _ in selected]
 
-    # Do not let source names outrank the substantive query terms inside a source.
-    query = folded
-    for _, _, cues in selected:
-        for alias in sorted(cues, key=len, reverse=True):
-            query = re.sub(r"(?<!\w)" + re.escape(_fold(alias)) + r"(?!\w)", " ", query)
-    keywords = terms(query) - years - {"show", "montrez", "source", "sources", "preuves", "dans", "pour"}
     per_source = max(1, limit // len(selected))
     results, gaps = [], []
-    for source, spec, _ in selected:
+    for source, spec, cues, scoped in selected:
         name = source["source_name"]
+        years = set(re.findall(r"\b(?:19|20)\d{2}\b", scoped))
+        query = scoped
+        for alias in sorted(cues, key=len, reverse=True):
+            query = re.sub(r"(?<!\w)" + re.escape(_fold(alias)) + r"(?!\w)", " ", query)
+        keywords = terms(query) - years - {"show", "montrez", "source", "sources", "preuves", "dans", "pour"}
         if spec.get("geographic_level") == "country" and re.search(
             r"\b(?:regions?|cercles?|communes?|districts?|villages?|localit\w*)\b", query
         ):
@@ -176,7 +221,7 @@ def retrieve(question, registry=None, limit=8):
             rows = _records(spec, path.parent)
             wanted = keywords | {term for key, aliases in spec.get("term_aliases", {}).items()
                                  if key in keywords for term in aliases}
-            identifiers = set(re.findall(spec["identifier_pattern"], folded)) if spec.get("identifier_pattern") else set()
+            identifiers = set(re.findall(spec["identifier_pattern"], scoped)) if spec.get("identifier_pattern") else set()
             candidates = []
             for row in rows:
                 if not _period_matches(row, years):
@@ -211,10 +256,15 @@ def retrieve(question, registry=None, limit=8):
 
 
 
-def resolve_year_followup(question, previous):
+def resolve_year_followup(question, previous, *, evidence_only=True):
     """Change only a single explicit year slot in the previous evidence brief."""
     new_year = re.fullmatch(r"(?:and (?:in|for)|et (?:en|pour)) ((?:19|20)\d{2})", _fold(question))
-    if not new_year or not EVIDENCE_REQUEST.match(_fold(previous)):
+    if not new_year or not previous:
+        return None
+    if evidence_only:
+        if not EVIDENCE_REQUEST.match(_fold(previous)):
+            return None
+    elif sum(bool(_cues(_fold(previous), spec)) for _, spec in _active_registry(REGISTRY)) != 1:
         return None
     text = previous.strip()
     years = list(re.finditer(r"\b(?:in|for|en|pour) ((?:19|20)\d{2})\b", text, re.IGNORECASE))

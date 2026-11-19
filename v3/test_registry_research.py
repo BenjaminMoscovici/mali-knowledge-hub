@@ -122,3 +122,36 @@ def test_valid_id_alone_does_not_verify_generated_registry_quantities():
     assert unsupported_registry_quantities(swapped, evidence) == [
         {"cited_ids": ["E02"], "unsupported_quantity_count": 2}
     ]
+
+
+def test_compound_question_keeps_geographic_and_temporal_constraints_per_source():
+    question = (
+        "What can the 2022 census report explain about enumeration methods "
+        "and what does global HPC HNO establish for Mopti cercle in 2026 "
+        "and how much financing does OCHA FTS report for HMLI25 in 2025?"
+    )
+    evidence, gaps = registry_research.retrieve(question)
+    assert any(item["source_type"] == "registry_document" for item in evidence)
+    assert any(item["reference_period_start"] == "2025-01-01" for item in evidence)
+    assert not any(item["source_family"] == "OCHA HPC / HDX" for item in evidence)
+    assert any(reason == "unsupported_geography" for _, reason in gaps)
+    assert not any(item["reference_period_start"] == "2026-01-01" for item in evidence)
+
+
+def test_planner_can_find_registry_sources_without_literal_topic_or_source_name():
+    capabilities = registry_research.planner_capabilities()
+    census = "registry:mli-instat-rgph5-global-2022"
+    assert census in capabilities
+    evidence, _ = registry_research.retrieve(
+        "How did enumerators collect household data in 2022?",
+        planned_ids=(census, "registry:unregistered"),
+    )
+    assert evidence and {item["source_type"] for item in evidence} == {"registry_document"}
+
+
+def test_normal_year_followup_preserves_source_and_exact_plan():
+    question = "What did OCHA FTS report for plan HMLI26 in 2026?"
+    revised = registry_research.resolve_year_followup("And in 2025?", question, evidence_only=False)
+    assert revised == "What did OCHA FTS report for plan HMLI26 in 2025?"
+    evidence, gaps = registry_research.retrieve(revised)
+    assert not evidence and gaps

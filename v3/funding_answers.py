@@ -29,6 +29,12 @@ def answer(question, ledger, language=None):
         r'convert\w*|conversion|exchange)\b',q):
         return None
     rows=[e for e in ledger if e.get('funding_record',{}).get('source_namespace')=='FTS']
+    requested_codes = set(re.findall(r"\bhmli\d{2}\b", q))
+    if requested_codes:
+        rows = [item for item in rows
+                if str(item["funding_record"].get("plan_code") or "").casefold() in requested_codes]
+        if requested_codes - {item["funding_record"]["plan_code"].casefold() for item in rows}:
+            return None
     if not rows or len(rows)>8:
         return None
     required_keys={'source_id','year','currency','name','plan_code','requirements','reported_funding','publisher_percent','funding_definition'}
