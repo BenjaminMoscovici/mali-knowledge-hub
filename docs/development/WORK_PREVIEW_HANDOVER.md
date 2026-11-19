@@ -6,7 +6,7 @@ V2.1 adds registry-driven discovery to ordinary chat, more precise document and 
 
 ## Build and access
 
-The pinned preview application revision is `253b90c28ea352dae2ff6a6764899136011e6a02`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers use browser username `reviewer` and the separately supplied password.
+The pinned preview application revision is `91d4fc5c62c6e46e55ec6ab1b5ddcaaa99333c1f`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers use browser username `reviewer` and the separately supplied password.
 
 The application packages are pinned by its Git revision. Live corpus and model access remain pending. Record the approved shared corpus release identity and any live HAPI date differences when the operator completes smoke testing.
 
