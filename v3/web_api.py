@@ -599,7 +599,13 @@ async def chat(request):
     context_method = "existing_resolver"
     slot_context = None
     try:
-        if route["path"] not in {"conversational", "conversation_only"}:
+        from registry_observations import answer as registry_answer
+        try:
+            registered = await asyncio.to_thread(registry_answer, question, synthesis_language(question))
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
+            registered = None
+        if registered is None and route["path"] not in {"conversational", "conversation_only"}:
             resolved = await asyncio.to_thread(resolve_country_followup, question, prior)
             geography_method = 'structured_country_fact'
             if not resolved:
@@ -618,7 +624,10 @@ async def chat(request):
                     standalone = slot_context['standalone_question']
                     route = classify(standalone, mode)
                     context_method = slot_context['method']
-        if route["path"] == "conversational":
+        if registered is not None:
+            route = {"path": "registry_observation"}
+            result = registered
+        elif route["path"] == "conversational":
             result = {"answer": route["reply"], "evidence": []}
         elif route["path"] == "conversation_only":
             from conversation_transform import restate

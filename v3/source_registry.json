@@ -282,6 +282,50 @@
       "INSTAT census and DNP projections differ; population release/reference dates retained.",
       "Commune crosswalks remain unapproved; all conflicts must be exposed."
     ],
+    "annual_observations": [
+      {
+        "measure": "enumerated_population",
+        "definition": "RGPH5 preliminary resident population count",
+        "geography_id": "MLI:country",
+        "place": "Mali",
+        "place_aliases": [
+          "Mali"
+        ],
+        "unit": "person",
+        "labels": {
+          "en": "Preliminary census population",
+          "fr": "Population au recensement (résultats préliminaires)"
+        },
+        "unit_labels": {
+          "en": "people",
+          "fr": "habitants"
+        },
+        "notes": {
+          "en": "Preliminary RGPH5 census results, distinct from later population projections.",
+          "fr": "Résultats préliminaires du RGPH5, distincts des projections ultérieures."
+        },
+        "aliases": [
+          "census population of {place}",
+          "census population in {place}",
+          "population of {place} at the census",
+          "population du {place} au recensement",
+          "population recensée au {place}",
+          "population recensée du {place}"
+        ],
+        "release_id": "2e9759a0-ca06-54aa-8a3b-f05fe11d89b8",
+        "version": "RGPH5-2022-preliminaire-2023-11",
+        "records": [
+          {
+            "year": 2022,
+            "value": 22395489,
+            "id": "mli-instat-rgph5-global-2022:national-total",
+            "page": 12,
+            "locator": "PDF page 12 · Indicateurs clés",
+            "excerpt": "Effectif de la population totale du Mali au RGPH5 de 2022 : 22 395 489"
+          }
+        ]
+      }
+    ],
     "fallback_source": "next official provider edition",
     "next_action": "maintain provenance and approve authoritative crosswalks",
     "responsible_party": "MKH source maintainer"
