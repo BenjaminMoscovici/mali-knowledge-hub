@@ -136,3 +136,30 @@ def test_multiple_canonical_tables_do_not_establish_one_selected_set():
     output='Unchanged semantic question.'
     assert preserve_project_selection(output,'Which of those projects have a donor?',
         [{'role':'assistant','content':table+'\n'+table}])==output
+
+
+@pytest.mark.parametrize('filename', ['analysis_core.py', 'app.py'])
+def test_fresh_lookup_preserves_french_displayed_project_table(filename):
+    from project_references import fongim_project_ids
+    messages = [
+        {'role': 'user', 'content': 'Donnez les projets FONGIM en cours à Sikasso.'},
+        {'role': 'assistant', 'content': (
+            '| Identifiant | Projet | Date |\n|---|---|---|\n'
+            '| **73** | Projet de santé | 2025 |\n'
+            '| **81** | Suite du projet 55 | 2026 |\n\n'
+            'Autre exemple : FONGIM project ID 36.')},
+    ]
+    question = 'Et parmi ces mêmes projets, lesquels ont un bailleur déclaré ?'
+    result = rewrite(filename, question, messages, 'Parmi les projets identifiés 73 et 81, quels bailleurs ?')
+    assert fongim_project_ids(result) == (73, 81)
+    assert result.endswith(question)
+    assert '2025' not in result and '36' not in result
+
+
+def test_unqualified_table_cannot_supply_ids_for_a_mixed_source_topic():
+    from research_context import preserve_project_selection
+    messages = [
+        {'role': 'user', 'content': 'Compare FONGIM and World Bank projects.'},
+        {'role': 'assistant', 'content': '| ID | Project |\n|---|---|\n| 73 | Name |'},
+    ]
+    assert preserve_project_selection('Please clarify.', 'Which of those projects have donors?', messages) == 'Please clarify.'

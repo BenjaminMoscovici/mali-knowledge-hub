@@ -176,7 +176,7 @@ def preserve_project_selection(standalone, question, messages):
     q = ' '.join(re.sub(r'[^\w\s]', ' ', q).split())
     en = re.match(r'which of (?:those|these) '
                   r'(?:(?P<source>fongim|world bank|eu) )?projects\b', q)
-    fr = re.match(r'lesquels de ces projets'
+    fr = re.match(r'(?:et )?(?:lesquels de|parmi) ces (?:memes )?projets'
                   r'(?: (?P<source>fongim|de la banque mondiale|de l ue|ue))?\b', q)
     pronoun = re.match(r'(?:which of them|lesquels d entre eux|lesquels parmi eux)\b', q)
     if not (en or fr or pronoun):
@@ -217,6 +217,27 @@ def preserve_project_selection(standalone, question, messages):
                 break
             columns.append(line.split('|')[1].strip())
         latest = '\n'.join(columns)
+    else:
+        # Generated tables can use an unqualified ID column. Only the latest
+        # user topic can establish its namespace. Read IDs from the rows,
+        # never from cited examples, titles, dates, or surrounding commentary.
+        topic = next((row.get('standalone_question') or row.get('content', '')
+                      for row in recent if row.get('role') == 'user'), '')
+        heading = re.compile(r'^\|\s*(?:ID|Identifiant)\s*\|\s*(?:Project|Projet)\s*\|', re.I)
+        tables = [i for i, line in enumerate(lines) if heading.match(line.lstrip())]
+        if (len(tables) == 1 and re.search(r'\bfongim\b', topic, re.I)
+                and not re.search(r'\b(?:world bank|banque mondiale|iati|eu|ue|3w|5w)\b', topic, re.I)
+                and not any(ids for _, ids in _context_identifier_groups(latest)[1:])):
+            ids = []
+            for line in lines[tables[0] + 2:]:
+                if not line.lstrip().startswith('|'):
+                    break
+                value = line.split('|')[1].strip().strip('*`').strip()
+                if not re.fullmatch(r'[1-9]\d{0,11}', value):
+                    return standalone
+                ids.append(value)
+            if ids:
+                latest = 'FONGIM project IDs: ' + ', '.join(ids)
     groups = [(namespace, tuple(value.rstrip('.:') for value in ids)) for namespace, ids in
               _context_identifier_groups(latest) if ids]
     source_labels = {'fongim': 'FONGIM project IDs',
