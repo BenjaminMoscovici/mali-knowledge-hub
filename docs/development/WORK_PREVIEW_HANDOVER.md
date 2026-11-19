@@ -1,14 +1,14 @@
 # Independent Work evaluation
 
-The comparison is between the existing [V4 test application](https://mali-knowledge-hub-v4-test.onrender.com/) and the isolated [V2.1 evaluation preview](https://mali-knowledge-hub-v21-preview.onrender.com/). Use the preview link only after the operator has verified its model and corpus access. Keep the deployed revisions fixed for the review.
+The comparison is between the existing [V4 test application](https://mali-knowledge-hub-v4-test.onrender.com/) and the isolated [V2.1 evaluation preview](https://mali-knowledge-hub-v21-preview.onrender.com/). Keep the deployed revisions fixed for the review.
 
 V2.1 adds registry-driven discovery to ordinary chat, more precise document and record targeting, tighter geographic and temporal scope, and checks for unsupported quantities. Some simple answers remain deterministic. The comparison should cover the normal guest chat experience at the same analysis depth on both services.
 
 ## Build and access
 
-The pinned preview application revision is `91d4fc5c62c6e46e55ec6ab1b5ddcaaa99333c1f`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers use browser username `reviewer` and the separately supplied password.
+The pinned preview application revision is `c6a0a9cae24170a6055f4370281affb475322095`. The original V4 reference was verified at `550eb2b450f26e96a03e8663a799b4e28a16b5a4`. Verify both before beginning an evaluation. Reviewers use browser username `reviewer` and the separately supplied password.
 
-The application packages are pinned by its Git revision. Live corpus and model access remain pending. Record the approved shared corpus release identity and any live HAPI date differences when the operator completes smoke testing.
+The application packages are pinned by its Git revision. The preview passed startup checks for live model access and the restricted read-only corpus login. Chromium smoke testing confirmed live model answers, the inline citation drawer, and context retention across a geographic follow-up. Record the source release and reference period shown on each answer, especially for sources retrieved live.
 
 ## Review protocol
 
