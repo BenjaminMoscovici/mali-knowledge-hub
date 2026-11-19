@@ -150,7 +150,13 @@ def from_environment():
     dsn = os.environ.get("MKH_QUALIFICATION_CORPUS_DSN")
     if not dsn or any(os.environ.get(name) for name in ("SUPABASE_SECRET_KEY", "OPENAI_API_KEY")):
         raise RuntimeError("Qualification requires a dedicated corpus login and no Supabase secret key")
-    from psycopg.conninfo import conninfo_to_dict
-    if conninfo_to_dict(dsn).get("sslmode") != "verify-full":
+    from psycopg.conninfo import conninfo_to_dict, make_conninfo
+    options = conninfo_to_dict(dsn)
+    if options.get("sslmode") != "verify-full":
         raise RuntimeError("Qualification corpus connections must verify the server certificate and hostname")
+    # The binary driver can use a different OpenSSL default trust path on
+    # hosted builds. Give it the installed CA bundle explicitly.
+    if options.get("sslrootcert") == "system":
+        import certifi
+        dsn = make_conninfo(dsn, sslrootcert=certifi.where())
     return QualificationCorpus(dsn)
