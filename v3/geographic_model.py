@@ -144,6 +144,7 @@ class GeographyModel:
             "geographic_scope": "Mali — release-specific hierarchy",
             "content": json.dumps({"release": r["upstream_version"],
                 "enumerated_counts": dict(Counter(u['unit_type'] for u in self.units.values() if u['release_id'] == rid)),
+                "count_scope": {"arrondissement": "Bamako District only, not a Mali national total"} if rid == self.preferred else {},
                 "query_scope_counts": list(computed_counts),
                 "records": [self.describe(uid) for uid in ids],
                 "unresolved_matches": self.unresolved if rid != self.preferred else [],
@@ -204,7 +205,11 @@ class GeographyModel:
             if parents:
                 candidates = [u for u in candidates if all(any(_fold(p['name']) == n for p in u['path'][:-1]) for n in parents)]
         national_summary = bool(re.search(r"\b(how many|combien|structure|structured|structuree|versions?|referentiel|reference|unresolved|disputed|conflicts?|conflits?)\b", q))
-        national_summary = national_summary and (not names or names == ["mali"])
+        national_structure = re.search(r"\b(?:mali s (?:current )?administrative structure|"
+                                       r"administrative structure of mali|structure administrative du mali)\b", q)
+        national_summary = national_summary and (
+            not names or names == ["mali"] or (national_structure and set(names) <= {"mali", "bamako"})
+        )
         if national_summary:
             answer = summary_text + "\n\n" + caveat
             if re.search(r"\b(list|name|quelles|liste|lister)\b", q) and re.search(r"\bregions\b", q) and not names:
@@ -305,7 +310,7 @@ def simple_geography_question(question):
         return True
     # Generic question words plus a place mention establish context only.
     # Require an administrative operation or a count/list of units themselves.
-    if re.search(r"\b(?:belong|appartien\w*|administratively structured|structure administrative|"
+    if re.search(r"\b(?:belong|appartien\w*|administratively structured|administrative structure|structure administrative|"
                  r"hierarch\w*|administrative path|parent|p codes?|pcode|homonyms?|homonymes?|"
                  r"aliases|unresolved|disputed|conflicts?|conflits?)\b", q):
         return True

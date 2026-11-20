@@ -123,6 +123,25 @@ def has_reference(question):
     return any(re.search(pattern, text) for pattern in patterns)
 
 
+def assignment_edit(question):
+    """Identify instructions that operate on the current assignment."""
+    from source_wave import _fold
+    q = _fold(question)
+    return bool(re.search(
+        r"\b(?:change|replace|switch|keep|retain|repeat|shorten|condense|rewrite|reformat|translate|"
+        r"remplace\w*|change\w*|garde\w*|conserve\w*|repet\w*|ramene\w*|"
+        r"transform\w*|reformul\w*|raccourci\w*|tradui\w*)\b"
+        r".{0,140}\b(?:only|instead|same|previous|above|last|that|this|it|everything|"
+        r"uniquement|seulement|meme|reste|derniere?|cela|cette|ce meme)\b"
+        r"|\b(?:same (?:task|brief|analysis|comparison|framework|format)|"
+        r"meme (?:note|analyse|recherche|comparaison|perimetre)|"
+        r"(?:using|among|from) (?:the )?(?:same|previous|last|those|these)|"
+        r"parmi ces|dans ce meme|ce bailleur|just discussed|that region|that commune|that year|then conclude|therefore (?:say|write|infer))\b"
+        r"|\b(?:keep|retain|garde\w*|conserve\w*) "
+        r"(?:the|le|la|les|l) (?:year|place|criteria|scope|lieu|annee|periode|perimetre|format|references)\b", q
+    ))
+
+
 def _latest_topic_messages(messages):
     """Exclude exchanges superseded by a newer substantive question."""
     recent = messages[-10:]
@@ -135,8 +154,14 @@ def _latest_topic_messages(messages):
     for index, message in enumerate(recent):
         if message.get('role') != 'user':
             continue
-        value = message.get('standalone_question') or message.get('content')
-        if isinstance(value, str) and value.strip() and classify(value)['path'] not in {
+        value = message.get('content')
+        if not isinstance(value, str) or assignment_edit(value) or has_reference(value):
+            continue
+        following = recent[index + 1:index + 2]
+        resolved = following[0].get('standalone_question') if following and following[0].get('role') == 'assistant' else None
+        if resolved and resolved.strip() != value.strip():
+            continue
+        if value.strip() and classify(value)['path'] not in {
                 'conversational', 'conversation_only'}:
             starts.append(index)
     if starts:
@@ -158,9 +183,12 @@ def conversation_context(messages):
                 turns.append('USER QUESTION: ' + str(value)[:1600])
         elif message.get('role') == 'assistant' and message.get('content'):
             limit = 6000 if index == last else 800
+            if message.get('standalone_question'):
+                turns.append('RESOLVED ASSIGNMENT (context only): ' +
+                             str(message['standalone_question'])[:1600])
             turns.append('ASSISTANT CONTEXT ONLY: ' +
                          _bounded_context_text(message['content'], limit))
-    return '\n\n'.join(turns[-8:])
+    return '\n\n'.join(turns)
 
 
 def preserve_project_selection(standalone, question, messages):
@@ -176,7 +204,7 @@ def preserve_project_selection(standalone, question, messages):
     q = ' '.join(re.sub(r'[^\w\s]', ' ', q).split())
     en = re.match(r'which of (?:those|these) '
                   r'(?:(?P<source>fongim|world bank|eu) )?projects\b', q)
-    fr = re.match(r'(?:et )?(?:lesquels de|parmi) ces (?:memes )?projets'
+    fr = re.match(r'(?:et )?(?:lesquels de|parmi) ces (?:(?:memes|derniers) )?projets'
                   r'(?: (?P<source>fongim|de la banque mondiale|de l ue|ue))?\b', q)
     pronoun = re.match(r'(?:which of them|lesquels d entre eux|lesquels parmi eux)\b', q)
     if not (en or fr or pronoun):

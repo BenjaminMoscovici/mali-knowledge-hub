@@ -84,6 +84,8 @@ def country_plan(question):
             and model.lookup(' '.join(words[i:i+s]),'locality',model.preferred)})
         names=[n for n in names if not any(n!=other and (' '+n+' ') in (' '+other+' ') for other in names)]
     comparison=bool(re.search(r'\b(compare\w*|comparaison|vergleich\w*)\b',q))
+    relative_difference = population and comparison and bool(re.search(
+        r'\b(percent(?:age)?|pourcent\w*|prozent\w*)\b', q))
     incomplete_comparison=False
     if comparison:
         remainder=' '+q+' '
@@ -91,6 +93,8 @@ def country_plan(question):
         grammar={'compare','compares','comparing','comparez','comparer','comparaison','the','of','and','et','und','de','du','des','la','le','les',
                  'population','populations','in','en','au','mali','region','regions','cercle','cercles','commune','communes','with','to',
                  'for','2023','between','entre','by'}
+        if relative_difference:
+            grammar.update('show both operands formula percentage percent relative smaller larger give calculate using comparable same year level which is by determine difference plus grand petit pourcentage relatif calcul formule'.split())
         incomplete_comparison=any(token not in grammar for token in remainder.split())
     unknown_place=False
     for match in re.finditer(r'\b(?:of|in|von|du) (?:the )?(.+?) (region|cercle|commune|locality)\b',q):
@@ -98,7 +102,7 @@ def country_plan(question):
         if not re.search(r'\b(and|et|und|in|of|de|du|population|most|least|top|urban|rural)\b',name):
             if not geographic_model().lookup(name,match[2],geographic_model().preferred):unknown_place=True
     return {'metric':metric,'level':level,'scope_level':scope_level,'names':names,'unknown_place':unknown_place,
-            'comparison':comparison,'incomplete_comparison':incomplete_comparison,
+            'comparison':comparison,'relative_difference':relative_difference,'incomplete_comparison':incomplete_comparison,
             'national':bool(re.search(r'\bmali\b',q)), 'limit':limit,'order':order,
             'international':bool(re.search(r'\b(countries|country borders|pays|international\w*|lander)\b',q)),
             'question':question}
@@ -326,6 +330,17 @@ class CountryFoundation:
             lines+=['','[E01] '+tr('Published totals are retained; sex subtotals can differ by one person through rounding. U/R denotes the publisher’s urban/rural administrative classification, not built-up land cover.',
                 'Les totaux publiés sont conservés; les sous-totaux par sexe peuvent différer d’une personne par arrondi. U/R désigne le classement administratif urbain/rural de l’éditeur, pas l’occupation du sol.',
                 'Veröffentlichte Summen bleiben erhalten; Rundungen können Abweichungen von einer Person zwischen den Geschlechtern und der Gesamtsumme ergeben. U/R ist die administrative Stadt-/Land-Klassifikation des Herausgebers, keine Landbedeckung.')]
+            if plan['relative_difference'] and len(rows) == 2:
+                smaller, larger = sorted(rows, key=lambda row: row['population']['total'])
+                low, high = smaller['population']['total'], larger['population']['total']
+                if low > 0:
+                    percent = (high - low) * 100 / low
+                    formula = f"({high:,} − {low:,}) ÷ {low:,} × 100 = {percent:.2f}%"
+                    lines += ['', tr(f"{larger['name']} compared with {smaller['name']}, using the smaller population as the denominator: ",
+                        f"{larger['name']} par rapport à {smaller['name']}, avec la population la plus faible au dénominateur : ",
+                        f"{larger['name']} gegenüber {smaller['name']}, mit der kleineren Bevölkerung als Nenner: ") + formula + ' [E01]']
+                    data['relative_difference'] = {'larger_unit': larger['unit_id'], 'smaller_unit': smaller['unit_id'],
+                                                   'larger_population': high, 'smaller_population': low, 'percent': percent}
             if data.get('omitted_count'):lines.append(tr(f"Showing {len(rows)} of {data['candidate_count']} matching units.",f"{len(rows)} unités affichées sur {data['candidate_count']}.",f"Angezeigt: {len(rows)} von {data['candidate_count']} passenden Einheiten."))
             if metric=='ranking' and level=='commune':lines.append(tr(
                 'Bamako is represented by seven arrondissements in this edition; they are not included as communes in this ranking.',

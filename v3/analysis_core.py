@@ -2055,6 +2055,7 @@ def research_fongim(
     if sector_org_projects:
 
         sector_org_lines = []
+        sector_org_rows = []
 
         for sector, org_map in sorted(
             sector_org_projects.items(),
@@ -2088,8 +2089,12 @@ def research_fongim(
                 in org_details
             )
 
-            sector_org_lines.append(
-                f"{sector}: {org_text}"
+            sector_org_lines.append(f"{sector}: {org_text}")
+            sector_org_rows.extend(
+                {"sector": sector, "organization": organization,
+                 "relationship": "associated with the same project",
+                 "unique_projects": count}
+                for organization, count in org_details
             )
 
         evidence.append({
@@ -2101,6 +2106,7 @@ def research_fongim(
             "version": None,
             "page": None,
             "section": "Sector-organization relationships",
+            "relationship_rows": sector_org_rows,
             "content": (
                 f"Project-level sector-organization relationships "
                 f"for FONGIM projects in {geographic_scope}. "
@@ -2937,7 +2943,19 @@ EPISTEMIC RULES:
     experimental impact or universal recommendations. Money fields with
     unverified units must not become analytical amounts or disbursements.
 
-24. When a source supplies bounded individual project examples, report those
+24. For every material fact, bind the value or relationship to the exact
+    statement or row that supports it. Keep indicator, entity, disease,
+    numerator, denominator, unit, geography and observation date together.
+    A household percentage cannot establish a population percentage. A
+    partial table cannot establish a larger geographic total. Actors and
+    sectors co-listed in one document do not establish a relationship unless
+    the cited row links them. If evidence concerns another disease, indicator
+    or intervention, omit its figures unless explicitly requested as context.
+    Check compatible operands before computing, and show the inputs and formula.
+    Deliver the requested comparison, briefing or table first. Where blocked,
+    state the specific missing observation or relationship once.
+
+25. When a source supplies bounded individual project examples, report those
     examples and state that the list is incomplete. Do not claim that names,
     sectors or dates are entirely unavailable when supplied examples contain
     them. A complete count does not imply that every individual record was
@@ -2991,6 +3009,14 @@ in a different language; translate faithfully while retaining citations.
             "four IDs cannot support all items. National priorities cannot "
             "serve as citations for local need sectors."
         )
+
+    explicit_word_caps = re.findall(
+        r"(?:\b(?:at most|maximum(?: of)?|no more than|au plus)\s+(\d+)\s+(?:words|mots)\b"
+        r"|\b(\d+)\s+(?:words|mots)\s+(?:maximum|max)\b)", question, re.I
+    )
+    if explicit_word_caps:
+        cap = min(int(first or second) for first, second in explicit_word_caps)
+        user_prompt += f"\nThe user requires a maximum of {cap} words. Count the complete deliverable before returning it."
 
     from synthesis_context import results_table_guard
     table_guard=results_table_guard(synthesis_ledger,depth)
@@ -3255,9 +3281,21 @@ Rules:
 3. Do not use outside knowledge.
 4. Never cite or rely on a previous assistant answer as evidence. The new
    question will trigger fresh retrieval from documents and data.
-5. If the new question is already standalone, return it essentially unchanged.
-6. Use the language of the new question.
+5. If the new question is a fresh standalone assignment, return it essentially unchanged.
+6. Use the requested language. In a continuing assignment inherit its output language.
 7. Return only the rewritten question.
+10. Treat the conversation as an active professional assignment. A request
+    to change one constraint inherits every other compatible user constraint:
+    subject and deliverable, entities and levels, dates, geographic framework,
+    audience, language, length, output format, metrics, comparison method,
+    filters, fields and evidence requirements. Preserve the original task
+    when an intervening assistant response missed it. The user's latest
+    explicit changes take precedence over resolved text and assistant claims.
+11. For compression, drafting or format changes, rewrite the underlying
+    assignment with the requested new presentation. For a comparison of
+    earlier results, resolve all operands as entity/indicator/period lookups.
+    Never copy unverified numbers into the assignment. Keep the task language
+    when the user changes only one scope field, unless they request a translation.
 8. When filtering or comparing "those projects" or another previous set,
    preserve the exact source identifiers supplied in that set, or the explicit
    titles if identifiers were not supplied. Keep the user's restrictions;

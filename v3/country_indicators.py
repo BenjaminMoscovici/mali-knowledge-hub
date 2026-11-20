@@ -20,16 +20,30 @@ def indicator_package():
 
 def indicator_plan(question):
     q=_fold(question)
-    if not re.search(r'\bmali\b',q):return None
+    if not re.search(r'\b(?:mali|malien(?:ne)?s?)\b',q):return None
+    agriculture = bool(re.search(r'\b(agricultur\w*|landwirtschaft\w*)\b', q))
+    employment = bool(re.search(r'\b(employment|emploi|beschaftig\w*)\b', q))
+    gdp = bool(re.search(r'\b(gdp|pib|bruttoinlandsprodukt)\b', q))
+    sector_pair = agriculture and employment and gdp
+    water_definition_comparison = bool(re.search(
+        r'\b(difference|distinguish|distinguer|distingue|differe\w*)\b', q
+    ) and re.search(r'\b(basic|de base|minimal)\b', q)
+      and re.search(r'\b(safely managed|gere\w* en toute securite)\b', q))
+    lookup = re.sub(r'\b(?:latest available|derniere annee disponible|cite (?:les donnees|the data))\b', '', q)
+    if water_definition_comparison:
+        lookup = re.sub(r'\bgere\w* en toute securite\b', '', lookup)
+    if sector_pair or water_definition_comparison:
+        lookup = re.sub(r'\bcompar\w*\b', '', lookup)
+
     if re.search(r'\b(regions?|cercles?|communes?|localit\w*|villages?|'
         r'conflict\w*|security|securite|humanitar\w*|politic\w*|displace\w*|deplace\w*|'
         r'projects?|projets?|funding|financement|why|pourquoi|impact|priorit\w*|recommend\w*|'
-        r'hub|datasets?|sources?|available|compare|compar\w*|versus|vs|forecast\w*|predict\w*|prevision\w*|population of|population du|population de)\b',q):return None
+        r'hub|datasets?|sources?|available|compare|compar\w*|versus|vs|forecast\w*|predict\w*|prevision\w*|population of|population du|population de)\b',lookup):return None
     # A national indicator must not answer a place-specific question mentioning Mali.
     if any(n not in {'mali','what','which','are','the','and','how','les','des','pour','une','dans','rural','urban'}
            for n in geographic_model().retrieval_place_names(question)):return None
     codes=[]
-    if re.search(r'\b(gdp|pib|bruttoinlandsprodukt)\b',q):
+    if gdp and not agriculture:
         codes.append('NY.GDP.PCAP.CD' if re.search(r'\b(per capita|par habitant|pro kopf)\b',q) else 'NY.GDP.MKTP.CD')
     if re.search(r'\b(electricity|electrification|electricite|strom\w*)\b',q):
         codes.append('EG.ELC.ACCS.RU.ZS' if re.search(r'\brural\w*\b',q) else
@@ -37,9 +51,11 @@ def indicator_plan(question):
     if re.search(r'\b(drinking water|eau potable|trinkwasser)\b',q):codes.append('SH.H2O.BASW.ZS')
     if re.search(r'\b(sanitation|assainissement|sanitar\w*)\b',q):codes.append('SH.STA.BASS.ZS')
     if re.search(r'\b(forest\w*|foret\w*|wald\w*)\b',q):codes.append('AG.LND.FRST.ZS')
-    if re.search(r'\b(agricultur\w*|landwirtschaft\w*)\b',q):
-        codes.append('SL.AGR.EMPL.ZS' if re.search(r'\b(employment|emploi|beschaftig\w*)\b',q) else
-                     'AG.LND.AGRI.ZS' if re.search(r'\b(land|terres|flache\w*)\b',q) else 'NV.AGR.TOTL.ZS')
+    if agriculture:
+        if employment: codes.append('SL.AGR.EMPL.ZS')
+        if gdp: codes.append('NV.AGR.TOTL.ZS')
+        if not employment and not gdp:
+            codes.append('AG.LND.AGRI.ZS' if re.search(r'\b(land|terres|flache\w*)\b',q) else 'NV.AGR.TOTL.ZS')
     if re.search(r'\b(enrol\w*|scolarisation|einschul\w*)\b',q):
         codes.append('SE.SEC.ENRR' if re.search(r'\b(second\w*|sekundar\w*)\b',q) else 'SE.PRM.ENRR')
     if re.search(r'\b(primary completion|achevement du primaire|primarschulabschluss)\b',q):codes.append('SE.PRM.CMPT.ZS')
@@ -48,7 +64,10 @@ def indicator_plan(question):
     if not codes:return None
     # Explicitly unsupported definitions must never be silently relaxed.
     unsupported=bool(re.search(r'\b(safely managed|gere\w* en toute securite|continuous|fiabilite|reliability|constant|real gdp|constant prices|inflation adjusted|constant dollars|net enrol\w*|net d inscription|taux net|attendance)\b',q))
-    return {'metric':'indicator','codes':list(dict.fromkeys(codes)),
+    if water_definition_comparison and codes == ['SH.H2O.BASW.ZS']:
+        unsupported = False
+    return {'metric':'indicator','compare_water_definitions':water_definition_comparison,
+            'compare_sector_shares':sector_pair,'codes':list(dict.fromkeys(codes)),
             'years':[int(y) for y in re.findall(r'\b(?:19|20)\d{2}\b',q)],
             'time_series':bool(re.search(r'\b(trend\w*|evolution|time series|tendance\w*|zeitreihe|depuis|since)\b',q)),
             'unsupported_definition':unsupported}
@@ -120,5 +139,18 @@ def indicator_answer(question,language='English'):
     lines+=['',tr('Each year is the observation year. Without a requested year, this shows the latest non-missing value within the stored window, not a measurement of today’s conditions. National values cannot establish conditions in a commune or at a facility.',
         'Chaque année est celle de l’observation. Sans année demandée, la dernière valeur non manquante de la fenêtre enregistrée est affichée; elle ne décrit pas nécessairement la situation actuelle. Les valeurs nationales ne décrivent pas une commune ou un établissement.',
         'Jedes Jahr bezeichnet das Beobachtungsjahr. Ohne Jahresangabe erscheint der jüngste vorhandene Wert im gespeicherten Zeitfenster, keine Messung der heutigen Lage. Nationale Werte belegen keine Verhältnisse in einer Gemeinde oder Einrichtung.')]
+    if plan['compare_sector_shares']:
+        lines += ['', tr('Employment uses total employment as its denominator. Value added uses GDP and includes agriculture, forestry and fishing. These shares describe different quantities, even in the same year. [E01, E02]',
+            'L’emploi a pour dénominateur l’emploi total. La valeur ajoutée a pour dénominateur le PIB et inclut l’agriculture, la sylviculture et la pêche. Ces parts mesurent des grandeurs différentes, même pour la même année. [E01, E02]',
+            'Die Nenner sind die Gesamtbeschäftigung und das BIP. Die Wertschöpfung umfasst Landwirtschaft, Forstwirtschaft und Fischerei. Die Anteile messen auch im selben Jahr verschiedene Größen. [E01, E02]')]
+    if plan['compare_water_definitions']:
+        evidence.append({'evidence_id':'E02', 'source_type':'indicator_methodology',
+            'source_family':'WHO/UNICEF Joint Monitoring Programme', 'organization':'WHO/UNICEF',
+            'document_title':'JMP drinking water service ladder', 'locator':'Drinking water service ladder',
+            'source_endpoint':'https://washdata.org/monitoring/drinking-water',
+            'content':'Safely managed: improved source accessible on premises, available when needed, and free from faecal and priority chemical contamination. Basic: improved source with collection within 30 minutes round trip.'})
+        lines += ['', tr('Basic drinking water uses an improved source with a round trip of no more than 30 minutes. Safely managed adds on-premises access, availability when needed and freedom from contamination. The reported share is for at least basic service. [E01, E02]',
+            'Un service de base utilise une source améliorée accessible en 30 minutes aller-retour au maximum. Un service géré en toute sécurité exige une source sur place, disponible quand nécessaire et exempte de contamination. La proportion citée concerne un service au moins de base. [E01, E02]',
+            'Die Grundversorgung nutzt eine verbesserte Quelle mit höchstens 30 Minuten für Hin- und Rückweg. Eine sichere Versorgung erfordert eine Quelle vor Ort, bedarfsgerechte Verfügbarkeit und Schadstofffreiheit. Der Anteil gilt für mindestens die Grundversorgung. [E01, E02]')]
     return {'answer':'\n'.join(lines),'evidence':evidence,'country':data,
             'family_counts':{'World Bank WDI country foundation':len(evidence)}}

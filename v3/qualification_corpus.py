@@ -42,13 +42,27 @@ class Select:
         self.start, self.size = start, end - start + 1
         return self
 
+    def order(self, column):
+        if column != self.corpus.key_columns[self.table]:
+            raise ValueError("Qualification pagination requires primary-key ordering")
+        return self
+
     def execute(self):
         sql = self.corpus.sql
         if not self.columns:
             raise ValueError("Qualification exposes explicit reads only")
         if "*" in self.columns:
             raise ValueError("Qualification requires named evidence columns")
-        fields = sql.SQL(", ").join(map(sql.Identifier, self.columns))
+        fields = []
+        for column in self.columns:
+            if self.table == "documents" and column == "chunks(count)":
+                fields.append(sql.SQL(
+                    "(SELECT json_build_array(json_build_object('count', COUNT(*))) "
+                    "FROM public.chunks WHERE chunks.document_id = documents.id) AS chunks"
+                ))
+            else:
+                fields.append(sql.Identifier(column))
+        fields = sql.SQL(", ").join(fields)
         statement = sql.SQL("SELECT row_to_json(q)::text FROM (SELECT {} FROM public.{}").format(
             fields, sql.Identifier(self.table)
         )

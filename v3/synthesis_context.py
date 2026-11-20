@@ -192,6 +192,8 @@ def prepare(ledger, question, depth='balanced'):
                and results_table(item.get('content',''))}
     doc_ids.update(table_ids)
     withheld = unverified_hapi_for_commune(question, deduplicated)
+    from normalization import sector_matches
+    requested_sectors = set(sector_matches(question))
     selected, excerpts, omitted = [], {}, []
     for item in deduplicated:
         if item["evidence_id"] in withheld:
@@ -208,6 +210,20 @@ def prepare(ledger, question, depth='balanced'):
                 omitted.append(item['evidence_id']); continue
         view = dict(item)
         content = str(item.get('content') or '')
+        relationship_rows = item.get('relationship_rows')
+        if relationship_rows and len(requested_sectors) == 1:
+            matched = [row for row in relationship_rows
+                       if requested_sectors.intersection(sector_matches(row["sector"], "fongim_structured"))]
+            view['relationship_rows'] = matched
+            if matched:
+                view['content'] = (
+                    'Rows selected for the requested sector from this source table. '
+                    'Organization and sector are associated with the same project. '
+                    'This does not establish actor role or service delivery.'
+                )
+                selected.append(view)
+                continue
+        view.pop('relationship_rows', None)
         if (item.get('source_type') == 'knowledge_base_document' and not exhaustive and item['evidence_id'] not in table_ids) or (section in ('Organization-sector relationships','Sector-organization relationships') and not exhaustive):
             compact, spans = extract_spans(content, wanted,
                 budget=3600 if depth=='deep' else 2200,
@@ -240,6 +256,8 @@ def serialize(ledger):
         fields = {k:item[k] for k in ('page','section','locator','geographic_scope','geographic_precision',
             'admin1_name','admin2_name','admin_level','retrieved_at','record_id','chunk_id','evidence_types')
             if item.get(k) not in (None,'',[],{})}
+        if item.get('relationship_rows'):
+            fields['relationship_rows'] = item['relationship_rows']
         if item.get('normalized_sectors'):
             fields['sector_cues'] = list(item['normalized_sectors'])
         blocks.append(f"[{item['evidence_id']}] SOURCE {sources[key]} " +

@@ -647,16 +647,29 @@ async def chat(request):
     try:
         from registry_observations import answer as registry_answer, resolve_year_followup
         from followup_context import previous_question
+        from research_context import assignment_edit
+        assignment_resolved = bool(prior and assignment_edit(question))
+        if assignment_resolved:
+            from analysis_core import openai_client, resolve_conversational_question
+            phase = "assignment_resolution"
+            async with _analysis_limit:
+                context_token, context_id = openai_client.begin()
+                try:
+                    standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
+                finally:
+                    context_usage = openai_client.finish(context_token, context_id)
+            context_method = "assignment_resolution"
+            route = conversational_route(standalone, mode)
+        language = synthesis_language(standalone if assignment_resolved else question)
         try:
             from registry_research import (answer as registry_evidence_answer,
                                            resolve_year_followup as resolve_evidence_year)
-            language = synthesis_language(question)
-            registered = await asyncio.to_thread(registry_answer, question, language)
+            registered = await asyncio.to_thread(registry_answer, standalone, language)
             evidence_brief = None
             if registered is None:
-                evidence_brief = await asyncio.to_thread(registry_evidence_answer, question, language)
+                evidence_brief = await asyncio.to_thread(registry_evidence_answer, standalone, language)
                 registered = evidence_brief
-            if registered is None and prior:
+            if registered is None and prior and not assignment_resolved:
                 previous = previous_question(prior)
                 evidence_question = resolve_evidence_year(question, previous)
                 if evidence_question:
@@ -674,7 +687,7 @@ async def chat(request):
         except (OSError, ValueError, KeyError, TypeError) as exc:
             print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
             registered = None
-        if registered is None and route["path"] not in {"conversational", "conversation_only"}:
+        if registered is None and not assignment_resolved and route["path"] not in {"conversational", "conversation_only"}:
             resolved = await asyncio.to_thread(resolve_country_followup, question, prior)
             geography_method = 'structured_country_fact'
             if not resolved:
@@ -709,20 +722,20 @@ async def chat(request):
                       "family_counts": {}}
         elif route["path"] == "country_fact":
             phase = "structured_country_fact"
-            result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, synthesis_language(question)))
+            result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
         elif route["path"] == "simple_geography":
             phase = "structured_geography"
-            result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
+            result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
         else:
             from analysis_core import (generate_grounded_answer, is_source_inventory_question,
                                    likely_context_dependent_followup, resolve_conversational_question,
                                    source_inventory_answer, openai_client)
             async with _analysis_limit:
                 scoped_followup = resolve_evidence_year(question, previous_question(prior), evidence_only=False)
-                if not slot_context and scoped_followup:
+                if not assignment_resolved and not slot_context and scoped_followup:
                     standalone = scoped_followup
                     context_method = "registry_research_reference_year"
-                elif not slot_context and likely_context_dependent_followup(question, prior):
+                elif not assignment_resolved and not slot_context and likely_context_dependent_followup(question, prior):
                     phase = "context_rewrite"
                     context_token, context_id = openai_client.begin()
                     try:
@@ -733,16 +746,16 @@ async def chat(request):
                 if conversational_route(standalone, mode)["path"] == "country_fact":
                     route = {"path": "country_fact"}
                     phase = "structured_country_fact"
-                    result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, synthesis_language(question)))
+                    result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
                 elif conversational_route(standalone, mode)["path"] == "simple_geography":
                     route = {"path": "simple_geography"}
                     phase = "structured_geography"
-                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, answer_language(question)))
+                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
                 elif is_source_inventory_question(standalone):
                     result = {"answer": await asyncio.to_thread(source_inventory_answer, answer_language(question)), "evidence": [], "family_counts": {}}
                 else:
                     result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
-                                                 response_language=synthesis_language(question))
+                                                 response_language=language)
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
         print("MKH_API_FAILURE " + json.dumps({
@@ -966,6 +979,9 @@ async def source_page(request):
 
 
 def source_inventory_db():
+    if setting("MKH_READ_ONLY_QUALIFICATION") == "1":
+        from qualification_corpus import from_environment
+        return from_environment()
     if not setting('SUPABASE_URL') or not setting('SUPABASE_SECRET_KEY'):
         raise RuntimeError('Document registry is not configured')
     return create_client(setting('SUPABASE_URL'), setting('SUPABASE_SECRET_KEY'),
