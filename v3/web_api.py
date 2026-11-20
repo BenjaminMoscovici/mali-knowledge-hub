@@ -646,116 +646,91 @@ async def chat(request):
     slot_context = None
     try:
         from registry_observations import answer as registry_answer, resolve_year_followup
+        from registry_research import answer as registry_evidence_answer, resolve_year_followup as resolve_evidence_year
         from followup_context import previous_question
         from research_context import assignment_edit
-        assignment_resolved = bool(prior and assignment_edit(question))
-        if assignment_resolved:
-            from analysis_core import openai_client, resolve_conversational_question
-            phase = "assignment_resolution"
-            async with _analysis_limit:
-                context_token, context_id = openai_client.begin()
-                try:
-                    standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
-                finally:
-                    context_usage = openai_client.finish(context_token, context_id)
-            context_method = "assignment_resolution"
+
+        if prior and route["path"] not in {"conversational", "conversation_only"}:
+            previous = previous_question(prior)
+            edit = assignment_edit(question)
+            if not edit:
+                # Exact edits keep their model-free path. Each resolver returns
+                # a complete query, and all use the same answer dispatch below.
+                for method, resolver in (
+                    ("registry_evidence_reference_year", lambda: resolve_evidence_year(question, previous)),
+                    ("registry_reference_year", lambda: resolve_year_followup(question, previous)),
+                    ("structured_country_fact", lambda: resolve_country_followup(question, prior)),
+                    ("structured_geographic_count", lambda: resolve_count_followup(question, prior)),
+                    ("structured_geographic_hierarchy", lambda: resolve_hierarchy_followup(question, prior)),
+                ):
+                    resolved = await asyncio.to_thread(resolver)
+                    if resolved:
+                        standalone, context_method = resolved, method
+                        break
+                if context_method == "existing_resolver":
+                    slot_context = await asyncio.to_thread(resolve_slots, question, prior)
+                    if slot_context:
+                        standalone = slot_context["standalone_question"]
+                        context_method = slot_context["method"]
+                    else:
+                        resolved = await asyncio.to_thread(resolve_evidence_year, question, previous, evidence_only=False)
+                        if resolved:
+                            standalone, context_method = resolved, "registry_research_reference_year"
+            if context_method == "existing_resolver":
+                from research_context import needs_context
+                if edit or needs_context(question):
+                    from analysis_core import openai_client, resolve_conversational_question
+                    phase = "assignment_resolution" if edit else "context_rewrite"
+                    async with _analysis_limit:
+                        token, request_id = openai_client.begin()
+                        try:
+                            standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
+                        finally:
+                            context_usage = openai_client.finish(token, request_id)
+                    if edit:
+                        context_method = "assignment_resolution"
             route = conversational_route(standalone, mode)
-        language = synthesis_language(standalone if assignment_resolved else question)
-        try:
-            from registry_research import (answer as registry_evidence_answer,
-                                           resolve_year_followup as resolve_evidence_year)
-            registered = await asyncio.to_thread(registry_answer, standalone, language)
-            evidence_brief = None
-            if registered is None:
-                evidence_brief = await asyncio.to_thread(registry_evidence_answer, standalone, language)
-                registered = evidence_brief
-            if registered is None and prior and not assignment_resolved:
-                previous = previous_question(prior)
-                evidence_question = resolve_evidence_year(question, previous)
-                if evidence_question:
-                    evidence_brief = await asyncio.to_thread(registry_evidence_answer, evidence_question, language)
-                    if evidence_brief is not None:
-                        registered = evidence_brief
-                        standalone = evidence_question
-                        context_method = "registry_evidence_reference_year"
-                revised = resolve_year_followup(question, previous) if registered is None else None
-                if revised:
-                    registered = await asyncio.to_thread(registry_answer, revised, language)
-                    if registered is not None:
-                        standalone = revised
-                        context_method = "registry_reference_year"
-        except (OSError, ValueError, KeyError, TypeError) as exc:
-            print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
-            registered = None
-        if registered is None and not assignment_resolved and route["path"] not in {"conversational", "conversation_only"}:
-            resolved = await asyncio.to_thread(resolve_country_followup, question, prior)
-            geography_method = 'structured_country_fact'
-            if not resolved:
-                resolved = await asyncio.to_thread(resolve_count_followup, question, prior)
-                geography_method = 'structured_geographic_count'
-            if not resolved:
-                resolved = await asyncio.to_thread(resolve_hierarchy_followup, question, prior)
-                geography_method = 'structured_geographic_hierarchy'
-            if resolved:
-                standalone = resolved
-                route = conversational_route(standalone, mode)
-                context_method = geography_method
-            else:
-                slot_context = await asyncio.to_thread(resolve_slots, question, prior)
-                if slot_context:
-                    standalone = slot_context['standalone_question']
-                    route = conversational_route(standalone, mode)
-                    context_method = slot_context['method']
-        if registered is not None:
-            route = {"path": "registry_evidence" if evidence_brief is not None else "registry_observation"}
-            result = registered
-        elif route["path"] == "conversational":
-            result = {"answer": route["reply"], "evidence": []}
-        elif route["path"] == "conversation_only":
-            from conversation_transform import restate
-            phase = "conversation_transform"
-            async with _transform_limit:
-                result = await asyncio.to_thread(restate, question, prior, answer_language(question))
-        elif slot_context and slot_context.get('direct_answer'):
-            phase = "structured_empty_project_subset"
-            result = {"answer": slot_context['direct_answer'], "evidence": [],
-                      "family_counts": {}}
-        elif route["path"] == "country_fact":
-            phase = "structured_country_fact"
-            result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
-        elif route["path"] == "simple_geography":
-            phase = "structured_geography"
-            result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
-        else:
-            from analysis_core import (generate_grounded_answer, is_source_inventory_question,
-                                   likely_context_dependent_followup, resolve_conversational_question,
-                                   source_inventory_answer, openai_client)
-            async with _analysis_limit:
-                scoped_followup = resolve_evidence_year(question, previous_question(prior), evidence_only=False)
-                if not assignment_resolved and not slot_context and scoped_followup:
-                    standalone = scoped_followup
-                    context_method = "registry_research_reference_year"
-                elif not assignment_resolved and not slot_context and likely_context_dependent_followup(question, prior):
-                    phase = "context_rewrite"
-                    context_token, context_id = openai_client.begin()
-                    try:
-                        standalone = await asyncio.to_thread(resolve_conversational_question, question, prior)
-                    finally:
-                        context_usage = openai_client.finish(context_token, context_id)
-                phase = "research"
-                if conversational_route(standalone, mode)["path"] == "country_fact":
-                    route = {"path": "country_fact"}
-                    phase = "structured_country_fact"
-                    result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
-                elif conversational_route(standalone, mode)["path"] == "simple_geography":
-                    route = {"path": "simple_geography"}
-                    phase = "structured_geography"
-                    result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
-                elif is_source_inventory_question(standalone):
-                    result = {"answer": await asyncio.to_thread(source_inventory_answer, answer_language(question)), "evidence": [], "family_counts": {}}
+
+        language = synthesis_language(standalone if context_method == "assignment_resolution" else question)
+        result = None
+        if route["path"] not in {"conversational", "conversation_only"}:
+            try:
+                result = await asyncio.to_thread(registry_answer, standalone, language)
+                if result is not None:
+                    route = {"path": "registry_observation"}
                 else:
-                    result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
-                                                 response_language=language)
+                    result = await asyncio.to_thread(registry_evidence_answer, standalone, language)
+                    if result is not None:
+                        route = {"path": "registry_evidence"}
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
+        if result is None:
+            if route["path"] == "conversational":
+                result = {"answer": route["reply"], "evidence": []}
+            elif route["path"] == "conversation_only":
+                from conversation_transform import restate
+                phase = "conversation_transform"
+                async with _transform_limit:
+                    result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+            elif slot_context and slot_context.get("direct_answer"):
+                phase = "structured_empty_project_subset"
+                result = {"answer": slot_context["direct_answer"], "evidence": [], "family_counts": {}}
+            elif route["path"] == "country_fact":
+                phase = "structured_country_fact"
+                result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
+            elif route["path"] == "simple_geography":
+                phase = "structured_geography"
+                result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
+            else:
+                from analysis_core import generate_grounded_answer, is_source_inventory_question, source_inventory_answer
+                phase = "research"
+                async with _analysis_limit:
+                    if is_source_inventory_question(standalone):
+                        result = {"answer": await asyncio.to_thread(source_inventory_answer, language),
+                                  "evidence": [], "family_counts": {}}
+                    else:
+                        result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
+                                                         response_language=language)
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
         print("MKH_API_FAILURE " + json.dumps({

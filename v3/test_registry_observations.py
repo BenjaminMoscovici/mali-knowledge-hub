@@ -80,10 +80,28 @@ def test_unfamiliar_releases_need_only_registry_data(tmp_path, monkeypatch):
     assert followup['metrics']['model_calls'] == 0
 
 
+    from citations import unsupported_registry_quantities
+    from joins import observation_comparisons
+
+    compound = ('Compare functional boreholes in Dara District in 2021 and 2022 '
+                'and discuss funding reported in 2023')
+    rows = registry_observations.retrieve(compound)
+    assert {row["observation"]["year"] for row in rows} == {2021, 2022}
+    for i, row in enumerate(rows, 1):
+        row["evidence_id"] = f"E{i:02d}"
+    calculations = observation_comparisons(rows, compound)
+    assert calculations[0]["difference"] == "17"
+    assert not unsupported_registry_quantities("Increased by 17 sites [E01, E02]", rows, calculations=calculations)
+    assert unsupported_registry_quantities("Increased by 17 sites [E01]", rows, calculations=calculations)
+
     entries[1]['annual_observations'][0]['definition'] = 'operator estimates'
     registry.write_text(json.dumps(entries))
     assert registry_observations.answer(
         'Compare functional boreholes in Dara District in 2021 and 2022', 'English') is None
+    conflicting = registry_observations.retrieve(compound)
+    for i, row in enumerate(conflicting, 1):
+        row["evidence_id"] = f"E{i:02d}"
+    assert not observation_comparisons(conflicting, compound)
     assert '**41 sites**' in chat(client, 'How many functional boreholes in Dara District in 2021?')['answer']
 
     assert registry_observations.answer(

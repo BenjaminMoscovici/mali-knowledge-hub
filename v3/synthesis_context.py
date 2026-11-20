@@ -256,6 +256,8 @@ def serialize(ledger):
         fields = {k:item[k] for k in ('page','section','locator','geographic_scope','geographic_precision',
             'admin1_name','admin2_name','admin_level','retrieved_at','record_id','chunk_id','evidence_types')
             if item.get(k) not in (None,'',[],{})}
+        if item.get('observation'):
+            fields['observation'] = item['observation']
         if item.get('relationship_rows'):
             fields['relationship_rows'] = item['relationship_rows']
         if item.get('normalized_sectors'):

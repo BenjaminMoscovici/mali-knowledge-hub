@@ -28,11 +28,60 @@ def _read(path, revision):
 
 
 
+def _capabilities(path):
+    for source, capability in _read(path, path.stat().st_mtime_ns):
+        subjects = {_fold(alias.format(place=place))
+                    for alias in capability["aliases"] for place in capability["place_aliases"]}
+        yield source, capability, subjects
+
+
+def _observation(source, capability, row):
+    year = row["year"]
+    return {
+        "source_type": "registry_observation", "document_title": source["source_name"],
+        "source_family": source["provider"], "organization": source["provider"],
+        "version": capability["version"], "release_id": capability["release_id"], "record_id": row["id"],
+        "source_endpoint": source["access_route"], "page": row.get("page"),
+        "section": row["locator"], "locator": row["locator"],
+        "reference_period_start": f"{year}-01-01", "reference_period_end": f"{year}-12-31",
+        "retrieved_at": source.get("last_successful_retrieval"), "geographic_scope": capability["place"],
+        "observation": {"measure": capability["measure"], "definition": capability["definition"],
+                        "geography_id": capability["geography_id"], "unit": capability["unit"],
+                        "year": year, "value": row["value"]},
+        "content": row["excerpt"],
+    }
+
+
+def retrieve(question, registry=None):
+    """Supply referenced observations to normal synthesis, including compound requests."""
+    text = _fold(question)
+    matches = []
+    for source, capability, subjects in _capabilities(registry or REGISTRY):
+        for subject in sorted(subjects, key=lambda value: (-len(value), value)):
+            # Require the declared subject and year together. A date in another
+            # clause must not be applied to this observation.
+            match = re.search(
+                rf"(?<!\w){re.escape(subject)} (?:in |for |en |pour |de |of )?"
+                rf"((?:19|20)\d{{2}}(?:(?: and | et | vs | versus | a | to )(?:19|20)\d{{2}})?)(?!\d)", text)
+            if match:
+                years = set(map(int, re.findall(r"\d{4}", match[1])))
+                matches.extend(_observation(source, capability, row)
+                               for row in capability["records"] if row["year"] in years)
+                break
+    return matches
+
+
 def resolve_year_followup(question, previous):
     """Carry forward an explicit registry subject when only the year changes."""
     year = re.fullmatch(r"(?:and in|what about|et en|et pour) ((?:19|20)\d{2})", _fold(question))
     match = LOOKUP.fullmatch(_fold(previous or ""))
     if not year or not match or match["compare"] or len(match["years"]) != 4:
+        return None
+    try:
+        known_subject = any(match["subject"] in subjects for _, _, subjects in _capabilities(REGISTRY))
+    except OSError:
+        return None
+    if not known_subject:
         return None
     return match["subject"] + " " + year[1]
 
@@ -45,12 +94,7 @@ def answer(question, language, registry=None):
     subject = match["subject"]
     years = tuple(dict.fromkeys(map(int, re.findall(r"\d{4}", match["years"]))))
     selections = []
-    for source, capability in _read(path, path.stat().st_mtime_ns):
-        subjects = {
-            _fold(alias.format(place=place))
-            for alias in capability["aliases"]
-            for place in capability["place_aliases"]
-        }
+    for source, capability, subjects in _capabilities(path):
         if subject in subjects:
             selections.append((source, capability))
     selected = [(source, capability, row) for source, capability in selections
@@ -75,18 +119,7 @@ def answer(question, language, registry=None):
         unit = capability["unit_labels"]["fr" if fr else "en"]
         note = capability["notes"]["fr" if fr else "en"]
         lines.append(f'- **{row["year"]} · {capability["place"]}** · {label} — **{value} {unit}** ({source["provider"]}). {note} [{eid}]')
-        evidence.append({
-            "evidence_id": eid, "source_type": "registry_observation",
-            "document_title": source["source_name"], "source_family": source["provider"],
-            "organization": source["provider"], "version": capability["version"],
-            "release_id": capability["release_id"], "record_id": row["id"],
-            "source_endpoint": source["access_route"], "page": row.get("page"),
-            "section": row["locator"], "locator": row["locator"],
-            "reference_period_start": f'{row["year"]}-01-01',
-            "reference_period_end": f'{row["year"]}-12-31',
-            "retrieved_at": source.get("last_successful_retrieval"),
-            "geographic_scope": capability["place"], "content": row["excerpt"],
-        })
+        evidence.append({**_observation(source, capability, row), "evidence_id": eid})
     missing = set(years) - {row["year"] for _, _, row in selected}
     if missing:
         years_text = ", ".join(map(str, sorted(missing)))

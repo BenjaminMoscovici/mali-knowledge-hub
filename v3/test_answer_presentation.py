@@ -163,3 +163,16 @@ def test_bad_registry_answer_repair_cannot_bypass_checks():
     )
     assert len(calls) == 2 and "million" not in result["answer"]
     assert result["execution_trace"]["synthesis_context"]["citation_repair"] == "rejected"
+
+
+
+def test_requested_brief_limit_repairs_without_dropping_citations():
+    calls, result, _ = invoke(
+        "balanced",
+        ("The release reports a plan for the following year without any evidence of delivery [E01].",
+         "Planned for 2027 [E01]."),
+        question="What is the schedule? Use at most 6 words.",
+    )
+    assert len(calls) == 2
+    assert result["answer"] == "Planned for 2027 [E01]."
+    assert result["execution_trace"]["synthesis_context"]["word_limit_repair"] == "accepted"

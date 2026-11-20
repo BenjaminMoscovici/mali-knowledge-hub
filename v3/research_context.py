@@ -123,6 +123,56 @@ def has_reference(question):
     return any(re.search(pattern, text) for pattern in patterns)
 
 
+def needs_context(question):
+    """Recognize conversational references without loading the research engine."""
+    from source_wave import _fold
+    q = _fold(question)
+
+    if not q:
+        return False
+
+    if has_reference(q):
+        return True
+
+    markers = [
+        "what about ",
+        "how about ",
+        "and ",
+        "but ",
+        "compare that",
+        "compare this",
+        "compare it",
+        "same for ",
+        "same question",
+        "that ",
+        "this ",
+        "those ",
+        "these ",
+        "them ",
+        "it ",
+        "why is that",
+        "why does that",
+        "what does that",
+        "and there",
+        "and in ",
+        "et ",
+        "mais ",
+        "meme question",
+        "et la-bas",
+        "dans cette zone",
+        "compare cela",
+        "compare ca",
+    ]
+
+    if any(
+        q.startswith(marker)
+        for marker in markers
+    ):
+        return True
+
+    return len(q.split()) <= 5
+
+
 def assignment_edit(question):
     """Identify instructions that operate on the current assignment."""
     from source_wave import _fold

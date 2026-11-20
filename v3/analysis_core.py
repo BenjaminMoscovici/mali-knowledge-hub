@@ -2637,11 +2637,16 @@ def run_four_source_research(question, document_count=8):
     legacy_evidence = (fongim_result["evidence"] + inventory_evidence +
                        [item for family in packaged_retrievers for item in packaged_results[family]])
     from registry_research import retrieve as retrieve_registered
+    from registry_observations import retrieve as retrieve_observations
     planner_output = planner_result.get("planner_output") or {}
     registry_ids = {family for intent in planner_output.get("intents", [])
                     for family in intent.get("source_families", [])
                     if family.startswith("registry:")}
     registered_evidence, registry_gaps = retrieve_registered(question, planned_ids=registry_ids)
+    try:
+        registered_evidence.extend(retrieve_observations(question))
+    except (OSError, ValueError, KeyError, TypeError):
+        print("MKH_REGISTRY_OBSERVATION_LOOKUP_FAILURE", flush=True)
     legacy_records = {(item.get("release_id"), item.get("record_id")) for item in legacy_evidence}
     registered_evidence = [item for item in registered_evidence
                            if (item["release_id"], item["record_id"]) not in legacy_records]
@@ -2814,6 +2819,8 @@ def _generate_grounded_answer(
 
     synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
     evidence_text = serialize_synthesis(synthesis_ledger)
+    from joins import observation_comparisons
+    calculations = observation_comparisons(synthesis_ledger, question)
     # Only IDs actually supplied to synthesis can be used by its navigation aid.
     synthesis_joined = build_join_context(synthesis_ledger, research["geography"])
     synthesis_joined["organization_resolution"] = research["joined"].get("organization_resolution", [])
@@ -3010,12 +3017,18 @@ in a different language; translate faithfully while retaining citations.
             "serve as citations for local need sectors."
         )
 
+    if calculations:
+        user_prompt += (
+            "\nVERIFIED ANNUAL DIFFERENCES (later minus earlier; cite both operand IDs): "
+            + json.dumps(calculations, ensure_ascii=False)
+        )
+
     explicit_word_caps = re.findall(
         r"(?:\b(?:at most|maximum(?: of)?|no more than|au plus)\s+(\d+)\s+(?:words|mots)\b"
         r"|\b(\d+)\s+(?:words|mots)\s+(?:maximum|max)\b)", question, re.I
     )
-    if explicit_word_caps:
-        cap = min(int(first or second) for first, second in explicit_word_caps)
+    cap = min((int(first or second) for first, second in explicit_word_caps), default=None)
+    if cap:
         user_prompt += f"\nThe user requires a maximum of {cap} words. Count the complete deliverable before returning it."
 
     from synthesis_context import results_table_guard
@@ -3054,27 +3067,39 @@ in a different language; translate faithfully while retaining citations.
         answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."
     elif answer:
         from citations import unsupported_registry_quantities
-        unsupported = unsupported_registry_quantities(answer, synthesis_ledger)
-        if unsupported and depth != "quick":
-            context_audit["citation_repair"] = "rejected"
+        unsupported = unsupported_registry_quantities(answer, synthesis_ledger, calculations=calculations)
+        over_budget = bool(cap and len(answer.split()) > cap)
+        if (unsupported or over_budget) and depth != "quick":
+            repair_key = "citation_repair" if unsupported else "word_limit_repair"
+            correction = (
+                "The previous draft included numbers that could not be verified against the citations. "
+                "Use exact supplied values and direct citations. Omit unsupported claims."
+                if unsupported else
+                f"The previous draft exceeded the requested {cap}-word limit. Retain the central findings, "
+                "citations and decisive limitations within the limit."
+            )
+            context_audit[repair_key] = "rejected"
             try:
                 repaired = openai_client.responses.create(
                     model=model,
                     reasoning={"effort": "none"},
                     max_output_tokens=min(configuration["max_output_tokens"], 1000),
                     instructions=system_prompt,
-                    input=(user_prompt + "\nThe previous draft included numbers that could not be "
-                           "verified against the citations. Write a fresh answer using exact supplied "
-                           "values and direct citations. Omit unsupported claims while answering the "
-                           "remaining parts. Keep the same language and decision focus.")
+                    input=(user_prompt + "\n" + correction +
+                           " Keep the same language, scope and decision focus."),
                 )
                 proposed, proposed_audit = verify_citations(repaired.output_text, synthesis_ledger)
-                if proposed_audit["valid"] and proposed and not unsupported_registry_quantities(proposed, synthesis_ledger, check_all_cited=True):
+                if (
+                    proposed_audit["valid"] and proposed
+                    and (not cap or len(proposed.split()) <= cap)
+                    and not unsupported_registry_quantities(
+                        proposed, synthesis_ledger, check_all_cited=True, calculations=calculations)
+                ):
                     answer, prompt_citation_audit, unsupported = proposed, proposed_audit, []
-                    context_audit["citation_repair"] = "accepted"
+                    context_audit[repair_key] = "accepted"
             except Exception as exc:
-                context_audit["citation_repair"] = "unavailable"
-                context_audit["citation_repair_error"] = type(exc).__name__
+                context_audit[repair_key] = "unavailable"
+                context_audit[repair_key + "_error"] = type(exc).__name__
         if unsupported:
             prompt_citation_audit["unsupported_registry_quantities"] = unsupported
             selected_language = response_language or answer_language(question)
@@ -3200,52 +3225,8 @@ def likely_context_dependent_followup(
     if not messages:
         return False
 
-    q = normalize_text(question).strip()
-
-    if not q:
-        return False
-
-    from research_context import has_reference
-    if has_reference(q):
-        return True
-
-    markers = [
-        "what about ",
-        "how about ",
-        "and ",
-        "but ",
-        "compare that",
-        "compare this",
-        "compare it",
-        "same for ",
-        "same question",
-        "that ",
-        "this ",
-        "those ",
-        "these ",
-        "them ",
-        "it ",
-        "why is that",
-        "why does that",
-        "what does that",
-        "and there",
-        "and in ",
-        "et ",
-        "mais ",
-        "meme question",
-        "et la-bas",
-        "dans cette zone",
-        "compare cela",
-        "compare ca",
-    ]
-
-    if any(
-        q.startswith(marker)
-        for marker in markers
-    ):
-        return True
-
-    return len(q.split()) <= 5
+    from research_context import needs_context
+    return needs_context(question)
 
 
 def resolve_conversational_question(

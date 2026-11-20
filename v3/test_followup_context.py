@@ -96,7 +96,9 @@ def test_api_skips_only_rewrite_and_retrieves_for_each_guest():
         # Missing history must not inherit another guest's topic.
         response = client.post('/api/chat', json={'question':'What about women?'},
                                headers={'Origin':'http://127.0.0.1:8765'})
-        assert response.status_code == 503
+        assert response.status_code == 200
+        assert requests[-1][0] == 'What about women?'
+        assert response.json()['metrics']['context_api_usage'] == {}
     client.close()
 
 

@@ -46,7 +46,7 @@ def _quantities(text):
     return values
 
 
-def unsupported_registry_quantities(answer, evidence, *, check_all_cited=False):
+def unsupported_registry_quantities(answer, evidence, *, check_all_cited=False, calculations=()):
     by_id = {item["evidence_id"]: item for item in evidence}
     problems = []
     for line in answer.splitlines():
@@ -64,6 +64,9 @@ def unsupported_registry_quantities(answer, evidence, *, check_all_cited=False):
                 available |= _quantities(" ".join(str(item.get(key) or "") for key in (
                     "content", "reference_period_start", "reference_period_end",
                 )))
+            for calculation in calculations:
+                if set(calculation["evidence_ids"]).issubset(ids):
+                    available |= _quantities(calculation["difference"])
             unsupported = _quantities(claim) - available
             if unsupported:
                 problems.append({"cited_ids": ids, "unsupported_quantity_count": len(unsupported)})
