@@ -35,6 +35,18 @@ def _capabilities(path):
         yield source, capability, subjects
 
 
+OBSERVATION_DIMENSIONS = (
+    "measure", "definition", "geography_id", "unit",
+    "denominator", "population", "methodology", "geographic_level", "period_type",
+)
+
+
+def observation_identity(record):
+    """Match the required identity and every additional dimension declared."""
+    dimensions = tuple(record.get(field) for field in OBSERVATION_DIMENSIONS)
+    return dimensions if all(dimensions[:4]) else None
+
+
 def _observation(source, capability, row):
     year = row["year"]
     return {
@@ -45,9 +57,8 @@ def _observation(source, capability, row):
         "section": row["locator"], "locator": row["locator"],
         "reference_period_start": f"{year}-01-01", "reference_period_end": f"{year}-12-31",
         "retrieved_at": source.get("last_successful_retrieval"), "geographic_scope": capability["place"],
-        "observation": {"measure": capability["measure"], "definition": capability["definition"],
-                        "geography_id": capability["geography_id"], "unit": capability["unit"],
-                        "year": year, "value": row["value"]},
+        "observation": {**{field: capability[field] for field in OBSERVATION_DIMENSIONS
+                           if field in capability}, "year": year, "value": row["value"]},
         "content": row["excerpt"],
     }
 
@@ -102,9 +113,8 @@ def answer(question, language, registry=None):
     if not selected:
         return None
     # Identical wording can describe different measures or boundary vintages.
-    identities = {(c["measure"], c["geography_id"], c["definition"], c["unit"])
-                  for _, c, _ in selected}
-    if len(identities) != 1:
+    identities = {observation_identity(c) for _, c, _ in selected}
+    if len(identities) != 1 or None in identities:
         return None
     fr = language == "French"
     if language not in {"English", "French"}:

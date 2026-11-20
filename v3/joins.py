@@ -9,6 +9,7 @@ from decimal import Decimal
 import re
 
 from normalization import classify_evidence, sector_matches
+from registry_observations import OBSERVATION_DIMENSIONS, observation_identity
 
 
 def enrich(ledger):
@@ -84,8 +85,8 @@ def observation_comparisons(ledger, question):
         value = item.get("observation")
         if not value:
             continue
-        identity = tuple(value.get(key) for key in ("measure", "definition", "geography_id", "unit"))
-        if all(identity):
+        identity = observation_identity(value)
+        if identity:
             groups[identity][value["year"]].append((Decimal(str(value["value"])), item["evidence_id"]))
     calculations = []
     for identity, periods in groups.items():
@@ -96,8 +97,9 @@ def observation_comparisons(ledger, question):
         new, new_id = periods[later][0]
         if old.is_finite() and new.is_finite():
             calculations.append({
-                "measure": identity[0], "definition": identity[1], "geography_id": identity[2],
-                "unit": identity[3], "earlier_year": earlier, "earlier_value": str(old),
+                **{field: value for field, value in zip(OBSERVATION_DIMENSIONS, identity)
+                   if value is not None},
+                "earlier_year": earlier, "earlier_value": str(old),
                 "later_year": later, "later_value": str(new), "difference": str(new - old),
                 "evidence_ids": [old_id, new_id],
             })
@@ -124,4 +126,12 @@ def prompt_context(joined):
         lines.append(f"- {link['sector']} ({link['taxonomy_relation']}): {refs}. "
                      "THEME ONLY; cite underlying IDs. "
                      "No programme relationship, coverage or outcome is proven.")
+        for scope in link["scopes"]:
+            period = " to ".join(filter(None, (scope["period_start"], scope["period_end"])))
+            roles = ", ".join(role["type"] for role in scope["evidence_types"] if role.get("type"))
+            if scope["geography"] or period or roles:
+                lines.append(
+                    f"  {scope['evidence_id']}: {scope['geography'] or 'geography unreported'}; "
+                    f"{period or 'period unreported'}; {roles or 'role unclassified'}."
+                )
     return "\n".join(lines)

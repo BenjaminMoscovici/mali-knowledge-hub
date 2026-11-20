@@ -689,7 +689,14 @@ async def chat(request):
                             context_usage = openai_client.finish(token, request_id)
                     if edit:
                         context_method = "assignment_resolution"
-            route = conversational_route(standalone, mode)
+            if edit and standalone.strip().casefold() == question.casefold():
+                language = synthesis_language(previous or question)
+                route = {"path": "conversational", "reply": {
+                    "French": "Quel élément de la demande précédente souhaitez-vous modifier ?",
+                    "German": "Welchen Teil des bisherigen Auftrags soll ich ändern?",
+                }.get(language, "Which part of the previous assignment should I change?")}
+            else:
+                route = conversational_route(standalone, mode)
 
         language = synthesis_language(standalone if context_method == "assignment_resolution" else question)
         result = None

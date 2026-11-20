@@ -187,6 +187,8 @@ def assignment_edit(question):
         r"meme (?:note|analyse|recherche|comparaison|perimetre)|"
         r"(?:using|among|from) (?:the )?(?:same|previous|last|those|these)|"
         r"parmi ces|dans ce meme|ce bailleur|just discussed|that region|that commune|that year|then conclude|therefore (?:say|write|infer))\b"
+        r"|\b(?:turn|convert|format|presente\w*|mets|mettez) (?:it|this|that|cela|le|la|les) "
+        r"(?:into|as|en|sous)\b"
         r"|\b(?:keep|retain|garde\w*|conserve\w*) "
         r"(?:the|le|la|les|l) (?:year|place|criteria|scope|lieu|annee|periode|perimetre|format|references)\b", q
     ))
@@ -206,6 +208,10 @@ def _latest_topic_messages(messages):
             continue
         value = message.get('content')
         if not isinstance(value, str) or assignment_edit(value) or has_reference(value):
+            continue
+        if not message.get("standalone_question") and re.match(
+            r"^(?:and|et|but|mais|what about|how about)\b", value.strip(), re.I
+        ):
             continue
         following = recent[index + 1:index + 2]
         resolved = following[0].get('standalone_question') if following and following[0].get('role') == 'assistant' else None
