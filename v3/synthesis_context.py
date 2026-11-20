@@ -180,11 +180,14 @@ def prepare(ledger, question, depth='balanced', *, topics=()):
             did = item.get('document_id') or item.get('document_title')
             if did not in documents:
                 doc_ids.add(item['evidence_id']); documents.add(did)
-        if len(topic_terms) > 1:
+        rescued = next((item["evidence_id"] for item in ranked if item.get("lexical_rescue")), None)
+        if len(topic_terms) > 1 or rescued:
             # Use existing document slots to cover distinct parts of a compound
             # question. Required report tables are still retained below.
             selected_for_family = {item["evidence_id"] for item in ranked if item["evidence_id"] in doc_ids}
-            for topic in topic_terms[:limit]:
+            if rescued and len(selected_for_family) < limit:
+                selected_for_family.add(rescued)
+            for topic in topic_terms[:limit] if len(topic_terms) > 1 else ():
                 winner = max(ranked, key=lambda item: relevance(item.get("content", ""), topic))
                 if relevance(winner.get("content", ""), topic) and len(selected_for_family) < limit:
                     selected_for_family.add(winner["evidence_id"])

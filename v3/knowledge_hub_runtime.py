@@ -72,7 +72,7 @@ def search_knowledge_base(
     match_count=12,
     filter_document_ids=None,
     similarity_threshold=None,
-    *, document_metadata=None,
+    *, document_metadata=None, lexical_question=None,
 ):
     """
     Search the Knowledge Hub document corpus.
@@ -104,11 +104,14 @@ def search_knowledge_base(
     # 2. Vector search in Supabase
     # --------------------------------------------------------
 
+    candidate_count = match_count
+    if lexical_question and 2 <= match_count < 32:
+        candidate_count = min(match_count * 2, 32)
     response = execute_read(supabase.rpc(
         "match_chunks",
         {
             "query_embedding": query_embedding,
-            "match_count": match_count,
+            "match_count": candidate_count,
             "filter_document_ids": filter_document_ids
         }
     ), "search_knowledge_base")
@@ -135,6 +138,10 @@ def search_knowledge_base(
     # --------------------------------------------------------
     # 4. Load document metadata once
     # --------------------------------------------------------
+
+    if lexical_question and candidate_count > match_count:
+        from passage_ranking import rerank_passages
+        raw_results = rerank_passages(raw_results, lexical_question, match_count)
 
     document_ids = list({
         r.get("document_id")

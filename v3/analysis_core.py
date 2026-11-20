@@ -967,12 +967,15 @@ def build_document_evidence(
 
     metadata = {row["id"]: row for row in document_groups["documents"] if row.get("id")}
 
-    def search_documents(query, match_count, filter_document_ids):
+    def search_documents(query, match_count, filter_document_ids, allow_lexical=True):
         family = "GOVERNMENT_DOCS" if filter_document_ids[0] in government_document_ids else "HNRP"
         hints = [focus] if focus else (topics or {}).get(family, ())
         if hints:
             query += "\nPrioritize these parts of the original request: " + "; ".join(hints)
-        return search_knowledge_base(query, match_count, filter_document_ids, document_metadata=metadata)
+        return search_knowledge_base(
+            query, match_count, filter_document_ids, document_metadata=metadata,
+            lexical_question=question if allow_lexical else None,
+        )
 
     government_document_ids = document_groups["government"]
     hnrp_document_ids = document_groups["hnrp"]
@@ -1082,7 +1085,7 @@ user's question.
             with ThreadPoolExecutor(max_workers=len(report_targets)) as executor:
                 futures=[submit(executor,search_documents,
                     f'{title}\nAnnex: sector indicators, targets, results, achievements, progress, reporting period, population definitions and footnotes.',
-                    3,[document_id]) for document_id,title in report_targets]
+                    3,[document_id],False) for document_id,title in report_targets]
                 failures=0
                 for future in futures:
                     try:
@@ -1173,6 +1176,7 @@ user's question.
             "page": result.get("page_number"),
             "section": result.get("section_title"),
             "similarity": result.get("similarity"),
+            "lexical_rescue": bool(result.get("lexical_rescue")),
             "content": result.get("content")
         })
 
