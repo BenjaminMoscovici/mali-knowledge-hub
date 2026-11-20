@@ -111,3 +111,66 @@ def test_single_sector_synthesis_carries_typed_relationships_without_neighbor_ro
     assert "Education actor" not in prompt
     assert "associated with the same project" in prompt
     assert len(source["relationship_rows"]) == 2
+
+
+def test_exact_place_and_year_edits_recompute_the_same_comparison():
+    client = TestClient(web_api.app, base_url=ORIGIN)
+    history = []
+
+    def ask(question):
+        response = client.post("/api/chat", headers={"Origin": ORIGIN},
+                               json={"question": question, "prior_messages": history})
+        assert response.status_code == 200, response.text
+        result = response.json()
+        assert result["metrics"]["model_calls"] == 0
+        history.extend([
+            {"role": "user", "content": question},
+            {"role": "assistant", "content": result["answer"],
+             "standalone_question": result["standalone_question"]},
+        ])
+        return result
+
+    question = "Compare the 2023 populations of Gao and Sikasso communes and show percentage relative to the smaller."
+    initial = ask(question)
+    revised = ask("Replace Gao with Mopti.")
+    assert revised["metrics"]["context_resolution_method"] == "comparison_operand_edit"
+    assert revised["standalone_question"] == question.replace("Gao", "Mopti")
+    before = json.loads(initial["evidence"][0]["content"])["result"]
+    after = json.loads(revised["evidence"][0]["content"])["result"]
+    assert {row["name"] for row in before["rows"]} == {"GAO", "SIKASSO"}
+    assert {row["name"] for row in after["rows"]} == {"MOPTI", "SIKASSO"}
+    assert before["relative_difference"]["percent"] != after["relative_difference"]["percent"]
+
+    missing = ask("Same comparison for 2022.")
+    assert missing["standalone_question"] == revised["standalone_question"].replace("2023", "2022")
+    assert not missing["evidence"]
+    restored = ask("Same comparison for 2023.")
+    assert json.loads(restored["evidence"][0]["content"])["result"] == after
+
+
+def test_year_edit_does_not_relabel_ranges_or_exact_plan_identifiers():
+    from followup_context import edit_comparison
+
+    assert edit_comparison("Replace 2025 with 2024.", "Compare Mali FTS funding in 2025 and 2026.") == (
+        "Compare Mali FTS funding in 2024 and 2026."
+    )
+    assert edit_comparison("Replace 2025 with 2024.", "Compare Mali FTS funding in 2025–2026.") is None
+    assert edit_comparison("Replace 2025 with 2024.", "Compare plan HMLI25 in 2025 with HMLI26 in 2026.") is None
+
+
+def test_ambiguous_year_keeps_both_active_comparison_operands():
+    client = TestClient(web_api.app, base_url=ORIGIN)
+    previous = "Compare Mali FTS funding in 2025 and 2026."
+    response = client.post("/api/chat", headers={"Origin": ORIGIN}, json={
+        "question": "And in 2024?",
+        "prior_messages": [
+            {"role": "user", "content": previous},
+            {"role": "assistant", "content": "Comparison [E01, E02].", "standalone_question": previous},
+        ],
+    })
+    assert response.status_code == 200
+    result = response.json()
+    assert result["metrics"]["context_resolution_method"] == "comparison_year_clarification"
+    assert result["metrics"]["model_calls"] == 0 and not result["evidence"]
+    assert result["standalone_question"] == previous
+    assert "replace one of the comparison years" in result["answer"]

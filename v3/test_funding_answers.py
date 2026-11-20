@@ -96,3 +96,20 @@ def test_actual_answer_engine_uses_fresh_records_and_skips_only_qualified_financ
     result=ns[fn.name](QUESTION)
     assert calls==[QUESTION] and result['evidence']==rows and result['synthesis_seconds']==0
     assert result['execution_trace']['verified_calculation']['method']=='verified_funding_arithmetic'
+
+
+def test_funding_operand_edit_uses_the_new_periods_and_sources():
+    from followup_context import edit_comparison
+
+    original = "Compare Mali FTS requirements and reported funding in 2025 and 2026."
+    revised = edit_comparison("Use 2024 instead of 2025.", original)
+    assert revised
+    original_rows = ledger(original)
+    revised_rows = ledger(revised)
+    _, before = answer(original, original_rows)
+    text, after = answer(revised, revised_rows)
+    assert "| 2024 / HMLI24 |" in text and "2025 / HMLI25" not in text
+    assert before["comparisons"][0]["difference"] != after["comparisons"][0]["difference"]
+    by_id = {row["evidence_id"]: row["funding_record"]["year"] for row in revised_rows}
+    assert all({by_id[eid] for eid in row["evidence_ids"]} == {2024, 2026}
+               for row in after["comparisons"])

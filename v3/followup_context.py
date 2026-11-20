@@ -17,6 +17,71 @@ def previous_question(messages):
     return previous
 
 
+_COMPARISON = re.compile(r"\b(?:compar\w*|versus|vergleich\w*)\b")
+_YEAR = re.compile(r"(?<!\w)(?:19|20)\d{2}(?!\w)")
+_COMPARISON_YEAR_EDIT = re.compile(
+    r"(?:same comparison (?:in|for)|(?:la )?même comparaison (?:en|pour)|and in|et en) "
+    r"((?:19|20)\d{2})[.!? ]*", re.I
+)
+
+
+def ambiguous_comparison_year(question, previous):
+    """A bare year may replace either operand or add a third one."""
+    return bool(previous and _COMPARISON.search(_fold(previous))
+                and _COMPARISON_YEAR_EDIT.fullmatch(question.strip())
+                and len(set(_YEAR.findall(previous))) > 1)
+
+
+def edit_comparison(question, previous):
+    """Apply an unambiguous operand edit without changing the other criteria."""
+    if not previous or not _COMPARISON.search(_fold(previous)):
+        return None
+    request = question.strip().rstrip(".?!").strip()
+    replacement = re.fullmatch(
+        r"(?:now )?(?:replace|change|remplacez?|remplacer) (?:only |uniquement )?"
+        r"(?P<old>[\wÀ-ÿ’' -]{1,60}?) (?:with|to|par) (?P<new>[\wÀ-ÿ’' -]{1,60})", request, re.I
+    )
+    if replacement:
+        old, new = replacement["old"].strip(), replacement["new"].strip()
+    else:
+        substitute = re.fullmatch(
+            r"(?:now )?(?:use|utilisez|utilise) (?P<new>[\wÀ-ÿ’' -]{1,60}?) "
+            r"(?:instead of|au lieu de) (?P<old>[\wÀ-ÿ’' -]{1,60})", request, re.I
+        )
+        if substitute:
+            old, new = substitute["old"].strip(), substitute["new"].strip()
+        else:
+            year = _COMPARISON_YEAR_EDIT.fullmatch(request)
+            old_years = _YEAR.findall(previous)
+            if not year or len(old_years) != 1:
+                return None
+            old, new = old_years[0], year[1]
+
+    if _fold(old) == _fold(new):
+        return None
+    if re.fullmatch(r"(?:19|20)\d{2}", old):
+        if (not re.fullmatch(r"(?:19|20)\d{2}", new)
+                or re.search(r"\bHMLI\d{2}\b", previous, re.I)):
+            return None
+        operand = rf"(?<![\w/–—-]){old}(?![\w/–—-])"
+        # A bare instruction to change one endpoint must not edit a date range.
+        if re.search(rf"\b{old}\s*[-–—/]\s*\d|\d\s*[-–—/]\s*{old}\b", previous):
+            return None
+    else:
+        from geographic_model import geographic_model
+
+        model = geographic_model()
+        if not (model.retrieval_place_names(old) == [_fold(old)]
+                and model.retrieval_place_names(new) == [_fold(new)]):
+            return None
+        operand = rf"(?<!\w){re.escape(old)}(?!\w)"
+    matches = list(re.finditer(operand, previous, re.I))
+    if len(matches) != 1 or re.search(rf"(?<!\w){re.escape(new)}(?!\w)", previous, re.I):
+        return None
+    start, end = matches[0].span()
+    return previous[:start] + new + previous[end:]
+
+
 def metric(question):
     q = _fold(question)
     # Joined questions and multiple indicators need the semantic resolver.

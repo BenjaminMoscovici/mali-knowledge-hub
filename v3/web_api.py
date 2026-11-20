@@ -647,13 +647,17 @@ async def chat(request):
     try:
         from registry_observations import answer as registry_answer, resolve_year_followup
         from registry_research import answer as registry_evidence_answer, resolve_year_followup as resolve_evidence_year
-        from followup_context import previous_question
+        from followup_context import ambiguous_comparison_year, edit_comparison, previous_question
         from research_context import assignment_edit
 
         if prior and route["path"] not in {"conversational", "conversation_only"}:
             previous = previous_question(prior)
             edit = assignment_edit(question)
-            if not edit:
+            ambiguous_year = ambiguous_comparison_year(question, previous)
+            revised_comparison = await asyncio.to_thread(edit_comparison, question, previous)
+            if revised_comparison:
+                standalone, context_method = revised_comparison, "comparison_operand_edit"
+            if not edit and not ambiguous_year and context_method == "existing_resolver":
                 # Exact edits keep their model-free path. Each resolver returns
                 # a complete query, and all use the same answer dispatch below.
                 for method, resolver in (
@@ -676,7 +680,7 @@ async def chat(request):
                         resolved = await asyncio.to_thread(resolve_evidence_year, question, previous, evidence_only=False)
                         if resolved:
                             standalone, context_method = resolved, "registry_research_reference_year"
-            if context_method == "existing_resolver":
+            if not ambiguous_year and context_method == "existing_resolver":
                 from research_context import needs_context
                 if edit or needs_context(question):
                     from analysis_core import openai_client, resolve_conversational_question
@@ -689,7 +693,16 @@ async def chat(request):
                             context_usage = openai_client.finish(token, request_id)
                     if edit:
                         context_method = "assignment_resolution"
-            if edit and standalone.strip().casefold() == question.casefold():
+            if ambiguous_year:
+                standalone = previous
+                context_method = "comparison_year_clarification"
+                language = synthesis_language(previous)
+                route = {"path": "conversational", "reply": {
+                    "French": "Souhaitez-vous remplacer une année de la comparaison ou ajouter la nouvelle année ?",
+                    "German": "Soll das neue Jahr eines der Vergleichsjahre ersetzen oder soll ich es hinzufügen?",
+                }.get(language, "Should the new year replace one of the comparison years, or should I add it?")}
+            elif edit and standalone.strip().casefold() == question.casefold():
+                standalone = previous or standalone
                 language = synthesis_language(previous or question)
                 route = {"path": "conversational", "reply": {
                     "French": "Quel élément de la demande précédente souhaitez-vous modifier ?",
@@ -698,7 +711,9 @@ async def chat(request):
             else:
                 route = conversational_route(standalone, mode)
 
-        language = synthesis_language(standalone if context_method == "assignment_resolution" else question)
+        language = synthesis_language(
+            standalone if context_method in {"assignment_resolution", "comparison_operand_edit"} else question
+        )
         result = None
         if route["path"] not in {"conversational", "conversation_only"}:
             try:
