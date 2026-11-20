@@ -43,6 +43,11 @@ def test_compound_chat_synthesizes_registry_and_keeps_scope_on_followup(monkeypa
             def create(self, **kwargs):
                 prompts.append(kwargs["input"])
                 formats.append(kwargs.get("text"))
+                if "Audit the factual support" in kwargs.get("instructions", ""):
+                    lines = json.loads(kwargs["input"])["lines_to_review"]
+                    return SimpleNamespace(output_text=json.dumps({"findings": [
+                        {"line": int(i), "verdict": "supported", "replacement": ""} for i in lines
+                    ]}))
                 return SimpleNamespace(output_text=answers.pop(0))
 
         monkeypatch.setattr(engine, "openai_client", ControlledProvider())

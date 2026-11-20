@@ -2767,7 +2767,8 @@ def _generate_grounded_answer(
     question,
     model="gpt-5.6-luna",
     depth="balanced",
-    response_language=None
+    response_language=None,
+    claim_grounding=False
 ):
 
     answer_started = time.perf_counter()
@@ -3062,8 +3063,21 @@ in a different language; translate faithfully while retaining citations.
         )
     )
 
+    claim_review = {}
     answer, prompt_citation_audit = verify_citations(response.output_text, synthesis_ledger)
-    if not prompt_citation_audit["valid"]:
+    if claim_grounding and answer and synthesis_ledger:
+        from claim_grounding import ground_answer
+        PHASE.set("claim_grounding")
+        answer, claim_review = ground_answer(
+            openai_client.responses.create, model, question, answer, synthesis_ledger,
+            evidence_text, calculations, response_language or answer_language(question), word_cap=cap,
+        )
+        PHASE.set("synthesis")
+        context_audit["claim_grounding"] = claim_review
+        answer, prompt_citation_audit = verify_citations(answer, synthesis_ledger)
+    if claim_review.get("status") == "reviewed":
+        prompt_citation_audit["claim_reviewed"] = True
+    elif not prompt_citation_audit["valid"]:
         answer = "I could not verify the generated answer's evidence citations. Please retry the question; no uncited factual answer is shown."
     elif answer:
         from citations import unsupported_registry_quantities
@@ -3173,8 +3187,10 @@ def generate_grounded_answer(question, model="gpt-5.6-luna", depth=None, respons
     depth = depth or os.environ.get("MKH_DEPTH", "balanced")
     token, query_id = openai_client.begin()
     try:
-        result = _generate_grounded_answer(question, model=model, depth=depth,
-                                           response_language=response_language)
+        result = _generate_grounded_answer(
+            question, model=model, depth=depth, response_language=response_language,
+            claim_grounding=depth != "quick" and os.environ.get("MKH_CLAIM_GROUNDING", "1") == "1",
+        )
     except Exception as exc:
         usage = openai_client.finish(token, query_id)
         # Record only a class and frame names. Provider errors can include
@@ -3197,7 +3213,7 @@ def generate_grounded_answer(question, model="gpt-5.6-luna", depth=None, respons
     if prompt_audit.get("unsupported_registry_quantities"):
         result["citation_audit"]["valid"] = False
         result["citation_audit"]["unsupported_registry_quantities"] = prompt_audit["unsupported_registry_quantities"]
-    elif not result["citation_audit"]["valid"]:
+    elif not result["citation_audit"]["valid"] and not prompt_audit.get("claim_reviewed"):
         result["answer"] = (
             "I could not verify the generated answer's evidence citations. "
             "Please retry the question; no uncited factual answer is shown."
