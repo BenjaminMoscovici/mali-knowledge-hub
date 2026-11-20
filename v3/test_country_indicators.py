@@ -92,3 +92,16 @@ def test_national_series_in_source_inventory_and_cited_chat_without_network():
         assert feature['properties']['population_join'].startswith('not approved')
         assert 'population' not in feature['properties']
     client.close()
+
+
+
+def test_electricity_comparison_uses_common_year_and_preserves_denominators():
+    question = "Compare urban and rural electricity access in Mali and include the national rate"
+    result = indicator_answer(question)
+    assert len(result["evidence"]) == 3
+    assert {row["reference_period_start"] for row in result["evidence"]} == {"2024-01-01"}
+    assert "57.200 percentage points" in result["answer"]
+    assert "a separate observation" in result["answer"]
+    result = indicator_answer(question + " in 2030")
+    assert "not reported" in result["answer"]
+    assert "percentage points" not in result["answer"]

@@ -155,3 +155,12 @@ def test_normal_year_followup_preserves_source_and_exact_plan():
     assert revised == "What did OCHA FTS report for plan HMLI26 in 2025?"
     evidence, gaps = registry_research.retrieve(revised)
     assert not evidence and gaps
+
+
+
+def test_evidence_request_with_analysis_stays_on_regular_research_path():
+    question = ("Show evidence from OCHA FTS for HMLI26 in 2026 "
+                "and explain the difference between requirements and reported funding.")
+    assert registry_research.answer(question, "English") is None
+    evidence, _ = registry_research.retrieve(question)
+    assert evidence and "Reported financing gap" in evidence[0]["content"]

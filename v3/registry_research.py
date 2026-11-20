@@ -22,6 +22,16 @@ EVIDENCE_REQUEST = re.compile(
 )
 
 
+def _evidence_only(question):
+    text = _fold(question)
+    return bool(EVIDENCE_REQUEST.match(text)) and not re.search(
+        r"\b(?:and|then|et|puis) (?:also |ensuite )?"
+        r"(?:compare\w*|calculate|explain|assess|summarize|write|"
+        r"calcule\w*|explique\w*|evalu\w*|resume\w*|redige\w*)\b", text
+    )
+
+
+
 @lru_cache(maxsize=4)
 def _catalogue(path, revision):
     rows = json.loads(path.read_text())
@@ -262,7 +272,7 @@ def resolve_year_followup(question, previous, *, evidence_only=True):
     if not new_year or not previous:
         return None
     if evidence_only:
-        if not EVIDENCE_REQUEST.match(_fold(previous)):
+        if not _evidence_only(previous):
             return None
     elif sum(bool(_cues(_fold(previous), spec)) for _, spec in _active_registry(REGISTRY)) != 1:
         return None
@@ -278,7 +288,7 @@ def resolve_year_followup(question, previous, *, evidence_only=True):
 
 def answer(question, language):
     """Expose a local, citable evidence brief for explicit evidence requests."""
-    if not EVIDENCE_REQUEST.match(_fold(question)) or language not in {"English", "French"}:
+    if not _evidence_only(question) or language not in {"English", "French"}:
         return None
     evidence, gaps = retrieve(question)
     if not (evidence or gaps):
