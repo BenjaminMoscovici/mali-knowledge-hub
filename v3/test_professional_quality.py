@@ -41,7 +41,7 @@ def test_primary_document_wins_over_related_title_suffix():
     ]
     seen = []
 
-    def search(question, match_count, filter_document_ids):
+    def search(question, match_count, filter_document_ids, *, document_metadata):
         seen.append(filter_document_ids)
         return []
 

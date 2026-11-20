@@ -151,9 +151,10 @@ def unverified_hapi_for_commune(question, ledger):
     # label cannot prove an approved match to the requested commune boundary.
     return {item["evidence_id"] for item in ledger if item.get("source_type") == "hdx_hapi"}
 
-def prepare(ledger, question, depth='balanced'):
+def prepare(ledger, question, depth='balanced', *, topics=()):
     """Create an auditable prompt subset without changing/reassigning original IDs."""
     wanted = terms(question)
+    topic_terms = [terms(topic) for topic in topics if isinstance(topic, str) and terms(topic)]
     exhaustive = bool(re.search(r'\b(all|every|complete|exhaustive|tous|toutes|complet\w*)\b',fold(question)))
     seen, deduplicated = set(), []
     duplicates = []
@@ -179,8 +180,21 @@ def prepare(ledger, question, depth='balanced'):
             did = item.get('document_id') or item.get('document_title')
             if did not in documents:
                 doc_ids.add(item['evidence_id']); documents.add(did)
-        for item in ranked[:limit]:
-            doc_ids.add(item['evidence_id'])
+        if len(topic_terms) > 1:
+            # Use existing document slots to cover distinct parts of a compound
+            # question. Required report tables are still retained below.
+            selected_for_family = {item["evidence_id"] for item in ranked if item["evidence_id"] in doc_ids}
+            for topic in topic_terms[:limit]:
+                winner = max(ranked, key=lambda item: relevance(item.get("content", ""), topic))
+                if relevance(winner.get("content", ""), topic) and len(selected_for_family) < limit:
+                    selected_for_family.add(winner["evidence_id"])
+            for item in ranked:
+                if len(selected_for_family) >= limit:
+                    break
+                selected_for_family.add(item["evidence_id"])
+            doc_ids.update(selected_for_family)
+        else:
+            doc_ids.update(item["evidence_id"] for item in ranked[:limit])
     # Relevance budgets can favor narrative introductions over the very tables
     # needed to compare reported achievements with targets. Keep every retrieved
     # results-table chunk for this narrow workflow, including repeated headers

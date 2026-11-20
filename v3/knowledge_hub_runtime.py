@@ -71,7 +71,8 @@ def search_knowledge_base(
     question,
     match_count=12,
     filter_document_ids=None,
-    similarity_threshold=None
+    similarity_threshold=None,
+    *, document_metadata=None,
 ):
     """
     Search the Knowledge Hub document corpus.
@@ -141,9 +142,10 @@ def search_knowledge_base(
         if r.get("document_id")
     })
 
-    documents_by_id = {}
+    documents_by_id = dict(document_metadata or {})
+    missing_ids = [document_id for document_id in document_ids if document_id not in documents_by_id]
 
-    if document_ids:
+    if missing_ids:
 
         docs_response = (
             execute_read(supabase
@@ -153,13 +155,10 @@ def search_knowledge_base(
                 "valid_from,valid_until,document_type,"
                 "language,geographic_scope,status,version"
             )
-            .in_("id", document_ids), "search_knowledge_base")
+            .in_("id", missing_ids), "search_knowledge_base")
         )
 
-        documents_by_id = {
-            d["id"]: d
-            for d in docs_response.data
-        }
+        documents_by_id.update({d["id"]: d for d in docs_response.data})
 
 
     # --------------------------------------------------------

@@ -36,6 +36,8 @@ def test_quantity_with_wrong_denominator_is_repaired_and_unrelated_claim_is_remo
                                   draft, evidence, serialize(evidence), [], "English")
     assert len(calls) == 2
     assert calls[-1]["lines_to_review"] == {"0": corrected}
+    assert "[E01] SOURCE" in calls[-1]["citable_evidence"]
+    assert "[E02] SOURCE" not in calls[-1]["citable_evidence"]
     assert corrected in answer and draft.splitlines()[1] in answer
     assert "caused" not in answer and "of the population" not in answer
     assert audit["revised_lines"] == audit["removed_lines"] == 1

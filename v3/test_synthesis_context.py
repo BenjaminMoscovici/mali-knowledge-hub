@@ -1,3 +1,4 @@
+import pytest
 """Adversarial checks for source identity, exact excerpts and scope preservation."""
 import ast
 from pathlib import Path
@@ -134,7 +135,8 @@ def test_packaged_cache_copy_isolation_bound_and_expiry(tmp_path,monkeypatch):
     path.write_text('new release');lookup('a');assert len(calls)==6
 
 
-def test_actual_research_runs_independent_families_concurrently_and_preserves_citations(monkeypatch):
+@pytest.mark.parametrize("failure", [False, True])
+def test_actual_research_runs_independent_families_concurrently_and_preserves_citations(monkeypatch, failure):
     import geographic_model
     from threading import Barrier
     from collections import defaultdict
@@ -142,12 +144,14 @@ def test_actual_research_runs_independent_families_concurrently_and_preserves_ci
     tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
     functions=[node for node in tree.body if isinstance(node,ast.FunctionDef) and node.name in
                {'run_four_source_research','normalize_text','build_unified_evidence'}]
-    barrier=Barrier(6,timeout=3)
+    barrier=Barrier(7,timeout=3)
     calls=[]
     def retriever(family):
         def read(question):
             calls.append(family)
             barrier.wait()
+            if failure and family == "eu":
+                raise TimeoutError("sensitive provider detail")
             return [row(source_family=family,content='Scoped evidence for '+family)]
         return read
     from routing import bounded_fts_source_names, bounded_project_learning_source_names
@@ -161,12 +165,24 @@ def test_actual_research_runs_independent_families_concurrently_and_preserves_ci
                         ('retrieve_analytical_evidence','analytical'),('retrieve_project_learning','learning'),('retrieve_eu_evidence','eu')]:
         ns[name]=retriever(family)
     monkeypatch.setattr(geographic_model,'canonical_geography_evidence',retriever('geography'))
+    import registry_research
+    def registry_search(question, *, planned_ids):
+        calls.append("registry")
+        barrier.wait()
+        return [], []
+    monkeypatch.setattr(registry_research, "retrieve", registry_search)
     exec(compile(ast.Module(body=functions,type_ignores=[]),'research-flow','exec'),ns)
     result=ns['run_four_source_research']('Compare Mopti evidence')
-    assert set(calls)=={'foundation','operational','analytical','learning','eu','geography'}
-    assert [r['source_family'] for r in result['ledger']]==['foundation','operational','analytical','learning','eu','geography']
+    assert set(calls)=={'foundation','operational','analytical','learning','eu','geography','registry'}
+    families = [r['source_family'] for r in result['ledger']]
+    if failure:
+        assert families == ['MKH retrieval status','foundation','operational','analytical','learning','geography']
+        assert result['execution_trace']['sources']['eu']['status'] == "UNAVAILABLE"
+        assert "sensitive provider detail" not in str(result)
+    else:
+        assert families == ['foundation','operational','analytical','learning','eu','geography']
+        assert result['execution_trace']['sources']['eu']['records']==1
     assert [r['evidence_id'] for r in result['ledger']]==[f'E{i:02d}' for i in range(1,7)]
-    assert result['execution_trace']['sources']['eu']['records']==1
 
 
 def test_real_packaged_mopti_context_preserves_all_required_observations():

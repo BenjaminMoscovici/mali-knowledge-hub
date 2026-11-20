@@ -108,7 +108,13 @@ def ground_answer(create, model, question, answer, evidence, evidence_text, calc
         try:
             context = {i: candidates.get(i, line) for i, line in lines.items()
                        if i in candidates or i not in failed}
-            recheck = _review(create, model, question, candidates, evidence_text, calculations, context=context)
+            from synthesis_context import serialize
+            cited_ids = {eid for candidate in candidates.values() for eid in CITATION.findall(candidate)}
+            cited_evidence = [item for item in evidence if item["evidence_id"] in cited_ids]
+            cited_calculations = [calculation for calculation in calculations
+                                  if set(calculation["evidence_ids"]).issubset(cited_ids)]
+            recheck = _review(create, model, question, candidates, serialize(cited_evidence),
+                              cited_calculations, context=context)
             accepted = {i: line for i, line in candidates.items()
                         if _supported(line, recheck[i], evidence, calculations)}
         except Exception:

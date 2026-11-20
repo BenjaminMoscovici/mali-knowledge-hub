@@ -914,7 +914,7 @@ def get_document_groups():
     documents = (
         execute_read(supabase
         .table("documents")
-        .select("id,title,document_type,organization"), "get_document_groups")
+        .select("id,title,organization,publication_date,valid_from,valid_until,document_type,language,geographic_scope,status,version"), "get_document_groups")
         .data
         or []
     )
@@ -960,6 +960,11 @@ def build_document_evidence(
     function_started = time.perf_counter()
 
     document_groups = get_document_groups()
+
+    metadata = {row["id"]: row for row in document_groups["documents"] if row.get("id")}
+
+    def search_documents(query, match_count, filter_document_ids):
+        return search_knowledge_base(query, match_count, filter_document_ids, document_metadata=metadata)
 
     government_document_ids = document_groups["government"]
     hnrp_document_ids = document_groups["hnrp"]
@@ -1016,13 +1021,13 @@ user's question.
         if government_targets:
             per_document_count = max(3, (government_count + len(government_targets) - 1) // len(government_targets))
             with ThreadPoolExecutor(max_workers=len(government_targets)) as executor:
-                futures = [submit(executor, search_knowledge_base,
+                futures = [submit(executor, search_documents,
                                   f"{question}\nFocus on: {title}",
                                   per_document_count, [document_id])
                            for document_id, title in government_targets]
                 results = [chunk for future in futures for chunk in future.result()]
         else:
-            results = search_knowledge_base(
+            results = search_documents(
                 government_query,
                 match_count=government_count,
                 filter_document_ids=government_document_ids
@@ -1050,13 +1055,13 @@ user's question.
         if humanitarian_targets:
             per_document_count = max(3, (hnrp_count + len(humanitarian_targets) - 1) // len(humanitarian_targets))
             with ThreadPoolExecutor(max_workers=len(humanitarian_targets)) as executor:
-                futures = [submit(executor, search_knowledge_base,
+                futures = [submit(executor, search_documents,
                                   f"{question}\nFocus on: {title}",
                                   per_document_count, [document_id])
                            for document_id, title in humanitarian_targets]
                 results = [chunk for future in futures for chunk in future.result()]
         else:
-            results = search_knowledge_base(
+            results = search_documents(
                 hnrp_query,
                 match_count=hnrp_count,
                 filter_document_ids=hnrp_document_ids
@@ -1067,7 +1072,7 @@ user's question.
             if str(doc.get('id')) in hnrp_document_ids])
         if report_targets:
             with ThreadPoolExecutor(max_workers=len(report_targets)) as executor:
-                futures=[submit(executor,search_knowledge_base,
+                futures=[submit(executor,search_documents,
                     f'{title}\nAnnex: sector indicators, targets, results, achievements, progress, reporting period, population definitions and footnotes.',
                     3,[document_id]) for document_id,title in report_targets]
                 failures=0
@@ -2419,10 +2424,22 @@ def run_four_source_research(question, document_count=8):
 
     jobs = {}
 
-    # Streamlit cache initialization needs the active script context. The
-    # document worker can read its cached value safely after this call.
-    if source_plan["government_docs"] or source_plan["hnrp_docs"]:
-        get_document_groups()
+    def retrieve_registry():
+        from registry_research import retrieve as retrieve_registered
+        from registry_observations import retrieve as retrieve_observations
+
+        started = time.perf_counter()
+        registry_ids = {family for intent in (planner_result.get("planner_output") or {}).get("intents", [])
+                        for family in intent.get("source_families", []) if family.startswith("registry:")}
+        try:
+            rows, gaps = retrieve_registered(question, planned_ids=registry_ids)
+        except (OSError, ValueError, KeyError, TypeError):
+            rows, gaps = [], [("Reviewed source registry", "source_unavailable")]
+        try:
+            rows.extend(retrieve_observations(question))
+        except (OSError, ValueError, KeyError, TypeError):
+            gaps.append(("Annual observation registry", "source_unavailable"))
+        return rows, gaps, time.perf_counter() - started
 
     def timed_hapi():
         started = time.perf_counter()
@@ -2481,9 +2498,7 @@ def run_four_source_research(question, document_count=8):
         return values, time.perf_counter() - started
 
     with ThreadPoolExecutor(max_workers=8) as executor:
-        for family, retriever in packaged_retrievers.items():
-            jobs[family] = submit(executor, timed_packaged, retriever)
-
+        jobs["registry"] = submit(executor, retrieve_registry)
         if (
             source_plan["government_docs"]
             or source_plan["hnrp_docs"]
@@ -2507,8 +2522,18 @@ def run_four_source_research(question, document_count=8):
                 timed_fongim
             )
 
+        for family, retriever in packaged_retrievers.items():
+            jobs[family] = submit(executor, timed_packaged, retriever)
+
+        unavailable_sources = []
         if "documents" in jobs:
-            document_result = jobs["documents"].result()
+            try:
+                document_result = jobs["documents"].result()
+            except Exception as error:
+                unavailable_sources.append("Indexed documents")
+                for trace in document_result["trace"].values():
+                    if isinstance(trace, dict) and trace["requested"]:
+                        trace.update(status="UNAVAILABLE", error_class=type(error).__name__)
 
         if "hapi" in jobs:
             try:
@@ -2530,11 +2555,17 @@ def run_four_source_research(question, document_count=8):
             })
 
         if "fongim" in jobs:
-            fongim_result, fongim_seconds = jobs["fongim"].result()
+            try:
+                fongim_result, fongim_seconds = jobs["fongim"].result()
+            except Exception as error:
+                fongim_seconds = 0.0
+                unavailable_sources.append("FONGIM project records")
+                source_trace["fongim"]["error_class"] = type(error).__name__
             source_trace["fongim"].update({
                 "status": (
                     "SUCCESS_WITH_RESULTS"
                     if fongim_result.get("evidence")
+                    else "UNAVAILABLE" if source_trace["fongim"].get("error_class")
                     else "SUCCESS_ZERO_RESULTS"
                 ),
                 "seconds": round(fongim_seconds, 3),
@@ -2557,7 +2588,13 @@ def run_four_source_research(question, document_count=8):
             })
 
         for family in packaged_retrievers:
-            values, seconds = jobs[family].result()
+            try:
+                values, seconds = jobs[family].result()
+            except Exception as error:
+                packaged_results[family] = []
+                source_trace[family] = {"status": "UNAVAILABLE", "error_class": type(error).__name__, "records": 0}
+                unavailable_sources.append(family)
+                continue
             packaged_results[family] = values
             source_trace[family] = {"status": "SUCCESS_WITH_RESULTS" if values else "SUCCESS_ZERO_RESULTS",
                                     "seconds": round(seconds,3), "records": len(values)}
@@ -2570,6 +2607,8 @@ def run_four_source_research(question, document_count=8):
                     "selected_source_rows": max((v.get("source_record_count", 0) for v in presence), default=0),
                     "reference_periods": sorted({str(v.get("reference_period_start"))+"/"+str(v.get("reference_period_end")) for v in presence})}
 
+        registered_evidence, registry_gaps, registry_seconds = jobs["registry"].result()
+
     reduction_started = time.perf_counter()
 
     needs_local_inventory = bool(re.search(
@@ -2577,10 +2616,20 @@ def run_four_source_research(question, document_count=8):
         r"\bplan\s+(?:local|communal|regional)|"
         r"\bpriorit(?:e|es|y|ies)\s+(?:local|communal|regional)",
         normalize_text(question), re.I))
-    document_registry = (get_document_groups()["documents"]
-                         if source_plan["government_docs"] or source_plan["hnrp_docs"]
-                         or needs_local_inventory else [])
-    inventory_evidence = []
+    document_registry = []
+    inventory_available = "Indexed documents" not in unavailable_sources
+    if inventory_available and (source_plan["government_docs"] or source_plan["hnrp_docs"] or needs_local_inventory):
+        try:
+            document_registry = get_document_groups()["documents"]
+        except Exception:
+            inventory_available = False
+            unavailable_sources.append("Indexed document catalogue")
+    inventory_evidence = [{
+        "source_type": "source_availability", "source_family": "MKH retrieval status",
+        "document_title": "Source unavailable for this request", "section": family,
+        "content": f"{family} could not be checked for this request. "
+                   "Its unavailability does not establish absence of evidence or activity.",
+    } for family in unavailable_sources]
     if needs_geo_inventory:
         inventory_evidence.append({
             "source_type": "geo_inventory",
@@ -2615,7 +2664,7 @@ def run_four_source_research(question, document_count=8):
                         "A correction appends a superseding decision without "
                         "erasing the original decision or source value.")
         })
-    if needs_local_inventory:
+    if needs_local_inventory and inventory_available:
         titles = [str(d.get("title")) for d in document_registry if d.get("title")]
         inventory_evidence.append({
             "source_type": "corpus_inventory",
@@ -2636,23 +2685,13 @@ def run_four_source_research(question, document_count=8):
 
     legacy_evidence = (fongim_result["evidence"] + inventory_evidence +
                        [item for family in packaged_retrievers for item in packaged_results[family]])
-    from registry_research import retrieve as retrieve_registered
-    from registry_observations import retrieve as retrieve_observations
-    planner_output = planner_result.get("planner_output") or {}
-    registry_ids = {family for intent in planner_output.get("intents", [])
-                    for family in intent.get("source_families", [])
-                    if family.startswith("registry:")}
-    registered_evidence, registry_gaps = retrieve_registered(question, planned_ids=registry_ids)
-    try:
-        registered_evidence.extend(retrieve_observations(question))
-    except (OSError, ValueError, KeyError, TypeError):
-        print("MKH_REGISTRY_OBSERVATION_LOOKUP_FAILURE", flush=True)
     legacy_records = {(item.get("release_id"), item.get("record_id")) for item in legacy_evidence}
     registered_evidence = [item for item in registered_evidence
                            if (item["release_id"], item["record_id"]) not in legacy_records]
     if registered_evidence or registry_gaps:
         source_trace["registry"] = {
             "records": len(registered_evidence),
+            "seconds": round(registry_seconds, 3),
             "status": "SUCCESS_WITH_RESULTS" if registered_evidence else "SUCCESS_ZERO_RESULTS",
             "releases": sorted({item["release_id"] for item in registered_evidence}),
         }
@@ -2822,7 +2861,10 @@ def _generate_grounded_answer(
         return {**research, 'answer':answer, 'evidence':ledger, 'synthesis_seconds':0,
                 'total_seconds':round(time.perf_counter()-answer_started,2)}
 
-    synthesis_ledger, context_audit = prepare_synthesis(ledger, question, depth)
+    planned = (research["execution_trace"].get("routing", {}).get("planner_output") or {}).get("intents", ())
+    synthesis_ledger, context_audit = prepare_synthesis(
+        ledger, question, depth, topics=[intent.get("topic") for intent in planned]
+    )
     evidence_text = serialize_synthesis(synthesis_ledger)
     from joins import observation_comparisons
     calculations = observation_comparisons(synthesis_ledger, question)

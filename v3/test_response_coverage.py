@@ -47,7 +47,7 @@ def test_actual_document_search_keeps_filters_counts_government_query_and_origin
     tree=ast.parse(Path(__file__).with_name('analysis_core.py').read_text())
     fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='build_document_evidence')
     calls=[]
-    def search(q,match_count,filter_document_ids):
+    def search(q,match_count,filter_document_ids,*,document_metadata):
         calls.append((q,match_count,filter_document_ids))
         if '\nAnnex:' in q:
             if annex_failure:raise RuntimeError('Supplementary provider lookup unavailable')
