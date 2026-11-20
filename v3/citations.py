@@ -2,6 +2,8 @@
 
 import re
 
+from answer_structure import review_units
+
 
 def verify(answer, evidence):
     valid_ids = {item["evidence_id"] for item in evidence}
@@ -49,7 +51,7 @@ def _quantities(text):
 def unsupported_registry_quantities(answer, evidence, *, check_all_cited=False, calculations=()):
     by_id = {item["evidence_id"]: item for item in evidence}
     problems = []
-    for line in answer.splitlines():
+    for line in review_units(answer.splitlines())[0].values():
         cursor = 0
         for match in _CITATION.finditer(line):
             claim = line[cursor:match.start()]

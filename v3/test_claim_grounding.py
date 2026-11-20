@@ -68,3 +68,48 @@ def test_incomplete_audit_is_explicit_and_leaves_the_prior_guards_in_charge():
     )
     assert answer == "An inspection was recorded [E01]."
     assert audit == {"status": "unavailable"}
+
+
+def test_wrapped_claim_is_reviewed_with_its_citation_and_keeps_original_layout():
+    evidence = [{"evidence_id": "E01", "source_type": "registry_record",
+                 "content": "The survey counted 42 households."}]
+    calls = []
+
+    def provider(**kwargs):
+        payload = json.loads(kwargs["input"])
+        calls.append(payload)
+        return SimpleNamespace(output_text=json.dumps({"findings": [
+            {"line": int(i), "verdict": "supported", "replacement": ""}
+            for i in payload["lines_to_review"]
+        ]}))
+
+    draft = "The survey counted\n42 households.\n[E01]"
+    result, audit = ground_answer(provider, "fixture", "What was counted?", draft, evidence,
+                                  serialize(evidence), [], "English")
+    assert calls[0]["lines_to_review"] == {"0": "The survey counted 42 households. [E01]"}
+    assert result == draft and audit["removed_lines"] == 0
+    result, audit = ground_answer(provider, "fixture", "What was counted?", draft.replace("42", "99"),
+                                  evidence, serialize(evidence), [], "English")
+    assert "99" not in result and "[E01]" not in result and audit["removed_lines"] == 1
+
+
+def test_table_drops_unsupported_rows_without_lending_adjacent_citations():
+    evidence = [{"evidence_id": "E01", "source_type": "registry_record",
+                 "content": "River District reported 42 households."}]
+    draft = ("| District | Households |\n|---|---:|\n"
+             "| River | 42 [E01] |\n| Lake | 70 |")
+
+    def provider(**kwargs):
+        lines = json.loads(kwargs["input"])["lines_to_review"]
+        assert set(lines) == {"0", "2", "3"}
+        assert "[E01]" in lines["2"] and "[E01]" not in lines["3"]
+        return SimpleNamespace(output_text=json.dumps({"findings": [
+            {"line": 0, "verdict": "nonmaterial", "replacement": ""},
+            {"line": 2, "verdict": "supported", "replacement": ""},
+            {"line": 3, "verdict": "unsupported", "replacement": ""},
+        ]}))
+
+    result, audit = ground_answer(provider, "fixture", "What was reported?", draft, evidence,
+                                  serialize(evidence), [], "English")
+    assert "|---|---:|\n| River | 42 [E01] |" in result
+    assert "Lake" not in result and audit["removed_lines"] == 1
