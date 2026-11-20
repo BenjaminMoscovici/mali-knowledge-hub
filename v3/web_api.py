@@ -730,10 +730,22 @@ async def chat(request):
             if route["path"] == "conversational":
                 result = {"answer": route["reply"], "evidence": []}
             elif route["path"] == "conversation_only":
-                from conversation_transform import restate
+                from conversation_transform import replay_brief, restate
                 phase = "conversation_transform"
+                assignment = previous_question(prior)
                 async with _transform_limit:
-                    result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+                    if assignment and any(message["role"] == "assistant" for message in prior):
+                        try:
+                            result = await asyncio.to_thread(
+                                replay_brief, assignment, conversational_route(assignment, mode)["path"],
+                                synthesis_language(assignment),
+                            )
+                        except (OSError, ValueError, KeyError, TypeError):
+                            print("MKH_BRIEF_REPLAY_FAILURE", flush=True)
+                    if result is not None:
+                        standalone, context_method = assignment, "cited_brief_replay"
+                    else:
+                        result = await asyncio.to_thread(restate, question, prior, answer_language(question))
             elif slot_context and slot_context.get("direct_answer"):
                 phase = "structured_empty_project_subset"
                 result = {"answer": slot_context["direct_answer"], "evidence": [], "family_counts": {}}

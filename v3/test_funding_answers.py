@@ -113,3 +113,16 @@ def test_funding_operand_edit_uses_the_new_periods_and_sources():
     by_id = {row["evidence_id"]: row["funding_record"]["year"] for row in revised_rows}
     assert all({by_id[eid] for eid in row["evidence_ids"]} == {2024, 2026}
                for row in after["comparisons"])
+
+
+def test_replayed_financing_brief_reuses_cited_comparison_without_duplicate_metadata():
+    from conversation_transform import replay_brief
+
+    question = "Compare Mali FTS requirements and reported funding in 2025 and 2026."
+    original, _ = answer(question, ledger(question))
+    brief = replay_brief(question, "complex_research", "English")
+    assert brief and "-0.91 percentage points" in brief["answer"]
+    assert len(brief["answer"]) < len(original)
+    assert brief["answer"].count("Source update:") == 1
+    assert "No cross-plan/year total" in brief["answer"]
+    assert verify(brief["answer"], brief["evidence"])[1]["valid"]

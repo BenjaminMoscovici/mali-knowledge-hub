@@ -20,7 +20,7 @@ def display(value):
     return format(value, ',f').rstrip('0').rstrip('.') if '.' in format(value, ',f') else format(value, ',f')
 
 
-def answer(question, ledger, language=None):
+def answer(question, ledger, language=None, *, concise=False):
     q=_normal(question)
     if not _bounded_fts(question) or re.search(
         r'\b(?:disburs\w*|decaisse\w*|commit\w*|engage\w*|pledges?|'
@@ -83,11 +83,22 @@ def answer(question, ledger, language=None):
                        'requirements_minus_funding':display(difference),'calculated_percent':display(percent)})
     lines += ['', ('**Méthode :** besoins financiers moins financement déclaré ; pourcentage calculé = financement ÷ besoins × 100, arrondi à deux décimales. Le pourcentage arrondi par la source est conservé séparément. Sans besoins financiers déclarés, aucun écart ni pourcentage n’est calculé.' if french else
         '**Method:** requirements minus reported funding; calculated percentage = funding ÷ requirements × 100, rounded to two decimals. The publisher’s rounded percentage is retained separately. Missing requirements do not support a gap or percentage calculation.')]
-    for e,*_ in facts:
-        p=e['funding_record']
-        lines += ['', f'{cell(p["year"])} / {cell(p.get("plan_code"))}: {cell(p["name"])}. '+
-                  ('Mise à jour source : ' if french else 'Source update: ')+cell(p.get('source_updated_at'))+'; '+
-                  ('récupéré le ' if french else 'retrieved ')+cell(p.get('retrieved_at'))+'. '+cell(p['funding_definition'])+f' [{e["evidence_id"]}]']
+    if concise:
+        snapshots = {}
+        for e, *_ in facts:
+            p = e["funding_record"]
+            key = (p.get("source_updated_at"), p.get("retrieved_at"), p["funding_definition"])
+            snapshots.setdefault(key, []).append(e["evidence_id"])
+        for (updated, retrieved, definition), eids in snapshots.items():
+            label = (f'Mise à jour source : {cell(updated)} ; récupéré le {cell(retrieved)}. ' if french else
+                     f'Source update: {cell(updated)}; retrieved {cell(retrieved)}. ')
+            lines += ["", label + definition + " [" + ", ".join(eids) + "]"]
+    else:
+        for e,*_ in facts:
+            p=e['funding_record']
+            lines += ['', f'{cell(p["year"])} / {cell(p.get("plan_code"))}: {cell(p["name"])}. '+
+                      ('Mise à jour source : ' if french else 'Source update: ')+cell(p.get('source_updated_at'))+'; '+
+                      ('récupéré le ' if french else 'retrieved ')+cell(p.get('retrieved_at'))+'. '+cell(p['funding_definition'])+f' [{e["evidence_id"]}]']
     lines += ['', ('Un écart positif est un déficit arithmétique de financement ; un écart négatif indique un financement supérieur aux besoins financiers déclarés. Ces montants nationaux ne démontrent ni décaissement, ni livraison, ni couverture de besoins locaux. Aucun total interplans ou interannées ni conversion de devises n’a été effectué.' if french else
         'A positive balance is an arithmetic financing gap; a negative balance means reported funding exceeds requirements. These national figures do not establish disbursement, delivery or local needs coverage. No cross-plan/year total or currency conversion is performed.')]
     from joins import observation_comparisons

@@ -174,3 +174,35 @@ def test_ambiguous_year_keeps_both_active_comparison_operands():
     assert result["metrics"]["model_calls"] == 0 and not result["evidence"]
     assert result["standalone_question"] == previous
     assert "replace one of the comparison years" in result["answer"]
+
+
+def test_shorter_brief_retains_comparison_sources_and_followup_assignment():
+    client = TestClient(web_api.app, base_url=ORIGIN)
+    question = "Compare the 2023 populations of Gao and Sikasso communes and show percentage relative to the smaller."
+
+    def ask(text, prior):
+        response = client.post("/api/chat", headers={"Origin": ORIGIN},
+                               json={"question": text, "prior_messages": prior})
+        assert response.status_code == 200
+        return response.json()
+
+    original = ask(question, [])
+    prior = [
+        {"role": "user", "content": question},
+        {"role": "assistant", "content": "Fabricated population 900 million [E99].",
+         "standalone_question": original["standalone_question"]},
+    ]
+    brief = ask("Make it shorter.", prior)
+    assert brief["metrics"]["context_resolution_method"] == "cited_brief_replay"
+    assert brief["standalone_question"] == question
+    assert len(brief["answer"]) < len(original["answer"])
+    assert "206.29%" in brief["answer"] and "2023" in brief["answer"]
+    assert "900 million" not in brief["answer"]
+    assert brief["evidence"] == original["evidence"]
+    prior.extend([
+        {"role": "user", "content": "Make it shorter."},
+        {"role": "assistant", "content": brief["answer"], "standalone_question": brief["standalone_question"]},
+    ])
+    new_comparison = ask("Replace Gao with Mopti.", prior)
+    assert "Mopti" in new_comparison["standalone_question"]
+    assert "206.29%" not in new_comparison["answer"]
