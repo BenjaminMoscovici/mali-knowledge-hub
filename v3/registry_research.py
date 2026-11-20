@@ -136,6 +136,7 @@ def _evidence(source, spec, row, content):
         "source_family": source["provider"], "document_title": source["source_name"],
         "organization": source["provider"], "source_endpoint": source["access_route"],
         "release_id": spec["release_id"], "record_id": row["id"], "version": row["version"],
+        "registry_capability": "registry:" + spec["dataset_id"],
         "reference_period_start": row.get("reference_start"), "reference_period_end": row.get("reference_end"),
         "retrieved_at": row.get("retrieved_at"), "geographic_scope": spec["scope"],
         "page": row.get("page"), "locator": row["locator"], "section": row["locator"],
@@ -191,7 +192,7 @@ def _scoped_query(text, spec, catalogue):
     return matches[0] if len(matches) == 1 else text
 
 
-def retrieve(question, registry=None, limit=8, planned_ids=()):
+def retrieve(question, registry=None, limit=8, planned_ids=(), *, focus=None, only_capability=None):
     """Retrieve named, topic-matched and planner-selected reviewed evidence."""
     path = registry or REGISTRY
     folded = _fold(question)
@@ -201,6 +202,8 @@ def retrieve(question, registry=None, limit=8, planned_ids=()):
     selected = []
     catalogue = _active_registry(path)
     for source, spec in catalogue:
+        if only_capability and "registry:" + spec["dataset_id"] != only_capability:
+            continue
         scoped = _scoped_query(folded, spec, catalogue)
         names = [alias for alias in spec["aliases"] if _phrase(scoped, alias)]
         cues = names or (_cues(scoped, spec) if all_years else [])
@@ -221,7 +224,7 @@ def retrieve(question, registry=None, limit=8, planned_ids=()):
         query = scoped
         for alias in sorted(cues, key=len, reverse=True):
             query = re.sub(r"(?<!\w)" + re.escape(_fold(alias)) + r"(?!\w)", " ", query)
-        keywords = terms(query) - years - {"show", "montrez", "source", "sources", "preuves", "dans", "pour"}
+        keywords = terms(focus or query) - years - {"show", "montrez", "source", "sources", "preuves", "dans", "pour"}
         if spec.get("geographic_level") == "country" and re.search(
             r"\b(?:regions?|cercles?|communes?|districts?|villages?|localit\w*)\b", query
         ):

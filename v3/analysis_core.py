@@ -757,7 +757,10 @@ FONGIM
 RULES:
 1. Select every source family materially needed to answer the question.
 2. Do NOT select a source merely because it might be interesting.
-3. A question can require multiple source families.
+3. Separate materially different parts of a compound question into distinct
+   intents. Name the requested observation or relationship in each topic,
+   keeping its explicit reporting year or entity when needed to identify it.
+   Do not split a simple lookup into artificial parts or add new requirements.
 4. "Who is working", "who is active", actors, NGOs, organizations,
    interventions, projects, activities, operational presence or coverage
    require FONGIM.
@@ -954,7 +957,8 @@ def build_document_evidence(
     use_government=True,
     use_hnrp=True,
     government_count=8,
-    hnrp_count=8
+    hnrp_count=8,
+    *, focus=None,
 ):
 
     function_started = time.perf_counter()
@@ -964,6 +968,8 @@ def build_document_evidence(
     metadata = {row["id"]: row for row in document_groups["documents"] if row.get("id")}
 
     def search_documents(query, match_count, filter_document_ids):
+        if focus:
+            query = f"{query}\nPrioritize evidence about this part of the original request: {focus}"
         return search_knowledge_base(query, match_count, filter_document_ids, document_metadata=metadata)
 
     government_document_ids = document_groups["government"]
@@ -1070,7 +1076,7 @@ user's question.
         from document_targets import response_report_targets
         report_targets=response_report_targets(question,[doc for doc in document_groups['documents']
             if str(doc.get('id')) in hnrp_document_ids])
-        if report_targets:
+        if report_targets and not focus:
             with ThreadPoolExecutor(max_workers=len(report_targets)) as executor:
                 futures=[submit(executor,search_documents,
                     f'{title}\nAnnex: sector indicators, targets, results, achievements, progress, reporting period, population definitions and footnotes.',
@@ -2609,6 +2615,39 @@ def run_four_source_research(question, document_count=8):
 
         registered_evidence, registry_gaps, registry_seconds = jobs["registry"].result()
 
+    from retrieval_coverage import assess, retry_target
+    intents = (planner_result.get("planner_output") or {}).get("intents", [])
+    first_pass = (document_result["evidence"] + hapi_result["evidence"]
+                  + fongim_result["evidence"] + registered_evidence)
+    missing = assess(intents, first_pass)
+    coverage = {"initial_gaps": len(missing), "retry": "not_needed" if not missing else "not_eligible"}
+    target = retry_target(missing, document_result["trace"], registered_evidence)
+    if target:
+        topic, family = target
+        started = time.perf_counter()
+        try:
+            if family.startswith("registry:"):
+                from registry_research import retrieve as retrieve_registered
+                followup, _ = retrieve_registered(question, limit=3, planned_ids=(family,),
+                                                  focus=topic, only_capability=family)
+                destination = registered_evidence
+            else:
+                followup = build_document_evidence(
+                    question, family == "government_docs", family == "hnrp_docs", 3, 3, focus=topic,
+                )["evidence"]
+                destination = document_result["evidence"]
+            seen = {(row.get("record_id"), row.get("document_id"), row.get("chunk_id"), row.get("content"))
+                    for row in destination}
+            extra = [row for row in followup
+                     if (row.get("record_id"), row.get("document_id"), row.get("chunk_id"), row.get("content")) not in seen]
+            destination.extend(extra)
+            missing = assess(intents, first_pass + extra)
+            coverage.update(retry="completed", added_evidence=len(extra))
+        except Exception as exc:
+            coverage.update(retry="unavailable", error_class=type(exc).__name__)
+        coverage["seconds"] = round(time.perf_counter() - started, 3)
+    coverage["unresolved_gaps"] = len(missing)
+
     reduction_started = time.perf_counter()
 
     needs_local_inventory = bool(re.search(
@@ -2630,6 +2669,14 @@ def run_four_source_research(question, document_count=8):
         "content": f"{family} could not be checked for this request. "
                    "Its unavailability does not establish absence of evidence or activity.",
     } for family in unavailable_sources]
+    for gap in missing:
+        inventory_evidence.append({
+            "source_type": "source_availability", "source_family": "MKH retrieval coverage",
+            "document_title": "Coverage check for this request", "section": "Unresolved planned topic",
+            "content": f"No sufficiently relevant match was found in the planned sources for: {gap['topic']}. "
+                       "This is a retrieval signal. Consider other supplied records before concluding "
+                       "that any part of the request remains unsupported.",
+        })
     if needs_geo_inventory:
         inventory_evidence.append({
             "source_type": "geo_inventory",
@@ -2748,6 +2795,7 @@ def run_four_source_research(question, document_count=8):
 
     execution_trace = {
         "resolved_question": question,
+        "retrieval_coverage": coverage,
         "geography": {
             "resolved": geography,
             "seconds": round(geography_seconds, 3)
@@ -2873,6 +2921,8 @@ def _generate_grounded_answer(
     synthesis_joined["organization_resolution"] = research["joined"].get("organization_resolution", [])
     joined_text = prompt_context(synthesis_joined)
     context_audit["prompt_chars"] = len(evidence_text) + len(joined_text)
+    if research["execution_trace"].get("retrieval_coverage"):
+        context_audit["retrieval_coverage"] = research["execution_trace"]["retrieval_coverage"]
     research["execution_trace"]["synthesis_context"] = context_audit
 
     system_prompt = """

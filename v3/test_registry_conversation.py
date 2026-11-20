@@ -127,3 +127,66 @@ def test_read_only_qualification_skips_startup_publishers(monkeypatch):
     with TestClient(web_api.app, base_url=ORIGIN) as client:
         assert client.get("/api/health").status_code == 200
     assert calls == []
+
+
+def test_research_retries_only_the_uncovered_part_of_a_compound_question(monkeypatch):
+    for name, value in {
+        "SUPABASE_URL": "https://example.supabase.co",
+        "SUPABASE_SECRET_KEY": "fixture-key",
+        "OPENAI_API_KEY": "fixture-key",
+        "HDX_HAPI_APP_IDENTIFIER": "fixture-id",
+    }.items():
+        monkeypatch.setenv(name, value)
+    original = sys.modules.get("analysis_core")
+    try:
+        engine = importlib.import_module("analysis_core")
+        intents = [{"topic": name, "source_families": ["HNRP"]}
+                   for name in ("hospital equipment", "clinic staffing")]
+        monkeypatch.setattr(engine, "plan_sources_semantically", lambda _: {
+            "source_plan": {"government_docs": False, "hnrp_docs": True, "hapi": False, "fongim": False},
+            "planner_output": {"intents": intents}, "seconds": 0,
+        })
+        monkeypatch.setattr(engine, "get_document_groups", lambda: {"documents": []})
+
+        def evidence(content):
+            return {"source_type": "knowledge_base_document",
+                    "source_family": "Humanitarian reports and appeals", "content": content}
+
+        calls = []
+        retry_available = True
+
+        def search(question, government, humanitarian, *limits, focus=None):
+            calls.append((question, government, humanitarian, focus))
+            if focus and not retry_available:
+                raise TimeoutError("private provider details")
+            return {"evidence": [evidence("clinic staffing") if focus else evidence("hospital equipment")],
+                    "trace": {"government_docs": {"requested": False}, "hnrp_docs": {
+                        "requested": True, "status": "SUCCESS_WITH_RESULTS",
+                    }}}
+
+        monkeypatch.setattr(engine, "build_document_evidence", search)
+        question = "Compare hospital equipment and clinic staffing in Gao cercle in 2025."
+        result = engine.run_four_source_research(question)
+        assert calls == [(question, False, True, None), (question, False, True, "clinic staffing")]
+        coverage = result["execution_trace"]["retrieval_coverage"]
+        assert coverage["initial_gaps"] == 1 and coverage["unresolved_gaps"] == 0
+        assert coverage["added_evidence"] == 1
+        assert [item["content"] for item in result["ledger"] if item.get("source_type") ==
+                "knowledge_base_document"] == ["hospital equipment", "clinic staffing"]
+
+        calls.clear()
+        retry_available = False
+        result = engine.run_four_source_research(question)
+        assert result["execution_trace"]["retrieval_coverage"]["retry"] == "unavailable"
+        assert result["execution_trace"]["retrieval_coverage"]["unresolved_gaps"] == 1
+        assert len(calls) == 2 and "private provider details" not in str(result)
+        assert any(item.get("content") == "hospital equipment" for item in result["ledger"])
+
+        calls.clear()
+        intents.pop()
+        result = engine.run_four_source_research(question)
+        assert calls == [(question, False, True, None)]
+        assert result["execution_trace"]["retrieval_coverage"]["retry"] == "not_needed"
+    finally:
+        if original is None:
+            sys.modules.pop("analysis_core", None)
