@@ -7,6 +7,7 @@ from country_foundation import country_plan
 SIMPLIFY = {"can you explain that more simply", "explain that more simply", "explain it more simply",
     "simplify that", "simplify it", "summarize that", "summarise that", "summarize your answer",
     "make that shorter", "make it shorter", "shorter please", "can you make that shorter",
+    "turn it into a short brief", "turn that into a concise brief", "fais en une note courte",
     "peux tu expliquer plus simplement", "pouvez vous expliquer plus simplement",
     "explique plus simplement", "explique cela plus simplement", "resume ta reponse", "resumez votre reponse"}
 

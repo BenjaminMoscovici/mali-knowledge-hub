@@ -2768,7 +2768,8 @@ def _generate_grounded_answer(
     model="gpt-5.6-luna",
     depth="balanced",
     response_language=None,
-    claim_grounding=False
+    claim_grounding=False,
+    presentation=None,
 ):
 
     answer_started = time.perf_counter()
@@ -2811,7 +2812,10 @@ def _generate_grounded_answer(
         verified = verified_date_answer(question, ledger, response_language)
         if verified is None:
             from funding_answers import answer as verified_funding_answer
-            verified = verified_funding_answer(question, ledger, response_language)
+            if presentation == "brief":
+                verified = verified_funding_answer(question, ledger, response_language, concise=True)
+            else:
+                verified = verified_funding_answer(question, ledger, response_language)
     if verified:
         answer, audit = verified
         research['execution_trace']['verified_calculation'] = audit
@@ -3018,6 +3022,13 @@ in a different language; translate faithfully while retaining citations.
             "serve as citations for local need sectors."
         )
 
+    if presentation == "brief":
+        user_prompt += (
+            "\nPresent the same assignment as a short professional brief. Lead with the supported "
+            "finding, then give the decisive evidence and the most important limitation. Keep the "
+            "original audience, period, geographic scope, comparison operands and citation IDs."
+        )
+
     if calculations:
         user_prompt += (
             "\nVERIFIED DIFFERENCES (later minus earlier, or second geography minus first; cite both operands): "
@@ -3028,7 +3039,10 @@ in a different language; translate faithfully while retaining citations.
         r"(?:\b(?:at most|maximum(?: of)?|no more than|au plus)\s+(\d+)\s+(?:words|mots)\b"
         r"|\b(\d+)\s+(?:words|mots)\s+(?:maximum|max)\b)", question, re.I
     )
-    cap = min((int(first or second) for first, second in explicit_word_caps), default=None)
+    word_caps = [int(first or second) for first, second in explicit_word_caps]
+    if presentation == "brief":
+        word_caps.append(160)
+    cap = min(word_caps, default=None)
     if cap:
         user_prompt += f"\nThe user requires a maximum of {cap} words. Count the complete deliverable before returning it."
 
@@ -3183,12 +3197,13 @@ in a different language; translate faithfully while retaining citations.
     }
 
 
-def generate_grounded_answer(question, model="gpt-5.6-luna", depth=None, response_language=None):
+def generate_grounded_answer(question, model="gpt-5.6-luna", depth=None, response_language=None,
+                             *, presentation=None):
     depth = depth or os.environ.get("MKH_DEPTH", "balanced")
     token, query_id = openai_client.begin()
     try:
         result = _generate_grounded_answer(
-            question, model=model, depth=depth, response_language=response_language,
+            question, model=model, depth=depth, response_language=response_language, presentation=presentation,
             claim_grounding=depth != "quick" and os.environ.get("MKH_CLAIM_GROUNDING", "1") == "1",
         )
     except Exception as exc:

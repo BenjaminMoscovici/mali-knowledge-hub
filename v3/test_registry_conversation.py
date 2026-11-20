@@ -75,6 +75,24 @@ def test_compound_chat_synthesizes_registry_and_keeps_scope_on_followup(monkeypa
         assert "PDF page" in prompts[-1]
         assert census["evidence_id"] in {row["evidence_id"] for row in result["evidence"]}
 
+        answers.append(f'Enumeration method [{census["evidence_id"]}]. '
+                       f'Reported funding: USD 135,628,821 [{funding["evidence_id"]}].')
+        brief = client.post("/api/chat", headers={"Origin": ORIGIN}, json={
+            "question": "Turn it into a short brief.",
+            "prior_messages": [
+                {"role": "user", "content": query},
+                {"role": "assistant", "content": "Prior draft only [E99].", "standalone_question": query},
+                {"role": "user", "content": "Thanks."},
+                {"role": "assistant", "content": "You’re welcome."},
+            ],
+        }).json()
+        assert brief["metrics"]["context_resolution_method"] == "cited_brief_replay"
+        assert brief["standalone_question"] == query
+        assert "short professional brief" in prompts[-2] and query in prompts[-2]
+        assert "Prior draft only" not in prompts[-2]
+        assert funding["evidence_id"] in brief["answer"]
+        assert any(row.get("record_id") == funding["record_id"] for row in brief["evidence"])
+
         original_question = "What did OCHA FTS say about reported funding for HMLI26 in 2026?"
         revised = original_question.replace("2026", "2025")
         status = next(row for row in worker(revised)["ledger"]

@@ -34,31 +34,8 @@ def restate(question, prior, language):
     return {"answer": label + "\n\n" + quoted, "evidence": []}
 
 
-def replay_brief(assignment, route, language):
-    """Rebuild a brief from authoritative, model-free evidence on the active assignment."""
-    from registry_observations import answer as registry_answer
-    from registry_research import answer as registry_evidence_answer
-
-    result = registry_answer(assignment, language) or registry_evidence_answer(assignment, language)
-    if result is None and route == "country_fact":
-        from country_foundation import country_foundation
-        result = country_foundation().answer(assignment, language)
-    elif result is None and route == "simple_geography":
-        from geographic_model import geographic_model
-        result = geographic_model().answer(assignment, language)
-    if result is None:
-        from routing import _bounded_fts
-        if _bounded_fts(assignment):
-            from analytical_sources import retrieve_analytical_evidence
-            from funding_answers import answer as funding_answer
-
-            ledger = [{**row, "evidence_id": f"E{i:02d}"}
-                      for i, row in enumerate(retrieve_analytical_evidence(assignment), 1)]
-            funding = funding_answer(assignment, ledger, language, concise=True)
-            if funding:
-                result = {"answer": funding[0], "evidence": ledger}
-    if not result:
-        return None
+def compact_comparison(result):
+    """Keep the sourced calculation and omit the redundant population table."""
     comparison = result.get("country", {}).get("relative_difference")
     if comparison:
         # The calculation already states both operands and the denominator.

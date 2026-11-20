@@ -116,11 +116,11 @@ def test_funding_operand_edit_uses_the_new_periods_and_sources():
 
 
 def test_replayed_financing_brief_reuses_cited_comparison_without_duplicate_metadata():
-    from conversation_transform import replay_brief
-
     question = "Compare Mali FTS requirements and reported funding in 2025 and 2026."
     original, _ = answer(question, ledger(question))
-    brief = replay_brief(question, "complex_research", "English")
+    rows = ledger(question)
+    compact, _ = answer(question, rows, concise=True)
+    brief = {"answer": compact, "evidence": rows}
     assert brief and "-0.91 percentage points" in brief["answer"]
     assert len(brief["answer"]) < len(original)
     assert brief["answer"].count("Source update:") == 1

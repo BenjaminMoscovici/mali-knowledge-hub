@@ -34,11 +34,9 @@ from operational_sources import publish_operational_logged
 from analytical_sources import publish_analytical_logged
 from project_learning_sources import publish_project_learning_logged
 from eu_sources import publish_eu_logged
-from query_router import classify
+from answer_dispatch import answer_assignment, conversational_route
+from country_foundation import country_foundation
 from geographic_model import geographic_model
-from country_foundation import country_foundation, resolve_country_followup
-from geography_context import resolve_count_followup, resolve_hierarchy_followup
-from followup_context import resolve_slots
 
 
 WEB = Path(__file__).with_name("web")
@@ -597,14 +595,6 @@ async def saved_evidence(request):
 
 
 
-def conversational_route(question, mode):
-    route = classify(question, mode)
-    if route["path"] in {"country_fact", "simple_geography"}:
-        from registry_research import named_registry_sources
-        if named_registry_sources(question):
-            return {"path": "deep_research" if mode == "deep" else "complex_research"}
-    return route
-
 async def chat(request):
     request_started = time.perf_counter()
     payload = await body(request)
@@ -643,43 +633,22 @@ async def chat(request):
     context_usage = {}
     standalone = question
     context_method = "existing_resolver"
-    slot_context = None
+    exact = None
     try:
-        from registry_observations import answer as registry_answer, resolve_year_followup
-        from registry_research import answer as registry_evidence_answer, resolve_year_followup as resolve_evidence_year
-        from followup_context import ambiguous_comparison_year, edit_comparison, previous_question
+        from followup_context import (ambiguous_comparison_year, cited_assignment_in_history,
+                                      previous_question, resolve_exact_followup)
         from research_context import assignment_edit
 
         if prior and route["path"] not in {"conversational", "conversation_only"}:
             previous = previous_question(prior)
             edit = assignment_edit(question)
             ambiguous_year = ambiguous_comparison_year(question, previous)
-            revised_comparison = await asyncio.to_thread(edit_comparison, question, previous)
-            if revised_comparison:
-                standalone, context_method = revised_comparison, "comparison_operand_edit"
-            if not edit and not ambiguous_year and context_method == "existing_resolver":
-                # Exact edits keep their model-free path. Each resolver returns
-                # a complete query, and all use the same answer dispatch below.
-                for method, resolver in (
-                    ("registry_evidence_reference_year", lambda: resolve_evidence_year(question, previous)),
-                    ("registry_reference_year", lambda: resolve_year_followup(question, previous)),
-                    ("structured_country_fact", lambda: resolve_country_followup(question, prior)),
-                    ("structured_geographic_count", lambda: resolve_count_followup(question, prior)),
-                    ("structured_geographic_hierarchy", lambda: resolve_hierarchy_followup(question, prior)),
-                ):
-                    resolved = await asyncio.to_thread(resolver)
-                    if resolved:
-                        standalone, context_method = resolved, method
-                        break
-                if context_method == "existing_resolver":
-                    slot_context = await asyncio.to_thread(resolve_slots, question, prior)
-                    if slot_context:
-                        standalone = slot_context["standalone_question"]
-                        context_method = slot_context["method"]
-                    else:
-                        resolved = await asyncio.to_thread(resolve_evidence_year, question, previous, evidence_only=False)
-                        if resolved:
-                            standalone, context_method = resolved, "registry_research_reference_year"
+            if not ambiguous_year:
+                exact = await asyncio.to_thread(
+                    resolve_exact_followup, question, previous, prior, assignment_edit=edit,
+                )
+                if exact:
+                    standalone, context_method = exact["standalone_question"], exact["method"]
             if not ambiguous_year and context_method == "existing_resolver":
                 from research_context import needs_context
                 if edit or needs_context(question):
@@ -714,57 +683,41 @@ async def chat(request):
         language = synthesis_language(
             standalone if context_method in {"assignment_resolution", "comparison_operand_edit"} else question
         )
-        result = None
-        if route["path"] not in {"conversational", "conversation_only"}:
-            try:
-                result = await asyncio.to_thread(registry_answer, standalone, language)
-                if result is not None:
-                    route = {"path": "registry_observation"}
-                else:
-                    result = await asyncio.to_thread(registry_evidence_answer, standalone, language)
-                    if result is not None:
-                        route = {"path": "registry_evidence"}
-            except (OSError, ValueError, KeyError, TypeError) as exc:
-                print(f"MKH_REGISTRY_LOOKUP_FAILURE {type(exc).__name__}", flush=True)
-        if result is None:
-            if route["path"] == "conversational":
-                result = {"answer": route["reply"], "evidence": []}
-            elif route["path"] == "conversation_only":
-                from conversation_transform import replay_brief, restate
-                phase = "conversation_transform"
-                assignment = previous_question(prior)
-                async with _transform_limit:
-                    if assignment and any(message["role"] == "assistant" for message in prior):
-                        try:
-                            result = await asyncio.to_thread(
-                                replay_brief, assignment, conversational_route(assignment, mode)["path"],
-                                synthesis_language(assignment),
-                            )
-                        except (OSError, ValueError, KeyError, TypeError):
-                            print("MKH_BRIEF_REPLAY_FAILURE", flush=True)
-                    if result is not None:
-                        standalone, context_method = assignment, "cited_brief_replay"
-                    else:
-                        result = await asyncio.to_thread(restate, question, prior, answer_language(question))
-            elif slot_context and slot_context.get("direct_answer"):
-                phase = "structured_empty_project_subset"
-                result = {"answer": slot_context["direct_answer"], "evidence": [], "family_counts": {}}
-            elif route["path"] == "country_fact":
-                phase = "structured_country_fact"
-                result = await asyncio.to_thread(lambda: country_foundation().answer(standalone, language))
-            elif route["path"] == "simple_geography":
-                phase = "structured_geography"
-                result = await asyncio.to_thread(lambda: geographic_model().answer(standalone, language))
+        path = route["path"]
+        if path == "conversational":
+            result = {"answer": route["reply"], "evidence": []}
+        elif path == "conversation_only":
+            from conversation_transform import restate
+            phase = "conversation_transform"
+            assignment = previous_question(prior)
+            latest = next((message for message in reversed(prior) if message["role"] == "assistant"), None)
+            result = None
+            if assignment and latest:
+                original_path = conversational_route(assignment, mode)["path"]
+                # Authoritative evidence is fetched again. A historical citation is
+                # a signal to research, never an input to the evidence ledger.
+                allow_research = cited_assignment_in_history(assignment, prior)
+                try:
+                    result, _ = await answer_assignment(
+                        assignment, original_path, mode, synthesis_language(assignment),
+                        research_limit=_analysis_limit, presentation="brief", allow_research=allow_research,
+                    )
+                except Exception as exc:
+                    print(f"MKH_BRIEF_REPLAY_FAILURE {type(exc).__name__}", flush=True)
+            if result is not None:
+                standalone, context_method = assignment, "cited_brief_replay"
             else:
-                from analysis_core import generate_grounded_answer, is_source_inventory_question, source_inventory_answer
-                phase = "research"
-                async with _analysis_limit:
-                    if is_source_inventory_question(standalone):
-                        result = {"answer": await asyncio.to_thread(source_inventory_answer, language),
-                                  "evidence": [], "family_counts": {}}
-                    else:
-                        result = await asyncio.to_thread(generate_grounded_answer, standalone, depth=mode,
-                                                         response_language=language)
+                async with _transform_limit:
+                    result = await asyncio.to_thread(restate, question, prior, answer_language(question))
+        elif exact and exact.get("direct_answer"):
+            phase = "structured_empty_project_subset"
+            result = {"answer": exact["direct_answer"], "evidence": [], "family_counts": {}}
+        else:
+            phase = "answer_assignment"
+            result, path = await answer_assignment(
+                standalone, path, mode, language, research_limit=_analysis_limit,
+            )
+            route = {"path": path}
     except Exception as exc:
         # Never log provider messages, questions, tokens or source passages.
         print("MKH_API_FAILURE " + json.dumps({

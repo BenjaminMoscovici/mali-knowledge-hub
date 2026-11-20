@@ -17,6 +17,17 @@ def previous_question(messages):
     return previous
 
 
+def cited_assignment_in_history(assignment, messages):
+    """Find citation-bearing replies to the active assignment in guest or saved history."""
+    for user, assistant in zip(messages, messages[1:]):
+        if user["role"] != "user" or assistant["role"] != "assistant":
+            continue
+        resolved = assistant.get("standalone_question") or user.get("standalone_question") or user["content"]
+        if resolved == assignment and re.search(r"\[E\d{2,}", assistant["content"]):
+            return True
+    return False
+
+
 _COMPARISON = re.compile(r"\b(?:compar\w*|versus|vergleich\w*)\b")
 _YEAR = re.compile(r"(?<!\w)(?:19|20)\d{2}(?!\w)")
 _COMPARISON_YEAR_EDIT = re.compile(
@@ -80,6 +91,38 @@ def edit_comparison(question, previous):
         return None
     start, end = matches[0].span()
     return previous[:start] + new + previous[end:]
+
+
+def resolve_exact_followup(question, previous, messages, *, assignment_edit=False):
+    """Return a complete, executable assignment for a bounded edit."""
+    revised = edit_comparison(question, previous)
+    if revised:
+        return {"standalone_question": revised, "method": "comparison_operand_edit"}
+    if assignment_edit:
+        return None
+
+    from country_foundation import resolve_country_followup
+    from geography_context import resolve_count_followup, resolve_hierarchy_followup
+    from registry_observations import resolve_year_followup
+    from registry_research import resolve_year_followup as resolve_evidence_year
+
+    for method, resolver, arguments in (
+        ("registry_evidence_reference_year", resolve_evidence_year, (question, previous)),
+        ("registry_reference_year", resolve_year_followup, (question, previous)),
+        ("structured_country_fact", resolve_country_followup, (question, messages)),
+        ("structured_geographic_count", resolve_count_followup, (question, messages)),
+        ("structured_geographic_hierarchy", resolve_hierarchy_followup, (question, messages)),
+    ):
+        revised = resolver(*arguments)
+        if revised:
+            return {"standalone_question": revised, "method": method}
+    slots = resolve_slots(question, messages)
+    if slots:
+        return slots
+    revised = resolve_evidence_year(question, previous, evidence_only=False)
+    if revised:
+        return {"standalone_question": revised, "method": "registry_research_reference_year"}
+    return None
 
 
 def metric(question):
