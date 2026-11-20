@@ -11,6 +11,22 @@ DOCUMENT_FAMILIES = {
 }
 
 
+def topics_by_family(intents):
+    """Group the planner's distinct topics without broadening source selection."""
+    if len(intents) < 2:
+        return {}
+    grouped = {}
+    for intent in intents[:8]:
+        topic = str(intent.get("topic") or "").strip()[:350]
+        if not topic:
+            continue
+        for family in intent.get("source_families", ()):
+            topics = grouped.setdefault(family, [])
+            if topic not in topics and len(topics) < 3:
+                topics.append(topic)
+    return grouped
+
+
 def assess(intents, evidence):
     """Identify parts of the assignment that lack a plausible source match."""
     missing = []

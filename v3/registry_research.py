@@ -192,7 +192,7 @@ def _scoped_query(text, spec, catalogue):
     return matches[0] if len(matches) == 1 else text
 
 
-def retrieve(question, registry=None, limit=8, planned_ids=(), *, focus=None, only_capability=None):
+def retrieve(question, registry=None, limit=8, planned_ids=(), *, focus=None, only_capability=None, topics=None):
     """Retrieve named, topic-matched and planner-selected reviewed evidence."""
     path = registry or REGISTRY
     folded = _fold(question)
@@ -225,6 +225,14 @@ def retrieve(question, registry=None, limit=8, planned_ids=(), *, focus=None, on
         for alias in sorted(cues, key=len, reverse=True):
             query = re.sub(r"(?<!\w)" + re.escape(_fold(alias)) + r"(?!\w)", " ", query)
         keywords = terms(focus or query) - years - {"show", "montrez", "source", "sources", "preuves", "dans", "pour"}
+        topic_terms = []
+        if not focus:
+            for topic in (topics or {}).get("registry:" + spec["dataset_id"], ()):
+                topic_years = set(re.findall(r"\b(?:19|20)\d{2}\b", topic)) & years
+                words = terms(topic) - set(re.findall(r"\b(?:19|20)\d{2}\b", topic))
+                if words:
+                    topic_terms.append((words, topic_years))
+                    keywords.update(words)
         if spec.get("geographic_level") == "country" and re.search(
             r"\b(?:regions?|cercles?|communes?|districts?|villages?|localit\w*)\b", query
         ):
@@ -252,7 +260,26 @@ def retrieve(question, registry=None, limit=8, planned_ids=(), *, focus=None, on
                       if "page" not in row or not keywords or matches]
             ranked.sort(key=lambda item: -item[0])
             budget = min(per_source, 3) if spec["adapter"] == "document_pages" else per_source
-            chosen = ranked[:budget]
+            chosen = []
+            if len(topic_terms) > 1:
+                match_sets = {row["id"]: matching for row, _, matching in candidates}
+                selected_ids = set()
+                for topic, topic_years in topic_terms:
+                    eligible = [item for item in ranked if item[1]["id"] not in selected_ids
+                                and _period_matches(item[1], topic_years)]
+                    if len(chosen) == budget:
+                        break
+                    if not eligible:
+                        continue
+                    best = max(eligible, key=lambda item: len(match_sets[item[1]["id"]] & topic))
+                    record_id = best[1]["id"]
+                    if match_sets[record_id] & topic:
+                        chosen.append(best)
+                        selected_ids.add(record_id)
+                chosen.extend(item for item in ranked if item[1]["id"] not in selected_ids)
+                chosen = chosen[:budget]
+            else:
+                chosen = ranked[:budget]
             for _, row, content in chosen:
                 if "page" in row and len(content) > 1300:
                     content, _ = extract_spans(content, wanted, budget=1300)

@@ -65,10 +65,18 @@ def test_actual_document_search_keeps_filters_counts_government_query_and_origin
         'explicit_title_targets':lambda *args, **kwargs:[], 'search_knowledge_base':search,
         'classify_document_family':lambda item:'Humanitarian planning'}
     exec(compile(ast.Module(body=[fn],type_ignores=[]),'coverage-document-path','exec'),ns)
-    result=ns[fn.name]('For Agency Alpha, compare response coverage of needs with government priorities.',hnrp_count=4)
+    result=ns[fn.name]('For Agency Alpha, compare response coverage of needs with government priorities.',
+                       hnrp_count=4, topics={
+                           "GOVERNMENT_DOCS": ["strategy priorities for rural facilities"],
+                           "HNRP": ["recorded completion of clinic upgrades"],
+                       })
     assert len(calls)==3
     government=next(c for c in calls if c[2]==['g']);response=next(c for c in calls if c[2]==['h'] and '\nAnnex:' not in c[0])
     assert government[1]==8 and response[1]==4
+    assert "strategy priorities for rural facilities" in government[0]
+    assert "recorded completion of clinic upgrades" not in government[0]
+    assert "recorded completion of clinic upgrades" in response[0]
+
     annex=next(c for c in calls if '\nAnnex:' in c[0]);assert annex[1:]==(3,['h'])
     assert 'reporting period, population definitions and footnotes' in annex[0]
     assert result['trace']['hnrp_docs']['annex_lookup']=={'reports':1,'failed':int(annex_failure)}

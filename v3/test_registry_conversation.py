@@ -155,8 +155,10 @@ def test_research_retries_only_the_uncovered_part_of_a_compound_question(monkeyp
         calls = []
         retry_available = True
 
-        def search(question, government, humanitarian, *limits, focus=None):
+        def search(question, government, humanitarian, *limits, focus=None, topics=None):
             calls.append((question, government, humanitarian, focus))
+            if topics:
+                assert topics == {"HNRP": ["hospital equipment", "clinic staffing"]}
             if focus and not retry_available:
                 raise TimeoutError("private provider details")
             return {"evidence": [evidence("clinic staffing") if focus else evidence("hospital equipment")],

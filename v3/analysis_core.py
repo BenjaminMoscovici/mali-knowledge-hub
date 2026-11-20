@@ -958,7 +958,7 @@ def build_document_evidence(
     use_hnrp=True,
     government_count=8,
     hnrp_count=8,
-    *, focus=None,
+    *, focus=None, topics=None,
 ):
 
     function_started = time.perf_counter()
@@ -968,8 +968,10 @@ def build_document_evidence(
     metadata = {row["id"]: row for row in document_groups["documents"] if row.get("id")}
 
     def search_documents(query, match_count, filter_document_ids):
-        if focus:
-            query = f"{query}\nPrioritize evidence about this part of the original request: {focus}"
+        family = "GOVERNMENT_DOCS" if filter_document_ids[0] in government_document_ids else "HNRP"
+        hints = [focus] if focus else (topics or {}).get(family, ())
+        if hints:
+            query += "\nPrioritize these parts of the original request: " + "; ".join(hints)
         return search_knowledge_base(query, match_count, filter_document_ids, document_metadata=metadata)
 
     government_document_ids = document_groups["government"]
@@ -2430,6 +2432,10 @@ def run_four_source_research(question, document_count=8):
 
     jobs = {}
 
+    from retrieval_coverage import topics_by_family
+    intents = (planner_result.get("planner_output") or {}).get("intents", [])
+    topics = topics_by_family(intents)
+
     def retrieve_registry():
         from registry_research import retrieve as retrieve_registered
         from registry_observations import retrieve as retrieve_observations
@@ -2438,7 +2444,8 @@ def run_four_source_research(question, document_count=8):
         registry_ids = {family for intent in (planner_result.get("planner_output") or {}).get("intents", [])
                         for family in intent.get("source_families", []) if family.startswith("registry:")}
         try:
-            rows, gaps = retrieve_registered(question, planned_ids=registry_ids)
+            options = {"topics": topics} if any(key.startswith("registry:") for key in topics) else {}
+            rows, gaps = retrieve_registered(question, planned_ids=registry_ids, **options)
         except (OSError, ValueError, KeyError, TypeError):
             rows, gaps = [], [("Reviewed source registry", "source_unavailable")]
         try:
@@ -2509,14 +2516,14 @@ def run_four_source_research(question, document_count=8):
             source_plan["government_docs"]
             or source_plan["hnrp_docs"]
         ):
-            jobs["documents"] = submit(executor,
-                build_document_evidence,
-                question,
-                source_plan["government_docs"],
-                source_plan["hnrp_docs"],
-                document_count,
-                document_count
-            )
+            def retrieve_documents():
+                options = {"topics": topics} if "GOVERNMENT_DOCS" in topics or "HNRP" in topics else {}
+                return build_document_evidence(
+                    question, source_plan["government_docs"], source_plan["hnrp_docs"],
+                    document_count, document_count, **options,
+                )
+
+            jobs["documents"] = submit(executor, retrieve_documents)
 
         if source_plan["hapi"]:
             jobs["hapi"] = submit(executor,
@@ -2616,7 +2623,6 @@ def run_four_source_research(question, document_count=8):
         registered_evidence, registry_gaps, registry_seconds = jobs["registry"].result()
 
     from retrieval_coverage import assess, retry_target
-    intents = (planner_result.get("planner_output") or {}).get("intents", [])
     first_pass = (document_result["evidence"] + hapi_result["evidence"]
                   + fongim_result["evidence"] + registered_evidence)
     missing = assess(intents, first_pass)

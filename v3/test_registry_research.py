@@ -164,3 +164,37 @@ def test_evidence_request_with_analysis_stays_on_regular_research_path():
     assert registry_research.answer(question, "English") is None
     evidence, _ = registry_research.retrieve(question)
     assert evidence and "Reported financing gap" in evidence[0]["content"]
+
+
+def test_compound_registry_ranking_keeps_topics_and_source_period_filters(tmp_path, monkeypatch):
+    registry = tmp_path / "registry.json"
+    spec = dict(adapter="packaged_records", package="facts.json.gz", dataset_id="service-log",
+                release_id="r1", scope="district", aliases=["district service log"],
+                fields={"description": "Description"})
+    source = dict(source_name="District service log", provider="Fixture",
+                  access_route="https://example.org/service-log", integration_status="integrated",
+                  research=spec)
+    registry.write_text(json.dumps([source]))
+    with gzip.open(tmp_path / spec["package"], "wt") as archive:
+        records = []
+        for i, (year, content) in enumerate([
+            (2025, "hospital equipment supplies"),
+            (2025, "hospital equipment stock"),
+            (2024, "clinic staffing staffing schedules"),
+            (2025, "clinic staffing"),
+        ], 1):
+            records.append(dict(id=f"row-{i}", release_id="r1", dataset_id="service-log",
+                                version="v1", locator=f"Sheet row {i}",
+                                payload={"description": content},
+                                reference_start=f"{year}-01-01", reference_end=f"{year}-12-31"))
+        json.dump({"records": records}, archive)
+    monkeypatch.setattr(registry_research, "REGISTRY", registry)
+
+    evidence, _ = registry_research.retrieve(
+        "Compare hospital equipment and clinic staffing documented by the district service log in 2025.",
+        limit=2, topics={"registry:service-log": ["hospital equipment", "clinic staffing"]},
+    )
+    assert len(evidence) == 2
+    assert any("hospital equipment" in row["content"] for row in evidence)
+    assert any(row["record_id"] == "row-4" for row in evidence)
+    assert {row["reference_period_start"] for row in evidence} == {"2025-01-01"}
