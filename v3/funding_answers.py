@@ -90,4 +90,22 @@ def answer(question, ledger, language=None):
                   ('récupéré le ' if french else 'retrieved ')+cell(p.get('retrieved_at'))+'. '+cell(p['funding_definition'])+f' [{e["evidence_id"]}]']
     lines += ['', ('Un écart positif est un déficit arithmétique de financement ; un écart négatif indique un financement supérieur aux besoins financiers déclarés. Ces montants nationaux ne démontrent ni décaissement, ni livraison, ni couverture de besoins locaux. Aucun total interplans ou interannées ni conversion de devises n’a été effectué.' if french else
         'A positive balance is an arithmetic financing gap; a negative balance means reported funding exceeds requirements. These national figures do not establish disbursement, delivery or local needs coverage. No cross-plan/year total or currency conversion is performed.')]
-    return '\n'.join(lines),{'method':'verified_funding_arithmetic','records':audits}
+    from joins import observation_comparisons
+    comparisons = observation_comparisons(rows, question)
+    if comparisons:
+        lines += ["", "**Évolution dans le même instantané FTS**" if french else
+                  "**Changes within the same FTS snapshot**"]
+        translations = {"Plan requirements": "Besoins financiers du plan",
+                        "Reported plan funding": "Financement déclaré du plan",
+                        "Share of declared plan requirements funded": "Part des besoins financiers couverte"}
+        for change in comparisons:
+            label = translations[change["measure"]] if french else change["measure"]
+            unit = change["difference_unit"]
+            if french and unit == "percentage points":
+                unit = "points de pourcentage"
+            value = display(Decimal(change["difference"]))
+            first, second = change["earlier_year"], change["later_year"]
+            refs = ", ".join(change["evidence_ids"])
+            lines.append(f"- {label}, {second} − {first}: {value} {unit}. [{refs}]")
+    return '\n'.join(lines),{'method':'verified_funding_arithmetic','records':audits,
+                              'comparisons':comparisons}

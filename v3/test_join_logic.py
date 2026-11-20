@@ -141,3 +141,37 @@ class JoinTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+def test_spatial_comparison_requires_the_same_declared_geography_framework():
+    from joins import observation_comparisons
+
+    common = {"year": 2024, "measure": "monitored sites", "definition": "operational on survey date",
+              "unit": "site", "geographic_level": "district", "geography_framework": "2023 boundaries"}
+    records = [
+        {"evidence_id": "E01", "observation": {**common, "geography_id": "a", "value": 12}},
+        {"evidence_id": "E02", "observation": {**common, "geography_id": "b", "value": 7}},
+    ]
+    question = "Compare these districts in 2024."
+    [difference] = observation_comparisons(records, question)
+    assert difference["difference"] == "-5" and difference["evidence_ids"] == ["E01", "E02"]
+    records[1]["observation"]["geography_framework"] = "2010 boundaries"
+    assert not observation_comparisons(records, question)
+
+
+def test_exact_entity_links_keep_source_roles_and_namespaces_separate():
+    from joins import build_join_context, prompt_context
+
+    records = [{
+        "evidence_id": f"E{index:02d}", "source_family": family,
+        "entity_reference": {"namespace": namespace, "id": "X10", "role": role},
+    } for index, (family, namespace, role) in enumerate([
+        ("project registry", "reviewed identifier", "project profile"),
+        ("review office", "reviewed identifier", "evaluation finding"),
+        ("unrelated registry", "another identifier", "publisher activity"),
+    ], 1)]
+    joined = build_join_context(records, {})
+    [entity] = joined["exact_entities"]
+    assert [row["evidence_id"] for row in entity["sources"]] == ["E01", "E02"]
+    assert "Identity only" in prompt_context(joined) and "E03" not in prompt_context(joined)

@@ -3020,7 +3020,7 @@ in a different language; translate faithfully while retaining citations.
 
     if calculations:
         user_prompt += (
-            "\nVERIFIED ANNUAL DIFFERENCES (later minus earlier; cite both operand IDs): "
+            "\nVERIFIED DIFFERENCES (later minus earlier, or second geography minus first; cite both operands): "
             + json.dumps(calculations, ensure_ascii=False)
         )
 

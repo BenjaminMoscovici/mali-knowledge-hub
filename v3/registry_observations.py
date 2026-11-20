@@ -37,7 +37,7 @@ def _capabilities(path):
 
 OBSERVATION_DIMENSIONS = (
     "measure", "definition", "geography_id", "unit",
-    "denominator", "population", "methodology", "geographic_level", "period_type",
+    "denominator", "population", "methodology", "geographic_level", "period_type", "geography_framework", "series_id",
 )
 
 

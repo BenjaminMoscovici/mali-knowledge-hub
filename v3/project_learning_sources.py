@@ -25,6 +25,15 @@ def item(rows,content,title,family):
     result=evidence(rows,content,title,'Mali; country-level project context, local location unverified',
                     'project country profile only',data=package())
     result['source_family']=family
+    if len(rows) == 1:
+        record = rows[0]
+        project_id = record["payload"].get("project_id")
+        roles = {"development_project": "project profile", "aid_activity": "publisher activity",
+                 "evaluation_finding": "evaluation finding"}
+        role = roles.get(record["source_type"])
+        if role and re.fullmatch(r"P\d{6}", project_id or ""):
+            result["entity_reference"] = {"namespace": "World Bank project", "id": project_id, "role": role}
+
     return result
 
 

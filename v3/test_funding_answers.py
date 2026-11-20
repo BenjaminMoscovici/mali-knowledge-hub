@@ -34,6 +34,14 @@ def test_multiple_years_and_missing_requirements_never_become_a_combined_total()
     rows=ledger(q);text,audit=answer(q,rows)
     assert len(audit['records'])==4 and '| 2025 / HMLI25 |' in text and '| 2026 / HMLI26 |' in text
     assert '46,785,595' in text and 'No cross-plan/year total' in text
+    assert '-52,435,150 USD' in text and '-0.91 percentage points' in text
+    assert len(audit["comparisons"]) == 3
+    assert all(len(row["evidence_ids"]) == 2 for row in audit["comparisons"])
+    revised = deepcopy(rows)
+    for item in revised:
+        if item["funding_record"]["year"] == 2025:
+            item["funding_record"]["retrieved_at"] = "different snapshot"
+    assert not answer(q, revised)[1]["comparisons"]
     assert verify(text,rows)[1]['valid']
 
 
