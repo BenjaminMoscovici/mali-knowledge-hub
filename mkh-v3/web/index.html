@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Mali Knowledge Hub V3</title>
+  <link rel="stylesheet" href="/assets/styles.css?v=3">
+  <script src="/assets/app.js?v=3" defer></script>
+</head>
+<body>
+  <div class="workspace" id="workspace">
+    <aside class="sidebar" id="sidebar" aria-label="Conversations">
+      <div class="sidebar-top">
+        <div class="brand-row">
+          <div class="brand-mark" aria-hidden="true">M</div>
+          <span class="brand-name">Mali Knowledge Hub</span>
+          <button class="icon-button sidebar-collapse" id="sidebar-collapse" aria-label="Collapse sidebar" title="Collapse sidebar">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>
+          </button>
+        </div>
+        <button class="nav-action new-chat" id="new-chat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>New chat</span></button>
+        <button class="nav-action" type="button" id="sources-toggle"><svg viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v14a4 4 0 0 0-4-2H4zM13 7a3 3 0 0 1 3-3h4v15h-3a4 4 0 0 0-4 2"/></svg><span>What the Hub knows</span></button>
+      </div>
+      <div class="history-scroll">
+        <div class="history-label" id="history-label">Recent</div>
+        <div id="thread-list" class="thread-list"></div>
+      </div>
+      <div class="sidebar-bottom">
+        <p class="profile">V3 development preview</p>
+      </div>
+    </aside>
+
+    <div class="sidebar-scrim hidden" id="sidebar-scrim"></div>
+    <main class="main" id="main">
+      <header class="topbar">
+        <button class="icon-button sidebar-open" id="sidebar-open" aria-label="Open sidebar" title="Open sidebar"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
+        <span class="topbar-title" id="topbar-title">Mali Knowledge Hub</span>
+      </header>
+
+      <div class="conversation-scroll" id="conversation-scroll">
+        <div class="conversation-column" id="conversation-column">
+          <div class="welcome" id="welcome">
+            <div class="welcome-symbol" aria-hidden="true">M</div>
+            <h1>What would you like to explore?</h1>
+            <p>Research Mali with evidence you can inspect.</p>
+            <div class="suggestions" aria-label="Example questions">
+              <button class="suggestion">Prépare une note sur la sécurité alimentaire dans la zone de Mopti.</button>
+              <button class="suggestion">Compare the available food-security estimates and reporting periods for Mopti.</button>
+              <button class="suggestion">Which sources can I use to research food security in Mali?</button>
+            </div>
+          </div>
+          <div id="messages" class="messages" aria-live="polite"></div>
+          <div id="conversation-end"></div>
+        </div>
+      </div>
+
+      <div class="composer-dock">
+        <div class="composer-shell">
+          <div class="composer" id="composer">
+            <label class="sr-only" for="prompt">Ask a question about Mali</label>
+            <textarea id="prompt" rows="1" maxlength="5000" placeholder="Ask a question about Mali…"></textarea>
+            <div class="composer-toolbar">
+              <div class="composer-left">
+                <span class="composer-hint" id="composer-hint">Evidence-grounded research</span>
+              </div>
+              <div class="composer-right">
+                <label class="sr-only" for="analysis-mode">Analysis depth</label>
+                <select id="analysis-mode" title="Analysis depth"><option value="fast" selected>Fast</option><option value="deep">Deep</option></select>
+                <button class="send-button" id="send-button" aria-label="Send question" title="Send question" disabled><svg viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <div class="composer-caption"><span id="preview-status" role="status">Connecting to the V3 preview…</span></div>
+        </div>
+      </div>
+    </main>
+
+    <div class="drawer-scrim hidden" id="drawer-scrim"></div>
+    <aside class="evidence-drawer hidden" id="evidence-drawer" aria-label="Sources and evidence">
+      <div class="drawer-head"><div><small>RESEARCH EVIDENCE</small><h2>Sources</h2></div><button class="icon-button" id="drawer-close" aria-label="Close sources"><svg viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg></button></div>
+      <div class="drawer-body" id="drawer-body"></div>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+</body>
+</html>
