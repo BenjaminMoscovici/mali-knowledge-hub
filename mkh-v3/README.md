@@ -43,3 +43,12 @@ editing, a malicious source instruction and a draft or withdrawn release. Indepe
 release qualification uses a separate holdout. The first validation suite uses test
 doubles for Supabase authenticated state and model responses, and a metadata-only
 unfamiliar-source fixture.
+
+Hosted verification on 25 November 2026 used revision `929bd4a`, with external web
+research off. Fast returned the French Mopti comparison after recovering from one SQL
+tool error. The two sums matched the preserved workbook rows at two decimal places.
+Deep retained the historical scope on follow-up, identified the June–August 2026
+projection, and cited the live national WDI cereal-yield observations. The two
+assignments took 23.10 and 13.96 seconds on the server, with combined estimated
+model charges of US$0.0884. This run exercised the hosted companion; the real
+email-code sign-in and paired browser evaluation remain open.
