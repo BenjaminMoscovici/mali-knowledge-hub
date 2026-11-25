@@ -299,9 +299,19 @@ async def conversations(request):
         row = await state.store.load(token, conversation_id)
         if not row:
             return error("This V3 conversation is unavailable.", 404)
-        history = state.history.accessible(conversation_id, owner, row["turns"])
+        before = request.query_params.get("before")
+        if before is not None:
+            if not before.isdecimal() or len(before) > 9:
+                return error("Invalid historical turn number.")
+            page = await state.store.earlier_page(token, conversation_id, int(before))
+            turns = [r["turn"] for r in page]
+            first = page[0]["ordinal"] if page else 1
+        else:
+            turns = row["turns"]
+            first = row["revision"] - len(turns) + 1
+        history = state.history.accessible(conversation_id, owner, turns)
         return data_response({
-            "id": conversation_id, "title": row["title"],
+            "id": conversation_id, "title": row["title"], "earlier_before": first if first > 1 else None,
             "turns": [{k: v for k, v in turn.items() if k != "signature"} for turn in history],
         })
     except StateError as failure:
@@ -373,13 +383,22 @@ async def chat(request):
                 state.preview.reserve(guest)
                 if token:
                     await state.store.reserve(token)
+                async def recall(query, ledger):
+                    archived = []
+                    if row and row["revision"] > len(turns):
+                        archived = await state.store.find_work(token, conversation_id, query)
+                    accessible = list(state.history.accessible(conversation_id, owner, archived))
+                    return state.history.recall(accessible + earlier, query, ledger)
+
                 async for piece in state.companion.research(prompt, mode, context, prior_evidence, basis,
-                                                           any(turn.get("web_used") for turn in earlier)):
+                                                           any(turn.get("web_used") for turn in earlier), recall,
+                                                           previous.get("requirements", {})):
                     if piece["type"] == "answer":
                         title = row["title"] if row else " ".join(prompt.split())[:110]
                         turns.append(state.history.sign(conversation_id, owner, {
                             "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
-                            "objective": objective, "instructions": brief, "basis": piece.get("basis", {}),
+                            "objective": objective, "instructions": brief, "requirements": piece.get("requirements", {}),
+                            "basis": piece.get("basis", {}),
                             "artifacts": piece.get("artifacts", []),
                             "web_used": piece["web_used"], "partial": piece["partial"],
                             "tool_failures": piece["tool_failures"], "usage": piece["usage"], "mode": mode,

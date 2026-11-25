@@ -10,6 +10,8 @@ const dialog = byId("auth-dialog");
 let session = null;
 let conversationId = null;
 let workingInstructions = "";
+let currentRequirements = {};
+let earlierBefore = null;
 let active = null;
 let activeJob = null;
 const pendingJobKey = "mkh-v3-pending-research";
@@ -136,8 +138,14 @@ function evidenceCard(item, number) {
     card.append(el("p", "evidence-meta", [data.label, data.unit, data.provider_last_updated]
       .filter(Boolean).join(" · ")));
   }
-  if (data.relationship) card.append(el("p", "evidence-meta",
-    data.relationship.entity + " · " + data.relationship.method + " · " + data.relationship.matched_pairs + " matched pairs"));
+  if (data.relationship) {
+    const rel = data.relationship;
+    card.append(el("p", "evidence-meta", rel.entity + " · " + rel.method + " · " + rel.matched_pairs + " matched pairs"));
+    if (Number.isInteger(rel.left_unmatched_rows)) {
+      card.append(el("p", "evidence-meta", "Input rows without a match · " + rel.left + " " + rel.left_unmatched_rows
+        + " · " + rel.right + " " + rel.right_unmatched_rows));
+    }
+  }
   if (data.parent_evidence) {
     const parent = data.parent_evidence;
     const view = el("details");
@@ -275,6 +283,16 @@ function renderAnswer(container, text, evidence) {
   let list = null;
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index].trim();
+    if (line.startsWith("```")) {
+      const code = [];
+      while (index + 1 < lines.length && !lines[index + 1].trimStart().startsWith("```")) code.push(lines[++index]);
+      if (index + 1 < lines.length) index++;
+      const block = el("pre", "calculation");
+      block.append(el("code", "", code.join("\n")));
+      container.append(block);
+      list = null;
+      continue;
+    }
     if (!line) {
       list = null;
       continue;
@@ -335,16 +353,16 @@ function scrollToLatest() {
   requestAnimationFrame(() => { byId("conversation-scroll").scrollTop = byId("conversation-scroll").scrollHeight; });
 }
 
-function appendUser(text) {
+function appendUser(text, parent = messages) {
   byId("welcome").classList.add("hidden");
   const node = el("div", "message user");
   node.append(el("div", "user-bubble", text));
-  messages.append(node);
-  scrollToLatest();
+  parent.append(node);
+  if (parent === messages) scrollToLatest();
   return node;
 }
 
-function appendAnswer(turn) {
+function appendAnswer(turn, parent = messages) {
   const evidence = turn.evidence || [];
   const message = el("div", "message assistant");
   const body = el("div", "assistant-turn");
@@ -368,18 +386,48 @@ function appendAnswer(turn) {
     footer.append(el("span", "", turn.partial ? "Research incomplete" : "Some research tools could not complete"));
   }
   message.append(footer);
-  messages.append(message);
-  scrollToLatest();
+  parent.append(message);
+  if (parent === messages) scrollToLatest();
 }
 
 function reset() {
+  earlierBefore = null;
+  byId("earlier-turns").classList.add("hidden");
   workingInstructions = "";
+  currentRequirements = {};
   conversationId = null;
   messages.replaceChildren();
   byId("welcome").classList.remove("hidden");
   byId("topbar-title").textContent = "Mali Knowledge Hub";
   promptBox.value = "";
   updateComposer();
+}
+
+function showSavedTurns(value, parent) {
+  earlierBefore = value.earlier_before;
+  byId("earlier-turns").classList.toggle("hidden", !earlierBefore);
+  for (const turn of value.turns) {
+    appendUser(turn.prompt, parent);
+    if (turn.answer) appendAnswer(turn, parent);
+    if (turn.withdrawn) parent.append(el("p", "evidence-meta", "Earlier evidence is outside the current approved scope."));
+  }
+}
+
+async function loadEarlier() {
+  if (!conversationId || !earlierBefore) return;
+  const id = conversationId;
+  const button = byId("earlier-turns");
+  button.disabled = true;
+  try {
+    const result = await json("/api/conversations/" + id + "?before=" + earlierBefore);
+    if (id !== conversationId) return;
+    const group = document.createDocumentFragment();
+    showSavedTurns(result, group);
+    const previous = messages.firstElementChild;
+    messages.prepend(group);
+    previous?.scrollIntoView({block: "start"});
+  } catch (failure) { updateComposer(failure.message); }
+  finally { button.disabled = false; }
 }
 
 async function recent() {
@@ -400,12 +448,9 @@ async function recent() {
         reset();
         conversationId = entry.id;
         workingInstructions = value.turns.at(-1)?.instructions || "";
+        currentRequirements = value.turns.at(-1)?.requirements || {};
         byId("topbar-title").textContent = entry.title;
-        for (const turn of value.turns) {
-          appendUser(turn.prompt);
-          if (turn.answer) appendAnswer(turn);
-          if (turn.withdrawn) messages.append(el("p", "evidence-meta", "Earlier evidence is outside the current approved scope."));
-        }
+        showSavedTurns(value, messages);
         if (window.innerWidth <= 800) setSidebar(false);
       } catch (failure) {
         updateComposer(failure.message);
@@ -557,6 +602,7 @@ async function followJob(id, pendingMessage, prompt) {
     }
     if (event.type === "answer") {
       conversationId = event.conversation_id;
+      currentRequirements = event.requirements || {};
       appendAnswer({...event, prompt});
       sessionStorage.removeItem(pendingJobKey);
       await recent().catch(() => {});
@@ -666,6 +712,14 @@ async function editNotes(personal) {
       } catch (failure) { notice.textContent = failure.message; }
       finally { save.disabled = false; }
     });
+    if (!personal && Object.keys(currentRequirements).length) {
+      const heading = el("h3", "", "Requirements from this conversation");
+      const list = el("ul");
+      for (const [dimension, quote] of Object.entries(currentRequirements)) {
+        list.append(el("li", "", dimension.replaceAll("_", " ") + " · " + quote));
+      }
+      drawerBody.append(heading, list);
+    }
     drawerBody.append(form);
     textarea.focus();
   } catch (failure) { drawerBody.replaceChildren(el("p", "", failure.message)); }
@@ -674,6 +728,7 @@ async function editNotes(personal) {
 byId("working-notes").addEventListener("click", () => editNotes(false));
 byId("personal-memory").addEventListener("click", () => editNotes(true));
 if (window.innerWidth <= 800) setSidebar(false);
+byId("earlier-turns").addEventListener("click", loadEarlier);
 byId("sources-toggle").addEventListener("click", () => showCatalogue());
 byId("drawer-close").addEventListener("click", closeDrawer);
 byId("drawer-scrim").addEventListener("click", closeDrawer);

@@ -36,7 +36,7 @@ def chunks(text, size=1700, overlap=200):
 
 
 class SearchIndex:
-    def __init__(self, sources):
+    def __init__(self, sources, profiles=None):
         self.entries = []
         for source in sources.values():
             labels = " ".join([source["title"], source["id"], source["publisher"], *source["topics"]])
@@ -46,6 +46,8 @@ class SearchIndex:
             for key, value in source.get("definitions", {}).items():
                 if isinstance(value, dict):
                     fields.append(f"{key} {value.get('label', '')} {value.get('unit', '')}")
+            for field, profile in (profiles or {}).get(source["id"], {}).items():
+                fields.append(field + " " + " ".join(map(str, profile["examples"])))
             self.add("source", source, None, labels, " ".join([
                 source["description"], source["geography"], source["period"], *fields,
             ]))
@@ -88,6 +90,25 @@ class SearchIndex:
             for rank, i in enumerate(sorted(scores, key=scores.get, reverse=True)):
                 ranks[i] += 1 / (12 + rank)
         return [self.entries[i] for i in sorted(ranks, key=ranks.get, reverse=True)[:limit]]
+
+    def find_sources(self, query, limit, source_type, affinities):
+        direct = self.rank(query, "source", max(limit, 12), source_type=source_type, affinities=affinities)
+        if not query.strip():
+            return direct[:limit]
+        # A project identifier or a phrase may occur only inside the release. Give each
+        # parent one vote per result type, so large releases cannot win by repetition.
+        totals = Counter()
+        parents = {}
+        for kind, weight in (("source", 1.25), ("passage", 1.0), ("record", 1.0)):
+            matches = direct if kind == "source" else self.rank(query, kind, 12, source_type=source_type, affinities=affinities)
+            seen = set()
+            for rank, entry in enumerate(matches):
+                key = entry["source"]["id"]
+                if key not in seen:
+                    totals[key] += weight / (8 + rank)
+                    parents[key] = entry
+                    seen.add(key)
+        return [parents[key] for key, _ in totals.most_common(limit)]
 
 
 class SemanticSearch:

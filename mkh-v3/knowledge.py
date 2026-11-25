@@ -1,6 +1,7 @@
 """Published source discovery, evidence and bounded read-only analysis."""
 
-from collections import defaultdict
+from collections import Counter, defaultdict
+import gzip
 import hashlib
 import json
 import re
@@ -50,6 +51,7 @@ class Evidence:
         self.artifacts = {}
         self.new_evidence = set()
         self.requested_figures = set()
+        self.recalled_web = False
         self.items = {
             item["id"]: item for item in prior if self.allowed(item)
         }
@@ -60,12 +62,12 @@ class Evidence:
         source = self.knowledge.sources.get(item.get("source_id"))
         if not source or item.get("origin") != "canon" or item.get("release") != source["release"]:
             return False
-        if item.get("fingerprint") and item["fingerprint"] != self.knowledge.stamps[source["id"]]:
+        if item.get("fingerprint") and not self.knowledge.current_release(source["id"], item["fingerprint"]):
             return False
         for input_release in item.get("data", {}).get("input_releases", []):
             current = self.knowledge.sources.get(input_release["source_id"])
             if (current is None or current["release"] != input_release["release"] or
-                    (input_release.get("fingerprint") and input_release["fingerprint"] != self.knowledge.stamps[current["id"]])):
+                    (input_release.get("fingerprint") and not self.knowledge.current_release(current["id"], input_release["fingerprint"]))):
                 return False
         return True
 
@@ -86,11 +88,16 @@ class Evidence:
         result = {"kind": kind, "title": title[:160], "label_field": label_field, "value_field": value_field,
                   "evidence_id": evidence_id}
         if kind == "map":
-            source = self.knowledge.source(item["source_id"])
-            boundaries = source.get("geometries", {})
-            code_column = source.get("map_key")
-            if not code_column or len(item["data"].get("input_releases", [])) != 1:
-                raise KnowledgeError("Use one boundary release to identify the map geometries.")
+            inputs = [self.knowledge.source(r["source_id"]) for r in item["data"].get("input_releases", [])]
+            boundaries_used = [s for s in inputs if s.get("map_key")]
+            if len(boundaries_used) != 1:
+                raise KnowledgeError("Include a published boundary release. Join through a registered geographic identifier before mapping another dataset.")
+            source = boundaries_used[0]
+            relationship = item["data"].get("relationship") or {}
+            if len(inputs) > 1 and relationship.get("entity") not in source.get("entity_keys", {}):
+                raise KnowledgeError("Mapping multiple inputs requires a registered geographic relationship to the boundary release.")
+            boundaries = source["geometries"]
+            code_column = source["map_key"]
             # A display label may be a place name or an SQL alias. Bind the geometry
             # using the release's data values; never infer cross-vintage place matches.
             candidates = [column for column in rows[0] if all(
@@ -155,8 +162,10 @@ class Evidence:
 class Knowledge:
     def __init__(self, directory=CANON):
         self.sources = {}
-        for path in sorted(Path(directory).glob("*.json")):
-            source = json.loads(path.read_text(encoding="utf-8"))
+        directory = Path(directory)
+        for path in sorted([*directory.glob("*.json"), *directory.glob("*.json.gz")]):
+            raw = path.read_bytes()
+            source = json.loads(gzip.decompress(raw) if path.suffix == ".gz" else raw)
             if source.get("review") != "published":
                 continue
             if not SOURCE_ID.fullmatch(source["id"]) or source["id"] in self.sources:
@@ -169,7 +178,21 @@ class Knowledge:
                 raise ValueError(f"Unknown search field in {path.name}")
             self.sources[source["id"]] = source
         self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
-        self.index = SearchIndex(self.sources)
+        self.profiles = {}
+        for key, source in self.sources.items():
+            dims = {}
+            for column in source.get("dimensions", []):
+                if column not in source["columns"]:
+                    raise ValueError(f"Unknown dimension {column} in {key}")
+                counts = Counter(r.get(column) for r in source["records"] if r.get(column) is not None)
+                dims[column] = {"distinct_count": len(counts), "examples": [v for v, _ in counts.most_common(20)]}
+            self.profiles[key] = dims
+        self.index = SearchIndex(self.sources, self.profiles)
+
+    def current_release(self, source_id, version):
+        source = self.sources.get(source_id)
+        return bool(source and (version in (source["release"], self.stamps[source_id])
+                                or version in source.get("compatible_fingerprints", [])))
 
     @staticmethod
     def _validate_table(source, filename):
@@ -192,7 +215,7 @@ class Knowledge:
         return {k: v for k, v in source.items() if k not in {"passages", "records", "adapter", "join_group", "geometries"}}
 
     def discover(self, query="", kind=None, limit=8, affinities=None):
-        entries = self.index.rank(query, "source", limit, source_type=kind, affinities=affinities)
+        entries = self.index.find_sources(query, limit, kind, affinities)
         return [self.describes(entry["source"]) for entry in entries]
 
     def passage(self, entry, ledger):
@@ -240,10 +263,12 @@ class Knowledge:
             raise KnowledgeError("Provide an administrative place name.")
         candidates = []
         for source in self.sources.values():
-            if source["type"] != "reference":
+            fields = source.get("place_fields", ["place"] if source["type"] == "reference" else [])
+            if not fields:
                 continue
             for row in source["records"]:
-                if normalize(row.get("place")) == normalized and (not level or level == row.get("level")):
+                if (any(normalize(row.get(k, "")) == normalized for k in fields)
+                        and (not level or normalize(level) == normalize(row.get("level", "")))):
                     candidates.append(ledger.add(source, "source_record", row["locator"], row))
         return candidates[:12]
 
@@ -253,6 +278,13 @@ class Knowledge:
         if source["type"] in {"dataset", "reference"}:
             detail["row_count"] = len(source["records"])
             detail["samples"] = source["records"][:3]
+            if self.profiles[source_id]:
+                detail["dimension_values"] = self.profiles[source_id]
+            detail["relationships"] = [
+                {"entity": entity, "source": other["id"], "key": key, "other_key": other["entity_keys"][entity]}
+                for entity, key in source.get("entity_keys", {}).items() for other in self.sources.values()
+                if other["id"] != source_id and entity in other.get("entity_keys", {})
+            ]
         elif source["type"] == "document":
             detail["pages"] = [
                 {"page": p.get("page"), "locator": p["locator"], "characters": len(p["text"])} for p in source["passages"]
@@ -278,6 +310,10 @@ class Knowledge:
         for row in right["records"]:
             if row[rk] not in ("", None):
                 index[row[rk]].append(row)
+        left_counts = Counter(r[lk] for r in left["records"] if r[lk] not in ("", None))
+        shared = left_counts.keys() & index.keys()
+        if any(left_counts[key] > 1 and len(index[key]) > 1 for key in shared):
+            raise KnowledgeError("Both sources repeat a shared identifier. A raw join would multiply observations. Aggregate each native table to the intended grain and compare the results separately.")
         pairs = []
         for lrow in left["records"]:
             for rrow in index.get(lrow[lk], ()):
@@ -289,7 +325,11 @@ class Knowledge:
                    for k, v in source["columns"].items()}
         relation = {"entity": entity, "left": left_id, "left_key": lk, "right": right_id,
                     "right_key": rk, "method": "inner equality on the registered nonempty identifier",
-                    "matched_pairs": len(pairs)}
+                    "matched_pairs": len(pairs), "matched_identifiers": len(shared),
+                    "left_unmatched_rows": len(left["records"]) - sum(left_counts[key] for key in shared),
+                    "right_unmatched_rows": len(right["records"]) - sum(len(index[key]) for key in shared),
+                    "left_missing_keys": sum(r[lk] in (None, "") for r in left["records"]),
+                    "right_missing_keys": sum(r[rk] in (None, "") for r in right["records"])}
         return self._calculate([{"table": "linked", "columns": columns, "records": pairs}], sql,
                                ledger, [left, right], relation=relation)
 

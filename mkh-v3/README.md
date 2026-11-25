@@ -106,3 +106,16 @@ A COD map exercise on revision `646809b` correctly ranked five regions but retur
 only a table. The exhibit ledger now retains multiple presentations of the same
 calculation and checks geographic identifiers against the published release's rows,
 including SQL aliases. The attached map uses the same source values as the CSV.
+
+Two reviewed releases extend analysis to reported humanitarian response and displacement.
+OCHA's Q1 2026 3W workbook contributes 5,413 presence rows. IOM's September 2025
+DTM Round 83 contributes 467 public aggregate stock records. Both preserve native
+categories, row locators and source-era region labels. Only region IDs confirmed by
+the original package against COD v03 can join or map. The calculation records how
+many rows each input lost. A join that would multiply repeated identifiers is refused.
+An issued table, chart or map can be downloaded with its evidence.
+
+Source discovery searches catalogue descriptions, registered dimension values, passages
+and indexed records. Current task requirements persist as quotations from the user's messages.
+Signed-in chats archive older turns when the recent window fills. The assistant can reopen
+previous work in that conversation, subject to current source approval and signatures.

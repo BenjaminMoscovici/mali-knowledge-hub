@@ -69,6 +69,41 @@ class ResearchTest(unittest.TestCase):
         inputs, _ = history.context(turns)
         self.assertIn("change 1", inputs[0]["content"])
 
+    def test_approved_identifier_coverage_and_map_survive_source_transfer(self):
+        ledger = Evidence(self.k, False)
+        activities, boundary = "mli-ocha-3w-2026-q1", "mli-cod-ab"
+        key = next(iter(self.k.source(activities)["entity_keys"]))
+        result = self.k.link_records(activities, boundary, key,
+            "SELECT r_pcode, COUNT(DISTINCT l_organization) AS actors FROM linked GROUP BY r_pcode", ledger)
+        rows = self.k.source(activities)["records"]
+        self.assertTrue(result["data"]["relationship"]["left_unmatched_rows"] > 0)
+        self.assertEqual(result["data"]["relationship"]["matched_pairs"], sum(bool(r["cod_region_id"]) for r in rows))
+        self.assertEqual(result["data"]["relationship"]["left_unmatched_rows"],
+                         sum(r["cod_region_id"] is None for r in rows))
+        self.assertEqual(ledger.present(result["id"], "map", "Reported organizations", "r_pcode", "actors")["map_source"], boundary)
+        with self.assertRaisesRegex(KnowledgeError, "multiply observations"):
+            self.k.link_records(activities, "mli-dtm-round83", key, "SELECT COUNT(*) FROM linked", ledger)
+        inspected = self.k.inspect(activities)
+        self.assertIn("food_security", inspected["dimension_values"]["sector"]["examples"])
+        self.assertIn(boundary, {r["source"] for r in inspected["relationships"]})
+
+    def test_requirement_changes_are_grounded_in_user_words_and_recall_is_scoped(self):
+        from companion import apply_requirements
+        prev = {"audience": "pour le comité", "format": "un graphique", "geography": "Ségou"}
+        changes = [{"dimension": "format", "action": "set", "quote": "une note"},
+                   {"dimension": "audience", "action": "remove", "quote": "drop everybody"}]
+        self.assertEqual(apply_requirements(prev, changes, "Fais-en une note."),
+                         {**prev, "format": "une note"})
+        self.assertEqual(prev["format"], "un graphique")
+        ledger = Evidence(self.k, False)
+        history = History("fixture", self.k, False)
+        bad = history.sign("chat", "owner", {"prompt": "old task", "answer": "withdrawn fact",
+                           "basis": {"unpublished": "version"}})
+        good = history.sign("chat", "owner", {"prompt": "auditor", "answer": "verified previous wording"})
+        accessible = list(history.accessible("chat","owner",[bad,good]))
+        self.assertEqual(history.recall(accessible, "withdrawn", ledger), [])
+        self.assertEqual(history.recall(accessible, "auditor", ledger)[0]["previous_answer"], good["answer"])
+
 
 class RetrievalTest(unittest.IsolatedAsyncioTestCase):
     async def test_exact_semantic_fusion_and_service_failure(self):

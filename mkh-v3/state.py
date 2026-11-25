@@ -12,6 +12,7 @@ from uuid import uuid4
 import httpx
 
 from knowledge import Evidence, json_text
+from retrieval import tokens
 
 CONVERSATIONS = "/rest/v1/mkh_v3_conversations"
 ATTEMPTS = "/rest/v1/mkh_v3_attempts"
@@ -137,7 +138,10 @@ class SupabaseState:
         return rows[0] if rows else None
 
     async def save(self, token, conversation_id, title, turns, revision):
-        body = {"turns": turns[-TOP_TURNS:], "revision": revision + 1, "updated_at": now()}
+        recent = turns[-TOP_TURNS:]
+        while len(recent) > 1 and len(json_text(recent).encode()) > 620000:
+            recent = recent[1:]
+        body = {"turns": recent, "revision": revision + 1, "updated_at": now()}
         headers = {"Prefer": "return=representation"}
         if revision == 0:
             response = await self.request("POST", CONVERSATIONS, token=token, headers=headers,
@@ -154,6 +158,19 @@ class SupabaseState:
         response = await self.request("DELETE", CONVERSATIONS, token=token,
                                       params={"id": f"eq.{conversation_id}"})
         self.require(response)
+
+    async def earlier_page(self, token, chat, before):
+        response = await self.request("GET", "/rest/v1/mkh_v3_archived_turns", token=token, params={
+            "select": "ordinal,turn", "conversation_id": "eq." + chat, "ordinal": f"lt.{before}",
+            "order": "ordinal.desc", "limit": TOP_TURNS})
+        self.require(response)
+        return list(reversed(response.json()))
+
+    async def find_work(self, token, chat, query):
+        response = await self.request("POST", "/rest/v1/rpc/mkh_v3_find_archived_work", token=token,
+                                      json={"chat": chat, "terms": query[:250]})
+        self.require(response)
+        return [r["turn"] for r in response.json()]
 
     async def memory(self, token):
         response = await self.request("GET", MEMORY, token=token, params={"select": "enabled,notes", "limit": 1})
@@ -267,12 +284,35 @@ class History:
                 continue
             evidence = turn.get("evidence", [])
             basis = turn.get("basis", {})
-            stale = any(version not in (self.knowledge.sources.get(key, {}).get("release"), self.knowledge.stamps.get(key))
+            stale = any(not self.knowledge.current_release(key, version)
                         for key, version in basis.items())
             if stale or (turn.get("web_used") and not self.web_enabled) or not all(ledger.allowed(e) for e in evidence):
                 yield {"prompt": prompt, "withdrawn": True}
                 continue
             yield {**turn, "prompt": prompt}
+
+    def recall(self, turns, query, ledger):
+        keywords = set(tokens(query))
+        ranked = []
+        for index, turn in enumerate(turns):
+            if not turn.get("answer"):
+                continue
+            score = len(keywords.intersection(tokens(turn["prompt"] + " " + turn["answer"])))
+            if score or not keywords:
+                ranked.append((score, index, turn))
+        result = []
+        for _, _, turn in sorted(ranked, key=lambda x: (x[0], x[1]), reverse=True)[:3]:
+            ledger.consulted.update(turn.get("basis", {}))
+            ledger.recalled_web |= bool(turn.get("web_used"))
+            refs = []
+            for item in turn.get("evidence", []):
+                if ledger.allowed(item):
+                    ledger.items[item["id"]] = item
+                    refs.append({"id": item["id"], "locator": item["locator"]})
+                    if item["origin"] == "canon":
+                        ledger.consulted[item["source_id"]] = self.knowledge.stamps[item["source_id"]]
+            result.append({"request": turn["prompt"][:1500], "previous_answer": turn["answer"][:3500], "evidence": refs})
+        return result
 
     def context(self, accessible_turns):
         inputs, evidence = [], []

@@ -38,6 +38,16 @@
     "area_km2": "WGS84 ellipsoidal area; pyproj.Geod; oriented exterior rings; not official survey area"
   },
   "map_key": "pcode",
+  "compatible_fingerprints": [
+    "1e1156dc76b67c1c72f9e4557020a8b623f3947bc3f7752d0558332f304601d5"
+  ],
+  "entity_keys": {
+    "COD v03 ADM1 unit ID": "id"
+  },
+  "place_fields": [
+    "place",
+    "pcode"
+  ],
   "geometries": {
     "ML20": {
       "type": "Polygon",

@@ -9,7 +9,11 @@ from pathlib import Path
 
 from import_public_releases import CANON, write
 
+REGION_KEY = "COD v03 ADM1 unit ID"
+REGION_RELEASE = "75917a21-a82b-5ee8-82ff-e3fd4c9acec7"
+
 PACKAGES = {
+    "source_wave2.json.gz": "44a05fa3874f00593b5b80d206326d99d91fa136c2a3d4babf1ca22b4483c713",
     "country_indicators.json.gz": "4bfe2d12473971f75658682d16d92d349979de83015b51889e69a519dbb3ae00",
     "source_wave3.json.gz": "00747de8be87456017e7ba73736e1376ed3e7972ee1b5a964cb73726d0fde116",
     "source_wave4.json.gz": "7aec60127058227f61e448bb582632bedb2683d6510bfc9117efd07a902fbfc1",
@@ -43,7 +47,47 @@ def package(directory, name):
     return gzip.decompress(raw)
 
 
-def append_wave(data, selected):
+HUMANITARIAN = {
+    "mli-ocha-3w-2026-q1": {
+        "table": "response_presence", "fields": {"organization": "TEXT", "acronym": "TEXT", "organization_type": "TEXT", "sector": "TEXT", "sector_raw": "TEXT"},
+        "topics": ["who does what where", "reported operational presence", "actors", "présence des organisations par secteur", "réponse humanitaire"],
+        "dimensions": ["sector", "organization_type", "region"], "definitions": {
+            "grain": "One workbook presence record. Count distinct reported organization labels for an actor count. Multiple rows may describe the same organization and sector.",
+            "sector": "Normalized cluster or sector. sector_raw preserves the source label.",
+            "coverage": "No targets, people reached, delivery volumes or expenditures are reported."}},
+    "mli-dtm-round83": {
+        "table": "displacement_stocks", "fields": {"category": "TEXT", "measure": "TEXT", "value": "INTEGER", "unit": "TEXT", "households": "INTEGER"},
+        "topics": ["displacement tracking", "personnes déplacées internes", "retours", "déplacements", "displacement stocks"],
+        "dimensions": ["category", "measure", "unit", "region"], "definitions": {
+            "grain": "One public stock observation per source workbook row, category and source commune. Distinguish internally displaced people, returned IDPs and repatriated people.",
+            "value": "Reported persons in the selected category. Households are a separate measure. A stock cannot establish a flow or durable return."}}
+}
+
+
+def humanitarian(source, records, config, boundaries_by_id):
+    fields = config["fields"]
+    rows = []
+    for record in records:
+        payload = record["payload"]
+        geography = payload["geography"]
+        match = payload["geo_resolution"]["matches"].get("region", {})
+        unit = boundaries_by_id.get(match.get("unit_id"))
+        verified = (match.get("release_id") == REGION_RELEASE and unit is not None
+                    and unit["pcode"] == geography.get("region_pcode"))
+        rows.append({
+            "id": record["id"], "locator": record["locator"], **{f: payload.get(f) for f in fields},
+            "region": geography.get("region"), "reported_region_code": geography.get("region_pcode"),
+            "cod_region_id": unit["id"] if verified else None,
+        })
+    source.update(type="dataset", table=config["table"], dimensions=config["dimensions"],
+                  columns={"id": "TEXT", "locator": "TEXT", **fields, "region": "TEXT",
+                           "reported_region_code": "TEXT", "cod_region_id": "TEXT"}, records=rows,
+                  entity_keys={REGION_KEY: "cod_region_id"}, definitions={**config["definitions"],
+                      "cod_region_id": "Exact regional match validated in the source package against COD v03. NULL means no verified match. Report unmatched observations when the result depends on geographic linkage."})
+    source["topics"].extend(config["topics"])
+
+
+def append_wave(data, selected, boundaries_by_id=None):
     for release in data["tables"]["mkh_source_releases"]:
         key = release["dataset_id"]
         if key not in selected:
@@ -61,7 +105,9 @@ def append_wave(data, selected):
             "limitations": registry["limitations"], "description": registry["source_name"] + ". " + registry["limitations"][0],
             "topics": [registry["analytical_use"].replace("_", " ")],
         }
-        if key in TABLES:
+        if key in HUMANITARIAN:
+            humanitarian(source, records, HUMANITARIAN[key], boundaries_by_id)
+        elif key in TABLES:
             table, projection, topics, search = TABLES[key]
             columns = {k: "TEXT" for k in ["id", *projection.split(), "locator"]}
             if key == "mli-fts-requirements-funding":
@@ -90,7 +136,11 @@ def append_wave(data, selected):
                     "period": r["reference_start"] + " to " + r["reference_end"]})
                 source["topics"].extend(tags)
             source["topics"] = list(dict.fromkeys(source["topics"]))
-        write(source)
+        if key in HUMANITARIAN:
+            packed = json.dumps(source, ensure_ascii=False, separators=(",", ":")).encode()
+            (CANON / (key + ".json.gz")).write_bytes(gzip.compress(packed, mtime=0))
+        else:
+            write(source)
 
 
 def indicators(directory):
@@ -151,6 +201,9 @@ def boundaries(directory):
                           "COD region identifiers establish no equivalence with older CH areas or INSTAT census units."],
            "table":"cod_regions","columns":{"id":"TEXT","pcode":"TEXT","place":"TEXT","area_km2":"REAL","level":"TEXT","locator":"TEXT"},
            "definitions":{"area_km2":measures[rows[0]["id"]]["method"]}, "map_key":"pcode",
+           # Original geometry, rows and methodology are identical to the first V3 snapshot.
+           "compatible_fingerprints":["1e1156dc76b67c1c72f9e4557020a8b623f3947bc3f7752d0558332f304601d5"],
+           "entity_keys":{REGION_KEY: "id"}, "place_fields":["place", "pcode"],
            "geometries":geometry,"records":rows,"search_fields":["pcode","place"]})
     db.close()
     metrics.close()
@@ -161,11 +214,13 @@ if __name__ == "__main__":
     parser.add_argument("legacy_dir", type=Path)
     parser.add_argument("--include-programming", action="store_true")
     args = parser.parse_args()
-    selected = set(TABLES) | EVALUATIONS
+    boundaries(args.legacy_dir)
+    regions = json.loads((CANON / "mli-cod-ab.json").read_text())
+    boundaries_by_id = {r["id"]: r for r in regions["records"]}
+    selected = set(TABLES) | EVALUATIONS | set(HUMANITARIAN)
     if args.include_programming:
         selected |= PROGRAMMING
     for file in PACKAGES:
         if file.startswith("source_wave") and file.endswith(".json.gz"):
-            append_wave(json.loads(package(args.legacy_dir, file)), selected)
-    boundaries(args.legacy_dir)
+            append_wave(json.loads(package(args.legacy_dir, file)), selected, boundaries_by_id)
     indicators(args.legacy_dir)
