@@ -108,3 +108,5 @@ a.nav-action{text-decoration:none}
 .exhibit canvas {width: 100%; height: auto; display: block;}
 .exhibit summary {cursor: pointer; font-size: 13px;}
 .message-footer {flex-wrap: wrap;}
+
+.notes-form label input:not([type="checkbox"]), .notes-form label textarea, .notes-form select { display:block; width:100%; padding:.55rem; border:1px solid #bccbc5; border-radius:.4rem; font:inherit; color:inherit; background:#fff; }

@@ -119,3 +119,21 @@ Source discovery searches catalogue descriptions, registered dimension values, p
 and indexed records. Current task requirements persist as quotations from the user's messages.
 Signed-in chats archive older turns when the recent window fills. The assistant can reopen
 previous work in that conversation, subject to current source approval and signatures.
+
+The Source review panel is available to designated V3 editors. It accepts public CSV,
+TSV, XLSX, text, text-bearing PDF and a declarative Mali WDI connection. Originals are
+identified by their publisher URL and upload digest. Files remain private drafts until
+an editor selects a version and publishes it. Editors can suspend a source, withdraw
+it or restore an earlier version. Each research request checks the current publication
+registry. Cached jobs, saved chat and recalled evidence are checked against the active
+release. The preview intake limit is 1.5 MB per file and 5,000 worksheet rows. Scanned
+PDFs require an accessible text version. Larger reviewed packages can use the offline
+importer. AI metadata proposals use an editor-selected sample and require human review.
+
+In a deployed November browser assignment, V3 computed 346,629.77 people projected in
+CH Phase 3+ across eight historical Mopti analysis areas, and 11 distinct organizations
+across 30 Q1 2026 3W food-security records in the current COD Mopti region. The follow-up
+preserved the two geographies. The initial Deep turn reached a research limit and used
+prospective language after the projection period. The next revision supplies the current
+date in every investigation, supports independent tool calls in one round and gives the
+model compact evidence while retaining the full inspection and export record.

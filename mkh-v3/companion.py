@@ -5,6 +5,7 @@ import json
 import os
 import re
 import time
+from datetime import datetime, timezone
 
 import httpx
 
@@ -34,7 +35,10 @@ Use present_data when a chart, data table or geographic map forms part of the de
 the substantive requested work in the answer as well. Empirical descriptions of source coverage
 must match the inspected releases. Respect source licence and geographic and temporal grain.
 
-Find appropriate sources with discover_sources, inspect them and investigate iteratively.
+Find appropriate sources with discover_sources, inspect them and investigate iteratively. Request
+independent lookups together. Anchor tense and advice to the supplied as-of date unless the
+user specifies a historical decision date. An elapsed projection remains a historical forecast
+until an observed assessment establishes the outcome. For present decisions name the evidence gap.
 Use query_data for arithmetic and transformations. Use known source identifiers, columns
 and geography. Resolve ambiguous place names when the distinction matters. Preserve
 geographic levels, boundary versions, units, reporting periods, methods, country scope
@@ -167,6 +171,25 @@ RATES = {"gpt-6.2-sol": (2, 0.10, 10), "gpt-6.2-astra": (8, 0.40, 40)}
 ENDPOINT = "https://api.openai.com/v1/responses"
 
 
+def model_evidence(item):
+    data = item["data"]
+    if item["kind"] == "calculation":
+        visible = {key: data[key] for key in ("rows", "truncated", "relationship") if key in data}
+        visible["inputs"] = [r["source_id"] for r in data["input_releases"]]
+    else:
+        visible = data
+    return {"id": item["id"], "source_id": item.get("source_id"), "kind": item["kind"],
+            "release": item.get("release"), "locator": item["locator"], "data": visible}
+
+
+def tool_output(result):
+    if isinstance(result, list):
+        return [tool_output(item) for item in result]
+    if isinstance(result, dict) and result.get("origin") == "canon" and "data" in result:
+        return model_evidence(result)
+    return result
+
+
 class CompanionError(ValueError):
     """The current assignment could not complete transparently."""
 
@@ -253,12 +276,10 @@ class Companion:
             items.append({"role": "user", "content": "Current assignment requirements quoted from prior requests. "
                           "A later request overrides only dimensions it changes. " + json_text(requirements)})
         if ledger.items:
-            continuity = [
-                {"id": item["id"], "title": item["title"], "locator": item["locator"],
-                 "release": item.get("release"), "origin": item["origin"],
-                 "data": json_text(item["data"])[:1600]}
-                for item in list(ledger.items.values())[-8:]
-            ]
+            continuity = [{
+                "id": item["id"], "source_id": item.get("source_id"), "locator": item["locator"],
+                "data": json_text(model_evidence(item)["data"])[:1800],
+            } for item in list(ledger.items.values())[-8:]]
             items.append({"role": "user", "content": "Verified evidence from earlier turns; use only if still in scope. "
                           + json_text(continuity)})
         items.append({"role": "user", "content": prompt})
@@ -318,7 +339,7 @@ class Companion:
                                     tool_failures.append(name)
                                     result = {"error": str(error)[:260]}
                             items.append({"type": "function_call_output", "call_id": call["call_id"],
-                                          "output": json_text(result)})
+                                          "output": json_text(tool_output(result))})
                         continue
 
                     answer, cited_web, changes = self._answer(output, ledger)
@@ -385,14 +406,14 @@ class Companion:
     async def _provider_request(self, model, options, items, tools, remaining_tokens):
         body = {
             "model": model, "input": items, "store": False,
-            "instructions": POLICY + ("\nExternal web research is enabled." if self.web_enabled
+            "instructions": POLICY + "\nCurrent assignment date (UTC): " + datetime.now(timezone.utc).date().isoformat() + ("\nExternal web research is enabled." if self.web_enabled
                                        else "\nExternal web research is disabled."),
             "reasoning": {"effort": options["effort"]}, "text": {"format": ANSWER_FORMAT},
             "include": ["reasoning.encrypted_content"],
             "max_output_tokens": min(options["tokens"], remaining_tokens),
         }
         if tools:
-            body.update(tools=tools, parallel_tool_calls=False)
+            body.update(tools=tools, parallel_tool_calls=True)
         try:
             response = await self.client.post(
                 ENDPOINT, json=body, headers={"Authorization": f"Bearer {self.api_key}"}, timeout=50.0,

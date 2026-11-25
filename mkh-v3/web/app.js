@@ -464,6 +464,7 @@ async function recent() {
 async function refreshSession() {
   session = await json("/api/session");
   byId("personal-memory").classList.toggle("hidden", !session.authenticated);
+  byId("source-review").classList.toggle("hidden", !session.source_editor);
   byId("profile-title").textContent = session.authenticated ? "Sign out" : "Sign in";
   byId("history-label").classList.toggle("hidden", !session.authenticated);
   updateComposer();

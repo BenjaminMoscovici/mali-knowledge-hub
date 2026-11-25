@@ -160,22 +160,23 @@ class Evidence:
 
 
 class Knowledge:
-    def __init__(self, directory=CANON):
+    def __init__(self, directory=CANON, *, releases=None):
         self.sources = {}
         directory = Path(directory)
-        for path in sorted([*directory.glob("*.json"), *directory.glob("*.json.gz")]):
-            raw = path.read_bytes()
-            source = json.loads(gzip.decompress(raw) if path.suffix == ".gz" else raw)
+        if releases is None:
+            releases = self.read_releases(directory)
+        for source in releases:
+            origin = source.get("id", "source")
             if source.get("review") != "published":
                 continue
             if not SOURCE_ID.fullmatch(source["id"]) or source["id"] in self.sources:
-                raise ValueError(f"Invalid published source ID in {path.name}")
+                raise ValueError(f"Invalid published source ID in {origin}")
             if not https_url(source["url"]) or source["type"] not in SOURCE_TYPES:
-                raise ValueError(f"Invalid published source metadata in {path.name}")
+                raise ValueError(f"Invalid published source metadata in {origin}")
             if source["type"] in {"dataset", "reference"}:
-                self._validate_table(source, path.name)
+                self._validate_table(source, origin)
             if any(key not in source.get("columns", {}) for key in source.get("search_fields", [])):
-                raise ValueError(f"Unknown search field in {path.name}")
+                raise ValueError(f"Unknown search field in {origin}")
             self.sources[source["id"]] = source
         self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
         self.profiles = {}
@@ -188,6 +189,12 @@ class Knowledge:
                 dims[column] = {"distinct_count": len(counts), "examples": [v for v, _ in counts.most_common(20)]}
             self.profiles[key] = dims
         self.index = SearchIndex(self.sources, self.profiles)
+
+    @staticmethod
+    def read_releases(directory):
+        for path in sorted([*directory.glob("*.json"), *directory.glob("*.json.gz")]):
+            raw = path.read_bytes()
+            yield json.loads(gzip.decompress(raw) if path.suffix == ".gz" else raw)
 
     def current_release(self, source_id, version):
         source = self.sources.get(source_id)

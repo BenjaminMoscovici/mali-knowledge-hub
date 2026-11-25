@@ -21,7 +21,8 @@ from starlette.staticfiles import StaticFiles
 
 from companion import Companion, CompanionError, MODES
 from jobs import ResearchJobs
-from knowledge import Evidence, Knowledge, KnowledgeError, json_text
+from publication import Publications, extract, preview as source_preview, suggest
+from knowledge import Evidence, Knowledge, KnowledgeError, SOURCE_ID, json_text
 from live_preview_check import requested as preview_check_requested, run as run_preview_check
 from state import (
     COOKIE, EMAIL_FLOW_COOKIE, GUEST_COOKIE, PASSWORD_COOKIE, TOP_TURNS,
@@ -58,7 +59,7 @@ def same_origin(request):
     return request.headers.get("origin") == public_origin(request)
 
 
-async def request_json(request):
+async def request_json(request, limit=MAX_BYTES):
     if not same_origin(request):
         raise StateError("Open the preview directly to perform this action.")
     if request.headers.get("content-type", "").split(";")[0] != "application/json":
@@ -66,7 +67,7 @@ async def request_json(request):
     buffer = bytearray()
     try:
         async for chunk in request.stream():
-            if len(buffer) + len(chunk) > MAX_BYTES:
+            if len(buffer) + len(chunk) > limit:
                 raise StateError("The request exceeds the preview size limit.")
             buffer.extend(chunk)
         value = json.loads(buffer)
@@ -111,7 +112,7 @@ async def health(request):
     return data_response({
         "status": "ok", "environment": "v3-preview", "commit": os.getenv("RENDER_GIT_COMMIT", "local"),
         "chat_configured": bool(state.companion), "public_web_research": state.web_enabled,
-        "sources": len(state.knowledge.sources),
+        "sources": len(state.knowledge.sources), "managed_sources": state.registry is not None,
     })
 
 
@@ -169,11 +170,91 @@ async def memory(request):
         return error(str(failure), 400)
 
 
+async def sync_catalogue(state):
+    if state.registry is None:
+        return
+    current = await state.registry.refresh()
+    if current is state.knowledge:
+        return
+    state.knowledge = current
+    state.history = History(state.signing_key, current, state.web_enabled)
+    if state.companion:
+        state.companion = Companion(current, state.client, state.companion.api_key, state.web_enabled)
+
+
+def answer_available(state, piece):
+    return (all(state.knowledge.current_release(k, v) for k, v in piece.get("basis", {}).items())
+            and all(Evidence(state.knowledge, state.web_enabled).allowed(e) for e in piece.get("evidence", []))
+            and (not piece.get("web_used") or state.web_enabled))
+
+
+class CatalogueBoundary:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http" and scope["path"].startswith(("/api/sources", "/api/conversations", "/api/chat", "/api/admin")):
+            try:
+                await sync_catalogue(scope["app"].state)
+            except StateError:
+                return await error("The published source catalogue could not be verified. Try again shortly.", 503)(scope, receive, send)
+        return await self.app(scope, receive, send)
+
+
+async def admin(request):
+    state = settings(request)
+    try:
+        token, owner = await account(request)
+        registry = state.registry
+        if not owner or not registry or not await registry.editor(token):
+            return error("A V3 source editor account is required.", 403)
+        if request.method == "GET":
+            detail = request.query_params.get("version")
+            if detail:
+                from publication import VERSIONS
+                rows = await registry.rows(VERSIONS, "manifest", token, id="eq." + selected_id(detail), limit=1)
+                if not rows:
+                    return error("This source version is unavailable.", 404)
+                return data_response(source_preview(rows[0]["manifest"]))
+            inventory = await registry.inventory(token)
+            return data_response(inventory)
+        body = await request_json(request, 2150000)
+        op = body.get("operation")
+        if op == "change":
+            key = body.get("source_id")
+            if not isinstance(key, str) or not SOURCE_ID.fullmatch(key):
+                return error("Choose a saved source.")
+            version = selected_id(body["version_id"]) if body.get("version_id") else None
+            expected = selected_id(body["expected"]) if body.get("expected") else None
+            if body.get("status") == "published" and not version:
+                return error("Select the version to publish.")
+            await registry.change(token, key, body.get("status"), version, expected)
+            await sync_catalogue(state)
+            return data_response({"saved": True})
+        if op not in {"inspect","suggest","draft"}:
+            return error("Unknown source review action.")
+        manifest = await extract(body)
+        detail = source_preview(manifest)
+        if op == "suggest":
+            if not state.companion:
+                return error("The model is unavailable.", 503)
+            state.preview.reserve()
+            await state.store.reserve(token)
+            detail["suggestions"] = await suggest(state.companion, detail)
+        if op == "draft":
+            Knowledge(releases=[manifest])
+            await registry.draft(token, manifest)
+        return data_response(detail)
+    except (KnowledgeError, StateError, TimeoutError) as failure:
+        return error(str(failure) or "The source operation exceeded its time limit.", 400)
+
+
 async def identify(request):
     state = settings(request)
     try:
-        _, owner = await account(request)
+        token, owner = await account(request)
         return data_response({
+            "source_editor": bool(owner and state.registry and await state.registry.editor(token)),
             "authenticated": bool(owner), "auth_enabled": bool(state.store),
             "chat_enabled": bool(state.companion), "model_configured": bool(state.companion),
             "password_setup_pending": bool(request.cookies.get(PASSWORD_COOKIE)),
@@ -394,6 +475,9 @@ async def chat(request):
                                                            any(turn.get("web_used") for turn in earlier), recall,
                                                            previous.get("requirements", {})):
                     if piece["type"] == "answer":
+                        await sync_catalogue(state)
+                        if not answer_available(state, piece):
+                            raise StateError("A source changed during this assignment. Run it again with the current release.")
                         title = row["title"] if row else " ".join(prompt.split())[:110]
                         turns.append(state.history.sign(conversation_id, owner, {
                             "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
@@ -449,6 +533,14 @@ async def job_status(request):
             await asyncio.gather(job.task, return_exceptions=True)
             if job.result is None:
                 job.result = {"type": "error", "text": "Assignment stopped."}
+    if job.result and job.result.get("type") == "answer" and state.registry:
+        try:
+            await sync_catalogue(state)
+        except StateError:
+            return error("The current source catalogue is temporarily unavailable.", 503)
+        if not answer_available(state, job.result):
+            return data_response({"prompt":job.prompt, "instructions":job.instructions, "conversation_id":job.conversation,
+                                  "event":{"type":"error","text":"A source used in this answer changed. Run the assignment again."}})
     return data_response({"prompt": job.prompt, "instructions": job.instructions,
                           "conversation_id": job.conversation, "event": job.result or {"type": "activity", "text": job.activity}})
 
@@ -471,9 +563,10 @@ def create_app(transport=None, directory=None):
             state.store = SupabaseState(client, url, public_key) if url and public_key else None
             model_key = os.getenv("OPENAI_API_KEY")
             state.companion = Companion(state.knowledge, client, model_key, state.web_enabled) if model_key else None
-            state.history = History(
-                os.getenv("MKH_HISTORY_SIGNING_KEY") or model_key, state.knowledge, state.web_enabled,
-            )
+            state.signing_key = os.getenv("MKH_HISTORY_SIGNING_KEY") or model_key
+            state.history = History(state.signing_key, state.knowledge, state.web_enabled)
+            registry_enabled = os.getenv("MKH_MANAGED_SOURCES", "on" if os.getenv("RENDER") == "true" else "off").lower() in {"1","on","true"}
+            state.registry = Publications(state.knowledge, state.store) if registry_enabled and state.store else None
             state.slot = asyncio.Lock()
             state.preview = PreviewSessions()
             state.jobs = ResearchJobs()
@@ -489,12 +582,13 @@ def create_app(transport=None, directory=None):
                     await preview_check
             await client.aclose()
 
-    return Starlette(lifespan=lifespan, routes=[
+    application = Starlette(lifespan=lifespan, routes=[
         Route("/", home),
         Route("/api/health", health),
         Route("/api/sources", sources),
         Route("/api/sources/{source_id}", source),
         Route("/api/session", identify),
+        Route("/api/admin/sources", admin, methods=["GET","POST"]),
         Route("/api/memory", memory, methods=["GET", "POST"]),
         Route("/api/sources/{source_id}/geometry", geometry),
         Route("/auth/callback", auth_callback),
@@ -506,6 +600,8 @@ def create_app(transport=None, directory=None):
         Route("/api/jobs/{job_id}", job_status, methods=["GET", "DELETE"]),
         Mount("/assets", app=StaticFiles(directory=WEB)),
     ])
+    application.add_middleware(CatalogueBoundary)
+    return application
 
 
 app = create_app()
