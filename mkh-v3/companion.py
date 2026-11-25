@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import math
 import os
 import re
 import time
@@ -198,6 +199,42 @@ def mode_model(mode):
     return os.getenv(f"MKH_{mode.upper()}_MODEL") or MODES[mode]["default_model"]
 
 
+def turn_cost_limit(mode):
+    default = 0.45 if mode == "fast" else 1.5
+    try:
+        value = float(os.getenv("MKH_" + mode.upper() + "_MAX_MODEL_USD", default))
+    except ValueError:
+        value = math.nan
+    if not math.isfinite(value) or value <= 0:
+        raise CompanionError("The V3 per-assignment model allowance is unavailable.")
+    return value
+
+
+def model_cost(model, usage):
+    rates = RATES.get(model)
+    if not rates:
+        return None
+    fresh = max(0, usage["input_tokens"] - usage["cached_tokens"])
+    return (fresh * rates[0] + usage["cached_tokens"] * rates[1] + usage["output_tokens"] * rates[2]
+            + usage.get("embedding_tokens", 0) * SemanticSearch.RATE_PER_MILLION) / 1_000_000
+
+
+def budget_response(body, usage, ceiling):
+    model = body["model"]
+    spent = model_cost(model, usage)
+    if spent is None:
+        raise CompanionError("Register the selected model's input and output prices before starting a budgeted assignment.")
+    input_rate, _, output_rate = RATES[model]
+    # Bound input at uncached prices. UTF-8 byte count provides a conservative token
+    # allowance for these text-only requests, including serialized tool schemas.
+    max_input = len(json.dumps(body, ensure_ascii=False).encode()) + 1024 + 32 * len(body["input"])
+    available = (ceiling - spent) * 1_000_000 - max_input * input_rate
+    max_output = min(body["max_output_tokens"], math.floor(available / output_rate))
+    if max_output < 256:
+        raise CompanionError("The per-assignment model cost allowance was reached.")
+    body["max_output_tokens"] = max_output
+
+
 class Companion:
     def __init__(self, knowledge, client: httpx.AsyncClient, api_key, web_enabled=False):
         self.knowledge = knowledge
@@ -207,7 +244,7 @@ class Companion:
         self.semantic = (SemanticSearch(knowledge.index, client, api_key)
                          if os.getenv("MKH_SEMANTIC_SEARCH", "on").lower() not in {"off", "false", "0"} else None)
 
-    async def run_tool(self, name, arguments, ledger, search_cache=None, usage=None, recall=None):
+    async def run_tool(self, name, arguments, ledger, search_cache=None, usage=None, recall=None, embedding_allowed=None):
         if name not in TOOL_SPECS:
             raise KnowledgeError("Unknown research capability.")
         required = TOOL_SPECS[name][1]
@@ -230,7 +267,7 @@ class Companion:
         lookup = name in {"discover_sources", "search_documents", "search_records"}
         affinities = None
         if lookup and self.semantic and usage is not None:
-            affinities = await self.semantic.search(arguments["query"], search_cache, usage)
+            affinities = await self.semantic.search(arguments["query"], search_cache, usage, embedding_allowed)
         if name == "discover_sources":
             found = k.discover(arguments["query"], arguments["kind"], limit=5, affinities=affinities)
             ledger.consulted.update({s["id"]: k.stamps[s["id"]] for s in found})
@@ -286,6 +323,13 @@ class Companion:
         yield {"type": "activity", "text": "Starting the assignment"}
         usage = {"input_tokens": 0, "cached_tokens": 0, "output_tokens": 0, "tool_calls": 0}
         usage.update(embedding_tokens=0, retrieval_fallback=False)
+        ceiling = turn_cost_limit(mode)
+        # The semantic index and query embeddings share the assignment's allowance.
+        def embedding_allowed(texts):
+            maximum = sum(len(t.encode()) + 16 for t in texts) * SemanticSearch.RATE_PER_MILLION / 1_000_000
+            spent = model_cost(model, usage)
+            return spent is not None and spent + maximum <= ceiling
+
         search_cache = {}
         tool_failures = []
         iterative_limit_reached = False
@@ -308,7 +352,7 @@ class Companion:
                             "explain any limitation, and do not imply omitted work succeeded."
                         )})
                     document = await self._provider_request(
-                        model, options, items, [] if final_step else tools, remaining_tokens,
+                        model, options, items, [] if final_step else tools, remaining_tokens, usage, ceiling,
                     )
                     counts = document.get("usage") or {}
                     usage["input_tokens"] += counts.get("input_tokens", 0)
@@ -334,7 +378,7 @@ class Companion:
                                 usage["tool_calls"] += 1
                                 yield {"type": "activity", "text": ACTIVITIES.get(name, "Checking a research capability")}
                                 try:
-                                    result = await self.run_tool(name, json.loads(call["arguments"]), ledger, search_cache, usage, recall)
+                                    result = await self.run_tool(name, json.loads(call["arguments"]), ledger, search_cache, usage, recall, embedding_allowed)
                                 except (KnowledgeError, json.JSONDecodeError) as error:
                                     tool_failures.append(name)
                                     result = {"error": str(error)[:260]}
@@ -403,7 +447,7 @@ class Companion:
             return
         raise CompanionError("The assignment ended before a supported answer was available.")
 
-    async def _provider_request(self, model, options, items, tools, remaining_tokens):
+    async def _provider_request(self, model, options, items, tools, remaining_tokens, usage, ceiling):
         body = {
             "model": model, "input": items, "store": False,
             "instructions": POLICY + "\nCurrent assignment date (UTC): " + datetime.now(timezone.utc).date().isoformat() + ("\nExternal web research is enabled." if self.web_enabled
@@ -414,6 +458,7 @@ class Companion:
         }
         if tools:
             body.update(tools=tools, parallel_tool_calls=True)
+        budget_response(body, usage, ceiling)
         try:
             response = await self.client.post(
                 ENDPOINT, json=body, headers={"Authorization": f"Bearer {self.api_key}"}, timeout=50.0,
@@ -481,13 +526,7 @@ class Companion:
 
     @staticmethod
     def _usage(model, usage, start, web_used):
-        rates = RATES.get(model)
-        estimate = None
-        if rates and not web_used:
-            fresh = max(0, usage["input_tokens"] - usage["cached_tokens"])
-            estimate = round((fresh * rates[0] + usage["cached_tokens"] * rates[1]
-                              + usage["output_tokens"] * rates[2]) / 1_000_000, 6)
-        if estimate is not None:
-            estimate = round(estimate + usage.get("embedding_tokens", 0) * SemanticSearch.RATE_PER_MILLION / 1_000_000, 6)
+        amount = model_cost(model, usage)
+        estimate = round(amount, 6) if amount is not None and not web_used else None
         return {**usage, "model": model, "seconds": round(time.monotonic() - start, 2),
                 "estimated_model_usd": estimate}

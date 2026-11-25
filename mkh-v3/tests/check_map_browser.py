@@ -47,6 +47,7 @@ def check(origin):
                 "type":"answer","text":"Verified result [["+result["id"]+"]]", "evidence":[result],
                 "conversation_id":"test-chat","artifacts":[figure]}}))
             page.goto(origin,wait_until="domcontentloaded",timeout=60000)
+            page.get_by_text("Guest chat · Temporary conversation", exact=True).wait_for(timeout=20000)
             page.get_by_label("Ask a question about Mali").fill("Show the map")
             page.get_by_role("button", name="Send question").click()
             page.locator('.exhibit canvas[height="466"]').wait_for(timeout=20000)

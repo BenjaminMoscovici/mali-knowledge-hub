@@ -87,6 +87,17 @@ class ResearchTest(unittest.TestCase):
         self.assertIn("food_security", inspected["dimension_values"]["sector"]["examples"])
         self.assertIn(boundary, {r["source"] for r in inspected["relationships"]})
 
+    def test_model_allowance_caps_the_next_call_and_accounts_for_cached_input(self):
+        from companion import CompanionError, budget_response, model_cost
+        usage = {"input_tokens":5000, "cached_tokens":1000, "output_tokens":300, "embedding_tokens":1200}
+        model = "gpt-6.2-sol"
+        self.assertAlmostEqual(model_cost(model, usage), 0.011124)
+        body = {"model":model, "input":[{"role":"user","content":"draft"}], "max_output_tokens":3000}
+        budget_response(body, usage, 0.020)
+        self.assertLess(body["max_output_tokens"], 1000)
+        with self.assertRaisesRegex(CompanionError, "allowance was reached"):
+            budget_response(body, usage, 0.0112)
+
     def test_requirement_changes_are_grounded_in_user_words_and_recall_is_scoped(self):
         from companion import apply_requirements
         prev = {"audience": "pour le comité", "format": "un graphique", "geography": "Ségou"}

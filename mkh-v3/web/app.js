@@ -381,6 +381,9 @@ function appendAnswer(turn, parent = messages) {
   footer.append(action("Download brief", () => downloadReport(turn, body, evidence)));
   if (evidence.length) footer.append(action("Evidence file", () => downloadFile("MKH-evidence.json",
     JSON.stringify({evidence, exhibits: turn.artifacts || []}, null, 2), "application/json")));
+  if (Number.isFinite(turn.usage?.estimated_model_usd)) {
+    footer.append(el("span", "", "Est. model cost · $" + turn.usage.estimated_model_usd.toFixed(3)));
+  }
   if (turn.usage?.retrieval_fallback) footer.append(el("span", "", "Used text search while semantic search was unavailable"));
   if (turn.partial || turn.tool_failures?.length) {
     footer.append(el("span", "", turn.partial ? "Research incomplete" : "Some research tools could not complete"));

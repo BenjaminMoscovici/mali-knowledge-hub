@@ -143,3 +143,11 @@ organizations. The browser exposed a comparison between the data release and the
 release during rendering. The renderer now verifies the boundary version and fingerprint
 from the calculation inputs. The browser regression replays the computed rows, verifies
 all exported region values and checks that the standalone brief contains the rendered map.
+
+Each research assignment has a configurable ceiling for model and embedding estimates.
+The preview defaults to USD 0.45 in Fast and USD 1.50 in Deep. Before each provider
+request, the app budgets uncached input and limits the allowed output. The answer
+footer displays the model estimate based on provider-reported tokens. External web
+search is off. These per-assignment estimates exclude hosting and external web fees.
+Use positive values for MKH_FAST_MAX_MODEL_USD and MKH_DEEP_MAX_MODEL_USD. Rolling
+financial allowances by account and independent professional qualification remain open.

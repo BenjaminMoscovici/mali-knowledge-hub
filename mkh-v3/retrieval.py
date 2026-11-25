@@ -111,6 +111,10 @@ class SearchIndex:
         return [parents[key] for key, _ in totals.most_common(limit)]
 
 
+class EmbeddingBudgetReached(Exception):
+    pass
+
+
 class SemanticSearch:
     """Keep only published text vectors between requests. Query vectors live for one assignment."""
 
@@ -126,7 +130,9 @@ class SemanticSearch:
         self.lock = asyncio.Lock()
         self.retry_after = 0
 
-    async def embed(self, texts, usage):
+    async def embed(self, texts, usage, allowed=None):
+        if allowed and not allowed(texts):
+            raise EmbeddingBudgetReached
         response = await self.client.post("https://api.openai.com/v1/embeddings",
             headers={"Authorization": "Bearer " + self.key},
             json={"model": self.MODEL, "input": texts, "dimensions": self.DIMENSIONS}, timeout=6)
@@ -144,7 +150,7 @@ class SemanticSearch:
             vectors.append(vec)
         return vectors
 
-    async def search(self, query, cache, usage):
+    async def search(self, query, cache, usage, allowed=None):
         if not query.strip():
             return None
         if query in cache:
@@ -157,11 +163,14 @@ class SemanticSearch:
                 # Batches are checkpointed in memory so provider interruptions can resume.
                 while len(self.vectors) < len(self.index.entries):
                     batch = self.index.entries[len(self.vectors):len(self.vectors) + 64]
-                    self.vectors.extend(await self.embed([entry["text"] for entry in batch], usage))
-            query_vector, = await self.embed([query], usage)
+                    self.vectors.extend(await self.embed([entry["text"] for entry in batch], usage, allowed))
+            query_vector, = await self.embed([query], usage, allowed)
             scores = [sum(x * y for x, y in zip(vector, query_vector)) for vector in self.vectors]
             cache[query] = scores
             return scores
+        except EmbeddingBudgetReached:
+            usage["retrieval_fallback"] = True
+            return None
         except (httpx.HTTPError, KeyError, TypeError, ValueError, IndexError):
             self.retry_after = time.monotonic() + 90
             usage["retrieval_fallback"] = True
