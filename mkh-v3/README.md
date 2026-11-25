@@ -66,7 +66,9 @@ paired browser qualification remains open. Email/password signup, recovery and s
 ## Research and deliverables
 
 Reviewed public releases include OCHA plan funding, World Bank project profiles, IATI
-activity records, two IEG evaluation extracts and COD regional polygons. The offline
+activity records, two IEG evaluation releases, EU programming and partnership extracts, COD regional
+polygons, and 17 national WDI series in an immutable snapshot. The live WDI connection
+covers those reviewed indicators as well as cereal yield. The offline
 importer checks the pinned package digests and retains publication limitations and
 record or page locators. Aggregates are computed over native tables. A registered
 identifier permits an inner join across releases. The evidence records both input
@@ -84,3 +86,12 @@ Duplicate or missing identifiers, missing values, source withdrawals and geograp
 vintages remain substantive limits on combination. The development suite covers
 these boundaries where supported. Final qualification requires independent professional
 review and a separate holdout of at least 100 cases.
+
+A deployed Chromium check on revision `890bcdd` used the 2024 OCHA national plan.
+The French brief calculated a USD 393,244,791 gap and 43.95% coverage from the named
+plan, kept unspecified funding separate, and distinguished financing from expenditure.
+The standalone brief and CSV both downloaded. Fast took 22.21 seconds, estimated
+USD 0.017422 including the on-demand search index. An initial browser check also
+identified a notes control binding issue. It was corrected and the account memory
+lifecycle was verified through Chromium against isolated Supabase Auth and PostgREST.
+Two-account database checks verified owner isolation.

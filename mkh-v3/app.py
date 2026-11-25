@@ -360,7 +360,7 @@ async def chat(request):
                 previous = earlier[-1] if earlier else {}
                 objective = previous.get("objective") or (earlier[0]["prompt"] if earlier else prompt)
                 brief = previous.get("instructions", "") if instructions is None else instructions.strip()
-                if earlier and objective != earlier[0]["prompt"] or len(earlier) > 5:
+                if earlier and (objective != earlier[0]["prompt"] or len(earlier) > 5):
                     context.append({"role": "user", "content": "Original assignment (later changes take precedence): " + objective})
                 if brief:
                     context.append({"role": "user", "content": "Current user-pinned working instructions: " + brief})
@@ -371,7 +371,7 @@ async def chat(request):
                 basis = {}
                 for turn in earlier:
                     basis.update(turn.get("basis", {}))
-                    basis.update({e["source_id"]: e["release"] for e in turn.get("evidence", []) if e["origin"] == "canon"})
+                    basis.update({e["source_id"]: e.get("fingerprint", e["release"]) for e in turn.get("evidence", []) if e["origin"] == "canon"})
                 state.preview.reserve(guest)
                 if token:
                     await state.store.reserve(token)

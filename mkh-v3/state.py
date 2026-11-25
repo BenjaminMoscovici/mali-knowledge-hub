@@ -267,7 +267,8 @@ class History:
                 continue
             evidence = turn.get("evidence", [])
             basis = turn.get("basis", {})
-            stale = any(self.knowledge.sources.get(key, {}).get("release") != version for key, version in basis.items())
+            stale = any(version not in (self.knowledge.sources.get(key, {}).get("release"), self.knowledge.stamps.get(key))
+                        for key, version in basis.items())
             if stale or (turn.get("web_used") and not self.web_enabled) or not all(ledger.allowed(e) for e in evidence):
                 yield {"prompt": prompt, "withdrawn": True}
                 continue

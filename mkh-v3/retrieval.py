@@ -43,6 +43,9 @@ class SearchIndex:
             fields = list(source.get("columns", {})) + [
                 f"{code} {series['label']}" for code, series in source.get("series", {}).items()
             ]
+            for key, value in source.get("definitions", {}).items():
+                if isinstance(value, dict):
+                    fields.append(f"{key} {value.get('label', '')} {value.get('unit', '')}")
             self.add("source", source, None, labels, " ".join([
                 source["description"], source["geography"], source["period"], *fields,
             ]))

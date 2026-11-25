@@ -404,55 +404,7 @@ async function recent() {
           if (turn.answer) appendAnswer(turn);
           if (turn.withdrawn) messages.append(el("p", "evidence-meta", "Earlier evidence is outside the current approved scope."));
         }
-        async function editNotes(personal) {
-  openDrawer(personal ? "Personal memory" : "Working instructions");
-  const viewSession = session;
-  try {
-    const saved = personal ? await json("/api/memory") : {notes: workingInstructions};
-    if (viewSession !== session || drawer.classList.contains("hidden")) return;
-    const form = el("form", "notes-form");
-    const description = personal
-      ? "Choose what the Companion remembers across your chats. Only you can edit these notes."
-      : "Set the audience, scope or format for this chat. These instructions travel with your next message.";
-    const label = el("label", "", personal ? "My preferences and recurring assignments" : "Instructions for this chat");
-    const textarea = el("textarea");
-    textarea.id = "notes-editor"; textarea.maxLength = 2000; textarea.rows = 7;
-    textarea.value = saved.notes; label.htmlFor = textarea.id;
-    form.append(el("p", "", description), label, textarea);
-    const toggle = el("input");
-    if (personal) {
-      toggle.type = "checkbox"; toggle.checked = saved.enabled;
-      const check = el("label", "memory-toggle");
-      check.append(toggle, document.createTextNode(" Use personal memory in my chats"));
-      form.append(check);
-    }
-    const save = el("button", "primary-button", personal ? "Save memory" : "Apply to this chat");
-    const notice = el("p", "evidence-meta");
-    form.append(save, notice);
-    if (personal && saved.notes) form.append(action("Delete memory", async () => {
-      try {
-        await json("/api/memory", {notes: "", enabled: false});
-        closeDrawer();
-      } catch (failure) { notice.textContent = failure.message; }
-    }));
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      save.disabled = true;
-      try {
-        if (personal) await json("/api/memory", {notes: textarea.value, enabled: toggle.checked});
-        else workingInstructions = textarea.value.trim();
-        closeDrawer();
-      } catch (failure) { notice.textContent = failure.message; }
-      finally { save.disabled = false; }
-    });
-    drawerBody.append(form);
-    textarea.focus();
-  } catch (failure) { drawerBody.replaceChildren(el("p", "", failure.message)); }
-}
-
-byId("working-notes").addEventListener("click", () => editNotes(false));
-byId("personal-memory").addEventListener("click", () => editNotes(true));
-if (window.innerWidth <= 800) setSidebar(false);
+        if (window.innerWidth <= 800) setSidebar(false);
       } catch (failure) {
         updateComposer(failure.message);
       }
@@ -654,6 +606,54 @@ function setSidebar(open) {
   byId("sidebar-scrim").classList.toggle("hidden", !open);
 }
 
+async function editNotes(personal) {
+  openDrawer(personal ? "Personal memory" : "Working instructions");
+  const viewSession = session;
+  try {
+    const saved = personal ? await json("/api/memory") : {notes: workingInstructions};
+    if (viewSession !== session || drawer.classList.contains("hidden")) return;
+    const form = el("form", "notes-form");
+    const description = personal
+      ? "Choose what the Companion remembers across your chats. Only you can edit these notes."
+      : "Set the audience, scope or format for this chat. These instructions travel with your next message.";
+    const label = el("label", "", personal ? "My preferences and recurring assignments" : "Instructions for this chat");
+    const textarea = el("textarea");
+    textarea.id = "notes-editor"; textarea.maxLength = 2000; textarea.rows = 7;
+    textarea.value = saved.notes; label.htmlFor = textarea.id;
+    form.append(el("p", "", description), label, textarea);
+    const toggle = el("input");
+    if (personal) {
+      toggle.type = "checkbox"; toggle.checked = saved.enabled;
+      const check = el("label", "memory-toggle");
+      check.append(toggle, document.createTextNode(" Use personal memory in my chats"));
+      form.append(check);
+    }
+    const save = el("button", "primary-button", personal ? "Save memory" : "Apply to this chat");
+    const notice = el("p", "evidence-meta");
+    form.append(save, notice);
+    if (personal && saved.notes) form.append(action("Delete memory", async () => {
+      try {
+        await json("/api/memory", {notes: "", enabled: false});
+        closeDrawer();
+      } catch (failure) { notice.textContent = failure.message; }
+    }));
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      save.disabled = true;
+      try {
+        if (personal) await json("/api/memory", {notes: textarea.value, enabled: toggle.checked});
+        else workingInstructions = textarea.value.trim();
+        closeDrawer();
+      } catch (failure) { notice.textContent = failure.message; }
+      finally { save.disabled = false; }
+    });
+    drawerBody.append(form);
+    textarea.focus();
+  } catch (failure) { drawerBody.replaceChildren(el("p", "", failure.message)); }
+}
+
+byId("working-notes").addEventListener("click", () => editNotes(false));
+byId("personal-memory").addEventListener("click", () => editNotes(true));
 if (window.innerWidth <= 800) setSidebar(false);
 byId("sources-toggle").addEventListener("click", () => showCatalogue());
 byId("drawer-close").addEventListener("click", closeDrawer);

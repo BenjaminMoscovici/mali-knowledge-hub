@@ -10,12 +10,108 @@
   "adapter": "world_bank_wdi",
   "country_code": "MLI",
   "series": {
-    "AG.YLD.CREL.KG": {"label": "Cereal yield", "unit": "kg per hectare"},
-    "EG.ELC.ACCS.ZS": {"label": "Access to electricity", "unit": "% of population"}
+    "AG.YLD.CREL.KG": {
+      "label": "Cereal yield",
+      "unit": "kg per hectare"
+    },
+    "EG.ELC.ACCS.ZS": {
+      "label": "Access to electricity (% of population)",
+      "unit": "% of population"
+    },
+    "NY.GDP.MKTP.CD": {
+      "label": "GDP (current US$)",
+      "unit": "current US$"
+    },
+    "NY.GDP.PCAP.CD": {
+      "label": "GDP per capita (current US$)",
+      "unit": "current US$ per person"
+    },
+    "NV.AGR.TOTL.ZS": {
+      "label": "Agriculture, forestry, and fishing, value added (% of GDP)",
+      "unit": "% of GDP"
+    },
+    "SL.AGR.EMPL.ZS": {
+      "label": "Employment in agriculture (% of total employment) (modeled ILO estimate)",
+      "unit": "% of total employment; modelled ILO estimate"
+    },
+    "EG.ELC.ACCS.UR.ZS": {
+      "label": "Access to electricity, urban (% of urban population)",
+      "unit": "% of urban population"
+    },
+    "EG.ELC.ACCS.RU.ZS": {
+      "label": "Access to electricity, rural (% of rural population)",
+      "unit": "% of rural population"
+    },
+    "SH.H2O.BASW.ZS": {
+      "label": "People using at least basic drinking water services (% of population)",
+      "unit": "% of population"
+    },
+    "SH.STA.BASS.ZS": {
+      "label": "People using at least basic sanitation services (% of population)",
+      "unit": "% of population"
+    },
+    "SE.PRM.CMPT.ZS": {
+      "label": "Primary completion rate, total (% of relevant age group)",
+      "unit": "% of relevant age group"
+    },
+    "SE.PRM.ENRR": {
+      "label": "School enrollment, primary (% gross)",
+      "unit": "gross enrolment ratio, %"
+    },
+    "SE.SEC.ENRR": {
+      "label": "School enrollment, secondary (% gross)",
+      "unit": "gross enrolment ratio, %"
+    },
+    "AG.LND.FRST.ZS": {
+      "label": "Forest area (% of land area)",
+      "unit": "% of land area"
+    },
+    "AG.LND.AGRI.ZS": {
+      "label": "Agricultural land (% of land area)",
+      "unit": "% of land area"
+    },
+    "AG.SRF.TOTL.K2": {
+      "label": "Surface area (sq. km)",
+      "unit": "km²"
+    },
+    "AG.LND.TOTL.K2": {
+      "label": "Land area (sq. km)",
+      "unit": "km²"
+    },
+    "SH.MED.BEDS.ZS": {
+      "label": "Hospital beds (per 1,000 people)",
+      "unit": "hospital beds per 1,000 people"
+    }
   },
   "period": "Annual series, subject to upstream availability",
   "geography": "Mali · national only",
-  "description": "Approved live World Bank indicators, including cereal yields for national agricultural context.",
-  "topics": ["cereal", "production", "céréales", "rendement", "agriculture", "electricity", "électricité", "indicateurs", "Mali"],
-  "limitations": ["National observations. Series cannot establish local food insecurity, trends in Mopti, or causation."]
+  "description": "National World Development Indicators available through the approved live API.",
+  "topics": [
+    "cereal",
+    "production",
+    "céréales",
+    "rendement",
+    "agriculture",
+    "electricity",
+    "électricité",
+    "indicateurs",
+    "Mali",
+    "economy",
+    "livelihoods",
+    "infrastructure",
+    "WASH",
+    "education",
+    "environment",
+    "physical geography",
+    "health"
+  ],
+  "limitations": [
+    "National estimates only; no allocation to regions, communes or facilities.",
+    "Latest means latest non-null observation within the explicit reference window, not current conditions.",
+    "API update date is not the observation year or an indicator-specific publication date.",
+    "Null observations remain missing and are never treated as zero.",
+    "Gross school enrolment ratios can exceed 100%; they are not completion or attendance rates.",
+    "Electricity access is not continuous power supply; basic WASH is not safely managed WASH.",
+    "National reported land/surface area is distinct from COD-derived polygon area."
+  ]
 }

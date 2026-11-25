@@ -7,9 +7,10 @@ import json
 import sqlite3
 from pathlib import Path
 
-from import_public_releases import write
+from import_public_releases import CANON, write
 
 PACKAGES = {
+    "country_indicators.json.gz": "4bfe2d12473971f75658682d16d92d349979de83015b51889e69a519dbb3ae00",
     "source_wave3.json.gz": "00747de8be87456017e7ba73736e1376ed3e7972ee1b5a964cb73726d0fde116",
     "source_wave4.json.gz": "7aec60127058227f61e448bb582632bedb2683d6510bfc9117efd07a902fbfc1",
     "source_wave5.json.gz": "2a4075078bf3b9dc98de7fc143f260aa88d5db136c1292e922f835305cde62ef",
@@ -92,6 +93,36 @@ def append_wave(data, selected):
         write(source)
 
 
+def indicators(directory):
+    data = json.loads(package(directory, "country_indicators.json.gz"))
+    connection = json.loads((CANON / "world-bank-wdi-mli.json").read_text())
+    rows = []
+    for series in data["series"]:
+        key, label = series["indicator_id"], series["metadata"]["name"]
+        connection["series"][key] = {"label": label, "unit": series["unit"]}
+        for obs in series["observations"]:
+            rows.append({"id": f"{key}/{obs['year']}", "indicator": key, "label": label, "unit": series["unit"],
+                         "year": obs["year"], "value": obs["value"], "domain": series["domain"],
+                         "locator": f"World Development Indicators / MLI / {key} / {obs['year']}"})
+    topics = list(dict.fromkeys(s["domain"] for s in data["series"]))
+    connection["topics"] = list(dict.fromkeys(connection["topics"] + topics))
+    connection["description"] = "National World Development Indicators available through the approved live API."
+    connection["limitations"] = data["limitations"]
+    write(connection)
+    write({"id": data["dataset_id"], "review": "published", "type": "dataset", "title": "World Development Indicators · national observation snapshot",
+           "publisher": "World Bank and attributed indicator providers", "license": data["license"],
+           "release": data["retrieved_at"], "period": "2015–2026 retrieval window, missing years vary by series",
+           "geography": data["geographic_framework"], "url": "https://data.worldbank.org/country/mali",
+           "topics": topics + ["indicateurs", "électricité", "scolarisation", "PIB", "eau", "emploi", "sanitation"],
+           "description": "Annual comparable national observations with indicator definitions, original units and reference years.",
+           "definitions": {s["indicator_id"]: {"label": s["metadata"]["name"], "unit": s["unit"],
+               "definition": s["metadata"]["sourceNote"], "attribution": s["metadata"]["sourceOrganization"],
+               "original": s["data_url"], "checksum": s["response_sha256"]} for s in data["series"]},
+           "limitations": data["limitations"], "table": "national_indicators",
+           "columns": {"id": "TEXT", "indicator": "TEXT", "label": "TEXT", "unit": "TEXT", "year": "INTEGER",
+                       "value": "REAL", "domain": "TEXT", "locator": "TEXT"}, "records": rows})
+
+
 def boundaries(directory):
     # Shapely is required for this offline import only. Never use display geometry for measurement.
     from shapely import from_geojson, to_geojson
@@ -134,6 +165,7 @@ if __name__ == "__main__":
     if args.include_programming:
         selected |= PROGRAMMING
     for file in PACKAGES:
-        if file.endswith(".json.gz"):
+        if file.startswith("source_wave") and file.endswith(".json.gz"):
             append_wave(json.loads(package(args.legacy_dir, file)), selected)
     boundaries(args.legacy_dir)
+    indicators(args.legacy_dir)

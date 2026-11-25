@@ -74,6 +74,10 @@ TOOL_SPECS = {
         "Find citable entity or project records using titles, identifiers and indexed labels. For exhaustive counts use SQL.",
         {"query": TEXT, "source_id": OPTIONAL_TEXT},
     ),
+    "read_definition": (
+        "Read and cite a specific registered indicator, definition, unit or methodology listed by inspect_source.",
+        {"source_id": TEXT, "key": TEXT},
+    ),
     "read_passage": (
         "Open further original text or extracts from a published locator. Pass a character offset, usually zero.",
         {"source_id": TEXT, "locator": TEXT, "offset": INTEGER},
@@ -111,6 +115,7 @@ ACTIVITIES = {
     "resolve_geography": "Checking administrative scope",
     "query_data": "Running a read-only calculation",
     "fetch_live": "Checking an approved live source",
+    "read_definition": "Checking a published definition",
     "read_passage": "Opening the source passage", "search_records": "Looking up published records",
     "link_records": "Matching registered identifiers", "query_result": "Calculating from verified results",
     "present_data": "Preparing the analytical exhibit",
@@ -167,16 +172,22 @@ class Companion:
             affinities = await self.semantic.search(arguments["query"], search_cache, usage)
         if name == "discover_sources":
             found = k.discover(arguments["query"], arguments["kind"], limit=5, affinities=affinities)
+            ledger.consulted.update({s["id"]: k.stamps[s["id"]] for s in found})
             return [{key: s[key] for key in ("id", "title", "type", "period", "geography", "description")}
                     for s in found]
         if name == "inspect_source":
             source = k.inspect(arguments["source_id"])
-            ledger.consulted[source["id"]] = source["release"]
+            ledger.consulted[source["id"]] = k.stamps[source["id"]]
+            if len(json_text(source.get("definitions", {}))) > 1800:
+                source["definitions"] = {key: v.get("label", key) if isinstance(v, dict) else key
+                                         for key, v in source["definitions"].items()}
             return source
         if name == "search_documents":
             return k.search_documents(**arguments, ledger=ledger, affinities=affinities)
         if name == "search_records":
             return k.search_records(**arguments, ledger=ledger, affinities=affinities)
+        if name == "read_definition":
+            return k.definition(**arguments, ledger=ledger)
         if name == "read_passage":
             return k.read_passage(**arguments, ledger=ledger)
         if name == "link_records":

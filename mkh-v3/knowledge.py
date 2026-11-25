@@ -59,9 +59,12 @@ class Evidence:
         source = self.knowledge.sources.get(item.get("source_id"))
         if not source or item.get("origin") != "canon" or item.get("release") != source["release"]:
             return False
+        if item.get("fingerprint") and item["fingerprint"] != self.knowledge.stamps[source["id"]]:
+            return False
         for input_release in item.get("data", {}).get("input_releases", []):
             current = self.knowledge.sources.get(input_release["source_id"])
-            if current is None or current["release"] != input_release["release"]:
+            if (current is None or current["release"] != input_release["release"] or
+                    (input_release.get("fingerprint") and input_release["fingerprint"] != self.knowledge.stamps[current["id"]])):
                 return False
         return True
 
@@ -90,15 +93,15 @@ class Evidence:
         return result
 
     def add(self, source, kind, locator, data, *, url=None, related_sources=()):
-        self.consulted[source["id"]] = source["release"]
+        self.consulted[source["id"]] = self.knowledge.stamps[source["id"]]
         for release in data.get("input_releases", []):
-            self.consulted[release["source_id"]] = release["release"]
+            self.consulted[release["source_id"]] = self.knowledge.stamps[release["source_id"]]
         item = {
             "origin": "canon",
             "source_id": source["id"],
             "title": source["title"],
             "publisher": source["publisher"],
-            "release": source["release"],
+            "release": source["release"], "fingerprint": self.knowledge.stamps[source["id"]],
             "source_period": source["period"],
             "geography": source["geography"],
             "url": url or source["url"],
@@ -149,6 +152,7 @@ class Knowledge:
             if any(key not in source.get("columns", {}) for key in source.get("search_fields", [])):
                 raise ValueError(f"Unknown search field in {path.name}")
             self.sources[source["id"]] = source
+        self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
         self.index = SearchIndex(self.sources)
 
     @staticmethod
@@ -188,6 +192,17 @@ class Knowledge:
             self.source(source_id)
         entries = self.index.rank(query, "passage", limit, source_id, affinities=affinities)
         return [self.passage(e, ledger) for e in entries]
+
+    def definition(self, source_id, key, ledger):
+        src = self.source(source_id)
+        value = src.get("definitions", {}).get(key)
+        if value is None:
+            raise KnowledgeError("Select a published definition key from inspect_source.")
+        document = value if isinstance(value, dict) else {"definition": value}
+        original = document.get("original")
+        return ledger.add(src, "definition", "Published definition / " + key,
+                          {"text": json_text(document), "key": key},
+                          url=original if original and https_url(original) else src["url"])
 
     def read_passage(self, source_id, locator, offset, ledger):
         source = self.source(source_id)
@@ -338,7 +353,7 @@ class Knowledge:
 
         releases = [
             {"source_id": s["id"], "release": s["release"], "period": s["period"],
-             "release_id": s.get("release_id"), "table": s.get("table"), "record_count": len(s["records"]) if "records" in s else None,
+             "release_id": s.get("release_id"), "fingerprint": self.stamps[s["id"]], "table": s.get("table"), "record_count": len(s["records"]) if "records" in s else None,
              "url": s["url"]}
             for s in sources
         ]
