@@ -37,19 +37,30 @@ class SupabaseState:
 
     async def send_code(self, email):
         response = await self.request("POST", "/auth/v1/otp", json={"email": email, "create_user": True})
-        if response.status_code == 429:
-            raise StateError("Sign-in email is temporarily rate-limited. Try again later.")
-        if not response.is_success:
-            raise StateError("Sign-in email could not be sent. Use your V3 Supabase team email.")
+        if response.is_success:
+            return
+        code = self.error_code(response)
+        if response.status_code == 429 or code == "over_email_send_rate_limit":
+            raise StateError("Too many code requests. Use your latest code or wait before requesting a new one.")
+        if code == "email_address_not_authorized":
+            raise StateError("Sign-in emails are available to V3 Supabase team email addresses.")
+        raise StateError("V3 could not send a sign-in code. Try again shortly.")
 
     async def verify_code(self, email, code):
         response = await self.request("POST", "/auth/v1/verify", json={"email": email, "token": code, "type": "email"})
         if not response.is_success:
-            raise StateError("That sign-in code could not be verified. Request a new code if needed.")
+            raise StateError("That sign-in code is invalid or has expired. Use the code in the newest email.")
         payload = response.json()
         if not payload.get("access_token"):
             raise StateError("Supabase did not return a V3 session.")
         return payload["access_token"], max(1, min(3600, int(payload.get("expires_in", 3600))))
+
+    @staticmethod
+    def error_code(response):
+        try:
+            return response.json().get("error_code")
+        except (AttributeError, ValueError):
+            return None
 
     async def user(self, token):
         if not token:

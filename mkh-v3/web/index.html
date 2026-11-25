@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Mali Knowledge Hub V3</title>
   <link rel="stylesheet" href="/assets/styles.css?v=3.1">
-  <script src="/assets/app.js?v=3.1" defer></script>
+  <script src="/assets/app.js?v=3.2" defer></script>
 </head>
 <body>
   <div class="workspace" id="workspace">
@@ -57,21 +57,22 @@
 
       <div class="composer-dock">
         <div class="composer-shell">
-          <div class="composer" id="composer">
+          <form class="composer" id="composer">
             <label class="sr-only" for="prompt">Ask a question about Mali</label>
             <textarea id="prompt" rows="1" maxlength="5000" placeholder="Ask a question about Mali…"></textarea>
             <div class="composer-toolbar">
               <div class="composer-left">
+                <button type="button" class="sources-button hidden" id="composer-sign-in">Sign in to send</button>
                 <span class="composer-hint" id="composer-hint">Evidence-grounded research</span>
               </div>
               <div class="composer-right">
                 <button type="button" class="sources-button hidden" id="cancel-button">Stop</button>
                 <label class="sr-only" for="analysis-mode">Analysis depth</label>
                 <select id="analysis-mode" title="Analysis depth"><option value="fast" selected>Fast</option><option value="deep">Deep</option></select>
-                <button class="send-button" id="send-button" aria-label="Send question" title="Send question" disabled><svg viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+                <button type="submit" class="send-button" id="send-button" aria-label="Send question" title="Send question" disabled><svg viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
               </div>
             </div>
-          </div>
+          </form>
           <div class="composer-caption"><span id="preview-status" role="status">Connecting to the V3 preview…</span></div>
         </div>
       </div>
@@ -91,7 +92,7 @@
     </form>
     <div class="modal-mark" aria-hidden="true">M</div>
     <h2 id="auth-title">Sign in to V3</h2>
-    <p>Use your V3 Supabase team email to receive a one-time code.</p>
+    <p>Enter your existing V3 email address to receive a one-time sign-in code.</p>
     <div class="modal-status hidden" id="auth-status" role="status"></div>
     <form id="auth-form">
       <label for="auth-email">Email address</label>
@@ -102,6 +103,7 @@
       </div>
       <button class="primary-button" id="auth-submit" type="submit">Send code</button>
       <button class="sources-button hidden" id="auth-resend" type="button">Send a new code</button>
+      <button class="sources-button hidden" id="auth-change-email" type="button">Change email address</button>
     </form>
   </dialog>
 </body>

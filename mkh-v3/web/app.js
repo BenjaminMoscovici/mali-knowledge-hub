@@ -7,10 +7,11 @@ const drawer = byId("evidence-drawer");
 const drawerBody = byId("drawer-body");
 const messages = byId("messages");
 const dialog = byId("auth-dialog");
-let session = {};
+let session = null;
 let conversationId = null;
 let active = null;
 let codeSent = false;
+let submitAfterSignIn = false;
 let opener = null;
 
 function el(tag, className, value) {
@@ -24,7 +25,9 @@ async function request(path, options = {}) {
   const response = await fetch(path, options);
   if (!response.ok) {
     const failure = await response.json().catch(() => ({}));
-    throw new Error(failure.error || "The V3 preview could not complete this request.");
+    const error = new Error(failure.error || "The V3 preview could not complete this request.");
+    error.status = response.status;
+    throw error;
   }
   return response;
 }
@@ -37,12 +40,17 @@ async function json(path, body) {
 }
 
 function updateComposer(status = "") {
-  byId("send-button").disabled = Boolean(active) || !promptBox.value.trim() || !session.chat_enabled;
+  const needsSignIn = session?.auth_enabled && !session.authenticated;
+  byId("composer-sign-in").classList.toggle("hidden", !needsSignIn);
+  byId("send-button").disabled = Boolean(active) || !promptBox.value.trim();
+  byId("send-button").title = needsSignIn ? "Sign in to send" : "Send question";
   byId("cancel-button").classList.toggle("hidden", !active);
   byId("new-chat").disabled = Boolean(active);
+  promptBox.readOnly = Boolean(active);
   statusLine.textContent = status || (
-    !session.model_configured ? "V3 preview · Source browsing is available. Model access is being configured." :
-      !session.authenticated ? "Sign in to start a private research conversation." :
+    !session ? "Checking the V3 preview session…" :
+      !session.model_configured ? "V3 preview · Source browsing is available. Model access is being configured." :
+        !session.authenticated ? "Sign in with your email code to send a message." :
         "V3 preview · Saved to your V3 account."
   );
 }
@@ -312,6 +320,7 @@ function appendUser(text) {
   node.append(el("div", "user-bubble", text));
   messages.append(node);
   scrollToLatest();
+  return node;
 }
 
 function appendAnswer(turn) {
@@ -346,7 +355,7 @@ function reset() {
 async function recent() {
   const list = byId("thread-list");
   list.replaceChildren();
-  if (!session.authenticated) return;
+  if (!session?.authenticated) return;
   const data = await json("/api/conversations");
   for (const entry of data.conversations) {
     const row = el("div", "thread-row");
@@ -377,7 +386,11 @@ async function refreshSession() {
   session = await json("/api/session");
   byId("profile-title").textContent = session.authenticated ? "Sign out" : "Sign in";
   updateComposer();
-  await recent();
+  recent().catch(() => {
+    if (session?.authenticated) {
+      byId("thread-list").textContent = "Saved chats could not be loaded.";
+    }
+  });
 }
 
 function authStatus(text) {
@@ -390,6 +403,7 @@ function showCode(visible) {
   codeSent = visible;
   byId("code-wrap").classList.toggle("hidden", !visible);
   byId("auth-resend").classList.toggle("hidden", !visible);
+  byId("auth-change-email").classList.toggle("hidden", !visible);
   byId("auth-email").readOnly = visible;
   byId("auth-submit").textContent = visible ? "Sign in" : "Send code";
   byId("auth-code").required = visible;
@@ -397,36 +411,71 @@ function showCode(visible) {
   if (visible) byId("auth-code").focus();
 }
 
+function openSignIn(resume = false, message = "") {
+  if (!session?.auth_enabled) {
+    updateComposer("V3 sign-in is temporarily unavailable.");
+    return;
+  }
+  if (dialog.open) return;
+  submitAfterSignIn = resume;
+  showCode(false);
+  authStatus(message);
+  dialog.showModal();
+  byId("auth-email").focus();
+}
+
 async function submitAuth(event) {
   event.preventDefault();
   const email = byId("auth-email").value.trim();
+  const requestCode = !codeSent || event.currentTarget === byId("auth-resend");
   const button = byId("auth-submit");
+  if (button.disabled) return;
   button.disabled = true;
+  byId("auth-resend").disabled = true;
+  byId("auth-change-email").disabled = true;
   try {
-    if (!codeSent) {
+    if (requestCode) {
       await json("/api/auth/request-code", {email});
-      authStatus("Enter the one-time code sent to your email.");
+      authStatus("Enter the one-time code from the latest MKH V3 email.");
       showCode(true);
     } else {
       await json("/api/auth/verify-code", {email, code: byId("auth-code").value.trim()});
-      dialog.close();
       await refreshSession();
-      promptBox.focus();
+      if (!session.authenticated) throw new Error("V3 could not open your session. Request a new code.");
+      const resume = submitAfterSignIn;
+      submitAfterSignIn = false;
+      dialog.close();
+      if (resume) send();
     }
   } catch (failure) {
     authStatus(failure.message);
   } finally {
     button.disabled = false;
+    byId("auth-resend").disabled = false;
+    byId("auth-change-email").disabled = false;
   }
 }
 
 async function send() {
   const prompt = promptBox.value.trim();
-  if (active || !prompt || !session.chat_enabled) return;
+  if (active || !prompt) return;
+  if (!session) {
+    updateComposer("The preview is connecting. Try Send again in a moment.");
+    return;
+  }
+  if (!session.authenticated) {
+    openSignIn(true, "Sign in to send your draft. Your message is kept here.");
+    return;
+  }
+  if (!session.chat_enabled) {
+    updateComposer("Model-backed chat is temporarily unavailable. Your draft is kept here.");
+    return;
+  }
   active = new AbortController();
   promptBox.value = "";
-  appendUser(prompt);
+  const pendingMessage = appendUser(prompt);
   updateComposer("Starting the assignment…");
+  let completed = false;
   try {
     const response = await request("/api/chat", {
       method: "POST", signal: active.signal,
@@ -436,7 +485,6 @@ async function send() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let pending = "";
-    let completed = false;
     while (true) {
       const {value, done} = await reader.read();
       pending += decoder.decode(value, {stream: !done});
@@ -461,6 +509,22 @@ async function send() {
     updateComposer();
   } catch (failure) {
     active = null;
+    if (completed) {
+      updateComposer();
+      return;
+    }
+    pendingMessage.remove();
+    byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
+    if (failure.status === 401) {
+      session = {...session, authenticated: false, chat_enabled: false};
+      byId("profile-title").textContent = "Sign in";
+      byId("thread-list").replaceChildren();
+      reset();
+      promptBox.value = prompt;
+      updateComposer("Your session expired. Sign in again to send your draft.");
+      openSignIn(false, "Your session expired. Sign in again to continue.");
+      return;
+    }
     promptBox.value = prompt;
     updateComposer(failure.name === "AbortError" ? "Assignment stopped." : failure.message);
   }
@@ -484,29 +548,41 @@ byId("sidebar-scrim").addEventListener("click", () => setSidebar(false));
 byId("new-chat").addEventListener("click", () => { reset(); promptBox.focus(); });
 byId("profile-button").addEventListener("click", async () => {
   try {
-    if (session.authenticated) {
+    if (session?.authenticated) {
       if (active) return;
       await json("/api/auth/signout", {});
       reset();
       await refreshSession();
     } else {
-      showCode(false);
-      authStatus("");
-      dialog.showModal();
+      openSignIn();
     }
   } catch (failure) {
     updateComposer(failure.message);
   }
 });
 byId("auth-form").addEventListener("submit", submitAuth);
-byId("auth-resend").addEventListener("click", () => { showCode(false); byId("auth-form").requestSubmit(); });
-byId("send-button").addEventListener("click", send);
+byId("auth-resend").addEventListener("click", submitAuth);
+byId("auth-change-email").addEventListener("click", () => {
+  showCode(false);
+  authStatus("");
+  byId("auth-email").focus();
+});
+dialog.addEventListener("close", () => {
+  submitAfterSignIn = false;
+  byId("auth-code").value = "";
+  if (!active) promptBox.focus();
+});
+byId("composer-sign-in").addEventListener("click", () => openSignIn());
+byId("composer").addEventListener("submit", (event) => {
+  event.preventDefault();
+  send();
+});
 byId("cancel-button").addEventListener("click", () => active?.abort());
 promptBox.addEventListener("input", () => { if (!active) updateComposer(); });
 promptBox.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && !event.shiftKey && !event.isComposing && session.chat_enabled) {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
     event.preventDefault();
-    send();
+    byId("composer").requestSubmit();
   }
 });
 document.querySelectorAll(".suggestion").forEach((button) => {

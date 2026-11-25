@@ -10,6 +10,10 @@ Deploys are triggered manually after verification. The Render service supplies p
 configuration, including `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `OPENAI_API_KEY`.
 An independent `MKH_HISTORY_SIGNING_KEY` can keep transcript signatures valid across model
 credential rotation. Preview users receive one-time codes through Supabase Auth.
+The V3 project's **Magic Link** and **Confirm signup** email templates both use the
+body in `supabase/templates/email-code.html` and the subject **Your MKH V3 sign-in code**.
+Apply those settings in the V3 Supabase dashboard to deliver codes for both returning
+and first-time sign-ins. Hosted templates are settings on the V3 project.
 
 ## Sources and evidence
 
