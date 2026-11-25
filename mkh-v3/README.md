@@ -137,3 +137,9 @@ preserved the two geographies. The initial Deep turn reached a research limit an
 prospective language after the projection period. The next revision supplies the current
 date in every investigation, supports independent tool calls in one round and gives the
 model compact evidence while retaining the full inspection and export record.
+
+A second professional assignment requested a regional map of reported nutrition-sector
+organizations. The browser exposed a comparison between the data release and the boundary
+release during rendering. The renderer now verifies the boundary version and fingerprint
+from the calculation inputs. The browser regression replays the computed rows, verifies
+all exported region values and checks that the standalone brief contains the rendered map.

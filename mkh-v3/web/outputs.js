@@ -58,7 +58,12 @@ function bars(canvas, rows, label, field) {
 
 async function regionalMap(canvas, rows, figure, item) {
   const source = await json("/api/sources/" + encodeURIComponent(figure.map_source) + "/geometry");
-  if (source.release !== item.release) throw new Error("The mapped release has changed.");
+  const boundary = item.data.input_releases?.find(input => input.source_id === figure.map_source)
+    || (item.source_id === figure.map_source ? item : null);
+  if (!boundary || source.release !== boundary.release || (boundary.fingerprint &&
+      boundary.fingerprint !== source.fingerprint && !(source.compatible_fingerprints || []).includes(boundary.fingerprint))) {
+    throw new Error("The mapped boundary release has changed.");
+  }
   const entries = Object.entries(source.geometries);
   const polygons = entries.map(([id, g]) => [id, g.type === "Polygon" ? [g.coordinates] : g.coordinates]);
   const points = polygons.flatMap(([, rings]) => rings.flat(2));

@@ -147,7 +147,9 @@ async def geometry(request):
         src = settings(request).knowledge.source(request.path_params["source_id"])
         if not src.get("map_key"):
             return error("The selected release has no published display boundaries.", 404)
-        return data_response({"key": src["map_key"], "release": src["release"], "geometries": src["geometries"]})
+        return data_response({"key": src["map_key"], "release": src["release"], "geometries": src["geometries"],
+                              "fingerprint": settings(request).knowledge.stamps[src["id"]],
+                              "compatible_fingerprints": src.get("compatible_fingerprints", [])})
     except KnowledgeError as failure:
         return error(str(failure), 404)
 
