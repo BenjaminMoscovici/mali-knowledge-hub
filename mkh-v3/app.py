@@ -20,6 +20,7 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
 from companion import Companion, CompanionError, MODES
+from jobs import ResearchJobs
 from knowledge import Evidence, Knowledge, KnowledgeError, json_text
 from live_preview_check import requested as preview_check_requested, run as run_preview_check
 from state import (
@@ -338,18 +339,15 @@ async def chat(request):
     except StateError as failure:
         return error(str(failure), 400)
 
-    def event(value):
-        return json_text(value) + "\n"
-
     async def stream():
         if state.slot.locked():
-            yield event({"type": "error", "text": "The preview is processing another assignment. Try again shortly."})
+            yield {"type": "error", "text": "The preview is processing another assignment. Try again shortly."}
             return
         async with state.slot:
             try:
                 row = await state.store.load(token, conversation_id) if token else None
                 if token and body.get("conversation_id") and row is None:
-                    yield event({"type": "error", "text": "The saved V3 conversation is unavailable."})
+                    yield {"type": "error", "text": "The saved V3 conversation is unavailable."}
                     return
                 if guest:
                     turns = list(guest.conversations.get(conversation_id, []))
@@ -393,15 +391,47 @@ async def chat(request):
                         else:
                             await state.store.save(token, conversation_id, title, turns, row["revision"] if row else 0)
                         piece["conversation_id"] = conversation_id
-                    yield event(piece)
+                    yield piece
             except (KnowledgeError, CompanionError, StateError) as failure:
-                yield event({"type": "error", "text": str(failure)})
+                yield {"type": "error", "text": str(failure)}
 
-    response = StreamingResponse(stream(), media_type="application/x-ndjson",
-                                 headers={**ERROR_HEADERS, "X-Content-Type-Options": "nosniff"})
+    if body.get("delivery") == "job":
+        job_id = state.jobs.start(owner, prompt, instructions or "", conversation_id, stream)
+        response = data_response({"job_id": job_id, "conversation_id": conversation_id}, 202)
+    else:
+        async def encoded():
+            async for item in stream():
+                yield json_text(item) + "\n"
+        response = StreamingResponse(encoded(), media_type="application/x-ndjson",
+                                     headers={**ERROR_HEADERS, "X-Content-Type-Options": "nosniff"})
     if new_guest:
         set_cookie(response, request, GUEST_COOKIE, owner, 86400)
     return response
+
+
+async def job_status(request):
+    state = settings(request)
+    try:
+        _, owner = await account(request)
+    except StateError as failure:
+        return error(str(failure), 503)
+    if not owner:
+        owner = request.cookies.get(GUEST_COOKIE)
+        if owner not in state.preview.guests:
+            return error("This temporary research run has expired.", 410)
+    job = state.jobs.get(request.path_params["job_id"], owner)
+    if not job:
+        return error("This research run is unavailable. Reopen a saved chat or start another assignment.", 410)
+    if request.method == "DELETE":
+        if not same_origin(request):
+            return error("Open the preview directly to stop research.", 403)
+        if job.task and not job.task.done():
+            job.task.cancel()
+            await asyncio.gather(job.task, return_exceptions=True)
+            if job.result is None:
+                job.result = {"type": "error", "text": "Assignment stopped."}
+    return data_response({"prompt": job.prompt, "instructions": job.instructions,
+                          "conversation_id": job.conversation, "event": job.result or {"type": "activity", "text": job.activity}})
 
 
 def create_app(transport=None, directory=None):
@@ -427,10 +457,13 @@ def create_app(transport=None, directory=None):
             )
             state.slot = asyncio.Lock()
             state.preview = PreviewSessions()
+            state.jobs = ResearchJobs()
             if state.companion and preview_check_requested():
                 preview_check = asyncio.create_task(run_preview_check(state.companion))
             yield
         finally:
+            if hasattr(application.state, "jobs"):
+                await application.state.jobs.close()
             if preview_check is not None:
                 preview_check.cancel()
                 with suppress(asyncio.CancelledError):
@@ -451,6 +484,7 @@ def create_app(transport=None, directory=None):
         Route("/api/conversations", conversations),
         Route("/api/conversations/{conversation_id}", conversations, methods=["GET", "DELETE"]),
         Route("/api/chat", chat, methods=["POST"]),
+        Route("/api/jobs/{job_id}", job_status, methods=["GET", "DELETE"]),
         Mount("/assets", app=StaticFiles(directory=WEB)),
     ])
 

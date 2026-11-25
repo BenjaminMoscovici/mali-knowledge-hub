@@ -95,3 +95,14 @@ USD 0.017422 including the on-demand search index. An initial browser check also
 identified a notes control binding issue. It was corrected and the account memory
 lifecycle was verified through Chromium against isolated Supabase Auth and PostgREST.
 Two-account database checks verified owner isolation.
+
+Browser assignments run on the existing web instance and expose an owner-bound status
+URL for progress, reconnection and cancellation. Refreshing the tab rejoins a running
+assignment. The service retains completed jobs for up to 15 minutes, with a bounded
+in-memory cache. A new service instance ends pending guest jobs. Signed-in completed
+turns use Supabase. The streaming API remains available for existing clients.
+
+A COD map exercise on revision `646809b` correctly ranked five regions but returned
+only a table. The exhibit ledger now retains multiple presentations of the same
+calculation and checks geographic identifiers against the published release's rows,
+including SQL aliases. The attached map uses the same source values as the CSV.

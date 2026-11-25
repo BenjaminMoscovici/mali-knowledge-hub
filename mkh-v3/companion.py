@@ -93,7 +93,7 @@ TOOL_SPECS = {
     ),
     "present_data": (
         "Attach an inspectable table, bar chart or map to this answer using result rows from an issued evidence ID. "
-        "For chart or map use a label column and numeric value column. For maps return the published map_key unchanged.",
+        "Charts and maps already include an accessible data table and CSV. For maps include the published region identifier in the result.",
         {"evidence_id": TEXT, "kind": {"type": "string", "enum": ["table","chart","map"]},
          "title": TEXT, "label_field": OPTIONAL_TEXT, "value_field": OPTIONAL_TEXT},
     ),
@@ -285,8 +285,21 @@ class Companion:
                     evidence = ledger.citations(answer)
                     if ledger.artifacts:
                         used_ids = {item["id"] for item in evidence}
-                        evidence.extend(ledger.items[key] for key in ledger.artifacts if key not in used_ids)
+                        for exhibit in ledger.artifacts.values():
+                            key = exhibit["evidence_id"]
+                            if key not in used_ids:
+                                evidence.append(ledger.items[key])
+                                used_ids.add(key)
                     unresolved = set(EVIDENCE_REF.findall(answer)) - ledger.items.keys()
+                    missing_figures = ledger.requested_figures - {v["kind"] for v in ledger.artifacts.values()}
+                    if missing_figures and not signature_repairs and not final_step:
+                        signature_repairs += 1
+                        items.extend(output)
+                        items.append({"role": "user", "content": "The application has no completed "
+                                      + ", ".join(sorted(missing_figures)) +
+                                      " exhibit for this run. Complete it with the tools if possible. "
+                                      "Otherwise state that the output is unavailable and report only completed work."})
+                        continue
                     missing = (bool(ledger.new_evidence) and not evidence) or (web_used and not cited_web and not evidence)
                     if (unresolved or missing) and not signature_repairs and not final_step:
                         signature_repairs += 1
@@ -304,13 +317,26 @@ class Companion:
                     yield {
                         "type": "answer", "text": answer, "evidence": evidence,
                         "basis": ledger.consulted, "artifacts": list(ledger.artifacts.values()),
-                        "web_used": web_used, "partial": not complete or iterative_limit_reached,
+                        "web_used": web_used, "partial": not complete or iterative_limit_reached or bool(missing_figures),
                         "tool_failures": list(dict.fromkeys(tool_failures)),
                         "usage": self._usage(model, usage, started, web_used),
                     }
                     return
-        except TimeoutError:
-            raise CompanionError("The research time limit was reached. Try a narrower assignment or Deep mode.") from None
+        except (TimeoutError, CompanionError) as failure:
+            reason = ("The research time limit was reached." if isinstance(failure, TimeoutError) else str(failure))
+            completed = [item for key, item in ledger.items.items() if key in ledger.new_evidence][-5:]
+            if not completed:
+                raise CompanionError(reason) from None
+            lines = ["**Résultats partiels / Partial results**", reason,
+                     "Éléments vérifiés disponibles / Verified material available:"]
+            for item in completed:
+                lines.append(f"- {item['title']} · {item['locator']} [[{item['id']}]]")
+            selected = {item["id"] for item in completed}
+            yield {"type": "answer", "text": "\n\n".join(lines), "evidence": completed, "basis": ledger.consulted,
+                   "artifacts": [v for v in ledger.artifacts.values() if v["evidence_id"] in selected],
+                   "web_used": web_used, "partial": True, "tool_failures": list(dict.fromkeys(tool_failures)),
+                   "usage": self._usage(model, usage, started, web_used)}
+            return
         raise CompanionError("The assignment ended before a supported answer was available.")
 
     async def _provider_request(self, model, options, items, tools, remaining_tokens):

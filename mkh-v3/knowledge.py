@@ -49,6 +49,7 @@ class Evidence:
         self.consulted = {}
         self.artifacts = {}
         self.new_evidence = set()
+        self.requested_figures = set()
         self.items = {
             item["id"]: item for item in prior if self.allowed(item)
         }
@@ -69,6 +70,8 @@ class Evidence:
         return True
 
     def present(self, evidence_id, kind, title, label_field, value_field):
+        if kind in {"chart", "map", "table"}:
+            self.requested_figures.add(kind)
         item = self.items.get(evidence_id)
         rows = item["data"].get("rows") if item else None
         if not rows or kind not in {"table", "chart", "map"} or not title.strip():
@@ -84,12 +87,25 @@ class Evidence:
                   "evidence_id": evidence_id}
         if kind == "map":
             source = self.knowledge.source(item["source_id"])
-            if source.get("map_key") != label_field or not all(r[label_field] in source.get("geometries", {}) for r in rows):
-                raise KnowledgeError("Map rows must include the published boundary identifier under its original field name.")
-            if len({r[label_field] for r in rows}) != len(rows):
+            boundaries = source.get("geometries", {})
+            code_column = source.get("map_key")
+            if not code_column or len(item["data"].get("input_releases", [])) != 1:
+                raise KnowledgeError("Use one boundary release to identify the map geometries.")
+            # A display label may be a place name or an SQL alias. Bind the geometry
+            # using the release's data values; never infer cross-vintage place matches.
+            candidates = [column for column in rows[0] if all(
+                isinstance(r.get(column), str) and r[column] in boundaries for r in rows)]
+            if code_column in candidates:
+                field = code_column
+            elif candidates and all([r[c] for r in rows] == [r[candidates[0]] for r in rows] for c in candidates):
+                field = candidates[0]
+            else:
+                raise KnowledgeError("Include the release's boundary identifier in the result for every map row.")
+            if len({r[field] for r in rows}) != len(rows):
                 raise KnowledgeError("Return one observation for each displayed geographic identifier.")
-            result["map_source"] = source["id"]
-        self.artifacts[evidence_id] = result
+            result.update(map_source=source["id"], map_field=field)
+        identity = (evidence_id, kind, label_field, value_field)
+        self.artifacts[identity] = result
         return result
 
     def add(self, source, kind, locator, data, *, url=None, related_sources=()):

@@ -33,8 +33,13 @@ class ResearchTest(unittest.TestCase):
         for kind in ("map", "chart", "table"):
             result = ledger.present(item["id"], kind, "Area by region", "pcode", "area_km2")
             self.assertEqual(result["evidence_id"], item["id"])
+        self.assertEqual(len(ledger.artifacts), 3)
+        aliased = self.k.query(["mli-cod-ab"], "SELECT pcode as region_id, place, area_km2 FROM cod_regions", ledger)
+        mapped = ledger.present(aliased["id"], "map", "Area by region", "place", "area_km2")
+        self.assertEqual(mapped["map_field"], "region_id")
+        invalid = self.k.query(["mli-cod-ab"], "SELECT place, area_km2 FROM cod_regions", ledger)
         with self.assertRaises(KnowledgeError):
-            ledger.present(item["id"], "map", "Area by region", "area_km2", "area_km2")
+            ledger.present(invalid["id"], "map", "Area by region", "place", "area_km2")
         self.assertNotIn("geometries", self.k.inspect("mli-cod-ab"))
 
     def test_snapshot_computation_and_dependency_withdrawal(self):
@@ -92,3 +97,31 @@ class RetrievalTest(unittest.IsolatedAsyncioTestCase):
             self.assertIsNone(scores)
             self.assertTrue(usage["retrieval_fallback"])
             self.assertEqual(k.discover("financement", affinities=scores)[0]["id"], target)
+
+
+class ResearchDeliveryTest(unittest.TestCase):
+    def test_job_is_private_and_cancellation_prevents_an_answer(self):
+        import asyncio
+        import os
+        from unittest.mock import patch
+        from starlette.testclient import TestClient
+        from app import create_app
+
+        async def slow_model(request):
+            await asyncio.sleep(4)
+            return httpx.Response(200, json={"output": []})
+        hdr = {"Origin": "http://testserver"}
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "test", "MKH_SEMANTIC_SEARCH": "off"}), TestClient(
+            create_app(httpx.MockTransport(slow_model))
+        ) as client:
+            res = client.post("/api/chat", json={"prompt": "Write a decision note.", "delivery": "job"}, headers=hdr)
+            self.assertEqual(res.status_code, 202)
+            job = "/api/jobs/" + res.json()["job_id"]
+            owner = client.cookies["mkh_v3_guest"]
+            self.assertEqual(client.get(job).json()["event"]["type"], "activity")
+            client.cookies.clear()
+            self.assertEqual(client.get(job).status_code, 410)
+            client.cookies.set("mkh_v3_guest", owner)
+            self.assertEqual(client.delete(job).status_code, 403)
+            self.assertEqual(client.delete(job, headers=hdr).json()["event"]["text"], "Assignment stopped.")
+            self.assertEqual(client.get(job).json()["event"]["type"], "error")

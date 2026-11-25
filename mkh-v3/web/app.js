@@ -11,6 +11,8 @@ let session = null;
 let conversationId = null;
 let workingInstructions = "";
 let active = null;
+let activeJob = null;
+const pendingJobKey = "mkh-v3-pending-research";
 let authMode = "sign-in";
 let opener = null;
 
@@ -526,79 +528,96 @@ function handleEmailLink() {
   }
 }
 
+async function followJob(id, pendingMessage, prompt) {
+  activeJob = id;
+  sessionStorage.setItem(pendingJobKey, id);
+  let failures = 0;
+  while (true) {
+    let status;
+    try {
+      status = await json("/api/jobs/" + encodeURIComponent(id));
+      failures = 0;
+    } catch (failure) {
+      if (failure.status === 410 || failure.status === 401 || ++failures >= 4) throw failure;
+      updateComposer("Reconnecting to the research run…");
+      await new Promise((resolve) => setTimeout(resolve, 1400));
+      continue;
+    }
+    if (!pendingMessage) {
+      prompt = status.prompt;
+      workingInstructions = status.instructions;
+      pendingMessage = appendUser(prompt);
+    }
+    const event = status.event;
+    if (event.type === "error") {
+      sessionStorage.removeItem(pendingJobKey);
+      pendingMessage.remove();
+      promptBox.value = prompt;
+      throw new Error(event.text);
+    }
+    if (event.type === "answer") {
+      conversationId = event.conversation_id;
+      appendAnswer({...event, prompt});
+      sessionStorage.removeItem(pendingJobKey);
+      await recent().catch(() => {});
+      return;
+    }
+    updateComposer(event.text + "…");
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+  }
+}
+
+async function stopResearch() {
+  if (!active) return;
+  active.abort();
+  if (activeJob) {
+    try {
+      await request("/api/jobs/" + encodeURIComponent(activeJob), {method: "DELETE"});
+    } catch (failure) { updateComposer(failure.message); }
+  }
+}
+
+async function runAssignment(prompt, resumeId) {
+  active = new AbortController();
+  let pendingMessage = null;
+  try {
+    if (!resumeId) {
+      promptBox.value = "";
+      pendingMessage = appendUser(prompt);
+      updateComposer("Starting the assignment…");
+      const job = await json("/api/chat", {prompt, instructions: workingInstructions, delivery: "job",
+        conversation_id: conversationId, signed_in: session.authenticated, mode: byId("analysis-mode").value});
+      resumeId = job.job_id;
+    }
+    activeJob = resumeId;
+    if (active.signal.aborted) await stopResearch();
+    await followJob(resumeId, pendingMessage, prompt);
+    active = activeJob = null;
+    updateComposer();
+  } catch (failure) {
+    active = activeJob = null;
+    pendingMessage?.remove();
+    byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
+    if (failure.status === 401 || failure.status === 410) {
+      sessionStorage.removeItem(pendingJobKey);
+      reset();
+      await refreshSession().catch(() => {});
+    }
+    if (prompt) promptBox.value = prompt;
+    updateComposer(sessionStorage.getItem(pendingJobKey)
+      ? "Connection interrupted. Reload this tab to rejoin the assignment." : failure.message);
+  }
+}
+
 async function send() {
   const prompt = promptBox.value.trim();
   if (active || !prompt) return;
-  if (!session) {
-    updateComposer("The preview is connecting. Try Send again in a moment.");
+  if (!session?.chat_enabled) {
+    updateComposer(session ? "Model-backed chat is temporarily unavailable. Your draft is kept here."
+                           : "The preview is connecting. Try Send again in a moment.");
     return;
   }
-  if (!session.chat_enabled) {
-    updateComposer("Model-backed chat is temporarily unavailable. Your draft is kept here.");
-    return;
-  }
-  active = new AbortController();
-  promptBox.value = "";
-  const pendingMessage = appendUser(prompt);
-  updateComposer("Starting the assignment…");
-  let completed = false;
-  try {
-    const response = await request("/api/chat", {
-      method: "POST", signal: active.signal,
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({prompt, instructions: workingInstructions, conversation_id: conversationId,
-        signed_in: session.authenticated, mode: byId("analysis-mode").value}),
-    });
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let pending = "";
-    while (true) {
-      const {value, done} = await reader.read();
-      pending += decoder.decode(value, {stream: !done});
-      const lines = pending.split("\n");
-      pending = lines.pop();
-      for (const line of lines) {
-        if (!line) continue;
-        const event = JSON.parse(line);
-        if (event.type === "activity") updateComposer(event.text + "…");
-        if (event.type === "error") throw new Error(event.text);
-        if (event.type === "answer") {
-          conversationId = event.conversation_id;
-          appendAnswer({...event, prompt});
-          completed = true;
-        }
-      }
-      if (done) break;
-    }
-    if (!completed) throw new Error("The connection ended before the answer completed.");
-    await recent().catch(() => {});
-    active = null;
-    updateComposer();
-  } catch (failure) {
-    active = null;
-    if (completed) {
-      updateComposer();
-      return;
-    }
-    pendingMessage.remove();
-    byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
-    if (failure.status === 401 || failure.status === 410) {
-      if (failure.status === 401) {
-        session = {...session, authenticated: false};
-        byId("profile-title").textContent = "Sign in";
-        byId("history-label").classList.add("hidden");
-        byId("thread-list").replaceChildren();
-      }
-      reset();
-      promptBox.value = prompt;
-      updateComposer(failure.status === 401
-        ? "Sign-in expired. Send to start a guest chat, or sign in to reopen saved chats."
-        : "Guest chat expired. Send again to start a new chat.");
-      return;
-    }
-    promptBox.value = prompt;
-    updateComposer(failure.name === "AbortError" ? "Assignment stopped." : failure.message);
-  }
+  await runAssignment(prompt, null);
 }
 
 function setSidebar(open) {
@@ -693,7 +712,7 @@ byId("composer").addEventListener("submit", (event) => {
   event.preventDefault();
   send();
 });
-byId("cancel-button").addEventListener("click", () => active?.abort());
+byId("cancel-button").addEventListener("click", stopResearch);
 promptBox.addEventListener("input", () => { if (!active) updateComposer(); });
 promptBox.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
@@ -708,4 +727,8 @@ document.querySelectorAll(".suggestion").forEach((button) => {
     promptBox.focus();
   });
 });
-refreshSession().then(handleEmailLink).catch((failure) => updateComposer(failure.message));
+refreshSession().then(() => {
+  handleEmailLink();
+  const id = sessionStorage.getItem(pendingJobKey);
+  if (id && !dialog.open) runAssignment("", id);
+}).catch((failure) => updateComposer(failure.message));

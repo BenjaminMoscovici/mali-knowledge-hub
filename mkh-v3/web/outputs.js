@@ -58,7 +58,7 @@ function bars(canvas, rows, label, field) {
 
 async function regionalMap(canvas, rows, figure, item) {
   const source = await json("/api/sources/" + encodeURIComponent(figure.map_source) + "/geometry");
-  if (source.release !== item.release || source.key !== figure.label_field) throw new Error("The mapped release has changed.");
+  if (source.release !== item.release) throw new Error("The mapped release has changed.");
   const entries = Object.entries(source.geometries);
   const polygons = entries.map(([id, g]) => [id, g.type === "Polygon" ? [g.coordinates] : g.coordinates]);
   const points = polygons.flatMap(([, rings]) => rings.flat(2));
@@ -68,7 +68,7 @@ async function regionalMap(canvas, rows, figure, item) {
   const scale = Math.min(610 / ((east - west) * Math.cos(mid)), 400 / (north - south));
   const x = (lon) => 20 + (lon - west) * Math.cos(mid) * scale;
   const y = (lat) => 18 + (north - lat) * scale;
-  const values = new Map(rows.map((r) => [r[figure.label_field], r[figure.value_field]]));
+  const values = new Map(rows.map((r) => [r[figure.map_field || figure.label_field], r[figure.value_field]]));
   const valid = Array.from(values.values()).filter(Number.isFinite);
   const min = Math.min(...valid), max = Math.max(...valid);
   canvas.height = 466;
@@ -105,7 +105,7 @@ function exhibit(figure, item) {
     canvas.setAttribute("role", "img");
     box.append(canvas);
     if (figure.kind === "chart") bars(canvas, rows, figure.label_field, figure.value_field);
-    if (figure.kind === "map") regionalMap(canvas, rows, figure, item).catch(() => {
+    if (figure.kind === "map") canvas.rendered = regionalMap(canvas, rows, figure, item).catch(() => {
       canvas.replaceWith(el("p", "evidence-meta", "The map could not load. The source values are listed below."));
     });
     const details = el("details");
@@ -120,7 +120,8 @@ function exhibit(figure, item) {
   return box;
 }
 
-function downloadReport(turn, body, evidence) {
+async function downloadReport(turn, body, evidence) {
+  await Promise.all(Array.from(body.querySelectorAll("canvas"), (canvas) => canvas.rendered));
   const report = document.implementation.createHTMLDocument("Mali Knowledge Hub research brief");
   const charset = report.createElement("meta");
   charset.setAttribute("charset", "utf-8");
