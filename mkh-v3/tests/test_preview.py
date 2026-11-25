@@ -94,6 +94,7 @@ class PublishedKnowledgeTest(unittest.TestCase):
                          [{"prompt": "Earlier question"}])
 
 
+@patch.dict(os.environ, {"MKH_SEMANTIC_SEARCH": "off"})
 class CompanionEntryPointTest(unittest.TestCase):
     def test_chat_uses_discovery_sql_documents_and_live_data_then_retains_scope(self):
         stored = {}
@@ -125,6 +126,8 @@ class CompanionEntryPointTest(unittest.TestCase):
                 entry = next(iter(stored.values()))
                 entry.update(payload)
                 return httpx.Response(200, json=[entry])
+            if path == "/rest/v1/mkh_v3_memory":
+                return httpx.Response(200, json=[])
             if path == "/rest/v1/mkh_v3_attempts":
                 return httpx.Response(200, json=[]) if request.method == "GET" else httpx.Response(201)
             if request.url.host == "api.worldbank.org":

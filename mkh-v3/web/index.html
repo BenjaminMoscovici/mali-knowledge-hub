@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>Mali Knowledge Hub V3</title>
-  <link rel="stylesheet" href="/assets/styles.css?v=3.1">
-  <script src="/assets/app.js?v=3.3" defer></script>
+  <link rel="stylesheet" href="/assets/styles.css?v=4">
+  <script src="/assets/outputs.js?v=1" defer></script>
+  <script src="/assets/app.js?v=4" defer></script>
 </head>
 <body>
   <div class="workspace" id="workspace">
@@ -27,6 +28,7 @@
         <div id="thread-list" class="thread-list"></div>
       </div>
       <div class="sidebar-bottom">
+        <button type="button" id="personal-memory" class="sources-button hidden">Personal memory</button>
         <button type="button" class="profile" id="profile-button"><span class="avatar" aria-hidden="true">M</span><span class="profile-text"><strong id="profile-title">Sign in</strong><small>V3 development preview</small></span></button>
       </div>
     </aside>
@@ -36,6 +38,7 @@
       <header class="topbar">
         <button class="icon-button sidebar-open" id="sidebar-open" aria-label="Open sidebar" title="Open sidebar"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
         <span class="topbar-title" id="topbar-title">Mali Knowledge Hub</span>
+        <button type="button" class="sources-button" id="working-notes">Working instructions</button>
       </header>
 
       <div class="conversation-scroll" id="conversation-scroll">
@@ -46,8 +49,8 @@
             <p>Research Mali with evidence you can inspect.</p>
             <div class="suggestions" aria-label="Example questions">
               <button class="suggestion">Prépare une note sur la sécurité alimentaire dans la zone de Mopti.</button>
-              <button class="suggestion">Compare the available food-security estimates and reporting periods for Mopti.</button>
-              <button class="suggestion">Which sources can I use to research food security in Mali?</button>
+              <button class="suggestion">Compare reported funding with requirements for a humanitarian plan.</button>
+              <button class="suggestion">What can independent evaluations tell us about the results of development projects?</button>
             </div>
           </div>
           <div id="messages" class="messages" aria-live="polite"></div>

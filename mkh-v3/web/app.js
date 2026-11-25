@@ -9,6 +9,7 @@ const messages = byId("messages");
 const dialog = byId("auth-dialog");
 let session = null;
 let conversationId = null;
+let workingInstructions = "";
 let active = null;
 let authMode = "sign-in";
 let opener = null;
@@ -46,6 +47,8 @@ function updateComposer(status = "") {
   byId("send-button").disabled = Boolean(active) || !promptBox.value.trim();
   byId("cancel-button").classList.toggle("hidden", !active);
   byId("new-chat").disabled = Boolean(active);
+  byId("working-notes").disabled = Boolean(active);
+  byId("personal-memory").disabled = Boolean(active);
   promptBox.readOnly = Boolean(active);
   statusLine.textContent = status || (
     !session ? "Checking the V3 preview session…" :
@@ -131,7 +134,23 @@ function evidenceCard(item, number) {
     card.append(el("p", "evidence-meta", [data.label, data.unit, data.provider_last_updated]
       .filter(Boolean).join(" · ")));
   }
-  if (data.rows) card.append(dataTable(data.rows));
+  if (data.relationship) card.append(el("p", "evidence-meta",
+    data.relationship.entity + " · " + data.relationship.method + " · " + data.relationship.matched_pairs + " matched pairs"));
+  if (data.parent_evidence) {
+    const parent = data.parent_evidence;
+    const view = el("details");
+    view.append(el("summary", "", "Input to this calculation"), el("p", "", parent.locator + " · " + parent.release));
+    if (parent.data.sql) view.append(el("pre", "calculation", parent.data.sql));
+    view.append(dataTable(parent.data.rows));
+    const original = link(parent.url, "Open input source ↗");
+    if (original) view.append(original);
+    card.append(view);
+  }
+  if (data.rows) {
+    card.append(dataTable(data.rows));
+    if (data.rows.length) card.append(action("Download CSV", () =>
+      downloadFile(item.id + ".csv", csv(data.rows), "text/csv;charset=utf-8")));
+  }
   if (data.truncated) card.append(el("p", "evidence-meta", "Showing the first 30 query rows."));
   if (!data.rows && !data.text && item.kind === "source_record") card.append(dataTable([data]));
   const original = link(item.url, "Open original source ↗");
@@ -328,6 +347,10 @@ function appendAnswer(turn) {
   const message = el("div", "message assistant");
   const body = el("div", "assistant-turn");
   renderAnswer(body, turn.answer || turn.text, evidence);
+  for (const figure of turn.artifacts || []) {
+    const item = evidence.find((e) => e.id === figure.evidence_id);
+    if (item?.data?.rows?.length) body.append(exhibit(figure, item));
+  }
   message.append(body);
   const footer = el("div", "message-footer");
   if (evidence.length) {
@@ -335,6 +358,10 @@ function appendAnswer(turn) {
     view.addEventListener("click", () => showEvidence(evidence));
     footer.append(view);
   }
+  footer.append(action("Download brief", () => downloadReport(turn, body, evidence)));
+  if (evidence.length) footer.append(action("Evidence file", () => downloadFile("MKH-evidence.json",
+    JSON.stringify({evidence, exhibits: turn.artifacts || []}, null, 2), "application/json")));
+  if (turn.usage?.retrieval_fallback) footer.append(el("span", "", "Used text search while semantic search was unavailable"));
   if (turn.partial || turn.tool_failures?.length) {
     footer.append(el("span", "", turn.partial ? "Research incomplete" : "Some research tools could not complete"));
   }
@@ -344,6 +371,7 @@ function appendAnswer(turn) {
 }
 
 function reset() {
+  workingInstructions = "";
   conversationId = null;
   messages.replaceChildren();
   byId("welcome").classList.remove("hidden");
@@ -369,13 +397,62 @@ async function recent() {
         if (session !== viewingSession) return;
         reset();
         conversationId = entry.id;
+        workingInstructions = value.turns.at(-1)?.instructions || "";
         byId("topbar-title").textContent = entry.title;
         for (const turn of value.turns) {
           appendUser(turn.prompt);
           if (turn.answer) appendAnswer(turn);
           if (turn.withdrawn) messages.append(el("p", "evidence-meta", "Earlier evidence is outside the current approved scope."));
         }
-        if (window.innerWidth <= 800) setSidebar(false);
+        async function editNotes(personal) {
+  openDrawer(personal ? "Personal memory" : "Working instructions");
+  const viewSession = session;
+  try {
+    const saved = personal ? await json("/api/memory") : {notes: workingInstructions};
+    if (viewSession !== session || drawer.classList.contains("hidden")) return;
+    const form = el("form", "notes-form");
+    const description = personal
+      ? "Choose what the Companion remembers across your chats. Only you can edit these notes."
+      : "Set the audience, scope or format for this chat. These instructions travel with your next message.";
+    const label = el("label", "", personal ? "My preferences and recurring assignments" : "Instructions for this chat");
+    const textarea = el("textarea");
+    textarea.id = "notes-editor"; textarea.maxLength = 2000; textarea.rows = 7;
+    textarea.value = saved.notes; label.htmlFor = textarea.id;
+    form.append(el("p", "", description), label, textarea);
+    const toggle = el("input");
+    if (personal) {
+      toggle.type = "checkbox"; toggle.checked = saved.enabled;
+      const check = el("label", "memory-toggle");
+      check.append(toggle, document.createTextNode(" Use personal memory in my chats"));
+      form.append(check);
+    }
+    const save = el("button", "primary-button", personal ? "Save memory" : "Apply to this chat");
+    const notice = el("p", "evidence-meta");
+    form.append(save, notice);
+    if (personal && saved.notes) form.append(action("Delete memory", async () => {
+      try {
+        await json("/api/memory", {notes: "", enabled: false});
+        closeDrawer();
+      } catch (failure) { notice.textContent = failure.message; }
+    }));
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      save.disabled = true;
+      try {
+        if (personal) await json("/api/memory", {notes: textarea.value, enabled: toggle.checked});
+        else workingInstructions = textarea.value.trim();
+        closeDrawer();
+      } catch (failure) { notice.textContent = failure.message; }
+      finally { save.disabled = false; }
+    });
+    drawerBody.append(form);
+    textarea.focus();
+  } catch (failure) { drawerBody.replaceChildren(el("p", "", failure.message)); }
+}
+
+byId("working-notes").addEventListener("click", () => editNotes(false));
+byId("personal-memory").addEventListener("click", () => editNotes(true));
+if (window.innerWidth <= 800) setSidebar(false);
       } catch (failure) {
         updateComposer(failure.message);
       }
@@ -387,6 +464,7 @@ async function recent() {
 
 async function refreshSession() {
   session = await json("/api/session");
+  byId("personal-memory").classList.toggle("hidden", !session.authenticated);
   byId("profile-title").textContent = session.authenticated ? "Sign out" : "Sign in";
   byId("history-label").classList.toggle("hidden", !session.authenticated);
   updateComposer();
@@ -516,7 +594,7 @@ async function send() {
     const response = await request("/api/chat", {
       method: "POST", signal: active.signal,
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({prompt, conversation_id: conversationId,
+      body: JSON.stringify({prompt, instructions: workingInstructions, conversation_id: conversationId,
         signed_in: session.authenticated, mode: byId("analysis-mode").value}),
     });
     const reader = response.body.getReader();
@@ -534,7 +612,7 @@ async function send() {
         if (event.type === "error") throw new Error(event.text);
         if (event.type === "answer") {
           conversationId = event.conversation_id;
-          appendAnswer(event);
+          appendAnswer({...event, prompt});
           completed = true;
         }
       }

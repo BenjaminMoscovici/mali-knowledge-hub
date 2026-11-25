@@ -15,6 +15,7 @@ from knowledge import Evidence, json_text
 
 CONVERSATIONS = "/rest/v1/mkh_v3_conversations"
 ATTEMPTS = "/rest/v1/mkh_v3_attempts"
+MEMORY = "/rest/v1/mkh_v3_memory"
 COOKIE = "mkh_v3_session"
 GUEST_COOKIE = "mkh_v3_guest"
 EMAIL_FLOW_COOKIE = "mkh_v3_email_flow"
@@ -154,6 +155,20 @@ class SupabaseState:
                                       params={"id": f"eq.{conversation_id}"})
         self.require(response)
 
+    async def memory(self, token):
+        response = await self.request("GET", MEMORY, token=token, params={"select": "enabled,notes", "limit": 1})
+        self.require(response)
+        return next(iter(response.json()), {"enabled": False, "notes": ""})
+
+    async def save_memory(self, token, enabled, notes):
+        if not notes:
+            response = await self.request("DELETE", MEMORY, token=token, params={"owner_id": "not.is.null"})
+        else:
+            response = await self.request("POST", MEMORY, token=token, params={"on_conflict": "owner_id"},
+                                          headers={"Prefer": "resolution=merge-duplicates"},
+                                          json={"enabled": enabled, "notes": notes})
+        self.require(response)
+
     async def reserve(self, token, daily_limit=DAILY_ASSIGNMENTS):
         after = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
         response = await self.request("GET", ATTEMPTS, token=token,
@@ -251,18 +266,23 @@ class History:
                 yield {"prompt": prompt}
                 continue
             evidence = turn.get("evidence", [])
-            if (turn.get("web_used") and not self.web_enabled) or not all(ledger.allowed(e) for e in evidence):
+            basis = turn.get("basis", {})
+            stale = any(self.knowledge.sources.get(key, {}).get("release") != version for key, version in basis.items())
+            if stale or (turn.get("web_used") and not self.web_enabled) or not all(ledger.allowed(e) for e in evidence):
                 yield {"prompt": prompt, "withdrawn": True}
                 continue
             yield {**turn, "prompt": prompt}
 
     def context(self, accessible_turns):
         inputs, evidence = [], []
+        for turn in accessible_turns[:-5]:
+            evidence.extend(turn.get("evidence", []))
+        if len(accessible_turns) > 5:
+            earlier = [turn["prompt"][:1200] for turn in accessible_turns[:-5]]
+            inputs.append({"role": "user", "content": "Earlier requests in this assignment, oldest first: " + json_text(earlier)})
         for turn in accessible_turns[-5:]:
-            inputs.append({"role": "user", "content": turn["prompt"][:3200]})
-            if turn.get("answer") and turn.get("evidence"):
-                inputs.append({"role": "assistant", "content": turn["answer"][:4500]})
-                evidence.extend(turn["evidence"])
-            elif turn.get("answer") and not turn.get("web_used"):
-                inputs.append({"role": "assistant", "content": turn["answer"][:2500]})
-        return inputs, evidence[-12:]
+            inputs.append({"role": "user", "content": turn["prompt"][:5000]})
+            if turn.get("answer"):
+                inputs.append({"role": "assistant", "content": turn["answer"][:5500]})
+                evidence.extend(turn.get("evidence", []))
+        return inputs, list({item["id"]: item for item in evidence}.values())[-24:]

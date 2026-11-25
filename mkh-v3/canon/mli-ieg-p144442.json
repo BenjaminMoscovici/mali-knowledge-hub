@@ -1,0 +1,77 @@
+{
+  "id": "mli-ieg-p144442",
+  "review": "published",
+  "release": "ICRR0023565; project 2013–2022; document publication date unverified",
+  "release_id": "b9f94979-ae35-5291-8659-e908030aa697",
+  "title": "IEG P144442 — small historical findings collection",
+  "publisher": "World Bank Independent Evaluation Group",
+  "url": "https://documents1.worldbank.org/curated/en/099090624032518175/pdf/P144442-9238b018-2490-4f90-b1e6-f992f61c90ca.pdf",
+  "period": "2013-12-06 to 2022-12-31",
+  "geography": "historical Mali project; Konna/Mopti context only",
+  "license": "Public factual findings/paraphrases only; full-text reproduction rights not assumed",
+  "attribution": "World Bank Independent Evaluation Group",
+  "retrieved_at": "2026-10-02T15:26:08.583882+00:00",
+  "upstream_checksum": "79f7fbc09bcd39e48e4cc827316f82190bc652e4b962b80b179de3315ecd1686",
+  "update_policy": "provider cycle; checked per wave",
+  "limitations": [
+    "One project review and three short findings with exact PDF pages; not an evaluation repository.",
+    "No causal attribution, current-project endorsement or unrestricted full-text redistribution.",
+    "Recommendations reflect this project experience; transferability requires current-context checks."
+  ],
+  "description": "IEG P144442 — small historical findings collection. One project review and three short findings with exact PDF pages; not an evaluation repository.",
+  "topics": [
+    "evaluation finding",
+    "P144442",
+    "results",
+    "IEG Implementation Completion Report Review — Mali Reconstruction and Economic Recovery (P144442)",
+    "évaluation indépendante",
+    "lessons",
+    "constraints",
+    "recommendations"
+  ],
+  "type": "document",
+  "passages": [
+    {
+      "kind": "factual_extract",
+      "page": 9,
+      "locator": "IEG ICRR0023565 / P144442 / PDF page 9",
+      "text": "IEG reports productive assets remaining in use at 86%, below the revised 95% target. Some beneficiary totals include double counting; reported Konna benefits lack supporting data. Independent desk-based ICR validation; retrospective project evidence. Historical Mali reconstruction project, including Konna/Mopti. No counterfactual attribution; no automatic transfer to current actors, communes or 2026 needs. Source ICR quality rated High, while some outcome indicators remain limited.",
+      "topics": [
+        "P144442",
+        "results",
+        "IEG Implementation Completion Report Review — Mali Reconstruction and Economic Recovery (P144442)",
+        "évaluation indépendante",
+        "lessons"
+      ],
+      "period": "2013-12-06 to 2022-12-31"
+    },
+    {
+      "kind": "factual_extract",
+      "page": 11,
+      "locator": "IEG ICRR0023565 / P144442 / PDF page 11",
+      "text": "IEG rates outcome Moderately Satisfactory and efficiency Modest. Insecurity, procurement delays, COVID-19 and suspended disbursements delayed delivery; closing was extended by almost four years. Independent desk-based ICR validation; retrospective project evidence. Historical Mali reconstruction project, including Konna/Mopti. No counterfactual attribution; no automatic transfer to current actors, communes or 2026 needs. Source ICR quality rated High, while some outcome indicators remain limited.",
+      "topics": [
+        "P144442",
+        "constraints",
+        "IEG Implementation Completion Report Review — Mali Reconstruction and Economic Recovery (P144442)",
+        "évaluation indépendante",
+        "lessons"
+      ],
+      "period": "2013-12-06 to 2022-12-31"
+    },
+    {
+      "kind": "factual_extract",
+      "page": 17,
+      "locator": "IEG ICRR0023565 / P144442 / PDF page 17",
+      "text": "Lessons support participatory local plans and experienced local monitoring partners. Third-party capacity and procurement delays require assessment. These are project-experience lessons, not experimental proof of effectiveness. Independent desk-based ICR validation; retrospective project evidence. Historical Mali reconstruction project, including Konna/Mopti. No counterfactual attribution; no automatic transfer to current actors, communes or 2026 needs. Source ICR quality rated High, while some outcome indicators remain limited.",
+      "topics": [
+        "P144442",
+        "recommendations",
+        "IEG Implementation Completion Report Review — Mali Reconstruction and Economic Recovery (P144442)",
+        "évaluation indépendante",
+        "lessons"
+      ],
+      "period": "2013-12-06 to 2022-12-31"
+    }
+  ]
+}

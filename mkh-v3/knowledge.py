@@ -1,16 +1,18 @@
 """Published source discovery, evidence and bounded read-only analysis."""
 
+from collections import defaultdict
 import hashlib
 import json
 import re
 import sqlite3
 import time
-import unicodedata
 from datetime import date, datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
+
+from retrieval import SearchIndex, normalize
 
 CANON = Path(__file__).resolve().parent / "canon"
 SQL_NAME = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
@@ -21,27 +23,11 @@ SQL_TYPES = {"TEXT", "INTEGER", "REAL"}
 SQL_FUNCTIONS = {
     "abs", "avg", "coalesce", "count", "date", "floor", "ifnull", "length", "like",
     "lower", "ltrim", "max", "min", "nullif", "replace", "round", "rtrim",
-    "substr", "substring", "sum", "trim", "upper",
+    "substr", "substring", "sum", "trim", "upper", "strftime", "julianday", "lag", "lead",
+    "row_number", "rank", "dense_rank", "percent_rank", "sqrt", "power", "ceil", "total",
 }
-STOPWORDS = {
-    "and", "are", "avec", "dans", "des", "est", "for", "from", "les", "par",
-    "pour", "que", "sur", "that", "the", "this", "une", "what", "which", "with",
-}
-
-
 class KnowledgeError(ValueError):
     """A source or operation is unavailable within the published research boundary."""
-
-
-def normalize(value):
-    return "".join(
-        char for char in unicodedata.normalize("NFKD", str(value).casefold())
-        if not unicodedata.combining(char)
-    )
-
-
-def words(value):
-    return set(re.findall(r"[a-z0-9]{2,}", normalize(value))) - STOPWORDS
 
 
 def json_text(value):
@@ -60,6 +46,9 @@ class Evidence:
     def __init__(self, knowledge, web_enabled, prior=()):
         self.knowledge = knowledge
         self.web_enabled = web_enabled
+        self.consulted = {}
+        self.artifacts = {}
+        self.new_evidence = set()
         self.items = {
             item["id"]: item for item in prior if self.allowed(item)
         }
@@ -76,7 +65,34 @@ class Evidence:
                 return False
         return True
 
+    def present(self, evidence_id, kind, title, label_field, value_field):
+        item = self.items.get(evidence_id)
+        rows = item["data"].get("rows") if item else None
+        if not rows or kind not in {"table", "chart", "map"} or not title.strip():
+            raise KnowledgeError("Choose issued evidence with result rows and a title for the exhibit.")
+        if kind in {"chart", "map"}:
+            if not all(label_field in r and value_field in r for r in rows):
+                raise KnowledgeError("Choose label and value columns from these result rows.")
+            if not any(type(row[value_field]) in {int, float} for row in rows):
+                raise KnowledgeError("At least one observation must have a numeric value.")
+            if any(value is not None and type(value) not in {int, float} for value in (r[value_field] for r in rows)):
+                raise KnowledgeError("Choose a numeric value column.")
+        result = {"kind": kind, "title": title[:160], "label_field": label_field, "value_field": value_field,
+                  "evidence_id": evidence_id}
+        if kind == "map":
+            source = self.knowledge.source(item["source_id"])
+            if source.get("map_key") != label_field or not all(r[label_field] in source.get("geometries", {}) for r in rows):
+                raise KnowledgeError("Map rows must include the published boundary identifier under its original field name.")
+            if len({r[label_field] for r in rows}) != len(rows):
+                raise KnowledgeError("Return one observation for each displayed geographic identifier.")
+            result["map_source"] = source["id"]
+        self.artifacts[evidence_id] = result
+        return result
+
     def add(self, source, kind, locator, data, *, url=None, related_sources=()):
+        self.consulted[source["id"]] = source["release"]
+        for release in data.get("input_releases", []):
+            self.consulted[release["source_id"]] = release["release"]
         item = {
             "origin": "canon",
             "source_id": source["id"],
@@ -105,6 +121,7 @@ class Evidence:
     def _register(self, item):
         identifier = "E-" + hashlib.sha256(json_text(item).encode()).hexdigest()[:16]
         item["id"] = identifier
+        self.new_evidence.add(identifier)
         self.items[identifier] = item
         return item
 
@@ -129,7 +146,10 @@ class Knowledge:
                 raise ValueError(f"Invalid published source metadata in {path.name}")
             if source["type"] in {"dataset", "reference"}:
                 self._validate_table(source, path.name)
+            if any(key not in source.get("columns", {}) for key in source.get("search_fields", [])):
+                raise ValueError(f"Unknown search field in {path.name}")
             self.sources[source["id"]] = source
+        self.index = SearchIndex(self.sources)
 
     @staticmethod
     def _validate_table(source, filename):
@@ -149,43 +169,39 @@ class Knowledge:
 
     @staticmethod
     def describes(source):
-        return {k: v for k, v in source.items() if k not in {"passages", "records", "adapter", "join_group"}}
+        return {k: v for k, v in source.items() if k not in {"passages", "records", "adapter", "join_group", "geometries"}}
 
-    def discover(self, query="", kind=None, limit=8):
-        keywords = words(query)
-        ranked = []
-        for source in self.sources.values():
-            if kind and kind != source["type"]:
-                continue
-            tags = source["topics"] + [source["title"], source["id"]]
-            title_and_topics = words(" ".join(tags))
-            description = words(" ".join((source["description"], source["geography"], source["period"])))
-            score = 3 * len(keywords & title_and_topics) + len(keywords & description)
-            if score or not keywords:
-                ranked.append((score, source["title"], source))
-        return [self.describes(source) for _, _, source in sorted(
-            ranked, key=lambda entry: (-entry[0], entry[1])
-        )[:limit]]
+    def discover(self, query="", kind=None, limit=8, affinities=None):
+        entries = self.index.rank(query, "source", limit, source_type=kind, affinities=affinities)
+        return [self.describes(entry["source"]) for entry in entries]
 
-    def search_documents(self, query, source_id, ledger, limit=4):
-        keywords = words(query)
-        ranked = []
-        sources = [self.source(source_id)] if source_id else self.sources.values()
-        for source in sources:
-            if source["type"] != "document":
-                continue
-            for passage in source["passages"]:
-                tags = words(" ".join(passage.get("topics", [])))
-                score = 3 * len(keywords & tags) + len(keywords & words(passage["text"]))
-                if score or not keywords:
-                    ranked.append((score, passage["page"], source, passage))
-        results = []
-        for _, _, source, passage in sorted(ranked, key=lambda item: (-item[0], item[1]))[:limit]:
-            page_url = f"{source['url'].split('#')[0]}#page={passage['page']}"
-            results.append(ledger.add(source, passage["kind"], passage["locator"], {
-                "text": passage["text"][:6200], "page": passage["page"],
-            }, url=page_url))
-        return results
+    def passage(self, entry, ledger):
+        source = entry["source"]
+        p, start, text = entry["payload"]
+        page = p.get("page")
+        url = source["url"] if not page else f"{source['url'].split('#')[0]}#page={page}"
+        data = {"text": text, "page": page, "offset": start, "period": p.get("period", source["period"])}
+        return ledger.add(source, p["kind"], p["locator"], data, url=url)
+
+    def search_documents(self, query, source_id, ledger, limit=4, affinities=None):
+        if source_id:
+            self.source(source_id)
+        entries = self.index.rank(query, "passage", limit, source_id, affinities=affinities)
+        return [self.passage(e, ledger) for e in entries]
+
+    def read_passage(self, source_id, locator, offset, ledger):
+        source = self.source(source_id)
+        passage = next((p for p in source.get("passages", []) if p["locator"] == locator), None)
+        if not passage or type(offset) is not int or not 0 <= offset < len(passage["text"]):
+            raise KnowledgeError("Choose a published passage locator and a valid character offset.")
+        text = passage["text"][offset:offset + 3000]
+        return self.passage({"source": source, "payload": (passage, offset, text)}, ledger)
+
+    def search_records(self, query, source_id, ledger, affinities=None):
+        if source_id:
+            self.source(source_id)
+        entries = self.index.rank(query, "record", 5, source_id, affinities=affinities)
+        return [ledger.add(e["source"], "source_record", e["payload"]["locator"], e["payload"]) for e in entries]
 
     def geography(self, name, level, ledger):
         normalized = normalize(name).strip()
@@ -208,7 +224,7 @@ class Knowledge:
             detail["samples"] = source["records"][:3]
         elif source["type"] == "document":
             detail["pages"] = [
-                {"page": p["page"], "locator": p["locator"]} for p in source["passages"]
+                {"page": p.get("page"), "locator": p["locator"], "characters": len(p["text"])} for p in source["passages"]
             ]
         return detail
 
@@ -218,16 +234,60 @@ class Knowledge:
         sources = [self.source(s) for s in dict.fromkeys(source_ids)]
         if any(s["type"] not in {"dataset", "reference"} for s in sources):
             raise KnowledgeError("SQL uses published structured datasets and reference tables.")
-        groups = {s.get("join_group") for s in sources}
-        if len(sources) > 1 and (len(groups) != 1 or None in groups):
-            raise KnowledgeError("These releases have no approved shared join key. Query them separately.")
+        if len(sources) > 1:
+            raise KnowledgeError("Use link_records with a shared registered identifier to join releases.")
+        return self._calculate(sources, sql, ledger, sources)
+
+    def link_records(self, left_id, right_id, entity, sql, ledger):
+        left, right = self.source(left_id), self.source(right_id)
+        lk, rk = [s.get("entity_keys", {}).get(entity) for s in [left, right]]
+        if left_id == right_id or not lk or not rk or lk not in left["columns"] or rk not in right["columns"]:
+            raise KnowledgeError("These two releases do not share that registered entity identifier.")
+        index = defaultdict(list)
+        for row in right["records"]:
+            if row[rk] not in ("", None):
+                index[row[rk]].append(row)
+        pairs = []
+        for lrow in left["records"]:
+            for rrow in index.get(lrow[lk], ()):
+                if len(pairs) >= 20000:
+                    raise KnowledgeError("The published identity mapping exceeds the join budget.")
+                pairs.append({**{"l_" + k: v for k, v in lrow.items()},
+                              **{"r_" + k: v for k, v in rrow.items()}})
+        columns = {alias + k: v for alias, source in (("l_", left), ("r_", right))
+                   for k, v in source["columns"].items()}
+        relation = {"entity": entity, "left": left_id, "left_key": lk, "right": right_id,
+                    "right_key": rk, "method": "inner equality on the registered nonempty identifier",
+                    "matched_pairs": len(pairs)}
+        return self._calculate([{"table": "linked", "columns": columns, "records": pairs}], sql,
+                               ledger, [left, right], relation=relation)
+
+    def query_result(self, evidence_id, sql, ledger):
+        item = ledger.items.get(evidence_id)
+        if not item or item["origin"] != "canon":
+            raise KnowledgeError("Select an issued calculation or live-series evidence ID.")
+        data = item["data"]
+        if not data.get("rows") or data.get("truncated"):
+            raise KnowledgeError("This result is empty or truncated. Aggregate or filter the original source.")
+        if data.get("parent_evidence"):
+            raise KnowledgeError("Recalculate from the original evidence rows for a reproducible operation.")
+        names = list(data["rows"][0])
+        if not all(SQL_NAME.fullmatch(name) for name in names):
+            raise KnowledgeError("Use simple lowercase column aliases for further calculations.")
+        columns = {n: ("REAL" if any(type(r.get(n)) in {int, float} for r in data["rows"]) else "TEXT") for n in names}
+        source = self.source(item["source_id"])
+        inputs = [self.source(r["source_id"]) for r in data.get("input_releases", [])] or [source]
+        table = {"table": "prior_result", "columns": columns, "records": data["rows"]}
+        return self._calculate([table], sql, ledger, inputs, item)
+
+    def _calculate(self, tables, sql, ledger, sources, parent=None, relation=None):
         if not isinstance(sql, str) or not 1 <= len(sql) <= 4000:
             raise KnowledgeError("Provide a single SQL SELECT, up to 4,000 characters.")
 
         conn = sqlite3.connect(":memory:")
         try:
             names = set()
-            for source in sources:
+            for source in tables:
                 table, columns = source["table"], source["columns"]
                 if table in names:
                     raise KnowledgeError("The selected table names collide.")
@@ -278,18 +338,22 @@ class Knowledge:
 
         releases = [
             {"source_id": s["id"], "release": s["release"], "period": s["period"],
-             "release_id": s.get("release_id"), "table": s["table"], "record_count": len(s["records"]),
+             "release_id": s.get("release_id"), "table": s.get("table"), "record_count": len(s["records"]) if "records" in s else None,
              "url": s["url"]}
             for s in sources
         ]
-        row_ids = {row.get("id") for row in rows if isinstance(row.get("id"), str)}
+        row_ids = {row[key] for row in rows for key in ("id", "l_id", "r_id") if isinstance(row.get(key), str)}
         input_locations = [
             {"source_id": s["id"], "id": row["id"], "locator": row["locator"]}
-            for s in sources for row in s["records"] if row["id"] in row_ids
+            for s in sources for row in s.get("records", []) if row["id"] in row_ids
         ]
+        derivation = {"relationship": relation} if relation else {}
+        if parent:
+            derivation["parent_evidence"] = {key: parent[key] for key in
+                ("id", "source_id", "release", "locator", "url", "kind", "data")}
         return ledger.add(sources[0], "calculation", "Reproducible SQL over approved release snapshots", {
             "sql": sql, "input_releases": releases, "input_records": input_locations,
-            "rows": rows, "truncated": len(raw_rows) > 30,
+            "rows": rows, "truncated": len(raw_rows) > 30, **derivation,
         }, related_sources=[s["id"] for s in sources[1:]])
 
     async def live(self, source_id, series_code, start_year, end_year, ledger, client: httpx.AsyncClient):

@@ -116,7 +116,7 @@ async def health(request):
 
 async def sources(request):
     query = request.query_params.get("q", "")[:350]
-    return data_response({"sources": settings(request).knowledge.discover(query)})
+    return data_response({"sources": settings(request).knowledge.discover(query, limit=150)})
 
 
 async def source(request):
@@ -138,6 +138,34 @@ async def source(request):
         return error(str(failure), 400)
     except ValueError:
         return error("Use a valid year range.", 400)
+
+
+async def geometry(request):
+    try:
+        src = settings(request).knowledge.source(request.path_params["source_id"])
+        if not src.get("map_key"):
+            return error("The selected release has no published display boundaries.", 404)
+        return data_response({"key": src["map_key"], "release": src["release"], "geometries": src["geometries"]})
+    except KnowledgeError as failure:
+        return error(str(failure), 404)
+
+
+async def memory(request):
+    try:
+        token, owner = await account(request)
+        if not owner:
+            return error("Sign in to manage personal memory.", 401)
+        store = settings(request).store
+        if request.method == "GET":
+            return data_response(await store.memory(token))
+        body = await request_json(request)
+        notes, enabled = body.get("notes"), body.get("enabled")
+        if not isinstance(notes, str) or len(notes) > 2000 or type(enabled) is not bool:
+            return error("Use up to 2,000 characters for memory and select its enabled state.")
+        await store.save_memory(token, enabled, notes.strip())
+        return data_response({"enabled": enabled and bool(notes.strip()), "notes": notes.strip()})
+    except StateError as failure:
+        return error(str(failure), 400)
 
 
 async def identify(request):
@@ -303,6 +331,9 @@ async def chat(request):
         conversation_id = selected_id(body["conversation_id"]) if body.get("conversation_id") else str(uuid4())
         if guest and body.get("conversation_id") and conversation_id not in guest.conversations:
             return error("This guest conversation expired. Start a new chat to continue.", 410)
+        instructions = body.get("instructions")
+        if instructions is not None and (not isinstance(instructions, str) or len(instructions) > 2000):
+            return error("Keep the working instructions within 2,000 characters.")
         prompt = prompt.strip()
     except StateError as failure:
         return error(str(failure), 400)
@@ -326,14 +357,32 @@ async def chat(request):
                     turns = list(row["turns"]) if row else []
                 earlier = list(state.history.accessible(conversation_id, owner, turns))
                 context, prior_evidence = state.history.context(earlier)
+                previous = earlier[-1] if earlier else {}
+                objective = previous.get("objective") or (earlier[0]["prompt"] if earlier else prompt)
+                brief = previous.get("instructions", "") if instructions is None else instructions.strip()
+                if earlier and objective != earlier[0]["prompt"] or len(earlier) > 5:
+                    context.append({"role": "user", "content": "Original assignment (later changes take precedence): " + objective})
+                if brief:
+                    context.append({"role": "user", "content": "Current user-pinned working instructions: " + brief})
+                if token:
+                    note = await state.store.memory(token)
+                    if note.get("enabled") and note.get("notes"):
+                        context.append({"role": "user", "content": "User-selected personal preferences and context: " + note["notes"]})
+                basis = {}
+                for turn in earlier:
+                    basis.update(turn.get("basis", {}))
+                    basis.update({e["source_id"]: e["release"] for e in turn.get("evidence", []) if e["origin"] == "canon"})
                 state.preview.reserve(guest)
                 if token:
                     await state.store.reserve(token)
-                async for piece in state.companion.research(prompt, mode, context, prior_evidence):
+                async for piece in state.companion.research(prompt, mode, context, prior_evidence, basis,
+                                                           any(turn.get("web_used") for turn in earlier)):
                     if piece["type"] == "answer":
                         title = row["title"] if row else " ".join(prompt.split())[:110]
                         turns.append(state.history.sign(conversation_id, owner, {
                             "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
+                            "objective": objective, "instructions": brief, "basis": piece.get("basis", {}),
+                            "artifacts": piece.get("artifacts", []),
                             "web_used": piece["web_used"], "partial": piece["partial"],
                             "tool_failures": piece["tool_failures"], "usage": piece["usage"], "mode": mode,
                         }))
@@ -394,6 +443,8 @@ def create_app(transport=None, directory=None):
         Route("/api/sources", sources),
         Route("/api/sources/{source_id}", source),
         Route("/api/session", identify),
+        Route("/api/memory", memory, methods=["GET", "POST"]),
+        Route("/api/sources/{source_id}/geometry", geometry),
         Route("/auth/callback", auth_callback),
         Route("/api/auth/signout", signout, methods=["POST"]),
         Route("/api/auth/{operation}", auth, methods=["POST"]),

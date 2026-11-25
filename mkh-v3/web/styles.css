@@ -96,3 +96,15 @@ a.nav-action{text-decoration:none}
 #code-wrap {
   margin-top: 12px;
 }
+
+#working-notes {margin-left: auto; flex: 0 0 auto;}
+#personal-memory {margin: 0 12px 8px;}
+.notes-form {display: grid; gap: 12px; font-size: 14px;}
+.notes-form textarea {width: 100%; box-sizing: border-box; padding: 10px; font: inherit; border: 1px solid #b2c6c2; border-radius: 8px;}
+.notes-form p {line-height: 1.5;}
+.memory-toggle {display: flex; align-items: center; gap: 8px;}
+.exhibit {margin: 20px 0; border-top: 1px solid #d4e1de; padding-top: 14px;}
+.exhibit figcaption {font-weight: 650; margin-bottom: 8px;}
+.exhibit canvas {width: 100%; height: auto; display: block;}
+.exhibit summary {cursor: pointer; font-size: 13px;}
+.message-footer {flex-wrap: wrap;}
