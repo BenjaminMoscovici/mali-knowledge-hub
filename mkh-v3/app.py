@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 import re
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -17,6 +17,7 @@ from starlette.staticfiles import StaticFiles
 
 from companion import Companion, CompanionError, MODES
 from knowledge import Evidence, Knowledge, KnowledgeError, json_text
+from live_preview_check import requested as preview_check_requested, run as run_preview_check
 from state import COOKIE, History, StateError, SupabaseState
 
 WEB = Path(__file__).resolve().parent / "web"
@@ -265,6 +266,7 @@ def create_app(transport=None, directory=None):
     async def lifespan(application):
         client = httpx.AsyncClient(transport=transport, timeout=12.0, follow_redirects=False,
                                    limits=httpx.Limits(max_connections=8))
+        preview_check = None
         try:
             state = application.state
             state.client = client
@@ -279,8 +281,14 @@ def create_app(transport=None, directory=None):
                 os.getenv("MKH_HISTORY_SIGNING_KEY") or model_key, state.knowledge, state.web_enabled,
             )
             state.slot = asyncio.Lock()
+            if state.companion and preview_check_requested():
+                preview_check = asyncio.create_task(run_preview_check(state.companion))
             yield
         finally:
+            if preview_check is not None:
+                preview_check.cancel()
+                with suppress(asyncio.CancelledError):
+                    await preview_check
             await client.aclose()
 
     return Starlette(lifespan=lifespan, routes=[

@@ -255,7 +255,11 @@ class Companion:
             if response.status_code in {401, 403, 404}:
                 raise CompanionError("The configured V3 credential or model is unavailable.")
             if response.status_code == 429:
+                if self._error_code(response) in {"insufficient_quota", "billing_hard_limit_reached"}:
+                    raise CompanionError("The OpenAI project has no available API quota. Check its billing and usage limits.")
                 raise CompanionError("The model provider is rate-limited. Try again later.")
+            if response.status_code == 400:
+                raise CompanionError("OpenAI rejected the V3 model request. Verify the model and tool configuration.")
             response.raise_for_status()
             document = response.json()
             if not isinstance(document, dict):
@@ -265,6 +269,13 @@ class Companion:
             if isinstance(error, CompanionError):
                 raise
             raise CompanionError("The model request failed. Your last completed turn is still available.") from None
+
+    @staticmethod
+    def _error_code(response):
+        try:
+            return response.json().get("error", {}).get("code")
+        except (AttributeError, ValueError):
+            return None
 
     def _answer(self, output, ledger):
         blocks, referenced_web = [], False
