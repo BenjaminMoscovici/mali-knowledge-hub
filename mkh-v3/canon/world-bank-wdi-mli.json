@@ -1,0 +1,21 @@
+{
+  "id": "world-bank-wdi-mli",
+  "review": "published",
+  "title": "World Bank World Development Indicators · Mali",
+  "publisher": "World Bank",
+  "license": "World Bank Open Data Terms of Use",
+  "type": "live",
+  "release": "World Development Indicators API v2",
+  "url": "https://data.worldbank.org/country/mali",
+  "adapter": "world_bank_wdi",
+  "country_code": "MLI",
+  "series": {
+    "AG.YLD.CREL.KG": {"label": "Cereal yield", "unit": "kg per hectare"},
+    "EG.ELC.ACCS.ZS": {"label": "Access to electricity", "unit": "% of population"}
+  },
+  "period": "Annual series, subject to upstream availability",
+  "geography": "Mali · national only",
+  "description": "Approved live World Bank indicators, including cereal yields for national agricultural context.",
+  "topics": ["cereal", "production", "céréales", "rendement", "agriculture", "electricity", "électricité", "indicateurs", "Mali"],
+  "limitations": ["National observations. Series cannot establish local food insecurity, trends in Mopti, or causation."]
+}
