@@ -162,7 +162,7 @@ class CompanionEntryPointTest(unittest.TestCase):
                "OPENAI_API_KEY": "test-only-key", "MKH_WEB_RESEARCH": "false"}
         with patch.dict(os.environ, cfg), TestClient(create_app(httpx.MockTransport(mocked))) as client:
             headers = {"Origin": "http://testserver"}
-            blocked = client.post("/api/chat", json={"prompt": "Bonjour"}, headers=headers)
+            blocked = client.post("/api/chat", json={"prompt": "Bonjour", "signed_in": True}, headers=headers)
             self.assertEqual(blocked.status_code, 401)
             client.cookies.set("mkh_v3_session", "test-only-session")
             result = client.post("/api/chat", json={"prompt": "Note en français pour la zone historique de Mopti."},
@@ -180,6 +180,75 @@ class CompanionEntryPointTest(unittest.TestCase):
             saved = client.get("/api/conversations/" + conversation_id).json()
             self.assertEqual(len(saved["turns"]), 2)
             self.assertNotIn("signature", saved["turns"][0])
+
+    def test_guest_context_uses_a_private_temporary_session(self):
+        prompts = []
+
+        def mocked(request):
+            self.assertEqual(request.url.host, "api.openai.com")
+            payload = json.loads(request.content)
+            prompts.append([item["content"] for item in payload["input"] if item["role"] == "user"])
+            self.assertFalse(payload["store"])
+            return httpx.Response(200, json={
+                "output": [{"type": "message", "content": [{"type": "output_text", "text": "Answer"}]}],
+            })
+
+        headers = {"Origin": "http://testserver"}
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}), TestClient(create_app(
+            httpx.MockTransport(mocked)
+        )) as client:
+            status = client.get("/api/session").json()
+            self.assertTrue(status["chat_enabled"])
+            self.assertFalse(status["authenticated"])
+            first = client.post("/api/chat", json={"prompt": "First guest turn."}, headers=headers)
+            self.assertEqual(first.status_code, 200)
+            conversation_id = json.loads(first.text.splitlines()[-1])["conversation_id"]
+            second = client.post("/api/chat", json={
+                "prompt": "Guest follow-up.", "conversation_id": conversation_id,
+            }, headers=headers)
+            self.assertEqual(json.loads(second.text.splitlines()[-1])["type"], "answer")
+            self.assertEqual(prompts, [["First guest turn."], ["First guest turn.", "Guest follow-up."]])
+            self.assertEqual(client.get("/api/conversations").status_code, 401)
+            client.cookies.clear()
+            other = client.post("/api/chat", json={"prompt": "Other session.", "conversation_id": conversation_id},
+                                headers=headers)
+            self.assertEqual(other.status_code, 410)
+            self.assertEqual(len(prompts), 2)
+
+    def test_recovery_exchanges_code_before_setting_password(self):
+        calls = []
+
+        def mocked(request):
+            body = json.loads(request.content)
+            calls.append(request.url.path)
+            if request.url.path.endswith("/recover"):
+                self.assertEqual(request.url.params["redirect_to"], "http://testserver/auth/callback")
+                self.assertEqual(body["code_challenge_method"], "s256")
+                self.assertEqual(len(body["code_challenge"]), 43)
+                return httpx.Response(200, json={})
+            if request.url.path.endswith("/token"):
+                self.assertEqual(request.url.params["grant_type"], "pkce")
+                self.assertEqual(len(body["code_verifier"]), 43)
+                return httpx.Response(200, json={"access_token": "fixture-recovery-session", "expires_in": 3600})
+            self.assertEqual(request.method, "PUT")
+            self.assertEqual(request.headers["authorization"], "Bearer fixture-recovery-session")
+            return httpx.Response(200, json={})
+
+        cfg = {"SUPABASE_URL": "https://test.invalid", "SUPABASE_PUBLISHABLE_KEY": "test-publishable"}
+        with patch.dict(os.environ, cfg), TestClient(create_app(httpx.MockTransport(mocked))) as client:
+            headers = {"Origin": "http://testserver"}
+            self.assertEqual(client.post("/api/auth/set-password", json={"password": "test-password-123"},
+                                         headers=headers).status_code, 401)
+            self.assertEqual(client.post("/api/auth/recover", json={"email": "viewer@example.test"},
+                                         headers=headers).status_code, 200)
+            callback = client.get("/auth/callback?code=fixture-auth-code", follow_redirects=False)
+            self.assertEqual(callback.headers["location"], "/?auth=set-password")
+            self.assertNotIn("mkh_v3_session", client.cookies)
+            result = client.post("/api/auth/set-password", json={"password": "test-password-123"}, headers=headers)
+            self.assertTrue(result.json()["authenticated"])
+            self.assertIn("mkh_v3_session", client.cookies)
+            self.assertNotIn("mkh_v3_password_setup", client.cookies)
+            self.assertEqual(calls, ["/auth/v1/recover", "/auth/v1/token", "/auth/v1/user"])
 
 
 if __name__ == "__main__":

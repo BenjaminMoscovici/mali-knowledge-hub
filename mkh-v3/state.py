@@ -2,6 +2,10 @@
 
 import hmac
 import re
+import secrets
+import time
+from collections import deque
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
@@ -12,7 +16,11 @@ from knowledge import Evidence, json_text
 CONVERSATIONS = "/rest/v1/mkh_v3_conversations"
 ATTEMPTS = "/rest/v1/mkh_v3_attempts"
 COOKIE = "mkh_v3_session"
+GUEST_COOKIE = "mkh_v3_guest"
+EMAIL_FLOW_COOKIE = "mkh_v3_email_flow"
+PASSWORD_COOKIE = "mkh_v3_password_setup"
 TOP_TURNS = 12
+DAILY_ASSIGNMENTS = 8
 
 
 class StateError(ValueError):
@@ -35,25 +43,58 @@ class SupabaseState:
             raise StateError("V3 sign-in or saved conversations are temporarily unavailable.") from None
         return response
 
-    async def send_code(self, email):
-        response = await self.request("POST", "/auth/v1/otp", json={"email": email, "create_user": True})
+    async def send_password_link(self, operation, email, password, challenge, redirect):
+        payload = {"email": email, "code_challenge": challenge, "code_challenge_method": "s256"}
+        if operation == "signup":
+            payload["password"] = password
+        response = await self.request("POST", "/auth/v1/" + operation, json=payload,
+                                      params={"redirect_to": redirect})
         if response.is_success:
             return
         code = self.error_code(response)
-        if response.status_code == 429 or code == "over_email_send_rate_limit":
-            raise StateError("Too many code requests. Use your latest code or wait before requesting a new one.")
+        if response.status_code == 429 or code in {"over_email_send_rate_limit", "over_request_rate_limit"}:
+            raise StateError("Too many email requests. Use your latest link or wait before requesting another.")
         if code == "email_address_not_authorized":
-            raise StateError("Sign-in emails are available to V3 Supabase team email addresses.")
-        raise StateError("V3 could not send a sign-in code. Try again shortly.")
+            raise StateError("Account emails are available to V3 Supabase team addresses during the preview.")
+        if code in {"user_already_exists", "email_exists"}:
+            raise StateError("Use Sign in or Forgot password for this email address.")
+        if code == "weak_password":
+            raise StateError("Choose a stronger V3 password.")
+        raise StateError("V3 could not send the email. Try again shortly.")
 
-    async def verify_code(self, email, code):
-        response = await self.request("POST", "/auth/v1/verify", json={"email": email, "token": code, "type": "email"})
+    async def sign_in(self, email, password):
+        response = await self.request("POST", "/auth/v1/token", params={"grant_type": "password"},
+                                      json={"email": email, "password": password})
         if not response.is_success:
-            raise StateError("That sign-in code is invalid or has expired. Use the code in the newest email.")
+            if self.error_code(response) == "email_not_confirmed":
+                raise StateError("Open the verification link in your V3 signup email.")
+            if response.status_code == 429:
+                raise StateError("Too many sign-in attempts. Try again shortly.")
+            raise StateError("Check your email and password. Use Forgot password to set or reset it.")
+        return self.session(response)
+
+    async def exchange_code(self, code, verifier):
+        response = await self.request("POST", "/auth/v1/token", params={"grant_type": "pkce"},
+                                      json={"auth_code": code, "code_verifier": verifier})
+        if not response.is_success:
+            raise StateError("The email link expired or was opened in a different browser. Request a new link.")
+        return self.session(response)
+
+    async def set_password(self, token, password):
+        response = await self.request("PUT", "/auth/v1/user", token=token, json={"password": password})
+        if not response.is_success:
+            if self.error_code(response) == "weak_password":
+                raise StateError("Choose a stronger V3 password.")
+            raise StateError("V3 could not set the password. Use the latest password setup link.")
+
+    @staticmethod
+    def session(response):
         payload = response.json()
-        if not payload.get("access_token"):
+        token = payload.get("access_token")
+        age = payload.get("expires_in", 3600)
+        if not isinstance(token, str) or not 1 <= len(token) <= 6000 or type(age) is not int:
             raise StateError("Supabase did not return a V3 session.")
-        return payload["access_token"], max(1, min(3600, int(payload.get("expires_in", 3600))))
+        return token, max(1, min(3600, age))
 
     @staticmethod
     def error_code(response):
@@ -113,7 +154,7 @@ class SupabaseState:
                                       params={"id": f"eq.{conversation_id}"})
         self.require(response)
 
-    async def reserve(self, token, daily_limit=8):
+    async def reserve(self, token, daily_limit=DAILY_ASSIGNMENTS):
         after = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
         response = await self.request("GET", ATTEMPTS, token=token,
                                       params={"select": "id", "attempted_at": f"gte.{after}", "limit": daily_limit})
@@ -122,6 +163,51 @@ class SupabaseState:
             raise StateError("The preview's daily research allowance has been used. Try again tomorrow.")
         response = await self.request("POST", ATTEMPTS, token=token, json={"id": str(uuid4())})
         self.require(response)
+
+
+@dataclass
+class GuestChat:
+    touched: float
+    conversations: dict = field(default_factory=dict)
+    attempts: deque = field(default_factory=deque)
+
+
+class PreviewSessions:
+    """Keep guest context in memory and bound admissions for the shared preview."""
+
+    MAX_GUESTS = 128
+    GUEST_IDLE_SECONDS = 3600
+    DAILY_PREVIEW_ASSIGNMENTS = 64
+
+    def __init__(self):
+        self.guests = {}
+        self.attempts = deque()
+
+    def guest(self, key):
+        current = time.monotonic()
+        for expired in [k for k, v in self.guests.items() if current - v.touched >= self.GUEST_IDLE_SECONDS]:
+            del self.guests[expired]
+        if key and key in self.guests:
+            self.guests[key].touched = current
+            return key, self.guests[key], False
+        if len(self.guests) >= self.MAX_GUESTS:
+            del self.guests[min(self.guests, key=lambda k: self.guests[k].touched)]
+        key = secrets.token_urlsafe(32)
+        self.guests[key] = GuestChat(current)
+        return key, self.guests[key], True
+
+    def reserve(self, guest=None):
+        current = time.monotonic()
+        for slots in ([self.attempts, guest.attempts] if guest else [self.attempts]):
+            while slots and current - slots[0] >= 86400:
+                slots.popleft()
+        if len(self.attempts) >= self.DAILY_PREVIEW_ASSIGNMENTS:
+            raise StateError("The shared preview has reached its research limit. Try again later.")
+        if guest and len(guest.attempts) >= DAILY_ASSIGNMENTS:
+            raise StateError("This preview session has reached its research limit. Try again later.")
+        self.attempts.append(current)
+        if guest:
+            guest.attempts.append(current)
 
 
 def now():

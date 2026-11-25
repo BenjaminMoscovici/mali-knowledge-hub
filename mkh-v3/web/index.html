@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Mali Knowledge Hub V3</title>
   <link rel="stylesheet" href="/assets/styles.css?v=3.1">
-  <script src="/assets/app.js?v=3.2" defer></script>
+  <script src="/assets/app.js?v=3.3" defer></script>
 </head>
 <body>
   <div class="workspace" id="workspace">
@@ -62,7 +62,7 @@
             <textarea id="prompt" rows="1" maxlength="5000" placeholder="Ask a question about Mali…"></textarea>
             <div class="composer-toolbar">
               <div class="composer-left">
-                <button type="button" class="sources-button hidden" id="composer-sign-in">Sign in to send</button>
+                <button type="button" class="sources-button hidden" id="composer-sign-in">Sign in to save chats</button>
                 <span class="composer-hint" id="composer-hint">Evidence-grounded research</span>
               </div>
               <div class="composer-right">
@@ -92,19 +92,28 @@
     </form>
     <div class="modal-mark" aria-hidden="true">M</div>
     <h2 id="auth-title">Sign in to V3</h2>
-    <p>Enter your existing V3 email address to receive a one-time sign-in code.</p>
+    <p id="auth-description">Sign in to save and reopen your V3 conversations.</p>
     <div class="modal-status hidden" id="auth-status" role="status"></div>
     <form id="auth-form">
-      <label for="auth-email">Email address</label>
-      <input id="auth-email" type="email" autocomplete="email" required maxlength="254">
-      <div class="hidden" id="code-wrap">
-        <label for="auth-code">Email code</label>
-        <input id="auth-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10">
+      <div id="auth-email-wrap">
+        <label for="auth-email">Email address</label>
+        <input id="auth-email" type="email" autocomplete="email" required maxlength="254">
       </div>
-      <button class="primary-button" id="auth-submit" type="submit">Send code</button>
-      <button class="sources-button hidden" id="auth-resend" type="button">Send a new code</button>
-      <button class="sources-button hidden" id="auth-change-email" type="button">Change email address</button>
+      <div id="auth-password-wrap">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required maxlength="256">
+      </div>
+      <div class="hidden" id="auth-confirm-wrap">
+        <label for="auth-confirm">Confirm password</label>
+        <input id="auth-confirm" type="password" autocomplete="new-password" maxlength="256">
+      </div>
+      <button class="primary-button" id="auth-submit" type="submit">Sign in</button>
     </form>
+    <div class="auth-links">
+      <button type="button" id="auth-login" class="hidden">Back to sign in</button>
+      <button type="button" id="auth-signup">Create account</button>
+      <button type="button" id="auth-recover">Forgot password</button>
+    </div>
   </dialog>
 </body>
 </html>

@@ -9,11 +9,14 @@ The **mkh-v3-dev** Supabase project holds preview sessions and owner-scoped conv
 Deploys are triggered manually after verification. The Render service supplies project
 configuration, including `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `OPENAI_API_KEY`.
 An independent `MKH_HISTORY_SIGNING_KEY` can keep transcript signatures valid across model
-credential rotation. Preview users receive one-time codes through Supabase Auth.
-The V3 project's **Magic Link** and **Confirm signup** email templates both use the
-body in `supabase/templates/email-code.html` and the subject **Your MKH V3 sign-in code**.
-Apply those settings in the V3 Supabase dashboard to deliver codes for both returning
-and first-time sign-ins. Hosted templates are settings on the V3 project.
+credential rotation. Chat supports guests and signed-in users with the same research
+tools and Fast and Deep modes. Guest context is held temporarily in the service.
+Signed-in users can save and reopen conversations.
+
+Accounts use Supabase email and password. Supabase sends password setup, recovery,
+and signup verification links back to the V3 callback. Add
+`https://mali-knowledge-hub-v3-dev.onrender.com/auth/callback` under Redirect URLs in
+the V3 Supabase project. Its built-in mail service sends to preview team addresses.
 
 ## Sources and evidence
 

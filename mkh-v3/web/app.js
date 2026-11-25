@@ -10,8 +10,7 @@ const dialog = byId("auth-dialog");
 let session = null;
 let conversationId = null;
 let active = null;
-let codeSent = false;
-let submitAfterSignIn = false;
+let authMode = "sign-in";
 let opener = null;
 
 function el(tag, className, value) {
@@ -42,15 +41,16 @@ async function json(path, body) {
 function updateComposer(status = "") {
   const needsSignIn = session?.auth_enabled && !session.authenticated;
   byId("composer-sign-in").classList.toggle("hidden", !needsSignIn);
+  byId("composer-sign-in").disabled = Boolean(active);
+  byId("profile-button").disabled = Boolean(active);
   byId("send-button").disabled = Boolean(active) || !promptBox.value.trim();
-  byId("send-button").title = needsSignIn ? "Sign in to send" : "Send question";
   byId("cancel-button").classList.toggle("hidden", !active);
   byId("new-chat").disabled = Boolean(active);
   promptBox.readOnly = Boolean(active);
   statusLine.textContent = status || (
     !session ? "Checking the V3 preview session…" :
       !session.model_configured ? "V3 preview · Source browsing is available. Model access is being configured." :
-        !session.authenticated ? "Sign in with your email code to send a message." :
+        !session.authenticated ? "Guest chat · Temporary conversation" :
         "V3 preview · Saved to your V3 account."
   );
 }
@@ -356,7 +356,9 @@ async function recent() {
   const list = byId("thread-list");
   list.replaceChildren();
   if (!session?.authenticated) return;
+  const viewingSession = session;
   const data = await json("/api/conversations");
+  if (session !== viewingSession) return;
   for (const entry of data.conversations) {
     const row = el("div", "thread-row");
     const button = el("button", "thread-title", entry.title);
@@ -364,6 +366,7 @@ async function recent() {
       if (active) return;
       try {
         const value = await json("/api/conversations/" + entry.id);
+        if (session !== viewingSession) return;
         reset();
         conversationId = entry.id;
         byId("topbar-title").textContent = entry.title;
@@ -385,6 +388,7 @@ async function recent() {
 async function refreshSession() {
   session = await json("/api/session");
   byId("profile-title").textContent = session.authenticated ? "Sign out" : "Sign in";
+  byId("history-label").classList.toggle("hidden", !session.authenticated);
   updateComposer();
   recent().catch(() => {
     if (session?.authenticated) {
@@ -399,60 +403,96 @@ function authStatus(text) {
   box.classList.toggle("hidden", !text);
 }
 
-function showCode(visible) {
-  codeSent = visible;
-  byId("code-wrap").classList.toggle("hidden", !visible);
-  byId("auth-resend").classList.toggle("hidden", !visible);
-  byId("auth-change-email").classList.toggle("hidden", !visible);
-  byId("auth-email").readOnly = visible;
-  byId("auth-submit").textContent = visible ? "Sign in" : "Send code";
-  byId("auth-code").required = visible;
-  byId("auth-code").value = "";
-  if (visible) byId("auth-code").focus();
-}
-
-function openSignIn(resume = false, message = "") {
+function openSignIn(mode = "sign-in", message = "") {
   if (!session?.auth_enabled) {
     updateComposer("V3 sign-in is temporarily unavailable.");
     return;
   }
-  if (dialog.open) return;
-  submitAfterSignIn = resume;
-  showCode(false);
+  authMode = mode;
+  const newPassword = mode === "signup" || mode === "set-password";
+  const email = byId("auth-email");
+  const password = byId("auth-password");
+  const confirm = byId("auth-confirm");
+  const labels = {
+    "sign-in": ["Sign in to V3", "Sign in to save and reopen your conversations.", "Sign in"],
+    signup: ["Create a V3 account", "Use your preview team email. Choose a password with at least 12 characters.", "Create account"],
+    recover: ["Set or reset your V3 password", "Open the link from your email in the browser where you request it.", "Email password link"],
+    "set-password": ["Choose your V3 password", "Use at least 12 characters for your V3 password.", "Save password"],
+  };
+  const [title, description, submit] = labels[mode];
+  byId("auth-title").textContent = title;
+  byId("auth-description").textContent = description;
+  byId("auth-submit").textContent = submit;
+  byId("auth-email-wrap").classList.toggle("hidden", mode === "set-password");
+  email.required = mode !== "set-password";
+  byId("auth-password-wrap").classList.toggle("hidden", mode === "recover");
+  password.required = mode !== "recover";
+  password.minLength = newPassword ? 12 : 1;
+  password.autocomplete = newPassword ? "new-password" : "current-password";
+  byId("auth-confirm-wrap").classList.toggle("hidden", !newPassword);
+  confirm.required = newPassword;
+  password.value = "";
+  confirm.value = "";
+  byId("auth-login").classList.toggle("hidden", mode === "sign-in");
+  byId("auth-signup").classList.toggle("hidden", mode !== "sign-in");
+  byId("auth-recover").classList.toggle("hidden", mode !== "sign-in");
   authStatus(message);
-  dialog.showModal();
-  byId("auth-email").focus();
+  if (!dialog.open) dialog.showModal();
+  (email.required ? email : password).focus();
 }
 
 async function submitAuth(event) {
   event.preventDefault();
-  const email = byId("auth-email").value.trim();
-  const requestCode = !codeSent || event.currentTarget === byId("auth-resend");
   const button = byId("auth-submit");
   if (button.disabled) return;
-  button.disabled = true;
-  byId("auth-resend").disabled = true;
-  byId("auth-change-email").disabled = true;
+  const mode = authMode;
+  const password = byId("auth-password").value;
+  if ((mode === "signup" || mode === "set-password") && password !== byId("auth-confirm").value) {
+    authStatus("The passwords do not match.");
+    return;
+  }
+  const payload = {};
+  if (mode !== "set-password") payload.email = byId("auth-email").value.trim();
+  if (mode !== "recover") payload.password = password;
+  const controls = [button, byId("auth-login"), byId("auth-signup"), byId("auth-recover")];
+  controls.forEach((control) => { control.disabled = true; });
+  authStatus(mode === "recover" ? "Requesting a password email…" : "Please wait…");
   try {
-    if (requestCode) {
-      await json("/api/auth/request-code", {email});
-      authStatus("Enter the one-time code from the latest MKH V3 email.");
-      showCode(true);
-    } else {
-      await json("/api/auth/verify-code", {email, code: byId("auth-code").value.trim()});
+    const result = await json("/api/auth/" + mode, payload);
+    if (result.authenticated) {
+      const draft = promptBox.value;
       await refreshSession();
-      if (!session.authenticated) throw new Error("V3 could not open your session. Request a new code.");
-      const resume = submitAfterSignIn;
-      submitAfterSignIn = false;
+      if (!session.authenticated) throw new Error("V3 could not open your session. Please sign in again.");
+      reset();
+      promptBox.value = draft;
       dialog.close();
-      if (resume) send();
+      updateComposer();
+    } else {
+      const message = mode === "signup"
+        ? "Open the verification link in your email to finish creating the account."
+        : "If an eligible account matches this address, you’ll receive a password setup link.";
+      openSignIn(mode, message);
     }
   } catch (failure) {
     authStatus(failure.message);
   } finally {
-    button.disabled = false;
-    byId("auth-resend").disabled = false;
-    byId("auth-change-email").disabled = false;
+    controls.forEach((control) => { control.disabled = false; });
+  }
+}
+
+function handleEmailLink() {
+  const params = new URLSearchParams(location.search);
+  const stage = params.get("auth");
+  if (stage) {
+    params.delete("auth");
+    history.replaceState(null, "", location.pathname + (params.size ? "?" + params : ""));
+  }
+  if (session.password_setup_pending) {
+    openSignIn("set-password");
+  } else if (stage === "ready" && session.authenticated) {
+    updateComposer("Account verified. Your V3 chats will be saved.");
+  } else if (stage === "expired") {
+    openSignIn("recover", "Request a fresh email link and open it in this browser.");
   }
 }
 
@@ -461,10 +501,6 @@ async function send() {
   if (active || !prompt) return;
   if (!session) {
     updateComposer("The preview is connecting. Try Send again in a moment.");
-    return;
-  }
-  if (!session.authenticated) {
-    openSignIn(true, "Sign in to send your draft. Your message is kept here.");
     return;
   }
   if (!session.chat_enabled) {
@@ -480,7 +516,8 @@ async function send() {
     const response = await request("/api/chat", {
       method: "POST", signal: active.signal,
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({prompt, conversation_id: conversationId, mode: byId("analysis-mode").value}),
+      body: JSON.stringify({prompt, conversation_id: conversationId,
+        signed_in: session.authenticated, mode: byId("analysis-mode").value}),
     });
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -515,14 +552,18 @@ async function send() {
     }
     pendingMessage.remove();
     byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
-    if (failure.status === 401) {
-      session = {...session, authenticated: false, chat_enabled: false};
-      byId("profile-title").textContent = "Sign in";
-      byId("thread-list").replaceChildren();
+    if (failure.status === 401 || failure.status === 410) {
+      if (failure.status === 401) {
+        session = {...session, authenticated: false};
+        byId("profile-title").textContent = "Sign in";
+        byId("history-label").classList.add("hidden");
+        byId("thread-list").replaceChildren();
+      }
       reset();
       promptBox.value = prompt;
-      updateComposer("Your session expired. Sign in again to send your draft.");
-      openSignIn(false, "Your session expired. Sign in again to continue.");
+      updateComposer(failure.status === 401
+        ? "Sign-in expired. Send to start a guest chat, or sign in to reopen saved chats."
+        : "Guest chat expired. Send again to start a new chat.");
       return;
     }
     promptBox.value = prompt;
@@ -561,15 +602,12 @@ byId("profile-button").addEventListener("click", async () => {
   }
 });
 byId("auth-form").addEventListener("submit", submitAuth);
-byId("auth-resend").addEventListener("click", submitAuth);
-byId("auth-change-email").addEventListener("click", () => {
-  showCode(false);
-  authStatus("");
-  byId("auth-email").focus();
-});
+byId("auth-login").addEventListener("click", () => openSignIn());
+byId("auth-signup").addEventListener("click", () => openSignIn("signup"));
+byId("auth-recover").addEventListener("click", () => openSignIn("recover"));
 dialog.addEventListener("close", () => {
-  submitAfterSignIn = false;
-  byId("auth-code").value = "";
+  byId("auth-password").value = "";
+  byId("auth-confirm").value = "";
   if (!active) promptBox.focus();
 });
 byId("composer-sign-in").addEventListener("click", () => openSignIn());
@@ -592,4 +630,4 @@ document.querySelectorAll(".suggestion").forEach((button) => {
     promptBox.focus();
   });
 });
-refreshSession().catch((failure) => updateComposer(failure.message));
+refreshSession().then(handleEmailLink).catch((failure) => updateComposer(failure.message));
