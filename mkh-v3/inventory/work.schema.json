@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MKH Work · Rechercheübergabe 1 · eine Ausgabe oder adressierbare Komponente",
+  "type": "object",
+  "properties": {
+    "work_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "v3_metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350
+        },
+        "release": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 140
+        },
+        "period": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350
+        },
+        "geography": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "update_policy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350
+        },
+        "topics": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "sheet": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,89}$"
+        },
+        "column_types": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "TEXT",
+              "INTEGER",
+              "REAL"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "publisher",
+        "url"
+      ]
+    },
+    "work": {
+      "type": "object",
+      "properties": {
+        "series": {
+          "type": "string",
+          "minLength": 1
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "release_date": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]{2}(\\.[0-9]{2})?$"
+          },
+          "uniqueItems": true
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "related_v3_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,89}$"
+          },
+          "uniqueItems": true
+        },
+        "access": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "object",
+          "properties": {
+            "ausgabe_gefunden": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "note"
+              ]
+            },
+            "inhalt_geprueft": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "note"
+              ]
+            },
+            "wiederverwendung": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "note"
+              ]
+            },
+            "v3_publiziert": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "note"
+              ]
+            },
+            "in_antwort_verwendet": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "ref",
+                "note"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "work_id",
+    "v3_metadata",
+    "work"
+  ]
+}

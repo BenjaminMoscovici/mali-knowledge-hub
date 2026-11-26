@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000011",
+  "edition_family": "RGPH5 — Situation des femmes",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Situation des femmes",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2025-01",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "gender"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Situation des femmes",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 24. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 24,
+      "locator": "PDF p. 24",
+      "text": "RESUME\n\n    Le cinquième Recensement Général de la Population et de l’Habitat (RGPH5) du Mali, réalisé en juillet\n    2022, a dénombré une population résidente totale de 22 395 489 habitants, dont 11 138 934 femmes.\n    Les hommes représentent 50,3 % de cette population, avec un rapport de masculinité de 101,1 hommes\n    pour 100 femmes.\n    Entre 1976 et 1987, la proportion de femmes est restée stable à 51,1 %. Toutefois, à partir de 1998, elle\n    a légèrement diminué, atteignant 50,5 % en 2009. Cette tendance à la baisse s'est poursuivie jusqu'en\n    2022, où les résultats du recensement indiquent une proportion de femmes de 49,7 %.\n    L’analyse des données sur la situation des femmes se concentre sur les ménages ordinaires. Dans ce\n    cadre, les femmes représentent 49,9 % de la population totale, soit environ 10,6 millions de personnes,\n    mais restent légèrement en minorité par rapport aux hommes (50,1 %). On observe également des\n    disparités entre les milieux urbain et rural : en ville, les femmes sont plus nombreuses que les hommes,\n    tandis qu’à la campagne, la tendance s'inverse.\n    Les rapports de masculinité varient selon les régions, oscillant entre 94,6 et 122,9 hommes pour 100\n    femmes. Le taux le plus élevé est observé à Taoudenni, tandis que le plus faible se trouve à Nioro.\n    Concernant les femmes étrangères vivant au Mali, le RGPH5 révèle une prédominance des Burkinabè\n    (13 889 personnes), suivies des Ivoiriennes (13 171) et des Guinéennes (8 673).\n    En matière de mariage, 61 % des femmes âgées de 12 ans et plus sont mariées, dont 36 % dans des\n    unions polygamiques. Dans le domaine de l'éducation, les filles restent en retrait par rapport aux garçons.\n    Le taux de scolarisation au primaire est de 61,9 % pour les filles, mais ces dernières sont légèrement\n    moins nombreuses que les garçons à être scolarisées. Cette disparité s’accentue au secondaire et dans\n    l’enseignement supérieur, où l’accès des filles à l’éducation demeure plus limité. Bien que le taux\n    d’alphabétisation des femmes soit supérieur à celui des hommes en milieu rural, il reste globalement plus\n    faible à l’échelle nationale.\n    Sur le plan de la santé, les femmes maliennes ont une espérance de vie plus élevée que les hommes\n    (60,6 ans contre 57,1 ans). Toutefois, elles font face à des défis majeurs, notamment un taux de mortalité\n    maternelle alarmant, avec 412,9 décès pour 100 000 naissances vivantes, un chiffre encore plus élevé\n    en milieu rural. Le taux de fécondité, estimé à 6,1 enfants par femme, reflète également une dynamique\n    démographique complexe.\n    Sur le plan économique, les femmes représentent seulement 44,5 % de la population active, contre 80,3\n    % pour les hommes. Elles sont majoritairement employées dans les secteurs du commerce, de\n    l’agriculture et des services, avec une forte présence de femmes rurales au foyer. Leur participation à\n    l’économie reste limitée par des rôles traditionnels encore largement centrés sur les tâches domestiques,\n    réduisant ainsi leur autonomie financière. Les femmes chefs de ménage représentent 10,5 % du total,\n    avec une proportion plus élevée en milieu urbain (12,5 %). La majorité d’entre elles sont propriétaires de\n    leur logement, bien que cette part reste légèrement inférieure à celle des hommes dans la même situation.\n    Malgré les progrès réalisés, les femmes maliennes continuent de faire face à de nombreuses inégalités,\n    notamment en matière d’accès à l’éducation, aux soins de santé et à l’activité économique.\n\n\n\n                                                                                                           XX\n\n\nINSTAT-BCR-Résultats du RGPH5                                                                                     XX"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000011",
+  "upstream_checksum": "9ebcc3472f5d7e1fb9650ea42774e300b86f5e670f724e2e083d0cf8f9245db8",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-situation-femmes-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

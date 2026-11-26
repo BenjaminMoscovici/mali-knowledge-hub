@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000012",
+  "edition_family": "RGPH5 — Mortalité",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Mortalité",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2024-12",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "mortality"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Mortalité",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 17, 18. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 17,
+      "locator": "PDF p. 17",
+      "text": "RESUME\n\n Ce document présente les principaux résultats issus de l’analyse de la mortalité à partir des données du\n cinquième Recensement Général de la Population et de l’Habitat (RGPH5) réalisé en 2022. Il aborde les\n éléments de contexte et les aspects méthodologiques concernant l’analyse de la mortalité, ainsi que\n l’évaluation de la qualité des données sur les décès des 12 derniers mois, du nombre d’enfants nés\n vivants et du nombre d’enfants encore en vie. Pour ce faire, la thématique a eu recours à des techniques\n démographiques d’estimation de la qualité des données par la méthode directe et les méthodes\n indirectes, et a calculé des taux et quotients de mortalité. Le niveau, la structure et les tendances de la\n mortalité ont été estimés par la méthode indirecte d’estimation de la mortalité. Cette analyse présente\n différents indicateurs de mortalité infantile, juvénile et infanto-juvénile, de mortalité générale par âge et\n par sexe, ainsi que les indicateurs de la mortalité adulte, de la mortalité des personnes âgées et de la\n mortalité maternelle.\n\n Le taux brut de mortalité observé est de 4,5 ‰, ce qui montre que les décès survenus au cours des 12\n mois précédant le RGPH5 ont été largement sous-estimés. Après ajustement, le taux brut est évalué à\n 8,9 ‰ pour le Mali. Il est important de considérer ce résultat dans tout ce qui suit.\n\n Par ailleurs, la connaissance du niveau de la mortalité générale et des taux de mortalité par âge et par\n sexe permet d’orienter les politiques de santé publique. Les tables de mortalité générées à partir de ces\n données sont utilisées pour la planification générale et par certains services spécialisés, dont les\n compagnies d’assurances.\n Pour déterminer le niveau de la mortalité générale, on a recouru à la procédure LTMXQXAD de PASEX\n qui consiste à générer une table de mortalité à partir des valeurs des taux spécifiques de mortalité (nMx)\n ou des quotients de mortalité (nQx). Cette procédure a également permis d’élaborer une table de mortalité\n pour l’ensemble du pays, mais aussi par sexe et par milieu de résidence. A partir de ces tables de\n mortalité, résumant les indices de mortalité classiques (taux par âge et/ou quotients), les espérances de\n vie à chaque âge ont été calculées.\n En connaissant le taux brut de natalité (43,6 ‰) et le taux brut de mortalité (8,9 ‰), le taux\n d’accroissement naturel a pu être calculé et évalué à 3,5 %.\n L'analyse de la mortalité révèle que les chances de survie ont augmenté au Mali avec une espérance de\n vie à la naissance de 58,7 ans, avantageant les femmes (60,6 ans) par rapport aux hommes (57,1 ans).\n L’espérance de vie à 20 ans et l’espérance de vie à 60 ans, toutes deux tirées de la table de mortalité,\n ont permis d’analyser la mortalité des adultes et des personnes âgées. De plus, ces deux indicateurs ont\n été comparés à l’espérance de vie à la naissance.\n Le premier indicateur, révèle qu’un adulte âgé de 20 ans au Mali peut espérer vivre 46,9 ans de plus.\n Cette espérance de vie est plus élevée chez les femmes (48,5 ans) que chez les hommes (45,6 ans). De\n même, un Malien qui survit à tous les risques de mortalité avant l'âge de 20 ans peut espérer vivre 8 ans\n de plus que l’espérance de vie à la naissance. Ces huit années supplémentaires représentent donc le\n coût en espérance de vie des risques auxquels les Maliens sont exposés durant leurs 20 premières\n années de vie. Le gain en vie est plus important chez les hommes (8,5 ans) que chez les femmes (7,9\n ans), ce qui reflète le risque de mortalité plus élevé que courent les hommes au cours des 20 premières\n années de leur vie.\n\n                                                     XIII\n\nINSTAT-BCR-Résultats du RGPH5                                                                              XIII"
+    },
+    {
+      "kind": "source_passage",
+      "page": 18,
+      "locator": "PDF p. 18",
+      "text": "Le second indicateur, indique qu’une personne qui atteint l'âge de 60 ans au Mali s'attend à vivre environ\n 15,6 ans de plus. Chez les hommes, cette espérance de vie supplémentaire est de 14,9 ans et de 16,5\n ans chez les femmes. Cela correspond à environ 17 années supplémentaires par rapport à l'espérance\n de vie à la naissance. Le gain en vie est encore plus élevé chez les hommes (17,8 ans) que chez les\n femmes (15,9 ans). Cela signifie que le coût en termes d'espérance de vie des différents risques qu'un\n Malien doit subir entre la naissance et l'âge de 60 ans est trop élevé (17 ans), surtout chez les hommes\n (17,8 ans), ce qui reflète le risque de décès plus élevé qu’ils encourent.\n Concerne la mortalité maternelle, une tendance à la hausse est observée sur la période 2018-2022, avec\n 413 décès pour 100 000 naissances vivantes en 2022. Cette situation pourrait indiquer une dégradation\n de la santé maternelle, qui pourrait être due à plusieurs facteurs, dont l’insuffisance de l’offre de services\n et de soins de santé, d’autant que l’insécurité persiste dans certaines régions du pays.\n L'analyse de la mortalité des enfants révèle qu'en dépit d'une tendance à la baisse au cours des quatre\n dernières décennies, le niveau de mortalité reste élevé (51,8 ‰ pour la mortalité infantile et 46,0 ‰ pour\n la mortalité juvénile) par rapport à la cible 3.2 des ODD (25 ‰) d’ici 2030. La mortalité des moins de cinq\n ans (infanto-juvénile) est estimée à 95,4 ‰. Son niveau est dans l'ensemble un peu plus élevé chez les\n garçons (100,7 ‰) que chez les filles (89,7 ‰). L'analyse différentielle révèle que le niveau d’instruction\n du chef de ménage et son statut par rapport à l’activité influencent les chances de survie des enfants.\n\n\n\n\n                                                     XIV\n\nINSTAT-BCR-Résultats du RGPH5                                                                               XIV"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000012",
+  "upstream_checksum": "2541dcfd34a261f26aeaae5a60a3a5df02bb9976d8fec06103192995d1353e81",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-mortalite-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

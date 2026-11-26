@@ -122,6 +122,12 @@ function evidenceCard(item, number) {
   card.append(el("h3", "", number ? `${number}. ${title}` : title));
   card.append(el("p", "evidence-meta", [item.publisher, item.release, item.locator, item.source_period]
     .filter(Boolean).join(" · ")));
+  if (item.license) {
+    const attribution = el("p", "evidence-meta", item.license);
+    const terms = link(item.reuse_url, "Reuse terms ↗");
+    if (terms) attribution.append(" ", terms);
+    card.append(attribution);
+  }
   const data = item.data || {};
   if (data.text) card.append(el("blockquote", "", data.text));
   if (data.sql) {

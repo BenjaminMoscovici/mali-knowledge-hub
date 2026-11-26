@@ -1,0 +1,39 @@
+{
+  "id": "mli-inv-000047",
+  "edition_family": "Journal officiel de la République du Mali, n° 22",
+  "collection": "Journal officiel",
+  "title": "Journal officiel de la République du Mali, n° 22",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "2024-10-04",
+  "geography": "Mali",
+  "period": "2024-10-04",
+  "topics": [
+    "legislation"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels : JO n° 22 du 04 octobre 2024, p. 880 / Ordonnance n°2024-017/PT-RM du 27 septembre 2024, art. 1er / JO n° 22 du 04 octobre 2024, p. 881 / Ordonnance n°2024-018/PT-RM du 27 septembre 2024, art. 1er",
+  "limitations": [
+    "Extraits d’articles à leur date de publication. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "passages": [
+    {
+      "page": 4,
+      "locator": "JO n° 22 du 04 octobre 2024, p. 880 / Ordonnance n°2024-017/PT-RM du 27 septembre 2024, art. 1er",
+      "text": "Article 1er : Il est créé un service central dénommé Direction générale du Trésor et de la Comptabilité publique, en abrégé « DGTCP ».",
+      "kind": "source_passage"
+    },
+    {
+      "page": 5,
+      "locator": "JO n° 22 du 04 octobre 2024, p. 881 / Ordonnance n°2024-018/PT-RM du 27 septembre 2024, art. 1er",
+      "text": "Article 1er : Est autorisée, la ratification de l’Accord de financement, signé à Bamako, le 22 juillet 2024, d’un montant de 93 millions 300 mille euros, soit 61 milliards 201 millions 40 mille 10 francs CFA, entre le Gouvernement de la République du Mali et l’Association internationale de Développement (IDA), pour le financement du Projet « Promouvoir la Résilience du Système de Santé inclusif pour Tous (ARISE) Keneya Yiriwali » au Mali.",
+      "kind": "source_passage"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000047",
+  "upstream_checksum": "cd5408671adde1f731302f966348bf17988fd9396c8a2fc37394b6c431d5f4f9",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-22.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

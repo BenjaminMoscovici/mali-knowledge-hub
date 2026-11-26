@@ -1,0 +1,41 @@
+{
+  "id": "mli-inv-000007",
+  "edition_family": "RGPH5 — Caractéristiques économiques de la population",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Caractéristiques économiques de la population",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2025-01",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "employment",
+    "livelihoods"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Caractéristiques économiques de la population",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 23, 24. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 23,
+      "locator": "PDF p. 23",
+      "text": "RESUME\n\n     Le présent rapport traite les caractéristiques économiques de la population, une des thématiques du plan\n     d’analyse du RGPH5. Le Mali a en effet réalisé cinq recensements généraux de la population et de\n     l’habitat en 1976, 1987, 1998, 2009 et 2022. Ces opérations ont permis de mieux comprendre les\n     caractéristiques économiques de la population et son évolution au fil des années. Les données du\n     RGPH5, collectées du 15 juin au 31 juillet 2022 sur l’ensemble du territoire, ont été traitées et analysées\n     pour fournir les résultats suivants :\n\n     La population âgée de 15 ans et plus est estimée à 11 280 253 personnes, réparties entre 5 493 152\n     hommes et 5 787 101 femmes. Parmi elles, 59,1 % sont en emploi, 3,0 % sont au chômage et 37,9 %\n     sont hors de la population active.\n\n     Une inégalité marquée entre les sexes est observée en matière d’emploi, avec un taux d’occupation de\n     77,0 % chez les hommes contre 42,1 % chez les femmes. Le chômage, bien que globalement faible,\n     touche davantage les hommes (3,5 %) que les femmes (2,5 %).\n\n     Dans les zones urbaines, 71,2 % des hommes et 41,1 % des femmes sont en emploi. En milieu rural, ces\n     taux sont légèrement plus élevés, atteignant 80,1 % pour les hommes et 42,7 % pour les femmes. Le\n     chômage reste plus fréquent en ville (6,2 % pour les hommes et 4,9 % pour les femmes) qu’en milieu\n     rural (2,0 % et 1,3 %, respectivement).\n\n     Certaines régions affichent des taux d’emploi particulièrement élevés, notamment Kidal (71,1 %),\n     Taoudenni (68,3 %) et Ménaka (66,6 %). En revanche, le chômage est plus marqué à Bamako (6,6 %)\n     et à Kidal (5,3 %).\n\n     Sur le plan socio-démographique et économique, la majorité des actifs appartient à la tranche des 15-64\n     ans (60,3 %). Au-delà de 65 ans, seuls 38,7 % des individus restent en activité.\n\n     Le niveau d’instruction n’est pas toujours un facteur favorable pour l’emploi. Le taux de chômage atteint\n     28,5 % chez les diplômés de l’enseignement supérieur, tandis qu’il reste nettement plus bas chez les\n     non-diplômés (1,3 %).\n\n     Les personnes en situation de handicap sont particulièrement touchées par le chômage. Ainsi, 4,0% des\n     personnes atteintes d’un handicap des membres inférieurs sont au chômage, contre 5,1 % des déficients\n     intellectuels. Les femmes en situation de handicap affichent des taux de chômage encore plus élevés.\n\n     La main-d’œuvre active, comprenant les personnes en emploi et au chômage, est estimée à 7 015 408\n     individus. Parmi elles, 95,2 % occupent un emploi et 4,8 % sont en situation de chômage. L’emploi est\n     plus répandu en milieu rural (97,4 %) qu’en milieu urbain (91,0 %), tandis que le chômage touche\n     davantage les femmes vivant en ville (10,6 %).\n\n     En milieu urbain, le chômage tend à augmenter avec le niveau de richesse, atteignant 6,3 % parmi les\n     catégories les plus aisées. À l’inverse, en zone rurale, le taux d’emploi reste relativement stable, oscillant\n     entre 61,6 % chez les plus pauvres et 59,0 % chez les plus riches.\n                                                                                                               XIX\n\n\nINSTAT-BCR-Résultats du RGPH5                                                                                         XIX"
+    },
+    {
+      "kind": "source_passage",
+      "page": 24,
+      "locator": "PDF p. 24",
+      "text": "Le rapport met en avant plusieurs recommandations pour favoriser l’emploi et dynamiser l’économie. Il\n    préconise la mise en place de politiques d’emploi urbain adaptées, en soutenant notamment les secteurs\n    porteurs tels que les services et l’artisanat, ainsi qu’en créant des incubateurs d’entreprises. Par ailleurs,\n    il insiste sur la nécessité d’adapter les programmes éducatifs aux exigences du marché du travail, tout\n    en proposant des mesures inclusives visant à faciliter l’intégration économique des personnes\n    handicapées ou présentant des particularités physiques.\n\n    Pour renforcer l’accès à l’emploi, le développement des infrastructures et des industries locales est\n    également mis en avant, tandis que, dans les zones rurales, la promotion d’une agriculture moderne et\n    la valorisation des produits locaux sont encouragées pour stimuler l’économie. Enfin, le rapport souligne\n    l’importance de renforcer des opportunités pour les jeunes à travers des stages, des apprentissages et\n    des initiatives entrepreneuriales, afin de mieux préparer leur insertion professionnelle.\n\n\n\n\n                                                                                                               XX\n\n\nINSTAT-BCR-Résultats du RGPH5                                                                                        XX"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000007",
+  "upstream_checksum": "4502014c14440dd2987f992e183fcaa011c6b18aa19b85d9327dcf29ae6f481c",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-caracteristiques-economiques-population-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

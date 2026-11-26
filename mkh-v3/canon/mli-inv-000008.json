@@ -1,0 +1,35 @@
+{
+  "id": "mli-inv-000008",
+  "edition_family": "RGPH5 — Caractéristiques culturelles de la population",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Caractéristiques culturelles de la population",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2025-01",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "culture",
+    "languages"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Caractéristiques culturelles de la population",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 14. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 14,
+      "locator": "PDF p. 14",
+      "text": "RESUME\n\n     Depuis son indépendance, la République du Mali a conduit cinq recensements généraux de la population\n     et de l’habitat ; le dernier a eu lieu en 2022. Ce cinquième recensement met en lumière, les\n     caractéristiques culturelles de la population malienne, notamment l’appartenance religieuse et ethnique,\n     ainsi que les langues maternelles et parlées, tout en les croisant avec des variables telles que le sexe, le\n     milieu de résidence, l’âge, le niveau d’instruction, l’état matrimonial, etc.\n     Les résultats révèlent une nette prédominance de l’islam, pratiqué par 96,45 % de la population en 2022,\n     marquant une augmentation du poids de cette religion par rapport à la valeur de 94,84 % trouvée en\n     2009. Les chrétiens, qui représentent 2,27 % de la population, sont majoritairement concentrés dans les\n     régions de San, Bandiagara et Koutiala, tandis que les animistes, désormais réduits à 0,65 %, sont\n     principalement présents en milieu rural. Les personnes sans religion ou pratiquant d’autres croyances\n     restent marginales, mais leur proportion a légèrement augmenté au fil des ans. Géographiquement,\n     l’islam domine particulièrement dans les régions du nord, notamment à Taoudéni, où il atteint 99,80 %.\n     Concernant l’appartenance ethnique, le Mali se caractérise par une grande diversité avec 22 groupes\n     identifiés au RGPH5. Les Bambara, qui représentent plus du tiers de la population (35,93 %), forment le\n     groupe le plus nombreux, suivis des Peulh (12,83 %), des Malinké (8,42 %) et des Soninké (8,17 %). À\n     l’inverse, des groupes tels que les Haoussa sont faiblement représentés (0,06 %). Cette diversité ethnique\n     contribue de manière significative à la richesse culturelle et linguistique du pays.\n     Par ailleurs, le taux net de scolarisation au primaire est de 63,3 % chez les enfants issus d’autres ethnies\n     non maliennes et 58,3 % chez les enfants du groupe ethnique Kakolo. À l'inverse, les enfants les moins\n     scolarisés proviennent des ethnies Touareg (9,6 %) et Arabe (6 %). De même, les personnes appartenant\n     au groupe ethnique non malienne enregistre le taux d’alphabétisation les plus élevé (57,9 %). A l’opposé,\n     le plus faible taux d’alphabétisation est observé chez le groupe ethnique Touareg (10,3 %).\n\n     Sur le plan linguistique, le bamanankan est la langue maternelle la plus parlée (49,90 %), suivi du fulfulde\n     (8,19 %) et du maninkakan (7,11 %). Cette tendance se reflète également dans les langues parlées, le\n     bamanankan étant utilisé par 57,83 % de la population, ce qui en fait une langue véhiculaire essentielle.\n     Les langues étrangères, bien qu’elles soient marginales, restent davantage parlées en milieu urbain,\n     notamment à Bamako, et leur maîtrise est étroitement liée au niveau d’instruction. Le français (0,10 %)\n     et l’anglais (0,01 %) illustrent cette tendance, les hommes étant légèrement plus nombreux à les pratiquer.\n     En définitive, ce recensement a mis en exergue une société malienne caractérisée par une diversité\n     culturelle et linguistique exceptionnelle, dans laquelle les spécificités culturelles régionales jouent un rôle\n     central. Ces particularités, combinées à une prédominance religieuse et à des usages linguistiques\n     marqués, témoignent de la richesse et de la complexité d’une nation en quête d’unité à travers sa\n     diversité. La valorisation et la préservation de cette diversité apparaissent comme des enjeux majeurs\n     pour la cohésion sociale et le développement du pays.\n\n\n\n\n                                                           X\n\nINSTAT-BCR-Résultats du RGPH5                                                                                          X"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000008",
+  "upstream_checksum": "57a1967d783b78e0b78208584312372ab06d3ba85d75d54119e1ecd7e13f3a9d",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-caracteristiques-culturelles-population-rgph5_rpgh.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

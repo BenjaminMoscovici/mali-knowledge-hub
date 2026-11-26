@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000021",
+  "edition_family": "RGPH5 — Situation des personnes vivant avec un handicap",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Situation des personnes vivant avec un handicap",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2024-12",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "disability"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Situation des personnes vivant avec un handicap",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 23, 24. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 23,
+      "locator": "PDF p. 23",
+      "text": "RESUME\n\n     L’un des objectifs spécifiques du RGPH5 est de fournir des indicateurs pour le plaidoyer en faveur de\n     certains groupes vulnérables, notamment les personnes âgées, les femmes, les jeunes, les personnes\n     vivant avec un handicap, les personnes déplacées, les orphelins, etc. L’objectif de ce rapport fournir des\n     informations comparatives avec la population sans handicap sur les caractéristiques\n     sociodémographiques, socioéconomiques et socioculturelles afin de comprendre la situation des\n     personnes vivant avec un handicap au Mali. Ces informations permettront d’évaluer les stratégies\n     sectorielles en matière de développement et de mettre en place de futures stratégies pour le handicap.\n     Le RGPH5 a été réalisé conformément aux principes et recommandations des Nations Unies dans le\n     cadre du cycle des recensement de la série 2020. Dans ce rapport le handicap est analysé sous l’angle\n     du handicap majeur. Les informations sur le handicap concernent l’ensemble de la population résidente\n     des ménages ordinaires, y compris les enfants de moins de 5 ans.\n     Le RGPH5 de 2022 a dénombré 162 689 personnes vivant avec un handicap au Mali. Parmi elles, on\n     compte 90 910 hommes (55,9%) et 71 779 femmes (44,1%). En 2022, le taux de handicap dans la\n     population résidente des ménages ordinaires était de 0,8%, avec 0,9% pour les hommes et 0,7% pour\n     les femmes. Ce taux augmente avec l'âge. Le handicap est plus fréquent chez les hommes que chez les\n     femmes et il est plus répandu en milieu rural qu'en milieu urbain. Il touche davantage les populations\n     vulnérables, telles que les orphelins, les apatrides, les étrangers, les personnes non alphabétisées, les\n     chômeurs ayant déjà travaillé, les retraités et les inactifs.\n     La répartition des personnes vivant avec un handicap au Mali révèle une diversité de handicaps : 17,5%\n     d’infirmes de membre(s) inférieur(s), 14,6% de malvoyants, 10,1% d’autres handicaps physiques\n     majeurs, 9,5% d’autres handicaps, 8,4% d’infirmes de membre(s) supérieur(s), 7% de malentendants,\n     6,3% de déficients mentaux ou physiques, 4,9% d’aveugles, 4,2% de déficients intellectuels, 4% de\n     borgnes, 3,7% de sourds, 3,7% de polyhandicaps majeurs, 3,6% de sourds-muets et 2,6% de muets.\n     Avec la répartition en pourcentage selon les tranches d’âges, le pourcentage de personnes sans handicap\n     est supérieur au pourcentage de personnes vivant avec un handicap si elles ont toutes moins de 30 ans.\n     De 30 à 34 ans, le pourcentage des personnes vivant avec un handicap est égal au pourcentage des\n     personnes sans handicap. A partir de la tranche d’âges 35-39 ans, le pourcentage de personnes vivant\n     avec un handicap devient supérieur à celui de personnes sans handicap. L’âge moyen de l’ensemble de\n     la population résidente des ménages ordinaires du Mali en 2022 est de 20,8 ans avec 38,5 ans pour les\n     personnes vivant avec un handicap et 20,7 ans pour les personnes sans handicap. En termes\n     d’éducation, elles sont plus marginalisées, avec des taux faibles de scolarisation et une proportion élevée\n     de non fréquentation scolaire. Leur taux d'emploi est inférieur à celui des personnes sans handicap et\n     ainsi qu’une recherche active d'emploi moins élevée chez les personnes vivant avec un handicap que\n     chez les personnes sans handicap. Sur le plan familial, les ménages dirigés par les chefs de ménage\n     vivant avec un handicap sont plus grands en taille (12,7) que ceux des sans handicap (9,2). Enfin, la\n     situation familiale est plus complexe, avec 38 % des personnes vivant avec un handicap ayant perdu\n     leurs deux parents, un taux significativement plus élevé que chez les personnes sans handicap (11,1%).\n     La proportion d’enfants vivant avec un handicap ayant perdu au moins un parent est plus élevée que celle\n     des personnes sans handicap.\n     Les personnes vivant avec un handicap sont peu représentées au sein la population totale. Le handicap\n     est davantage lié à l’âge. Ce rapport répond à la demande d’informations sur les personnes vivant avec\n                                                        XIX\n\nINSTAT-BCR-Résultats du RGPH5                                                                                      XIX"
+    },
+    {
+      "kind": "source_passage",
+      "page": 24,
+      "locator": "PDF p. 24",
+      "text": "un handicap émanant de l’ensemble des utilisateurs des données statistiques de sources nationales. Il\n     fournit des informations sur le handicap chez les enfants de moins de 5 ans y compris le handicap de\n     naissance (handicap de moins d’un an). Il contient également quelques statistiques sur les personnes\n     présentant certaines caractéristiques physiques (handicap mineur).\n\n\n\n\n                                                      XX\n\nINSTAT-BCR-Résultats du RGPH5                                                                                XX"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000021",
+  "upstream_checksum": "ef63554863e342dffa92f3ec79cc9f42f647ef2142d54150c341b065e61d737b",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-personnes-handicap-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

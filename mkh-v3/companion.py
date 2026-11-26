@@ -58,7 +58,12 @@ geographic levels, boundary versions, units, reporting periods, methods, country
 and exact constraints across follow-ups. Keep projections distinct from observations.
 Only combine compatible, non-overlapping observations. Never substitute a national
 estimate for a local one, an administrative name for a verified crosswalk, or missing
-data for zero. Use the relevant denominator from the same scoped release.
+data for zero. Use the relevant denominator from the same scoped release. For a quantitative claim, check the original
+cell or passage for the number, printed precision, unit, denominator, reference period and method.
+A mention of an asset or activity does not give its count. An index is not a percent or a physical
+quantity. Release dates, observation dates and dates of legal effect can differ. If a material
+method is undocumented, state that limitation alongside the reported figure. Attribute calculations
+and unit conversions to their actual inputs. Quote only literal source words and values.
 
 Support material empirical and calculated claims with exact evidence markers in the form
 [[E-0123456789abcdef]], replacing the example identifier with one issued by a tool.
@@ -211,22 +216,52 @@ RATES = {"gpt-6.2-sol": (2, 0.10, 10), "gpt-6.2-astra": (8, 0.40, 40)}
 ENDPOINT = "https://api.openai.com/v1/responses"
 
 
-def model_evidence(item):
+def model_evidence(item, knowledge=None):
     data = item["data"]
     if item["kind"] == "calculation":
         visible = {key: data[key] for key in ("rows", "truncated", "relationship") if key in data}
         visible["inputs"] = [r["source_id"] for r in data["input_releases"]]
+        visible["sql"] = data.get("sql")
+        visible["row_locators"] = data.get("input_records", [])[:4]
     else:
         visible = data
-    return {"id": item["id"], "source_id": item.get("source_id"), "kind": item["kind"],
+    ids = visible["inputs"] if item["kind"] == "calculation" else [item.get("source_id")]
+    context = []
+    for key in ids:
+        source = knowledge.sources.get(key) if knowledge else None
+        if source:
+            scope = source.get("comparison_scope", {})
+            context.append({"source_id": key, "period": source["period"], "geography": source["geography"],
+                            **{k: scope[k] for k in ("units", "measure", "basis") if k in scope},
+                            "limitations": source.get("limitations", [])[:3]})
+    return {"id": item["id"], "source_id": item.get("source_id"), "kind": item["kind"], "measurement_context": context,
             "release": item.get("release"), "locator": item["locator"], "data": visible}
 
 
-def tool_output(result):
+def unverified_numeric_quotes(answer, ledger):
+    """Check direct numerical quotations against the cited original passages in the paragraph."""
+    mismatches = []
+    for paragraph in re.split(r"\n\s*\n", answer):
+        passages = [" ".join(e["data"]["text"].split()) for e in ledger.citations(paragraph)
+                    if "offset" in e.get("data", {}) and isinstance(e["data"].get("text"), str)]
+        if not passages:
+            continue
+        for match in re.finditer(r'«([^»]+)»|“([^”]+)”|"([^"\n]+)"', paragraph):
+            quote = " ".join(next(g for g in match.groups() if g is not None).split())
+            if not any(ch.isdigit() for ch in quote):
+                continue
+            # Numeric and word boundaries keep 15 from matching 115, 15.7 or 0,15.
+            pattern = r"(?<!\w)(?<!\d[.,])" + re.escape(quote) + r"(?!\w|[.,]\d)"
+            if not any(re.search(pattern, passage) for passage in passages):
+                mismatches.append(quote[:160])
+    return mismatches
+
+
+def tool_output(result, knowledge):
     if isinstance(result, list):
-        return [tool_output(item) for item in result]
+        return [tool_output(item, knowledge) for item in result]
     if isinstance(result, dict) and result.get("origin") == "canon" and "data" in result:
-        return model_evidence(result)
+        return model_evidence(result, knowledge)
     return result
 
 
@@ -388,11 +423,11 @@ class Companion:
             items.append({"role": "user", "content": "Current assignment requirements quoted from prior requests. "
                           "A later request overrides only dimensions it changes. " + json_text(requirements)})
         if ledger.items:
-            continuity = [{
-                "id": item["id"], "source_id": item.get("source_id"), "locator": item["locator"],
-                "geography": item.get("geography"), "source_period": item.get("source_period"),
-                "data": json_text(model_evidence(item)["data"])[:1800],
-            } for item in list(ledger.items.values())[-8:]]
+            continuity = []
+            for item in list(ledger.items.values())[-8:]:
+                context = model_evidence(item, self.knowledge)
+                context["data"] = json_text(context["data"])[:1800]
+                continuity.append(context)
             items.append({"role": "user", "content": "Verified evidence from earlier turns; use only if still in scope. "
                           + json_text(continuity)})
         last_reply = next((m["content"] for m in reversed(history) if m.get("role") == "assistant"), "")
@@ -482,7 +517,7 @@ class Companion:
                             trace.append(step)
                             yield {"type": "activity", "text": "Reviewing research results", "step": step}
                             items.append({"type": "function_call_output", "call_id": call["call_id"],
-                                          "output": json_text(tool_output(result))})
+                                          "output": json_text(tool_output(result, self.knowledge))})
                         gathered = [v for key, v in ledger.items.items() if key in ledger.new_evidence]
                         ids = tuple(evidence_sources(gathered))
                         if len(ids) >= 2 and ids != reviewed_ids:
@@ -519,14 +554,20 @@ class Companion:
                                       "Otherwise state that the output is unavailable and report only completed work."})
                         continue
                     missing = (bool(ledger.new_evidence) and not evidence) or (web_used and not cited_web and not evidence)
-                    if (unresolved or missing) and not signature_repairs and not final_step:
+                    mismatches = unverified_numeric_quotes(answer, ledger)
+                    if (unresolved or missing or mismatches) and not signature_repairs and not final_step:
                         signature_repairs += 1
                         items.extend(output)
                         items.append({"role": "user", "content": (
                             "Use only issued evidence markers for your material claims. "
-                            "Explain gaps when there is no approved evidence."
+                            "Explain gaps when there is no approved evidence. "
+                            + ("These numeric quotations do not match the cited passages. Reopen the source, "
+                               "then quote accurately or paraphrase supported evidence: " + json_text(mismatches)
+                               if mismatches else "")
                         )})
                         continue
+                    if mismatches:
+                        raise CompanionError("A quantitative quotation could not be verified in its cited passage.")
                     if unresolved or missing:
                         raise CompanionError("The answer contained evidence references that could not be verified.")
                     if ledger.recalled_web or any(x["origin"] == "public_web" for x in evidence):

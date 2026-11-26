@@ -1,0 +1,33 @@
+{
+  "id": "mli-inv-000048",
+  "edition_family": "Journal officiel de la République du Mali, n° 09",
+  "collection": "Journal officiel",
+  "title": "Journal officiel de la République du Mali, n° 09",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "2023-04-07",
+  "geography": "Mali",
+  "period": "2023-04-07",
+  "topics": [
+    "legislation"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels : JO n° 09 du 07 avril 2023, p. 330 / Loi n°2023-004 du 13 mars 2023 portant Code des Collectivités territoriales, art. 1er et 2",
+  "limitations": [
+    "Extraits d’articles à leur date de publication. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "locator": "JO n° 09 du 07 avril 2023, p. 330 / Loi n°2023-004 du 13 mars 2023 portant Code des Collectivités territoriales, art. 1er et 2",
+      "text": "Article 1er : La Commune est une collectivité territoriale dotée de la personnalité morale et de l’autonomie financière. Elle est urbaine ou rurale.\nArticle 2 : La Commune urbaine se compose essentiellement de quartiers.\nLa Commune rurale se compose essentiellement de villages et / ou de fractions.",
+      "kind": "source_passage"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000048",
+  "upstream_checksum": "c608ca3d0f73eb599818e7ee7841e234e92eb82c351719f46cf1b3a573f72cad",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-09.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000033",
+  "edition_family": "Journal officiel de la République du Mali, n° 06",
+  "collection": "Journal officiel",
+  "title": "Journal officiel de la République du Mali, n° 06",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "2023-03-17",
+  "geography": "Mali",
+  "period": "2023-03-17",
+  "topics": [
+    "territorial administration",
+    "legislation"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels : JO n° 06 du 17 mars 2023, p. 205 / Loi n°2023-002 du 13 mars 2023, art. 1er (art. 3 nouveau de la Loi n°2012-006) / JO n° 06 du 17 mars 2023, p. 206 / Loi n°2023-003 du 13 mars 2023, art. 1er (art. 1er nouveau de la Loi n°2017-052)",
+  "limitations": [
+    "Extraits d’articles à leur date de publication. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "passages": [
+    {
+      "page": 5,
+      "locator": "JO n° 06 du 17 mars 2023, p. 205 / Loi n°2023-002 du 13 mars 2023, art. 1er (art. 3 nouveau de la Loi n°2012-006)",
+      "text": "« Article 3 (nouveau) : Les Collectivités territoriales sont : la Commune, la Région et le District.",
+      "kind": "source_passage"
+    },
+    {
+      "page": 6,
+      "locator": "JO n° 06 du 17 mars 2023, p. 206 / Loi n°2023-003 du 13 mars 2023, art. 1er (art. 1er nouveau de la Loi n°2017-052)",
+      "text": "« Article 1er (nouveau) : Dans le respect de l’unité nationale et de l’intégrité du territoire, les Collectivités territoriales de la République du Mali sont : la Commune, la Région et le District.\nLa Commune, la Région et le District sont dotés de la personnalité morale et de l’autonomie financière.",
+      "kind": "source_passage"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000033",
+  "upstream_checksum": "c23678ee2cc8f2f1315630f6efab7ca188846459f04685e86981149d953acf30",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-06.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

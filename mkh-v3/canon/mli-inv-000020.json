@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000020",
+  "edition_family": "RGPH5 — Situation des personnes âgées",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Situation des personnes âgées",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2024-12",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "ageing"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Situation des personnes âgées",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 20. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 20,
+      "locator": "PDF p. 20",
+      "text": "RESUME\n\n     La population âgée de 60 ans et plus au Mali est de 983 047 en 2022 et représente 4,6 % de la population\n     globale. Ce pourcentage est élevé chez les hommes (4,8 %) que chez les femmes (4,4 %). De même, quel\n     que soit le milieu de résidence, le poids démographique de l’homme est supérieur à celui de la femme. En\n     plus, on observe que le poids démographique des personnes âgées est élevé en milieu rural (4,9 %) qu’en\n     milieu urbain (4,0 %). Au niveau régional, il varie de 2,8 % pour la région de Kidal à 5,8 % pour la région\n     de Bandiagara. Par rapport à l’état matrimonial, la plupart des personnes âgées sont en union, 48 % sont\n     en union monogame, 31 % sont en union polygame et 16,4 % sont veuves. Par ailleurs, l’espérance de vie\n     d’une personne qui atteint l'âge de 60 ans au Mali est de 15,6 ans de plus.\n     Pour ce qui est des activités économiques des personnes âgées, nous pouvons retenir que 37,4 % étaient\n     occupées pendant la période du recensement. En plus, on a 9,9 % des personnes du 4ème âge qui sont\n     occupées contre 40,7 % du 3ème âge. Par rapport au sexe, 49,5 % des hommes âgés sont occupés contre\n     23,9 % de femmes. Au niveau régional, les proportions les plus élevées de personnes âgées occupées se\n     trouvent à Ménaka (56,7 %), Taoudenni (53,6 %) et Tombouctou (49,8 %). En revanche, les proportions\n     les plus faibles se situent à Kita (34,3 %), Kayes (30,9 %) et Nioro (28,9 %). Concernant les retraités, le\n     district de Bamako affiche la proportion la plus élevée avec 18,8 % des personnes âgées, tandis que\n     Taoudenni (0,9 %) et Kidal (0,4 %) ont les proportions les plus faibles.\n     L’analyse a aussi révélé que les personnes âgées vivant avec un handicap sont au nombre de 41 146, ils\n     représentent 4,2 % des personnes âgées. Par rapport au milieu de résidence, elles sont concentrées plus\n     dans le milieu rural qu’urbain avec respectivement 74,7 % et 25,3 %. Les régions de Kita (7,4 %), Nioro\n     (6 %) et Kayes (6 %) présentent les taux de handicap les plus élevés de personnes âgées vivant avec un\n     handicap. En revanche, Taoudenni (1,1 %) et Ménaka (0,3 %) ont les taux les plus faibles. En ce qui\n     concerne la situation des personnes âgées vivant seules, elles sont au nombre de 13 679 personnes. Parmi\n     ces personnes, 72 % vivent en milieu rural contre 28 % en milieu urbain. Par ailleurs, les personnes âgées\n     vivant seules et avec un handicap sont au nombre de 932. Ils représentent 2,2 % des personnes âgées\n     vivant avec handicap. Les femmes constituent près de 60 % de ces personnes. Quel que soit le milieu, les\n     femmes sont plus importantes dans cette situation que les hommes.\n     Du point de vue environnement familial, 52,4 % des personnes âgées sont chefs de leurs ménages. En\n     plus, 15 % des personnes âgées sont conjoints ou conjointes du chef de ménage, 16,9 % sont père ou\n     mère du Chef de ménage et 4,6 % sont les frères ou sœurs du chef de ménage. En ce qui concerne les\n     caractéristiques de l’habitation des ménages, les personnes âgées sont essentiellement dans des\n     concessions à 59,1 %. Les maisons à plusieurs logements servent d’habitation pour 15,6 % des personnes\n     âgées et près de 12 % des personnes âgées sont dans des habitations de type immeuble ou villa. En plus,\n     34 % des ménages sont de niveau de vie riche ou très riche. Ce qui signifie que la grande majorité des\n     ménages sont dans des conditions vie moyennes ou pauvre.\n\n\n     Mots clés : Personnes âgées, personnes vulnérables, Mali\n\n\n\n\nINSTAT-BCR-Résultats du RGPH5                                                                                      XVI"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000020",
+  "upstream_checksum": "7f550302abb9b0774e3579256e7af2e5f04c4dd3d9f4ff32bc80994ededd0e58",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-situation-personnes-agees-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

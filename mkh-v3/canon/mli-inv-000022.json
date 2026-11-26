@@ -1,0 +1,35 @@
+{
+  "id": "mli-inv-000022",
+  "edition_family": "RGPH5 — Situation de la population nomade",
+  "collection": "RGPH5 thematic reports",
+  "title": "RGPH5 — Situation de la population nomade",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2025-01",
+  "geography": "Mali (national)",
+  "period": "Census 2022",
+  "topics": [
+    "demography",
+    "mobility"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH5 — Situation de la population nomade",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 20. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 20,
+      "locator": "PDF p. 20",
+      "text": "RESUME\n\n      La population nomade constitue une composante non négligeable de la population malienne. Elle est\n      reconnue généralement par son habitat mobile contrairement à la population sédentaire, qui a un habitat\n      fixe, ce qui en fait une population difficile à dénombrer. Elle est reconnue également par son activité\n      principale qui est l’élevage, à travers lequel elle contribue à l’économie nationale de façon notable. C’est\n      une population qui est en perpétuel déplacement à la recherche du pâturage. Cependant, les nomades\n      adoptent une manière de vie particulière et sont souvent peu au courant de la réalité et de l’évolution\n      de la vie moderne, parce qu’ils se promènent continuellement en brousse. De plus, cette population est\n      la plus exposée aux effets néfastes de la sécheresse, à l’insécurité, à l’accès difficile à l’eau, etc.\n      Le RGPH5 a collecté des données sur les populations nomades qui se retrouvent un peu partout au\n      Mali dans toutes les régions exceptée le district de Bamako où elles ne vivent pas. A l’issue du\n      dénombrement général, on a trouvé 434398 nomades correspondant à 2% de la population totale contre\n      0,92% au dernier recensement de 2009. La majorité de ces nomades sont basés dans les régions du\n      nord-est du pays.\n      Entre 1998 et 2022, la proportion de la population nomade a doublé, passant de 1,00% à 2,00%. La\n      population nomade a connu une augmentation soutenue au fil du temps. En effet, cette population est\n      passée de 93 296 habitants en 1998 à 133 084 en 2009, puis à 434 398 habitants en 2022. Cette\n      évolution correspond à un taux d’accroissement intercensitaire annuel moyen de 3,30% entre 1998 et\n      2009, et de 9,31% entre 2009 et 2022. Entre 1998 et 2022, la population nomade a été multipliée par\n      4,5 ; avec un temps de doublement moyen d'environ 8 ans entre 2009 et 2022. À peine 1,1% de la\n      population nomade scolarisable fréquentait un établissement scolaire au moment du recensement,\n      contre 21% des sédentaires. De plus, les taux de possession d’acte de naissance et de déclaration des\n      naissances chez les nomades étaient respectivement de 52,00% et 69,60%, contre 84% et 90,30%\n      chez les sédentaires.\n      Les proportions les plus élevées des nomades se retrouvent dans les régions de Ménaka avec 52,60%\n      suivie de Taoudenni (44,50%), de Kidal (44,30%), de Gao (22,50%) et de Tombouctou (9,40%).\n      Les résultats mettent en évidence des situations socioculturelles et économiques plus difficiles pour les\n      nomades. Ils ont moins accès à l’éducation, aux services d’eau, d’hygiène, d’assainissement et aux\n      biens de commodités.\n\n\n\n\n                                                         XVI\nINSTAT-BCR-Résultats du RGPH5                                                                                        XVI"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000022",
+  "upstream_checksum": "36317e0c0b492e2dda5237fd8b7653ab0a4bda5847429756d50c03b2982f17ee",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-situation-population-nomade-rgph5_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

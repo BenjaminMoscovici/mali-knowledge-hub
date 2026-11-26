@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000027",
+  "edition_family": "RGPH 2009 — Urbanisation",
+  "collection": "RGPH 2009 final results",
+  "title": "RGPH 2009 — Urbanisation",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2012-12",
+  "geography": "Mali (national)",
+  "period": "2009",
+  "topics": [
+    "urbanization"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH 2009 — Urbanisation",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 10. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 10,
+      "locator": "PDF p. 10",
+      "text": "RESUME\n\nL’analyse du thème urbanisation a pour objectif de mieux appréhender la question de l’urbanisation, son\névolution et les différents facteurs qui l’influencent à travers les données du recensement général de la\npopulation et de l’habitat.\n\nLa Population du Mali, selon le recensement général de la population et de l’Habitat de 2009, a été\nestimée à 14 528 662 d’habitants, dont 3 274 727 citadins soit 22,5 % de la population totale selon le\ncritère d’urbanisation établi en 2009 qui consiste en l’appartenance de la localité de résidence à la liste\ndes communes urbaines classées par la loi. La population urbaine était de 1 793 779 en 1998 soit un\ntaux d’accroissement de 5,6% entre 1998 et 2009. Ce qui dénote de l’ampleur qu’a prise cette\npopulation au cours de cette période.\n\nLa population urbaine révèle une population en majorité jeune d’après la pyramide des âges. Les\npersonnes de moins de 20 ans représentent plus de la moitié de la population (53,4%).\n\nLes hommes constituent 50,2% de la population et les femmes 49,8%. Le rapport de masculinité est de\n100,8 en 2009.\n\nLa typologie suivante a été établie pour étudier les villes selon quatre modalités : (1) Bamako en tant\nque capitale du Mali, (2) les chefs lieux de région en tant que principales villes des régions ; les chefs-\nlieux de cercle en tant que principales villes des cercles, les autres urbains non classés ailleurs. Selon\ncette typologie, la distribution de la population urbaine est inégale car Bamako absorbe à elle seule\n55,3% de la population, les chefs lieux de région 24,9%, les chefs lieux de cercle 17,5% et les autres\nurbains 2,3%.\n\nEn matière d’instruction, 38 personnes sur 100 âgées de 6 ans et plus n’ont jamais fréquenté l’école ;\n44 ont le niveau du fondamental et 18 le niveau du secondaire ou du supérieur. Le taux\nd’alphabétisation des personnes âgées de 15 ans et plus est de 59,0%. Des disparités subsistent entre\nles femmes et les hommes, ces dernières étant moins instruites que les hommes ; entre les villes\négalement, les niveaux des indicateurs de Bamako étant toujours meilleurs que ceux des autres villes.\n\nPar rapport aux activités économiques, 5 personnes sur 10 âgées de 15 ans et plus étaient actives en\n2009. Les femmes sont plus inactives que les hommes, soit 7 femmes sur 10 inactives contre 3 chez\nles hommes. Les activités relatives au commerce occupent une place prépondérante dans la plupart\ndes localités urbaines, les travaux agricoles dans quelques unes.\n\nConcernant la situation matrimoniale, la majorité de la population âgée de 12 ans et plus (49,0%) est\ncélibataire et principalement les hommes parmi lesquels 56,4% sont célibataires. Plus de la moitié des\nfemmes ont un statut marital (51,2%).\n\nUn indice composite a été construit pour appréhender le niveau de confort de l’habitat des ménages\nurbains. Il révèle que 20,5% des ménages ne vivent pas dans des conditions confortables ; 49,5%\nvivent dans des conditions acceptables ; 30,0% vivent dans des conditions très confortables.\n\n\n\n                                                    9"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000027",
+  "upstream_checksum": "9b0b461e0394b32f3e2d67eaa46cde0cdac4cfecddf2d37393d9ad37240ed5d1",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/raurb09_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

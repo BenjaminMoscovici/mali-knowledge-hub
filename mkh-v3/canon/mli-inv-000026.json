@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000026",
+  "edition_family": "RGPH 2009 — Scolarisation, instruction et alphabétisation",
+  "collection": "RGPH 2009 final results",
+  "title": "RGPH 2009 — Scolarisation, instruction et alphabétisation",
+  "publisher": "INSTAT / Bureau central du recensement",
+  "type": "document",
+  "release": "2012-12",
+  "geography": "Mali (national)",
+  "period": "2009",
+  "topics": [
+    "education"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résumé analytique du rapport du recensement. RGPH 2009 — Scolarisation, instruction et alphabétisation",
+  "limitations": [
+    "Périmètre intégré : Résumé analytique du rapport, pages PDF 14. Les tableaux et annexes supplémentaires figurent dans l’original.",
+    "Respecter la population étudiée, les dates et le découpage de chaque mesure. Les comparaisons historiques peuvent utiliser d’autres périmètres."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 14,
+      "locator": "PDF p. 14",
+      "text": "RESUME\nCette étude thématique \" Education, instruction et alphabétisation\" est articulée autour de 3 grands\naxes : la préscolarisation/scolarisation, l’instruction et l’alphabétisation de la population. Les principaux\nrésultats portent sur les niveaux d’atteinte des différents indicateurs, leur évolution, les efforts à fournir\npour leur amélioration ainsi que des pistes de recommandations dans ce sens.\n\n\nLa préscolarisation des enfants de 3-6 ans est loin d’être généralisée avec moins de 2% des enfants de\ncette tranche d’âge inscrits pendant l’année scolaire 2008-2009. Aussi la préscolarisation se révèle-t-\nelle être un phénomène plus urbain que rural avec des taux de 5% et 1% respectivement. Par contre, il\nn’apparaît pas de différence significative entre les filles (1,8%) et les garçons (1,7%) en matière de\npréscolarisation.\n\n\nEn ce qui concerne la scolarisation au premier cycle fondamental, il faut noter que des progrès ont été\nréalisés par le pays depuis 1998. Le taux net de scolarisation (TNS) est passé de 29,3% en 1998 pour\natteindre 47,5% en 2009. En plus le fossé entre les filles et les garçons se réduit de plus en plus, le\nratio fille/garçon indiquant que pour 100 garçons scolarisés, 91 filles le sont aussi. Les caractéristiques\nsociodémographiques du chef de ménage, son lien de parenté avec l’enfant et la taille du ménage sont\nautant d’éléments qui influent sur la décision de scolariser ou non un enfant.\n\n\nAu second cycle du fondamental et au secondaire les progrès sont encore plus importants. En effet, de\n1998 à 2009, le taux net de scolarisation (TNS) au second cycle fondamental est passé de 4,8% à\n19,5% et celui du secondaire de 1,8% à 10,0%.Toutefois, comme pour le préscolaire, l’écart entre\nl’urbain et le rural est très prononcé au secondaire ; 24,0% et 4,3% de TNS respectivement. Même si\nleur scolarisation au primaire a pris un envol encourageant, la pérennisation des filles à l’école jusqu’au\nniveau secondaire demeure encore un défi pour les autorités nationales.\n\nLe niveau d’instruction général de la population est très faible. Seulement 35,0% des individus âgés de\n6 ans ou plus ont été à l’école et 14,4% n’ont que le niveau primaire. En dépit de cela, le niveau\nd’instruction de la population malienne a augmenté car il était de 29,9% en 1998. Par ailleurs, les\nanalyses montrent d’une part que la proportion de personnes instruites est faible et diminue à mesure\nque le niveau d’instruction considéré augmente. D’autre part cette proportion est encore plus faible pour\nles femmes et l’écart avec les hommes se creuse quand le niveau d’instruction augmente. L’écart entre\nle milieu urbain et rural demeure en défaveur du dernier.\n\nEnfin, une proportion (30,9%) relativement faible de la population (âgée de 15 ans ou plus) sait lire et\nécrire dans une langue quelconque. Ce chiffre cache néanmoins des disparités entre milieux de\nrésidence et entre les deux sexes en faveur respectivement du milieu urbain et du sexe masculin. En\neffet, le taux d’alphabétisation des 12 ans et plus est de 39,8% pour les hommes contre 22,4% pour les\nfemmes. Celui des 15 ans et plus est de 59,0% en milieu urbain contre 21,6% en milieu rural.\nCependant le niveau d’alphabétisation de la population (âgée de 15 ans ou plus) a augmenté de 11,9\npoints       entre      1998       et     2009 ;       il     était    de    19,0%       en      1998.\n\n\nRGPH-INSTAT 2009                                                                                     Page xiii"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000026",
+  "upstream_checksum": "ff44a68d8b53973bd12e29bbe24df25c26ed7221aa29ffafd5222acf78df2940",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/raedu09_rgph.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

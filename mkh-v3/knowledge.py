@@ -128,6 +128,7 @@ class Evidence:
             "publisher": source["publisher"],
             "release": source["release"], "fingerprint": self.knowledge.stamps[source["id"]],
             "source_period": source["period"],
+            "license": source.get("license"), "reuse_url": source.get("reuse_url"),
             "geography": source["geography"],
             "url": url or source["url"],
             "kind": kind,

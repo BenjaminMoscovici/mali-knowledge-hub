@@ -234,3 +234,13 @@ with a working source comparison drawer. Estimated inference and embedding charg
 totalled USD 0.193692 across the two accepted tasks, including the unsuccessful trial.
 Reproduce the result with `python scripts/task_cost.py evaluation/20261126-cross-source.jsonl`.
 The estimate excludes the independent review and hosting.
+
+### National inventory releases
+
+The offline release command takes a Work ZIP, a separate JSON file of independently verified eligibility receipts keyed by Work ID, and a directory of original and evidence files. It uses Python 3.11+, `jsonschema` and Poppler's `pdftotext` for PDF pages.
+
+```sh
+python scripts/publish_inventory.py batch.zip receipts.json verified-files --canon canon
+```
+
+Receipts pin the original URL and SHA-256, the reuse evidence file and SHA-256, and the precise components covered by the grant. Each eligible receipt carries native release metadata plus PDF page numbers or a checksum-pinned JSON extraction. An existing equivalent component can be identified with `match_id`. Unresolved records can carry a reason. Missing qualification, invalid schema, changed bytes and ambiguous editions produce per-record flags. Successful additions are immutable and use the same catalogue, search, SQL and citation interfaces as other V3 sources. The checked-in inventory reports retain Work IDs and release decisions. Checked-in queue entries refer to original research archives by name and checksum.
