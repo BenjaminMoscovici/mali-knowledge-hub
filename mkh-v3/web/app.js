@@ -380,6 +380,15 @@ function showScopeReview(review) {
   openDrawer("Compare sources");
   drawerBody.append(el("p", "source-description", review.interpretation));
   const titles = new Map(review.sources.map((s) => [s.source_id, s.title]));
+  if (review.outcome_alignment?.length) {
+    const box = el("article", "evidence-item");
+    box.append(el("h3", "", "Programme outcomes and available measures"));
+    for (const check of review.outcome_alignment) {
+      const names = check.sources_declaring_measure.map((key) => titles.get(key));
+      box.append(el("p", "", check.outcome + " · " + (names.join(", ") || "No matching indicator declared in these sources.")));
+    }
+    drawerBody.append(box);
+  }
   for (const pair of review.pairs) {
     const box = el("article", "evidence-item");
     box.append(el("h3", "", titles.get(pair.left) + " / " + titles.get(pair.right)),

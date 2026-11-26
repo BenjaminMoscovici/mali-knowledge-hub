@@ -286,6 +286,13 @@
     "measure": "Gross enrolment and girls/boys parity in fondamental 1",
     "units": "Percent and ratio",
     "basis": "Census and administrative reporting",
-    "windows": []
-  }
+    "windows": [],
+    "measured_outcomes": {
+      "edu.f1.gross_enrolment": "Taux brut de scolarisation au fondamental 1",
+      "edu.f1.ger_gender_parity": "Indice de parité du taux brut de scolarisation"
+    }
+  },
+  "compatible_fingerprints": [
+    "a5c1f4d54454ee63a15c9610d6c96c21b4663564a89b79edaadbdee50e1c043c"
+  ]
 }

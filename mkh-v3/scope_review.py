@@ -1,17 +1,28 @@
 """Compare declared release scopes without inferring comparability from place names."""
 from datetime import date
 from itertools import combinations
+import re
 
 
 FACETS = ("geographic_frame", "grain", "measure", "units", "basis")
 
 
+OUTCOMES = ("intended_outcomes", "measured_outcomes")
+
+
 def validate_scope(scope):
-    if not isinstance(scope, dict) or set(scope) - {*FACETS, "windows"}:
+    if not isinstance(scope, dict) or set(scope) - {*FACETS, *OUTCOMES, "windows"}:
         raise ValueError("Unknown source comparison metadata")
     if any(not isinstance(v, str) or not 1 <= len(v.strip()) <= 240
            for k, v in scope.items() if k in FACETS):
         raise ValueError("Invalid source comparison label")
+    for role in OUTCOMES:
+        outcomes = scope.get(role, {})
+        if not isinstance(outcomes, dict) or len(outcomes) > 20 or any(
+            not isinstance(key, str) or not re.fullmatch(r"[a-z][a-z0-9_.-]{0,79}", key)
+            or not isinstance(label, str) or not 1 <= len(label.strip()) <= 160 for key, label in outcomes.items()
+        ):
+            raise ValueError("Use a stable indicator code and short label for each declared outcome.")
     windows = scope.get("windows", [])
     if not isinstance(windows, list) or len(windows) > 12:
         raise ValueError("Invalid release coverage windows")
@@ -64,6 +75,21 @@ def returned_labels(source, evidence):
     return selections[-3:]
 
 
+def outcome_alignment(sources):
+    measured = {}
+    for source in sources:
+        for key in source.get("comparison_scope", {}).get("measured_outcomes", {}):
+            measured.setdefault(key, []).append(source["id"])
+    if not measured:
+        return []
+    checks = []
+    for source in sources:
+        for key, label in source.get("comparison_scope", {}).get("intended_outcomes", {}).items():
+            checks.append({"objective_source": source["id"], "outcome": label, "indicator": key,
+                           "sources_declaring_measure": measured.get(key, [])})
+    return checks
+
+
 def compare(sources, evidence=()):
     profiles = []
     for s in sources:
@@ -80,7 +106,7 @@ def compare(sources, evidence=()):
                       "period_relation": period_relation(x.get("windows"), y.get("windows")),
                       "distinct_declarations": differences, "unspecified": unknown,
                       "registered_record_keys": sorted(a.get("entity_keys", {}).keys() & b.get("entity_keys", {}).keys())})
-    return {"sources": profiles, "pairs": pairs,
+    return {"sources": profiles, "pairs": pairs, "outcome_alignment": outcome_alignment(sources),
             "interpretation": "Release-level review. Check the selected records, reporting periods, units and definitions. "
                               "Overlapping coverage alone does not establish matching observations. A registered key identifies "
                               "an entity only. Returned labels are samples from evidence rows; totals can omit grouping fields. Inspect the cited calculation for its filters."}

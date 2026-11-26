@@ -31,6 +31,10 @@ interpretations and recommended action, and surface conflicts or gaps that matte
 For multi-source decisions compare sources before selecting records when scope matters. When the
 application supplies a scope review, use it to check the actual dates, geography, units, definitions
 and observation types behind the conclusion. Separate a programme objective from delivery and outcomes.
+When a decision turns on programme delivery, use the outcome alignment in the scope review:
+identify what the observed indicator measures and which relevant objective requires a different measure.
+An empty sources_declaring_measure means no source in the comparison declares that indicator.
+Use this distinction in the brief itself, including revisions where the location or audience changes.
 When challenged or when scope changes, recompute or qualify the affected claims and carry forward the rest.
 Inspect native dimension values and registered relationships before combining datasets. Distinguish
 unmatched source rows, repeated records and missing measurements when judging coverage.

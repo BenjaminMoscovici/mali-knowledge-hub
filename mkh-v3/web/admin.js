@@ -55,6 +55,15 @@ async function openSourceReview() {
   const windowLabel = el("label", "", "Coverage periods, one YYYY-MM-DD / YYYY-MM-DD pair per line");
   windowLabel.append(windows);
   scopeOptions.append(windowLabel);
+  const outcomeFields = new Map();
+  for (const [role, name] of [["intended_outcomes", "Intended outcomes"], ["measured_outcomes", "Measured outcomes"]]) {
+    const label = el("label", "", name + " · one shared indicator code = label per line");
+    const input = el("textarea");
+    input.rows = 2;
+    label.append(input);
+    scopeOptions.append(label);
+    outcomeFields.set(role, input);
+  }
   form.append(scopeOptions);
   const report = el("div", "review-report");
   async function processFile(op) {
@@ -73,6 +82,15 @@ async function openSourceReview() {
         .map(([name, input]) => [name, input.value.trim()]).filter(([, value]) => value));
       if (windows.value.trim()) metadata.comparison_scope.windows = windows.value.trim()
         .split(/\n/).map(line => line.split("/").map(date => date.trim()));
+      for (const [role, input] of outcomeFields) {
+        if (!input.value.trim()) continue;
+        const entries = input.value.trim().split(/\n/).map((line) => {
+          const separator = line.indexOf("=");
+          if (separator < 1) throw new Error("Each outcome needs a shared indicator code = label.");
+          return [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
+        });
+        metadata.comparison_scope[role] = Object.fromEntries(entries);
+      }
       metadata.column_types = JSON.parse(metadata.column_types || "{}");
       const data = await json("/api/admin/sources", {operation:op, filename:chosen.name, content, metadata});
       fields.get("id").value = data.id; fields.get("title").value = data.title;

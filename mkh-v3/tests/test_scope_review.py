@@ -48,3 +48,11 @@ class ScopeReviewTest(unittest.TestCase):
         self.assertEqual(review["sources"][0]["returned_labels"], [])
         self.assertEqual(review["sources"][1]["returned_labels"][0]["labels"]["date"],
                          [result["data"]["rows"][0]["date"]])
+
+    def test_unfamiliar_programme_distinguishes_allocations_and_actual_delivery(self):
+        plan = {"id": "rural-water-plan", "title": "Plan", "period": "2024", "geography": "District",
+                "comparison_scope": {"intended_outcomes": {"water.coverage": "Households served", "budget.allocated": "Allocated funds"}}}
+        report = {**plan, "id": "accounts", "comparison_scope": {"measured_outcomes": {"budget.allocated": "Budget allocation"}}}
+        checks = {row["indicator"]:row["sources_declaring_measure"] for row in compare([plan, report])["outcome_alignment"]}
+        self.assertEqual(checks, {"water.coverage": [], "budget.allocated": ["accounts"]})
+        self.assertEqual(compare([plan, {**report, "comparison_scope": {}}])["outcome_alignment"], [])

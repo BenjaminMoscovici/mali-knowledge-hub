@@ -52,6 +52,14 @@
     "measure": "Planned access, retention and completion",
     "units": "Policy actions and percentage targets",
     "basis": "Policy intent",
-    "windows": []
-  }
+    "windows": [],
+    "intended_outcomes": {
+      "edu.f1.admission": "Admission au fondamental 1",
+      "edu.f1.completion": "Achèvement du fondamental 1",
+      "edu.girls.retention": "Maintien des filles à l’école"
+    }
+  },
+  "compatible_fingerprints": [
+    "8f09090bc11e2e36522a6760e670e6903d25a95e2f5b0d9ab5a9d7af0d9cc5df"
+  ]
 }
