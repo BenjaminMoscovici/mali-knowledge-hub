@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000779",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 09",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 09 · 2025-07-23",
+  "period": "2025-07-23",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "finance"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Arret n°2025-06/cc du 21 juillet 2025.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / ARRET N°2025-06/CC DU 21 JUILLET 2025 / art. 2 (extrait)",
+      "text": "ARRET N°2025-06/CC DU 21 JUILLET 2025\nArticle 2 : Dit que la loi n°2025-27/CNT-RM du 12 juin 2025 a été délibérée et adoptée par le Conseil national de Transition dans les forme et délai prescrits par la Constitution ;"
+    },
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / ARRET N°2025-06/CC DU 21 JUILLET 2025 / art. 3 (extrait)",
+      "text": "ARRET N°2025-06/CC DU 21 JUILLET 2025\nArticle 3 : Dit que la loi n°2025-27/CNT-RM du 12 juin 2025 portant loi organique relative aux lois de finances est conforme à la Constitution ;"
+    },
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / ARRET N°2025-06/CC DU 21 JUILLET 2025 / art. 4 (extrait)",
+      "text": "ARRET N°2025-06/CC DU 21 JUILLET 2025\nArticle 4 : Ordonne la notification du présent arrêt au Président de la Transition, Chef de l’Etat et sa publication au Journal officiel ;"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000779",
+  "upstream_checksum": "1dd4f4b938ea0ff4b03460a221c9b68e619d1e53b8cb51072686358c19beddf9",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-09-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

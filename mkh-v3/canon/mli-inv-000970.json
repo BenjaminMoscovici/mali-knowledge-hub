@@ -1,0 +1,71 @@
+{
+  "id": "mli-inv-000970",
+  "edition_family": "instat-ihpc-bamako",
+  "title": "Indice harmonisé des prix à la consommation — District de Bamako — 2017-10",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "dataset",
+  "release": "2017-10",
+  "period": "2017-10",
+  "collection": "INSTAT IHPC",
+  "geography": "District de Bamako",
+  "topics": [
+    "IHPC"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "IHPC District de Bamako, base 2008, niveau et variations publiées à un, trois et douze mois. Bulletin mensuel de 2017-10.",
+  "limitations": [
+    "Champ du bulletin : District de Bamako. Le niveau de l’indice, la variation mensuelle et le glissement annuel sont des mesures distinctes. Les niveaux sur des bases ou des populations différentes ne se raccordent pas directement."
+  ],
+  "comparison_scope": {
+    "geographic_frame": "District de Bamako",
+    "grain": "mois",
+    "measure": "IHPC",
+    "units": "points d’indice et variations en %",
+    "basis": "base 100 en 2008"
+  },
+  "table": "ihpc_970",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "month": "TEXT",
+    "area": "TEXT",
+    "base_year": "INTEGER",
+    "index_level": "REAL",
+    "monthly_pct": "REAL",
+    "three_month_pct": "REAL",
+    "annual_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2017-10",
+      "locator": "PDF p. 1 / INDICE DE BAMAKO / Pondération oct.-16 juil.-17 août.-17 sept.-17 oct.-17 derniers derniers",
+      "month": "2017-10",
+      "area": "District de Bamako",
+      "base_year": 2008,
+      "index_level": 116.3,
+      "monthly_pct": -0.6,
+      "three_month_pct": 0.1,
+      "annual_pct": 2.6
+    }
+  ],
+  "definitions": {
+    "index_level": "Niveau de l’indice mensuel, base 100 dans l’année indiquée.",
+    "monthly_pct": "Variation publiée sur un mois (%).",
+    "three_month_pct": "Variation publiée sur trois mois (%).",
+    "annual_pct": "Variation publiée sur douze mois (%)."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 1,
+      "locator": "PDF p. 1",
+      "text": "REPUBLIQUE DU MALI\n           UN PEUPLE-UN BUT-UNE FOI\n                          -=-=-=-=-=-\n\n       MINISTERE DE L’AMENAGEMENT DU\n       TERRITOIRE ET DE LA POPULATION\n                          -=-=-=-=-=-\n\n      INSTITUT NATIONAL DE LA STATISTIQUE\n\n\n                                                                     INDICE HARMONISE\n                                                              DES PRIX A LA CONSOMMATION(IHPC)\n                                                              POUR LES PAYS MEMBRES DE L'UEMOA\n                                                                    BAMAKO – OCTOBRE2017\n                                                                          AVERTISSEMENT\nL’Institut National de la Statistique a le plaisir de mettre à la disposition des utilisateurs l’Indice Harmonisé des Prix à la\nConsommation (IHPC). Cet indice est harmonisé car la méthodologie utilisée pour sa production est identique dans les huit pays\nmembres de l’Union Economique et Monétaire Ouest Africaine (UEMOA). Ainsi, cet indice a été adopté comme instrument de\nmesure de l’évolution des prix au sein des pays de l’UEMOA.\nLa première période de base de l’IHPC est l’année 1996. Elle a été rénovée en 2008 et comme en 1996, les pondérations proviennent\nd’une enquête sur les dépenses de plus de 1000 ménages, effectuée en 2008. La population de référence de l’IHPC est l’ensemble des\nménages résidant dans le District de Bamako. Le panier de la ménagère comprend 650 variétés suivies dans 1511 points de vente.\nL’IHPC est un indice de Laspeyres calculé en utilisant le principe d’agrégations successives du niveau le plus fin (variété) au niveau\nle plus élevé (fonction).\n                                                                     Mois d’octobre 2017\n                                                                    (Base 100 : année 2008)\n                                                                                                      Indices pour les mois de :                         Variations (en %)\n                                                                                                                                                              des 3           des 12\n                                                                                                                                               du dernier\n                                                                           Pondération   oct.-16   juil.-17   août.-17    sept.-17   oct.-17                 derniers        derniers\n                                                                                                                                                 mois\n                                                                                                                                                              mois             mois\n\n        INDICE DE BAMAKO                                                    10 000       113,4     116,2       115,7       117,0     116,3       -0,6          0,1             2,6\n\n 01     Produits alimentaires et boissons non alcoolisées                    4 540       119,9     123,8       122,9       124,9     124,3       -0,5          0,4             3,7\n\n        - Céréales non transformées                                          1 246       106,1     109,6       107,9       115,7     114,3       -1,2          4,3             7,7\n        - Autres fruits frais                                                 84         144,4     148,1       134,1       148,1     123,3       -16,8        -16,8           -14,6\n        -Sel, épices, sauces et produits alimentaires n,d,a                   263        125,9     124,1       127,1       130,1     124,2       -4,6          0,1            -1,4\n        -Légumes frais en feuilles                                            78         171,4     166,9       165,8       168,5     141,6       -16,0        -15,1           -17,4\n        - Tubercules et plantains                                             84         117,9     134,6       158,5       152,0     130,7       -14,0        -2,9            10,8\n        - Huiles                                                              244        111,7     113,5       103,9       103,8     137,6       32,6         21,3            23,2\n        - Autres matières grasses                                             91         120,0     115,3       116,0       106,1     108,8        2,6         -5,6            -9,3\n\n 02     Boissons alcoolisées, Tabac et stupéfiants                            78         137,0     133,0       132,9       133,1     132,9       -0,2         -0,1            -3,0\n\n 03     Articles d'habillement et chaussures                                  999        108,9     107,1       107,1       107,0     107,0        0,1         -0,1            -1,7\n        - Vêtements de dessus hommes                                          205        104,5     102,3       102,3       102,3     102,3        0,0          0,0            -2,1\n\n 04     Logement, eau, gaz, électricité et autres combustibles               1 097       116,2     115,2       115,4       112,9     114,5        1,4         -0,6            -1,5\n\n        - Combustibles solides et autres                                      222        145,6     137,8       138,7       126,7     134,1        5,8         -2,6            -7,9\n\n 05     Meubles, articles de ménage et entretien courant du foyer             386        110,8     141,7       141,8       141,7     141,7        0,0          0,0            27,9\n\n 06     Santé                                                                 256        99,9       99,6       99,7        100,6     99,8        -0,8          0,1            -0,2\n\n 07     Transports                                                           1 211       106,4     107,4       107,4       107,7     108,5        0,8          1,0             2,0\n        - Carburants et lubrifiants                                           639        101,9     103,6       103,5       103,8     105,3        1,5          1,7             3,4\n 08     Communication                                                         527        92,6       88,2       84,5         98,6     85,1        -13,6        -3,5            -8,1\n 09     Loisirs et culture                                                    132        95,9       93,9       93,9         93,8     93,8         0,0         -0,1            -2,2\n 10     Enseignement                                                          178        107,4     112,2       112,2       112,1     112,1        0,0          0,0             4,4\n 11     Restaurants et Hôtels                                                 231        108,7     115,5       115,5       115,5     115,5        0,0          0,0             6,2\n 12     Biens et services divers                                              365        109,3     112,3       112,3       111,3     111,3        0,0         -0,8             1,9\n\n\n\n                                                          INSTAT - Bamako, le 10/11/2017 - IHPC                                                                  Page                1"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000970",
+  "upstream_checksum": "ab02f7f38d27d5e36875d6fc03493dc878a3b99bc66021eb8e16f0adb821c29d",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/ihpc1017_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

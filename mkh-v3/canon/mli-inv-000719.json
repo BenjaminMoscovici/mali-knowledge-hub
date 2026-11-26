@@ -1,0 +1,133 @@
+{
+  "id": "mli-inv-000719",
+  "edition_family": "hdx-world-bank-economy-and-growth-indicators-for-mali",
+  "title": "Mali - Economy and Growth",
+  "publisher": "World Bank / World Development Indicators et producteurs cités",
+  "type": "dataset",
+  "release": "1960–2025 · capture 2026-11-26 · 46af82b1f664",
+  "period": "1960–2025",
+  "collection": "HDX resource — world-bank-economy-and-growth-indicators-for-mali",
+  "geography": "Mali",
+  "topics": [
+    "macroeconomic indicators"
+  ],
+  "description": "Mali - Economy and Growth : 245 indicateurs, 11854 observations publiées pour le Mali.",
+  "limitations": [
+    "Sur 11955 lignes du CSV, 11854 sont publiées avec un code et une licence CC BY vérifiés dans le dictionnaire WDI. Les autres sont exclues de cette table.",
+    "Les catalogues thématiques peuvent contenir les mêmes observations. Identifier chaque valeur par pays, code et année, conserver la définition et l’unité de l’indicateur avant comparaison."
+  ],
+  "license": "World Bank WDI, CC BY 4.0, with attribution in the provider field. Selected Mali observations from the HDX category CSV. Verified indicator licences in WDISeries.csv.",
+  "reuse_url": "https://datacatalog.worldbank.org/public-licenses#cc-by",
+  "comparison_scope": {
+    "geographic_frame": "Mali selon le découpage de la source",
+    "grain": "observation dans le fichier"
+  },
+  "table": "inventory_719",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "indicator_code": "TEXT",
+    "indicator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "provider": "TEXT"
+  },
+  "dimensions": [
+    "indicator",
+    "indicator_code"
+  ],
+  "definitions": {
+    "indicator": "Libellé du fournisseur, avec unité lorsque celle-ci figure dans la série.",
+    "provider": "Producteur ou source créditée à la ligne correspondante dans WDISeries.csv."
+  },
+  "table_snapshot": {
+    "sha256": "bc2dab8758b570be47f69fa887001a7a31401ae74b023951f94388a4639ddf2b",
+    "row_count": 11854,
+    "samples": [
+      {
+        "id": "r2",
+        "locator": "CSV row 2 / BG.GSR.NFSV.GD.ZS / Mali / 2024",
+        "indicator_code": "BG.GSR.NFSV.GD.ZS",
+        "indicator": "Trade in services (% of GDP)",
+        "year": 2024,
+        "value": 8.64776351342942,
+        "provider": "Balance of Payments Statistics Yearbook and data files, International Monetary Fund (IMF);\nWorld Development Indicators Database, World Bank (WB);\nNational Accounts data files, Organisation for Economic Co-operation and Development (OECD)"
+      },
+      {
+        "id": "r3",
+        "locator": "CSV row 3 / BG.GSR.NFSV.GD.ZS / Mali / 2023",
+        "indicator_code": "BG.GSR.NFSV.GD.ZS",
+        "indicator": "Trade in services (% of GDP)",
+        "year": 2023,
+        "value": 11.3444357251789,
+        "provider": "Balance of Payments Statistics Yearbook and data files, International Monetary Fund (IMF);\nWorld Development Indicators Database, World Bank (WB);\nNational Accounts data files, Organisation for Economic Co-operation and Development (OECD)"
+      },
+      {
+        "id": "r4",
+        "locator": "CSV row 4 / BG.GSR.NFSV.GD.ZS / Mali / 2022",
+        "indicator_code": "BG.GSR.NFSV.GD.ZS",
+        "indicator": "Trade in services (% of GDP)",
+        "year": 2022,
+        "value": 12.5458634641368,
+        "provider": "Balance of Payments Statistics Yearbook and data files, International Monetary Fund (IMF);\nWorld Development Indicators Database, World Bank (WB);\nNational Accounts data files, Organisation for Economic Co-operation and Development (OECD)"
+      }
+    ],
+    "dimension_values": {
+      "indicator": {
+        "distinct_count": 245,
+        "examples": [
+          "DEC alternative conversion factor (LCU per US$)",
+          "Grants, excluding technical cooperation (BoP, current US$)",
+          "Net ODA received per capita (current US$)",
+          "Net official development assistance received (current US$)",
+          "Technical cooperation grants (BoP, current US$)",
+          "Agriculture, forestry, and fishing, value added (% of GDP)",
+          "Agriculture, forestry, and fishing, value added (constant 2015 US$)",
+          "Agriculture, forestry, and fishing, value added (constant LCU)",
+          "Agriculture, forestry, and fishing, value added (current LCU)",
+          "Agriculture, forestry, and fishing, value added (current US$)",
+          "Changes in inventories (current LCU)",
+          "Changes in inventories (current US$)",
+          "Discrepancy in expenditure estimate of GDP (current LCU)",
+          "Exports as a capacity to import (constant LCU)",
+          "Exports of goods and services (% of GDP)",
+          "Exports of goods and services (constant 2015 US$)",
+          "Exports of goods and services (constant LCU)",
+          "Exports of goods and services (current LCU)",
+          "Exports of goods and services (current US$)",
+          "External balance on goods and services (% of GDP)"
+        ]
+      },
+      "indicator_code": {
+        "distinct_count": 245,
+        "examples": [
+          "PA.NUS.ATLS",
+          "BX.GRT.EXTA.CD.WD",
+          "BX.GRT.TECH.CD.WD",
+          "DT.ODA.ODAT.CD",
+          "DT.ODA.ODAT.PC.ZS",
+          "NE.CON.GOVT.CD",
+          "NE.CON.GOVT.CN",
+          "NE.CON.GOVT.ZS",
+          "NE.CON.PRVT.CD",
+          "NE.CON.PRVT.CN",
+          "NE.CON.PRVT.KD",
+          "NE.CON.PRVT.KN",
+          "NE.CON.PRVT.PC.KD",
+          "NE.CON.PRVT.ZS",
+          "NE.CON.TOTL.CD",
+          "NE.CON.TOTL.CN",
+          "NE.CON.TOTL.KD",
+          "NE.CON.TOTL.KN",
+          "NE.CON.TOTL.ZS",
+          "NE.DAB.DEFL.ZS"
+        ]
+      }
+    }
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000719",
+  "upstream_checksum": "46af82b1f664ebc727c429a0e6dd9f284e653506b6b4ce338b805b8130ecfb04",
+  "url": "https://data.humdata.org/dataset/0d6f43f1-f3b2-4443-894e-bc3e10109474/resource/3425e1d4-871c-4221-833e-928f95a2038c/download/economy-and-growth_mli.csv",
+  "reuse_evidence_sha256": "701d3fc76a3a1f39fd8b1cfe56d332c4fbe5a783a0f83775e1b736c765a5189d"
+}

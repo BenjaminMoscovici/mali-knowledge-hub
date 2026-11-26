@@ -1,0 +1,45 @@
+{
+  "id": "mli-inv-000876",
+  "edition_family": "instat-emop-passages",
+  "title": "EMOP — 2015, passage 2",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "document",
+  "release": "EMOP — 2015, passage 2",
+  "period": "2015, passage 2",
+  "collection": "INSTAT EMOP",
+  "geography": "Mali",
+  "topics": [
+    "EMOP"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Enquête modulaire et permanente auprès des ménages. Indicateurs et résultats du passage 2015, passage 2 recueillis par l’INSTAT.",
+  "limitations": [
+    "Les résultats correspondent à cette vague de l’enquête, à ses ménages, aux zones enquêtées et au champ de chaque tableau. Éviter d’assimiler un passage à une année entière ou à la couverture actuelle."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 2,
+      "locator": "PDF p. 2",
+      "text": "INDICATEURS DE CONDITIONS DE VIE DE LA POPULATION\n                  Indicateurs Passage 2                              Ensemble                Milieu                 Sexe\n\n                                                                                    Urbain            Rural    H           F\n                                                           Santé\nTaux de morbidité (%)                                                  24,6          24,0             24,8    23,4    25,8\nProportion des individus ayant contracté le paludisme au cours\ndes 03 derniers mois                                                   16,3          13,4             17,2    15,3    17,2\nProportion de la population consultée chez un guérisseur\nou un marabout (%)                                                     12,3           6,4             14,3    13,0    11,7\nProportion de la population habitant à moins d’un Km\nd’un établissement de santé (%)                                        47,1          46,8             47,2    48,1     46,2\nProportion de la population habitant à plus de 15 Km\nd’un établissement de santé (%)                                        8,3            2,6             10,2    8,5      8,1\n                                      Migration et transferts au sein des ménages\nProportion des ménages recevant les transferts d'argent\ndont au moins un (1) membre vivant en dehors de la\nlocalité                                                      54,5                   53,6             54,7    54,1    57,9\nMontant des transferts reçus par les ménages (en\nmilliards de FCFA)                                            66,2                   25,8             40,4    53,4    12,8\n                                                Pauvreté subjective\nProportion des ménages vivant difficilement avec leur\nniveau de revenu (%)                                          18,6                   17,7             19,0    17,8    28,8\nProportion des ménages vivant bien avec leur niveau de\nrevenu (%)                                                     3,6                    5,5             2,9     3,7      2,4\nProportion des ménages se considérant pauvre (%)              54,7                   46,6             57,9    49,9    43,1\nProportion des ménages estimant que leur niveau de vie\ns’est dégradé au cours de l’année écoulée (%)                 26,8                   29,1             25,9    32,7    25,2\nProportion des ménages estimant que leur niveau de vie\ns’est amélioré au cours de l’année écoulée (%)                25,3                   24,0             25,8    18,7    29,5\n                                            Dépenses de consommation\nDépenses moyennes par ménage (FCFA)                                  436 413       647 759       355 222\nDépenses moyennes par tête (FCFA)                                     63 708       105 523        47 644\nDépenses par équivalent adulte (FCFA)                                 84 506       137 826        64 022\n                                    Source : EMOP 2015/2016, passage 2 (juillet-septembre)\n\n\n\n\n                                                                 2"
+    },
+    {
+      "kind": "source_passage",
+      "page": 8,
+      "locator": "PDF p. 8",
+      "text": "RESUME EXECUTIF\n\n   L’Enquête Modulaire et Permanente auprès des ménages (EMOP), est un dispositif\n    permanent de collecte mis en place par l’INSTAT avec l’appui technique et financier de la\n    Suède pour répondre aux besoins de suivi-évaluation du Cadre Stratégique pour la\n    Croissance et la Réduction de la Pauvreté ainsi que des programmes sectoriels mis en\n    œuvre par le Mali.\n   Elle est réalisée annuellement en quatre passages sur l’ensemble du territoire national.\n    Chaque passage dure trois mois de collecte. Pour rappel, sur un total de 6258 ménages,\n    5994 ont été enquêtés au premier passage, soit un taux de couverture de 95,8 %. Au second\n    passage, il a été enregistré 39 ménages absents, n’ayant donc pas été enquêtés. Ce qui\n    ramène le taux de couverture à 95,2 %. Les résultats sont représentatifs au niveau de\n    chacune des régions enquêtées et le district de Bamako et selon le milieu de résidence\n    (urbain et rural).\n   Les thèmes abordés portent sur la santé de la population, les migrations et transferts des\n    ménages, la pauvreté subjective et les dépenses de consommation des ménages.\n   L’exploitation des données issues de cette phase a abouti aux résultats suivants :\n\n\n    a) Santé de la population\n   Le taux de morbidité au cours du troisième trimestre est estimé à 24,6 %. Il est resté stable\n    par rapport au deuxième trimestre (22,9 %). Il est plus élevé pour les individus vulnérables\n    comme les enfants de moins de cinq ans (33,0 %) et les personnes âgées de plus de soixante\n    ans (41,3 %).\n   Parmi les personnes ayant consulté et déclaré avoir rencontré des problèmes, 74,8 %\n    d’entre eux estiment que les coûts de prestation sanitaire sont chers.\n\n\n    b) Migrations et Transferts au sein des ménages\n   Le montant des transferts perçus par les ménages provenant de la migration au cours des\n    douze derniers mois est estimé à 66 milliards de FCFA, la France se plaçant en première\n    position avec 23 milliards.\n   Les transferts reçus sont utilisés prioritairement pour la satisfaction des besoins courants\n    du ménage comme l’acquisition de biens de consommation courante (43,5 %).\n\n\n\n\nEMOP 2015-2---Résultats                                                                  Page 8"
+    },
+    {
+      "kind": "source_passage",
+      "page": 9,
+      "locator": "PDF p. 9",
+      "text": "c) Pauvreté subjective\n   Près d’un ménage sur cinq (18,6 %) estime vivre difficilement avec son revenu pendant que\n    3,6 % des ménages estime que leurs revenus sont suffisants pour bien vivre.\n   Avoir accès à l'eau potable, prendre trois (3) repas tous les jours, et pouvoir se soigner quand\n    on est malade sont cités comme faisant partie des besoins minimums indispensables pour\n    avoir des conditions de vie acceptables.\n   La sécurité alimentaire (32,9 %) et la création d’emploi (28,6 %) sont citées prioritairement\n    dans le cadre des actions à mener pour lutter contre la pauvreté.\n\n\nd) Dépenses de consommation\n   Les dépenses de consommation des ménages maliens sur la période juillet - septembre\n    2015, sont estimées à 932 milliards contre 803 milliards FCFA sur le trimestre précédent.\n   Les produits de consommation des ménages sont dans 87 % de cas acquis par achat et près\n    de 62 % des dépenses sont destinées à l’alimentation et aux boissons non alcoolisées.\n\n\n\n\nEMOP 2015-2---Résultats                                                                     Page 9"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000876",
+  "upstream_checksum": "6fa301eba1d360d4180418fe3835395888450021a7c97f1b8972e4b964da8613",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/eq/rana15pas2_eq.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

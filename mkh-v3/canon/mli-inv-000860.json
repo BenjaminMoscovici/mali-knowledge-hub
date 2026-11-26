@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000860",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° spécial 13",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2023, n° spécial 13 · 2023-07-22",
+  "period": "2023-07-22",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2023-0401/pt-rm du 22 juillet 2023 portant promulgation de la constitution.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION / art. 1er (extrait)",
+      "text": "DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION\nArticle 1er : Tous les Maliens naissent et demeurent libres et égaux en droits et en devoirs. Toute discrimination fondée sur l’origine sociale, la région, la couleur, la langue, la race, l’ethnie, le sexe, la religion ou l’opinion politique est prohibée."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION / art. 3 (extrait)",
+      "text": "DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION\nArticle 3 : L’Etat assure la protection de l’enfant contre le trafic de personnes et les infractions assimilées et contre l’enrôlement dans les groupes extrémistes violents."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION / art. 4 (extrait)",
+      "text": "DECRET N°2023-0401/PT-RM DU 22 JUILLET 2023 PORTANT PROMULGATION DE LA CONSTITUTION\nArticle 4 : Nul ne peut être soumis à la torture, à l’esclavage, aux traitements inhumains, cruels et dégradants."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000860",
+  "upstream_checksum": "868623f571d0fae8a7414b0338092f0be93344044c18f6621a1b59891aa2eaa3",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-13-sp-3.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "mli-inv-000884",
+  "edition_family": "instat-emop-passages",
+  "title": "EMOP — 2018, passage 1",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "document",
+  "release": "EMOP — 2018, passage 1",
+  "period": "2018, passage 1",
+  "collection": "INSTAT EMOP",
+  "geography": "Mali",
+  "topics": [
+    "EMOP"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Enquête modulaire et permanente auprès des ménages. Indicateurs et résultats du passage 2018, passage 1 recueillis par l’INSTAT.",
+  "limitations": [
+    "Les résultats correspondent à cette vague de l’enquête, à ses ménages, aux zones enquêtées et au champ de chaque tableau. Éviter d’assimiler un passage à une année entière ou à la couverture actuelle."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 10,
+      "locator": "PDF p. 10",
+      "text": "RESUME EXECUTIF\n\n          L’Enquête Modulaire et Permanente auprès des ménages (EMOP), est un dispositif permanent de collecte\n           mis en place par l’INSTAT pour répondre aux besoins de suivi-évaluation du Cadre Stratégique pour la\n           Croissance et la Réduction de la Pauvreté devenu en 2016 le Cadre stratégique pour la Relance\n           Economique et le Développement Durable (CREDD 2016-2018) ainsi que des programmes sectoriels mis\n           en en œuvre par le Mali.\n          Spécifiquement, les thèmes abordés par l’EMOP portent sur les caractéristiques sociodémographiques de\n           la population, l’éducation, la santé, l’emploi, le logement, la sécurité alimentaire et les dépenses de\n           consommation des ménages.\n          Au total, 5817 ménages ont été enquêtés lors de ce passage (sur 6720 ménages échantillonnés). La\n           collecte des données a été réalisée du 1er avril au 30 juin 2018. Les résultats sont représentatifs au niveau\n           des régions enquêtées, et selon le milieu de résidence (urbain et rural). L’exploitation des données issues\n           de cette phase a abouti aux résultats suivants :\n\n\n           a) Caractéristiques sociodémographiques de la population\n\n\n          La population du Mali1 est estimée à dix-huit millions sept cents quatre-vingt-six mille neuf cent quatre-\n           vingt-seize (19 269 836) habitants en 2018 dont 74,0 % vivent en milieu rural.\n          Avec 48,8 % de personnes âgées de moins de 15 ans, le Mali se caractérise par une population jeune. La\n           population comprend 50,4 % de femmes.\n          Sikasso est la région la plus peuplée, avec 18,3 % de la population totale. Gao est la région la moins\n           peuplée avec 3,7 % de la population.\n          La taille moyenne des ménages est de 8,4 personnes. Le mariage constitue le régime matrimonial\n           dominant des personnes de 12 ans ou plus, 60,3 % d’entre eux sont mariés.\n\n\n           b) Education\n\n          En moyenne, plus de six personnes sur dix (68,5 %) sont sans niveau d’instruction au nombre desquelles\n           il y a 68,3 % d’hommes et 70,9 % de femmes. Seulement 4,5 % de la population a atteint un niveau d’études\n           supérieures.\n\n\n\n\n1\n    Sans la région de Kidal\n                                                              9"
+    },
+    {
+      "kind": "source_passage",
+      "page": 11,
+      "locator": "PDF p. 11",
+      "text": "   Le taux brut de scolarisation au premier cycle de l’enseignement fondamental est estimé à 74,5 %. Les\n    garçons sont plus scolarisés que les filles (75,7 % contre 73,2 %). Mopti est la région la moins scolarisée\n    avec 46,8 % de TBS.\n   Le taux brut de scolarisation au second cycle de l’enseignement fondamental s’élève à 53,9 %. Les garçons\n    sont scolarisés plus que les filles (54,0 % contre 53,7 %). Le taux brut le plus faible au second cycle a été\n    enregistré à Mopti soit 29,0 %.\n   Au premier cycle du fondamental, l’abandon volontaire avec 35,5 % de cas constitue la principale raison\n    pour laquelle les élèves abandonnent l’école, suivi de la crise sécuritaire (27,8%) et du manque de moyen\n    avec 10,2 %.\n   Au second cycle du fondamental, l’abandon volontaire avec 43,3 % de cas constitue la principale raison\n    pour laquelle les élèves abandonnent l’école, suivi par le mariage/grossesse (17,9%) et de l’échec scolaire\n    avec 15,5 %.\n   Le taux d’alphabétisation des adultes âgés de 15 ans ou plus est estimé à 35,5 % en 2018. Il est plus élevé\n    chez les hommes que chez les femmes (46,2 % contre 25,7 %).\n\n\n    c) Santé\n\n\n   Dans l’ensemble, 23,7 % de la population souffrait d’une maladie ou avait été victime d’une blessure au\n    cours des trois derniers mois ayant précédé l’enquête. Le paludisme ou la fièvre constituait la principale\n    pathologie dont souffrait la population malienne avec 13,0 %.\n\n\n    d) Emploi\n\n\n   Dans l’ensemble du pays, entre avril et juin 2018, le taux d’activité des personnes âgés de 15 à 64 ans est\n    de 68,9 %. Les femmes sont moins actives que les hommes (55,4 % contre 84,3 % respectivement).\n   Au niveau national, sur la période de collecte, le chômage frappe 8,4 % de la population en âge de travailler\n    (15 à 64 ans). Les femmes sont plus touchées par le phénomène que les hommes (9,7 % contre 7,5 %\n    respectivement).\n\n\ne) Cadre de vie\n\n\n   Dans l'ensemble 14,6 % des ménages vit en location.\n   Dans l’ensemble, 69,3% des ménages ont accès à l’électricité (EDM, panneaux solaires et groupes\n    électrogènes), soit 82,2 % en milieu urbain et 57,1 % en milieu rural.\n   Plus de quatre ménages sur cinq (85,1 %) au Mali ont accès à l’eau potable. La grande majorité (94,9 %)\n    des ménages urbains utilise l’eau potable contre 75,7 % pour les ménages ruraux.\n                                                   10"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000884",
+  "upstream_checksum": "3039e628375ad3dab6771affb1b42dba836c336bd12443cfe72a8c5e465e2d79",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/eq/rana18pas1_eq.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

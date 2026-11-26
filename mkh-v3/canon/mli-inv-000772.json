@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000772",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 13",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 13 · 2025-05-13",
+  "period": "2025-05-13",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2025-005 du 13 mai 2025 portant abrogation de la loi n°05-047 du 18 aout 2005 portant charte des partis politiques et de la loi n°2015-007 du 04 mars 2015 portant statut de l’opposition politique.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-005 DU 13 MAI 2025 PORTANT ABROGATION DE LA LOI N°05-047 DU 18 AOUT 2005 PORTANT CHARTE DES PARTIS POLITIQUES ET DE LA LOI N°2015-007 DU 04 MARS 2015 PORTANT STATUT DE L’OPPOSITION POLITIQUE / art. 1er (extrait)",
+      "text": "LOI N°2025-005 DU 13 MAI 2025 PORTANT ABROGATION DE LA LOI N°05-047 DU 18 AOUT 2005 PORTANT CHARTE DES PARTIS POLITIQUES ET DE LA LOI N°2015-007 DU 04 MARS 2015 PORTANT STATUT DE L’OPPOSITION POLITIQUE\nArticle 1er : Sont et demeurent abrogées, dans toutes leurs dispositions, la Loi n°05-047 du 18 août 2005 portant Charte des partis politiques et la Loi n°2015-007 du 04 mars 2015 portant Statut de l’Opposition politique."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-005 DU 13 MAI 2025 PORTANT ABROGATION DE LA LOI N°05-047 DU 18 AOUT 2005 PORTANT CHARTE DES PARTIS POLITIQUES ET DE LA LOI N°2015-007 DU 04 MARS 2015 PORTANT STATUT DE L’OPPOSITION POLITIQUE / art. 2 (extrait)",
+      "text": "LOI N°2025-005 DU 13 MAI 2025 PORTANT ABROGATION DE LA LOI N°05-047 DU 18 AOUT 2005 PORTANT CHARTE DES PARTIS POLITIQUES ET DE LA LOI N°2015-007 DU 04 MARS 2015 PORTANT STATUT DE L’OPPOSITION POLITIQUE\nArticle 2 : Une loi détermine les conditions de formation et d’exercice des activités des partis politiques, conformément à la Constitution."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000772",
+  "upstream_checksum": "22c882a23ecf71531554454b26049781b84ff77c52682e54d68fb9f6f25db407",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-13-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

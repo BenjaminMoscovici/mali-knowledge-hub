@@ -1,0 +1,310 @@
+{
+  "id": "mli-inv-000700",
+  "edition_family": "hdx-health-facilities-in-sub-saharan-africa",
+  "title": "Health Facilities in Sub-Saharan Africa",
+  "publisher": "Maina et al. / Kenya Medical Research Institute–Wellcome Trust Research Programme",
+  "type": "dataset",
+  "release": "Compilation publiée en 2019 · capture 2026-11-26 · 530bafa53afa",
+  "period": "Compilation publiée en 2019",
+  "collection": "HDX resource — health-facilities-in-sub-saharan-africa",
+  "geography": "Mali",
+  "topics": [
+    "historical public-sector health facilities"
+  ],
+  "description": "Compilation historique d’établissements de santé en Afrique subsaharienne : 1478 entrées portant le pays Mali, regroupées par région et type source.",
+  "limitations": [
+    "Registre assemblé à partir de sources multiples et de dates variables. Un point répertorié ne vérifie ni l’activité actuelle, ni la capacité, ni le taux d’accès de la population."
+  ],
+  "license": "Creative Commons Attribution International (CC BY). Compilation Maina et al., 2019, https://doi.org/10.1038/s41597-019-0142-2. MKH selected Mali and aggregated records.",
+  "reuse_url": "https://data.humdata.org/dataset/health-facilities-in-sub-saharan-africa",
+  "comparison_scope": {
+    "geographic_frame": "Mali selon le découpage de la source",
+    "grain": "observation dans le fichier"
+  },
+  "table": "inventory_700",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "source_region": "TEXT",
+    "facility_type": "TEXT",
+    "listed_features": "INTEGER"
+  },
+  "records": [
+    {
+      "id": "1",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='Clinic'",
+      "source_region": "Bamako",
+      "facility_type": "Clinic",
+      "listed_features": 61
+    },
+    {
+      "id": "2",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='Community Health Centre'",
+      "source_region": "Bamako",
+      "facility_type": "Community Health Centre",
+      "listed_features": 65
+    },
+    {
+      "id": "3",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='Hospital'",
+      "source_region": "Bamako",
+      "facility_type": "Hospital",
+      "listed_features": 6
+    },
+    {
+      "id": "4",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='Polyclinic'",
+      "source_region": "Bamako",
+      "facility_type": "Polyclinic",
+      "listed_features": 7
+    },
+    {
+      "id": "5",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='Referral Health Centre'",
+      "source_region": "Bamako",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 7
+    },
+    {
+      "id": "6",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Bamako' / Facility t='University Hospital'",
+      "source_region": "Bamako",
+      "facility_type": "University Hospital",
+      "listed_features": 3
+    },
+    {
+      "id": "7",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Gao' / Facility t='Clinic'",
+      "source_region": "Gao",
+      "facility_type": "Clinic",
+      "listed_features": 1
+    },
+    {
+      "id": "8",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Gao' / Facility t='Community Health Centre'",
+      "source_region": "Gao",
+      "facility_type": "Community Health Centre",
+      "listed_features": 72
+    },
+    {
+      "id": "9",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Gao' / Facility t='Hospital'",
+      "source_region": "Gao",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "10",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Gao' / Facility t='Referral Health Centre'",
+      "source_region": "Gao",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 4
+    },
+    {
+      "id": "11",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kayes' / Facility t='Clinic'",
+      "source_region": "Kayes",
+      "facility_type": "Clinic",
+      "listed_features": 4
+    },
+    {
+      "id": "12",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kayes' / Facility t='Community Health Centre'",
+      "source_region": "Kayes",
+      "facility_type": "Community Health Centre",
+      "listed_features": 223
+    },
+    {
+      "id": "13",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kayes' / Facility t='Hospital'",
+      "source_region": "Kayes",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "14",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kayes' / Facility t='Polyclinic'",
+      "source_region": "Kayes",
+      "facility_type": "Polyclinic",
+      "listed_features": 1
+    },
+    {
+      "id": "15",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kayes' / Facility t='Referral Health Centre'",
+      "source_region": "Kayes",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 7
+    },
+    {
+      "id": "16",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kidal' / Facility t='Community Health Centre'",
+      "source_region": "Kidal",
+      "facility_type": "Community Health Centre",
+      "listed_features": 17
+    },
+    {
+      "id": "17",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Kidal' / Facility t='Referral Health Centre'",
+      "source_region": "Kidal",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 4
+    },
+    {
+      "id": "18",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Koulikoro' / Facility t='Clinic'",
+      "source_region": "Koulikoro",
+      "facility_type": "Clinic",
+      "listed_features": 9
+    },
+    {
+      "id": "19",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Koulikoro' / Facility t='Community Health Centre'",
+      "source_region": "Koulikoro",
+      "facility_type": "Community Health Centre",
+      "listed_features": 205
+    },
+    {
+      "id": "20",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Koulikoro' / Facility t='Hospital'",
+      "source_region": "Koulikoro",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "21",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Koulikoro' / Facility t='Polyclinic'",
+      "source_region": "Koulikoro",
+      "facility_type": "Polyclinic",
+      "listed_features": 2
+    },
+    {
+      "id": "22",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Koulikoro' / Facility t='Referral Health Centre'",
+      "source_region": "Koulikoro",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 9
+    },
+    {
+      "id": "23",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Mopti' / Facility t='Community Health Centre'",
+      "source_region": "Mopti",
+      "facility_type": "Community Health Centre",
+      "listed_features": 169
+    },
+    {
+      "id": "24",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Mopti' / Facility t='Hospital'",
+      "source_region": "Mopti",
+      "facility_type": "Hospital",
+      "listed_features": 2
+    },
+    {
+      "id": "25",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Mopti' / Facility t='Referral Health Centre'",
+      "source_region": "Mopti",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 8
+    },
+    {
+      "id": "26",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Segou' / Facility t='Clinic'",
+      "source_region": "Segou",
+      "facility_type": "Clinic",
+      "listed_features": 5
+    },
+    {
+      "id": "27",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Segou' / Facility t='Community Health Centre'",
+      "source_region": "Segou",
+      "facility_type": "Community Health Centre",
+      "listed_features": 202
+    },
+    {
+      "id": "28",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Segou' / Facility t='Hospital'",
+      "source_region": "Segou",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "29",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Segou' / Facility t='Referral Health Centre'",
+      "source_region": "Segou",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 8
+    },
+    {
+      "id": "30",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Segou' / Facility t='Regional Hospital'",
+      "source_region": "Segou",
+      "facility_type": "Regional Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "31",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Sikasso' / Facility t='Clinic'",
+      "source_region": "Sikasso",
+      "facility_type": "Clinic",
+      "listed_features": 14
+    },
+    {
+      "id": "32",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Sikasso' / Facility t='Community Health Centre'",
+      "source_region": "Sikasso",
+      "facility_type": "Community Health Centre",
+      "listed_features": 238
+    },
+    {
+      "id": "33",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Sikasso' / Facility t='Hospital'",
+      "source_region": "Sikasso",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "34",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Sikasso' / Facility t='Polyclinic'",
+      "source_region": "Sikasso",
+      "facility_type": "Polyclinic",
+      "listed_features": 1
+    },
+    {
+      "id": "35",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Sikasso' / Facility t='Referral Health Centre'",
+      "source_region": "Sikasso",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 9
+    },
+    {
+      "id": "36",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Tombouctou' / Facility t='Community Health Centre'",
+      "source_region": "Tombouctou",
+      "facility_type": "Community Health Centre",
+      "listed_features": 103
+    },
+    {
+      "id": "37",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Tombouctou' / Facility t='Hospital'",
+      "source_region": "Tombouctou",
+      "facility_type": "Hospital",
+      "listed_features": 1
+    },
+    {
+      "id": "38",
+      "locator": "sub-saharan_health_facilities.dbf / Country=Mali / Admin1='Tombouctou' / Facility t='Referral Health Centre'",
+      "source_region": "Tombouctou",
+      "facility_type": "Referral Health Centre",
+      "listed_features": 5
+    }
+  ],
+  "dimensions": [
+    "source_region",
+    "facility_type"
+  ],
+  "definitions": {},
+  "review": "published",
+  "work_id": "MKH-SRC-000700",
+  "upstream_checksum": "530bafa53afadc83916a9f22a25a7535db820e55c8958294cd9365c65d0bff76",
+  "url": "https://data.humdata.org/dataset/eb1ba830-9464-43c8-9370-28cee0c99f5d/resource/341668a3-7066-46e4-aca0-fe09c57f9314/download/suhsharan_health_facilities.zip",
+  "reuse_evidence_sha256": "6c4fd3836308938897c90efd672220f5b06bc4f4643e934b0ae4a80e5ed95440"
+}

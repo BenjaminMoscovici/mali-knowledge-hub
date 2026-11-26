@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000777",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 10",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 10 · 2025-07-31",
+  "period": "2025-07-31",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2025-037 du 31 juillet 2025 portant loi organique fixant les indemnites et les autres avantages alloues aux membres du conseil national de transition.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION / art. 1er (extrait)",
+      "text": "LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION\nArticle 1er : La présente loi organique fixe les indemnités et autres avantages des membres du Conseil national de Transition."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION / art. 2 (extrait)",
+      "text": "LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION\nArticle 2 : Le Président du Conseil national de Transition perçoit une indemnité parlementaire mensuelle calculée sur la base de l’indice hors échelle 1800."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION / art. 3 (extrait)",
+      "text": "LOI N°2025-037 DU 31 JUILLET 2025 PORTANT LOI ORGANIQUE FIXANT LES INDEMNITES ET LES AUTRES AVANTAGES ALLOUES AUX MEMBRES DU CONSEIL NATIONAL DE TRANSITION\nArticle 3 : Les autres membres du Conseil national de Transition perçoivent une indemnité parlementaire mensuelle calculée sur la base de l’indice le plus élevé de la fonction publique soit 1650."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000777",
+  "upstream_checksum": "efbf14ef39ad2c5065c6ef2378c024cd925be82a7957fed708d8922e0c7481f0",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-10-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

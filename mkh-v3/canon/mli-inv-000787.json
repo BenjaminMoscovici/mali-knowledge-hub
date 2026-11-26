@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000787",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 04",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 04 · 2025-05-16",
+  "period": "2025-05-16",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2025-0339/pt-rm du 13 mai 2025 portant dissolution des partis politiques et des organisations a caractere politique en republique du mali.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI / art. 1er (extrait)",
+      "text": "DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI\nArticle 1er : Les partis politiques et les organisations à caractère politique sont dissouts sur toute l’étendue du territoire national."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI / art. 3 (extrait)",
+      "text": "DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI\nArticle 3 : Toute violation des dispositions du présent décret expose les auteurs et complices aux sanctions prévues par les lois et règlements en vigueur."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI / art. 4 (extrait)",
+      "text": "DECRET N°2025-0339/PT-RM DU 13 MAI 2025 PORTANT DISSOLUTION DES PARTIS POLITIQUES ET DES ORGANISATIONS A CARACTERE POLITIQUE EN REPUBLIQUE DU MALI\nArticle 4 : Le présent décret abroge le Décret n°2025- 0318/PT-RM du 07 mai 2025 portant suspension des activités des partis politiques."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000787",
+  "upstream_checksum": "e77656189c0b5a70dfd576144b4f53b67bd887bb2af4918e007c1d094dcd6b76",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-04-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

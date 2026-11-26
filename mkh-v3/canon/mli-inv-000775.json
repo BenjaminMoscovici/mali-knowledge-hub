@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000775",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 11",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 11 · 2025-08-27",
+  "period": "2025-08-27",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2024-38/cnt-rm du 5 decembre 2024 portant loi organique fixant le nombre des.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES / art. 2 (extrait)",
+      "text": "LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES\nArticle 2 : Dit que la loi n°2024-38/CNT-RM du 5 décembre 2024 portant loi organique fixant le nombre des membres du gouvernement a été délibérée et adoptée par le Conseil national de Transition dans les forme et délai prescrits par la Constitution ;"
+    },
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES / art. 3 (extrait)",
+      "text": "LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES\nArticle 3 : Dit que la loi n°2024-38/CNT-RM du 5 décembre 2024 portant loi organique fixant le nombre des membres du Gouvernement est conforme à la Constitution;"
+    },
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES / art. 4 (extrait)",
+      "text": "LOI N°2024-38/CNT-RM DU 5 DECEMBRE 2024 PORTANT LOI ORGANIQUE FIXANT LE NOMBRE DES\nArticle 4 : Ordonne la notification du présent arrêt au Président de la Transition, Chef de l’Etat et sa publication au Journal officiel."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000775",
+  "upstream_checksum": "ce78a19ab968d70b65f36a88f6ac6a9c88a8e0a19bfda98c1a65ac520d957b09",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-11-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

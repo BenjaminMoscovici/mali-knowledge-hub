@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000782",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 07",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 07 · 2025-07-04",
+  "period": "2025-07-04",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Arret n°2025-04/cc du 30 juin 2025.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 4,
+      "kind": "source_passage",
+      "locator": "PDF p. 4 / ARRET N°2025-04/CC DU 30 JUIN 2025 / art. 1er (extrait)",
+      "text": "ARRET N°2025-04/CC DU 30 JUIN 2025\nArticle 1er : Déclare la saisine du Président de la Transition, Chef de l’État régulière ;"
+    },
+    {
+      "page": 4,
+      "kind": "source_passage",
+      "locator": "PDF p. 4 / ARRET N°2025-04/CC DU 30 JUIN 2025 / art. 2 (extrait)",
+      "text": "ARRET N°2025-04/CC DU 30 JUIN 2025\nArticle 2 : Déclare régulière la procédure d’adoption de la loi n°2025-31/CNT-RM du 12 juin 2025 ;"
+    },
+    {
+      "page": 4,
+      "kind": "source_passage",
+      "locator": "PDF p. 4 / ARRET N°2025-04/CC DU 30 JUIN 2025 / art. 4 (extrait)",
+      "text": "ARRET N°2025-04/CC DU 30 JUIN 2025\nArticle 4 : Ordonne la notification du présent arrêt au Président de la Transition, Chef de l’État et sa publication au Journal officiel ;"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000782",
+  "upstream_checksum": "e94c57677619ba1d78f9bea37ea80f87dd9a26a6b309e8fcaf49aff346db7a3d",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-07-sp-2.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

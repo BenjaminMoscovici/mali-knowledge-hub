@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000834",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2024, n° spécial 01",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° spécial 01 · 2024-01-26",
+  "period": "2024-01-26",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2024-0053/pt-rm du 26 janvier 2024 instituant le comite de pilotage du dialogue inter-maliens pour la paix et la reconciliation nationale.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE / art. 1er (extrait)",
+      "text": "DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE\nArticle 1er : Il est créé, auprès du Président de la Transition, Chef de l’Etat, un Comité de Pilotage du Dialogue inter- maliens pour la Paix et la Réconciliation nationale."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE / art. 2 (extrait)",
+      "text": "DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE\nArticle 2 : Le Comité de Pilotage est chargé de la préparation et de l’organisation du Dialogue inter-maliens pour la paix et la Réconciliation nationale."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE / art. 3 (extrait)",
+      "text": "DECRET N°2024-0053/PT-RM DU 26 JANVIER 2024 INSTITUANT LE COMITE DE PILOTAGE DU DIALOGUE INTER-MALIENS POUR LA PAIX ET LA RECONCILIATION NATIONALE\nArticle 3 : Le Comité de Pilotage du Dialogue inter-maliens pour la Paix et la Réconciliation nationale se compose :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000834",
+  "upstream_checksum": "c4afd81f15d99ccdf2bbe4d94c904f42cccb1ed0a29fbc904d248e54b22b739a",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-01-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

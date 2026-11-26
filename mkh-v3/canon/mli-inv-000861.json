@@ -1,0 +1,47 @@
+{
+  "id": "mli-inv-000861",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° spécial 12",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "reference",
+  "release": "Journal officiel du Mali — 2023, n° spécial 12 · 2023-07-21",
+  "period": "2023-07-21",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Références des actes identifiés dans les intitulés du numéro, avec type de texte, numéro et page PDF.",
+  "limitations": [
+    "Index des intitulés identifiés. Pour la teneur d’une décision, les personnes concernées, sa date d’entrée en vigueur et les modifications, consulter le texte officiel. Le nombre de références indexées ne mesure pas l’ensemble des actes en vigueur."
+  ],
+  "table": "actes_861",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "instrument": "TEXT",
+    "reference": "TEXT",
+    "issue_date": "TEXT"
+  },
+  "records": [
+    {
+      "id": "arret 2023-08/CC-Réf",
+      "locator": "PDF p. 1 / ARRET n°2023-08/CC-Réf",
+      "instrument": "ARRET",
+      "reference": "2023-08/CC-Réf",
+      "issue_date": "2023-07-21"
+    }
+  ],
+  "search_fields": [
+    "reference",
+    "instrument"
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000861",
+  "upstream_checksum": "5f9e2e6fa1bf2941be0f999feffbcbdec3e3c1e957d1eba74e6e0723814803f1",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-12-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

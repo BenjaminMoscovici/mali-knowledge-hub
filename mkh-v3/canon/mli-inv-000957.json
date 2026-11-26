@@ -1,0 +1,71 @@
+{
+  "id": "mli-inv-000957",
+  "edition_family": "instat-ihpc-mensuel",
+  "title": "Indice harmonisé des prix à la consommation — Mali national — 2022-08",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "dataset",
+  "release": "2022-08",
+  "period": "2022-08",
+  "collection": "INSTAT IHPC",
+  "geography": "Mali national",
+  "topics": [
+    "IHPC"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "IHPC Mali national, base 2014, niveau et variations publiées à un, trois et douze mois. Bulletin mensuel de 2022-08.",
+  "limitations": [
+    "Champ du bulletin : Mali national. Le niveau de l’indice, la variation mensuelle et le glissement annuel sont des mesures distinctes. Les niveaux sur des bases ou des populations différentes ne se raccordent pas directement."
+  ],
+  "comparison_scope": {
+    "geographic_frame": "Mali national",
+    "grain": "mois",
+    "measure": "IHPC",
+    "units": "points d’indice et variations en %",
+    "basis": "base 100 en 2014"
+  },
+  "table": "ihpc_957",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "month": "TEXT",
+    "area": "TEXT",
+    "base_year": "INTEGER",
+    "index_level": "REAL",
+    "monthly_pct": "REAL",
+    "three_month_pct": "REAL",
+    "annual_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2022-08",
+      "locator": "PDF p. 1 / INDICE NATIONAL / Pondération août.-21 mai.-22 juin.-22 juil.-22 août.-22 dernier derniers derniers",
+      "month": "2022-08",
+      "area": "Mali national",
+      "base_year": 2014,
+      "index_level": 119.5,
+      "monthly_pct": 2.1,
+      "three_month_pct": 4.5,
+      "annual_pct": 13.9
+    }
+  ],
+  "definitions": {
+    "index_level": "Niveau de l’indice mensuel, base 100 dans l’année indiquée.",
+    "monthly_pct": "Variation publiée sur un mois (%).",
+    "three_month_pct": "Variation publiée sur trois mois (%).",
+    "annual_pct": "Variation publiée sur douze mois (%)."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 1,
+      "locator": "PDF p. 1",
+      "text": "REPUBLIQUE DU MALI\n           UN PEUPLE-UN BUT-UNE FOI\n                         -=-=-=-=-=-\n\nMINISTERE DE L’ECONOMIE ET DES FINANCES\n                         -=-=-=-=-=-\n\n\n     INSTITUT NATIONAL DE LA STATISTIQUE\n\n\n                                                                        INDICE HARMONISE\n                                                             DES PRIX A LA CONSOMMATION(IHPC)\n                                                             POUR LES PAYS MEMBRES DE L'UEMOA\n                                                                       NATIONAL –Août 2022\n                                                                              AVERTISSEMENT\nL’Institut National de la Statistique a le plaisir de mettre à la disposition des utilisateurs l’Indice Harmonisé des Prix à la\nConsommation (IHPC) base 2014 en remplacement de l’IHPC base 2008. Cet indice est harmonisé car la méthodologie utilisée pour\nsa production est identique dans les huit pays membres de l’Union Economique et Monétaire Ouest Africaine (UEMOA). Ainsi, cet\nindice a été adopté comme instrument de mesure de l’évolution des prix au sein des pays de l’UEMOA.\nLa première période de base de l’IHPC est l’année 1996. Elle a été rénovée en 2014 et comme en 2008 et 1996, les pondérations\nproviennent d’une enquête sur les dépenses de plus de 1000 ménages, effectuée en 2008 et révisée en 2014. La population de\nréférence de l’IHPC base 2014 est l’ensemble des ménages résidant sur le territoire malien. Le panier de la ménagère comprend plus\nde 650 variétés suivies dans 3344 points de vente. Environ 17123 relevés de prix sont effectués chaque mois.\nL’IHPC est un indice de Laspeyres calculé en utilisant le principe d’agrégations successives du niveau le plus fin (variété) au niveau\nle plus élevé (fonction).\n\n\n                                                             Mois de Août 2022\n                                                     (Période de référence : année 2014)\n                                                                                                    Indices pour les mois de :                          Variations (en %)\n                                                                                                                                                du           des 3        des 12\n                                                                         Pondération   août.-21   mai.-22   juin.-22    juil.-22   août.-22   dernier       derniers     derniers\n                                                                                                                                               mois          mois          mois\n\n      INDICE NATIONAL                                                     10 000       104,9      114,4      115,0       117,1     119,5       2,1            4,5           13,9\n\n01    Produits alimentaires et boissons non alcoolisées                    5 847       106,8      121,9      121,4       124,5     128,3       3,0            5,2           20,1\n\n      - Céréales non transformées                                          1 894       113,8      143,0      145,9       147,1     155,0       5,3            8,4           36,2\n      - Autres fruits frais                                                 129         99,8       92,2       95,0       99,4       98,6       -0,8           6,9           -1,2\n      -Sel, épices, sauces et produits alimentaires n,d,a                   109         64,2       70,8       81,7       78,7       74,5       -5,3           5,2           16,0\n      -Légumes frais en feuilles                                            120         77,5       79,5       92,0       102,5     109,5       6,8           37,8           41,3\n      - Tubercules et plantains                                             110        119,1      115,7      117,0       120,7     134,9       11,8          16,6           13,3\n      - Huiles                                                              189        123,0      136,5      140,0       144,0     142,1       -1,4           4,1           15,5\n      - Autres matières grasses                                             140         69,8       79,3       85,2       96,1       94,7       -1,5          19,4           35,7\n02    Boissons alcoolisées, Tabac et stupéfiants                             78        123,3      105,2      106,1       108,1     105,9       -2,1           0,6           -14,2\n03    Articles d'habillement et chaussures                                  557        108,6      109,4      109,6       110,7     111,4       0,7            1,9             2,5\n      - Vêtements de dessus hommes                                          109        107,4      112,5      112,5       113,8     114,8       0,8            2,0             6,8\n\n\n04    Logement, eau, gaz, électricité et autres combustibles                951        102,2      110,1      112,5       112,4     112,8       0,3            2,4           10,4\n\n\n      - Combustibles solides et autres                                      257        105,8      103,9      104,7       103,6     104,4       0,8            0,5           -1,4\n\n05    Meubles, articles de ménage et entretien courant du foyer             362        110,4      112,2      112,5       114,2     114,5       0,3            2,1             3,7\n\n06    Santé                                                                 307        129,6      124,6      124,2       124,1     123,0       -0,9           -1,2          -5,1\n\n07    Transports                                                            879        100,1      103,2      105,0       107,6     111,6       3,7            8,2           11,5\n      - Carburants et lubrifiants                                           639         88,8      101,6      104,4       109,4     114,7       4,9           12,9           29,2\n08    Communication                                                         487         81,7       80,8       81,3       81,9       79,9       -2,4           -1,0          -2,1\n09    Loisirs et culture                                                    151        107,7      104,9      137,9       138,2     138,0       -0,2          31,5           28,1\n10    Enseignement                                                           65        115,6      111,1      114,4       114,7     114,8       0,1            3,3           -0,6\n11    Restaurants et Hôtels                                                  60        108,6      105,6      105,5       105,8     108,3       2,4            2,6           -0,3\n12    Biens et services divers                                              256        113,5      117,1      117,5       121,8     122,8       0,8            4,9             8,2\n\n\n\n\n                                                            INSTAT - Mali, le 11/09/2022 - IHPC                                                                        Page         1"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000957",
+  "upstream_checksum": "c4e7237a0d528d4288d86e473f665ea2664266ba2cb1ce696c4f372fb1846099",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/ihpc0822_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

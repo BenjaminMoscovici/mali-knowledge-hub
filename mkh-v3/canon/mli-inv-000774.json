@@ -1,0 +1,131 @@
+{
+  "id": "mli-inv-000774",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 12",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "reference",
+  "release": "Journal officiel du Mali — 2025, n° spécial 12 · 2025-10-08",
+  "period": "2025-10-08",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "infrastructure"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Références des actes identifiés dans les intitulés du numéro, avec type de texte, numéro et page PDF.",
+  "limitations": [
+    "Index des intitulés identifiés. Pour la teneur d’une décision, les personnes concernées, sa date d’entrée en vigueur et les modifications, consulter le texte officiel. Le nombre de références indexées ne mesure pas l’ensemble des actes en vigueur."
+  ],
+  "table": "actes_774",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "instrument": "TEXT",
+    "reference": "TEXT",
+    "issue_date": "TEXT"
+  },
+  "records": [
+    {
+      "id": "decret 2025-0680/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0680/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0680/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0681/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0681/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0681/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0682/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0682/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0682/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0683/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0683/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0683/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0684/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0684/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0684/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0685/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0685/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0685/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0686/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0686/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0686/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0687/PT-RM",
+      "locator": "PDF p. 2 / Décret n°2025-0687/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0687/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0688/PT-RM",
+      "locator": "PDF p. 2 / Décret n°2025-0688/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0688/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0689/PT-RM",
+      "locator": "PDF p. 2 / Décret n°2025-0689/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0689/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "decret 2025-0690/PT-RM",
+      "locator": "PDF p. 2 / Décret n°2025-0690/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0690/PT-RM",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "arrete 2025-4620/MDAC-SGdu",
+      "locator": "PDF p. 2 / Arrêté n°2025-4620/MDAC-SGdu",
+      "instrument": "ARRÊTÉ",
+      "reference": "2025-4620/MDAC-SGdu",
+      "issue_date": "2025-10-08"
+    },
+    {
+      "id": "arrete 2025-4620/MDAC-SG",
+      "locator": "PDF p. 7 / ARRETE n°2025-4620/MDAC-SG",
+      "instrument": "ARRETE",
+      "reference": "2025-4620/MDAC-SG",
+      "issue_date": "2025-10-08"
+    }
+  ],
+  "search_fields": [
+    "reference",
+    "instrument"
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000774",
+  "upstream_checksum": "7ac4b39467eaecd992236ab874e613659e4622717e8817730a12406e58d91d4e",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-12-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

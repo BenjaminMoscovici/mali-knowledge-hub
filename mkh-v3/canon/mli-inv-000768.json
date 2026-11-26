@@ -1,0 +1,138 @@
+{
+  "id": "mli-inv-000768",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 15",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "reference",
+  "release": "Journal officiel du Mali — 2025, n° spécial 15 · 2025-12-03",
+  "period": "2025-12-03",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Références des actes identifiés dans les intitulés du numéro, avec type de texte, numéro et page PDF.",
+  "limitations": [
+    "Index des intitulés identifiés. Pour la teneur d’une décision, les personnes concernées, sa date d’entrée en vigueur et les modifications, consulter le texte officiel. Le nombre de références indexées ne mesure pas l’ensemble des actes en vigueur."
+  ],
+  "table": "actes_768",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "instrument": "TEXT",
+    "reference": "TEXT",
+    "issue_date": "TEXT"
+  },
+  "records": [
+    {
+      "id": "decret 2025-0756/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0756/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0756/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0757/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0757/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0757/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0758/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0758/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0758/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0759/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0759/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0759/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0760/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0760/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0760/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0761/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0761/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0761/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0762/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0762/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0762/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0763/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0763/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0763/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0764/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0764/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0764/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0765/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0765/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0765/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0766/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0766/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0766/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0767/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0767/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0767/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0768/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0768/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0768/PT-RM",
+      "issue_date": "2025-12-03"
+    },
+    {
+      "id": "decret 2025-0769/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2025-0769/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2025-0769/PT-RM",
+      "issue_date": "2025-12-03"
+    }
+  ],
+  "search_fields": [
+    "reference",
+    "instrument"
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000768",
+  "upstream_checksum": "befda13bc14974d30a8b0c4caaf81d77ea091dc07039cd8784bbe3d8427d072f",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-15-sp-2.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

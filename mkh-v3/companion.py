@@ -361,7 +361,8 @@ class Companion:
                         not isinstance(value, list) or not all(isinstance(item, str) for item in value)
                     ))):
                 raise KnowledgeError("A tool parameter has the wrong type.")
-            if isinstance(value, str) and len(value) > (4000 if field == "sql" else 350):
+            # A passage locator is an exact published key, validated by read_passage.
+            if field != "locator" and isinstance(value, str) and len(value) > (4000 if field == "sql" else 350):
                 raise KnowledgeError("Tool parameter exceeds its size limit.")
         k = self.knowledge
         if name == "recall_work":

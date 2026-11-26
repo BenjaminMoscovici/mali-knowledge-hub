@@ -1,0 +1,71 @@
+{
+  "id": "mli-inv-000896",
+  "edition_family": "instat-ihpc-mensuel",
+  "title": "Indice harmonisé des prix à la consommation — Mali national — 2020-01",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "dataset",
+  "release": "2020-01",
+  "period": "2020-01",
+  "collection": "INSTAT IHPC",
+  "geography": "Mali national",
+  "topics": [
+    "IHPC"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "IHPC Mali national, base 2014, niveau et variations publiées à un, trois et douze mois. Bulletin mensuel de 2020-01.",
+  "limitations": [
+    "Champ du bulletin : Mali national. Le niveau de l’indice, la variation mensuelle et le glissement annuel sont des mesures distinctes. Les niveaux sur des bases ou des populations différentes ne se raccordent pas directement."
+  ],
+  "comparison_scope": {
+    "geographic_frame": "Mali national",
+    "grain": "mois",
+    "measure": "IHPC",
+    "units": "points d’indice et variations en %",
+    "basis": "base 100 en 2014"
+  },
+  "table": "ihpc_896",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "month": "TEXT",
+    "area": "TEXT",
+    "base_year": "INTEGER",
+    "index_level": "REAL",
+    "monthly_pct": "REAL",
+    "three_month_pct": "REAL",
+    "annual_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2020-01",
+      "locator": "PDF p. 1 / INDICE NATIONAL / Pondération janv.-19 oct.-19 nov.-19 déc.-19 janv.-20 derniers derniers",
+      "month": "2020-01",
+      "area": "Mali national",
+      "base_year": 2014,
+      "index_level": 100.1,
+      "monthly_pct": 0.3,
+      "three_month_pct": -0.4,
+      "annual_pct": -0.9
+    }
+  ],
+  "definitions": {
+    "index_level": "Niveau de l’indice mensuel, base 100 dans l’année indiquée.",
+    "monthly_pct": "Variation publiée sur un mois (%).",
+    "three_month_pct": "Variation publiée sur trois mois (%).",
+    "annual_pct": "Variation publiée sur douze mois (%)."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 1,
+      "locator": "PDF p. 1",
+      "text": "REPUBLIQUE DU MALI\n          UN PEUPLE-UN BUT-UNE FOI\n                         -=-=-=-=-=-\n\n      MINISTERE DE L’AMENAGEMENT DU\n      TERRITOIRE ET DE LA POPULATION\n                         -=-=-=-=-=-\n\n     INSTITUT NATIONAL DE LA STATISTIQUE\n\n\n                                                                         INDICE HARMONISE\n                                                              DES PRIX A LA CONSOMMATION(IHPC)\n                                                              POUR LES PAYS MEMBRES DE L'UEMOA\n                                                                     NATIONAL – JANVIER 2020\n                                                                             AVERTISSEMENT\nL’Institut National de la Statistique a le plaisir de mettre à la disposition des utilisateurs l’Indice Harmonisé des Prix à la\nConsommation (IHPC) base 2014 en remplacement de l’IHPC base 2008. Cet indice est harmonisé car la méthodologie utilisée pour\nsa production est identique dans les huit pays membres de l’Union Economique et Monétaire Ouest Africaine (UEMOA). Ainsi, cet\nindice a été adopté comme instrument de mesure de l’évolution des prix au sein des pays de l’UEMOA.\nLa première période de base de l’IHPC est l’année 1996. Elle a été rénovée en 2014 et comme en 2008 et 1996, les pondérations\nproviennent d’une enquête sur les dépenses de plus de 1000 ménages, effectuée en 2008 et révisée en 2014. La population de\nréférence de l’IHPC base 2014 est l’ensemble des ménages résidant sur le territoire malien. Le panier de la ménagère comprend plus\nde 650 variétés suivies dans 3344 points de vente. Environ 17123 relevés de prix sont effectués chaque mois.\nL’IHPC est un indice de Laspeyres calculé en utilisant le principe d’agrégations successives du niveau le plus fin (variété) au niveau\nle plus élevé (fonction).\n\n\n                                                                      Mois de Janvier 2020\n                                                                     (Base 100 : année 2014)\n                                                                                                        Indices pour les mois de :                         Variations (en %)\n                                                                                                                                                                des 3           des 12\n                                                                                                                                                 du dernier\n                                                                             Pondération   janv.-19   oct.-19   nov.-19     déc.-19   janv.-20                 derniers        derniers\n                                                                                                                                                   mois\n                                                                                                                                                                mois             mois\n\n      INDICE NATIONAL                                                         10 000       101,0      100,6      100,3       99,9     100,1         0,3         -0,4            -0,9\n\n01    Produits alimentaires et boissons non alcoolisées                        4 540        97,7      99,4        98,8       98,0      98,3         0,3         -1,1             0,6\n\n      - Céréales non transformées                                              1 894       103,1      99,8        98,2       98,5      99,5         0,9         -0,3            -3,5\n      - Autres fruits frais                                                     129        106,2      106,4      116,2       117,5    126,8         7,9         19,2            19,4\n       -Sel, épices, sauces et produits alimentaires n,d,a                      109         69,9      77,5        73,2       75,0      72,6        -3,2         -6,4             3,9\n       -Légumes frais en feuilles                                               120         54,3      87,6        79,7       73,1      57,8        -20,9        -34,0            6,6\n      - Tubercules et plantains                                                 110        107,3      109,0      110,4       102,6    107,1         4,3         -1,8            -0,2\n      - Huiles                                                                  189         94,9      98,0        95,3       96,7      95,5        -1,3         -2,6             0,7\n      - Autres matières grasses                                                 140         65,9      74,6        72,0       66,6      84,6        27,1         13,4            28,4\n02    Boissons alcoolisées, Tabac et stupéfiants                                78         109,6      102,8      107,5       108,1    107,9        -0,1          5,0            -1,5\n03    Articles d'habillement et chaussures                                      999        101,3      104,5      105,1       105,2    105,5         0,3          1,0             4,1\n      - Vêtements de dessus hommes                                              109        104,6      107,7      109,8       108,6    108,5        -0,1          0,8             3,7\n\n\n04    Logement, eau, gaz, électricité et autres combustibles                   1 097       104,6      108,0      108,8       108,3    109,5         1,1          1,3             4,6\n\n\n      - Combustibles solides et autres                                          257        102,0      104,8      105,2       103,7    106,1         2,4          1,3             4,1\n\n05    Meubles, articles de ménage et entretien courant du foyer                 386        109,3      107,5      107,9       108,0    108,3         0,2          0,8            -1,0\n\n06    Santé                                                                     256        125,6      110,1      110,5       111,1    107,8        -3,0         -2,1            -14,1\n07    Transports                                                               1 211       102,3      98,6        99,1       99,5      98,9        -0,6          0,3            -3,4\n      - Carburants et lubrifiants                                               639         93,1      91,3        92,7       95,6      94,0        -1,7          2,9             1,0\n08    Communication                                                             527         94,1      92,7        88,0       88,0      86,5        -1,8         -6,7            -8,1\n09    Loisirs et culture                                                        132        134,8      104,8      104,9       105,0    106,1         1,0          1,3            -21,3\n10    Enseignement                                                              178        100,6      104,7      105,1       105,0    105,9         0,9          1,2             5,3\n11    Restaurants et Hôtels                                                     231         95,0      98,6        98,6       98,8      96,3        -2,5         -2,3             1,4\n12    Biens et services divers                                                  365        109,6      107,7      108,2       108,5    113,4         4,5          5,3             3,4\n\n\n\n\n                                                             INSTAT - Mali, le 13/12/2019 - IHPC                                                                Page                    1"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000896",
+  "upstream_checksum": "5a395cf16437be4fc24fcec98e641b30cf7ed671edea6d54a5fc44589a176584",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/ihpc0120_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

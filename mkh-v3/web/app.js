@@ -188,49 +188,59 @@ function showEvidence(evidence, selection) {
   }
 }
 
-async function showCatalogue(initial = "") {
+async function showCatalogue() {
   openDrawer("What the Hub knows");
   const form = el("form", "catalogue-search");
   const input = el("input");
   input.type = "search";
   input.placeholder = "Search approved sources";
   input.setAttribute("aria-label", "Search approved sources");
-  input.value = initial;
   const submit = el("button", "sources-button", "Search");
   form.append(input, submit);
   const results = el("div");
   drawerBody.append(form, results);
+  let searchVersion = 0;
   async function load() {
+    const version = ++searchVersion;
     results.replaceChildren(el("p", "evidence-meta", "Loading approved sources…"));
     try {
-      const {sources, catalogue_total, matching_total} = await json("/api/sources?q=" + encodeURIComponent(input.value));
+      const {sources, catalogue_total, matching_total} = await json("/api/sources?q=" + encodeURIComponent(input.value) + "&view=summary");
+      if (version !== searchVersion) return;
       results.replaceChildren(el("p", "evidence-meta", matching_total + " matching · " + catalogue_total + " published"));
       if (!sources.length) results.append(el("p", "evidence-meta", "No matching published sources."));
       for (const item of sources) {
         const card = el("article", "evidence-item");
         const detail = el("button", "source-title", item.title);
         detail.type = "button";
-        detail.addEventListener("click", () => showSource(item.id, input.value));
+        detail.addEventListener("click", () => {
+          const position = drawerBody.scrollTop;
+          showSource(item.id, () => {
+            openDrawer("What the Hub knows");
+            drawerBody.append(form, results);
+            detail.focus({preventScroll: true});
+            drawerBody.scrollTop = position;
+          });
+        });
         card.append(detail, el("p", "evidence-meta", [item.publisher, item.period].filter(Boolean).join(" · ")),
           el("p", "source-description", item.description));
         results.append(card);
       }
     } catch (failure) {
-      results.replaceChildren(el("p", "evidence-meta", failure.message));
+      if (version === searchVersion) results.replaceChildren(el("p", "evidence-meta", failure.message));
     }
   }
   form.addEventListener("submit", (event) => { event.preventDefault(); load(); });
   await load();
 }
 
-async function showSource(id, previousQuery) {
+async function showSource(id, returnToList) {
   openDrawer("Source details");
   try {
     const info = await json("/api/sources/" + encodeURIComponent(id));
     if (drawer.classList.contains("hidden")) return;
     drawer.querySelector("h2").textContent = info.title;
     const back = el("button", "sources-button", "Back to sources");
-    back.addEventListener("click", () => showCatalogue(previousQuery));
+    back.addEventListener("click", returnToList);
     drawerBody.append(back, el("p", "source-description", info.description),
       el("p", "evidence-meta", [info.publisher, info.release, info.geography, info.period, info.license]
         .filter(Boolean).join(" · ")));

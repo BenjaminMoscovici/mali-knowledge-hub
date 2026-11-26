@@ -1,0 +1,75 @@
+{
+  "id": "mli-inv-000744",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2026, n° spécial 04",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "reference",
+  "release": "Journal officiel du Mali — 2026, n° spécial 04 · 2026-05-04",
+  "period": "2026-05-04",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Références des actes identifiés dans les intitulés du numéro, avec type de texte, numéro et page PDF.",
+  "limitations": [
+    "Index des intitulés identifiés. Pour la teneur d’une décision, les personnes concernées, sa date d’entrée en vigueur et les modifications, consulter le texte officiel. Le nombre de références indexées ne mesure pas l’ensemble des actes en vigueur."
+  ],
+  "table": "actes_744",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "instrument": "TEXT",
+    "reference": "TEXT",
+    "issue_date": "TEXT"
+  },
+  "records": [
+    {
+      "id": "decret 2026-0252/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2026-0252/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2026-0252/PT-RM",
+      "issue_date": "2026-05-04"
+    },
+    {
+      "id": "decret 2026-0255/PT-RM",
+      "locator": "PDF p. 1 / Décret n°2026-0255/PT-RM",
+      "instrument": "DÉCRET",
+      "reference": "2026-0255/PT-RM",
+      "issue_date": "2026-05-04"
+    },
+    {
+      "id": "decret 2026-0250/PT-RM",
+      "locator": "PDF p. 2 / DECRET n°2026-0250/PT-RM",
+      "instrument": "DECRET",
+      "reference": "2026-0250/PT-RM",
+      "issue_date": "2026-05-04"
+    },
+    {
+      "id": "decret 2026-0251/PT-RM",
+      "locator": "PDF p. 2 / DECRET n°2026-0251/PT-RM",
+      "instrument": "DECRET",
+      "reference": "2026-0251/PT-RM",
+      "issue_date": "2026-05-04"
+    },
+    {
+      "id": "decret 2026-0254/PT-RM",
+      "locator": "PDF p. 3 / DECRET n°2026-0254/PT-RM",
+      "instrument": "DECRET",
+      "reference": "2026-0254/PT-RM",
+      "issue_date": "2026-05-04"
+    }
+  ],
+  "search_fields": [
+    "reference",
+    "instrument"
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000744",
+  "upstream_checksum": "96b2617f00984e0bdbd51d10930f886fcba4c016cec925390e3fffdebb4aa213",
+  "url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-04-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -1,0 +1,70 @@
+{
+  "id": "mli-inv-000849",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° 22",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2023, n° 22 · 2023-09-01",
+  "period": "2023-09-01",
+  "collection": "Journal officiel du Mali — normal",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2023-040 du 29 aout 2023 portant code minier en republique du mali. Loi n°2023-041 du 29 aout 2023 relative au contenu local dans le secteur minier. Decret n°2023-0446/pt-rm du 21 aout 2023 portant abrogation partielle du decret n°2021-0418/pt-rm du 02 juillet 2021 portant nomination au ministere de l’industrie et du commerce.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI / art. 2 (extrait)",
+      "text": "LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI\nArticle 2 : Le présent Code régit l’ensemble des opérations de reconnaissance, d’exploration, de recherche, de construction, d’exploitation de substances minérales et de carrière, en tenant compte des autres possibilités d’utilisation du territoire, dans la recherche d’un développement durable."
+    },
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI / art. 3 (extrait)",
+      "text": "LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI\nArticle 3 : Les gîtes naturels de substances minérales contenus dans le sol et le sous-sol du Mali sont, de plein droit, la propriété de l’Etat. L’Etat en assure la mise en valeur soit directement, soit indirectement, notamment en faisant appel au concours de l’initiative privée conformément aux dispositions du présent Code."
+    },
+    {
+      "page": 6,
+      "kind": "source_passage",
+      "locator": "PDF p. 6 / LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI / art. 4 (extrait)",
+      "text": "LOI N°2023-040 DU 29 AOUT 2023 PORTANT CODE MINIER EN REPUBLIQUE DU MALI\nArticle 4 : Est soumise aux dispositions du présent Code, toute activité ayant pour but d’effectuer la reconnaissance, l’exploration, la recherche et l’exploitation de substances minérales, ainsi que leur possession, leur transport, leur traitement et leur commercialisation."
+    },
+    {
+      "page": 32,
+      "kind": "source_passage",
+      "locator": "PDF p. 32 / LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER / art. 2 (extrait)",
+      "text": "LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER\nArticle 2 : La présente Loi fixe les règles relatives au Contenu local dans le secteur des mines en République du Mali."
+    },
+    {
+      "page": 32,
+      "kind": "source_passage",
+      "locator": "PDF p. 32 / LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER / art. 3 (extrait)",
+      "text": "LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER\nArticle 3 : Les dispositions de la présente Loi s’appliquent à toutes les activités directement ou indirectement liées :"
+    },
+    {
+      "page": 32,
+      "kind": "source_passage",
+      "locator": "PDF p. 32 / LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER / art. 5 (extrait)",
+      "text": "LOI N°2023-041 DU 29 AOUT 2023 RELATIVE AU CONTENU LOCAL DANS LE SECTEUR MINIER\nArticle 5 : Un décret pris en Conseil des Ministres fixe les obligations du Contenu local dans le secteur minier, notamment celles concernant :"
+    },
+    {
+      "page": 38,
+      "kind": "source_passage",
+      "locator": "PDF p. 38 / DECRET N°2023-0446/PT-RM DU 21 AOUT 2023 PORTANT ABROGATION PARTIELLE DU DECRET N°2021-0418/PT-RM DU 02 JUILLET 2021 PORTANT NOMINATION AU MINISTERE DE L’INDUSTRIE ET DU COMMERCE / art. 1er (extrait)",
+      "text": "DECRET N°2023-0446/PT-RM DU 21 AOUT 2023 PORTANT ABROGATION PARTIELLE DU DECRET N°2021-0418/PT-RM DU 02 JUILLET 2021 PORTANT NOMINATION AU MINISTERE DE L’INDUSTRIE ET DU COMMERCE\nArticle 1er : Les dispositions du Décret n°2021-0418/PT-RM du 02 juillet 2021 portant nomination au Ministère de l’Industrie et du Commerce sont abrogées, en ce qui concerne :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000849",
+  "upstream_checksum": "fd779a51482851cd75d678ab85f5cd04f37da5052a36143623246074f60a0408",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-22.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

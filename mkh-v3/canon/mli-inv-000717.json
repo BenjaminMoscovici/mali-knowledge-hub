@@ -1,0 +1,133 @@
+{
+  "id": "mli-inv-000717",
+  "edition_family": "hdx-world-bank-agriculture-and-rural-development-indicators-for-mali",
+  "title": "Mali - Agriculture and Rural Development",
+  "publisher": "World Bank / World Development Indicators et producteurs cités",
+  "type": "dataset",
+  "release": "1960–2025 · capture 2026-11-26 · fe333b97511a",
+  "period": "1960–2025",
+  "collection": "HDX resource — world-bank-agriculture-and-rural-development-indicators-for-mali",
+  "geography": "Mali",
+  "topics": [
+    "agricultural indicators"
+  ],
+  "description": "Mali - Agriculture and Rural Development : 34 indicateurs, 1670 observations publiées pour le Mali.",
+  "limitations": [
+    "Sur 1703 lignes du CSV, 1670 sont publiées avec un code et une licence CC BY vérifiés dans le dictionnaire WDI. Les autres sont exclues de cette table.",
+    "Les catalogues thématiques peuvent contenir les mêmes observations. Identifier chaque valeur par pays, code et année, conserver la définition et l’unité de l’indicateur avant comparaison."
+  ],
+  "license": "World Bank WDI, CC BY 4.0, with attribution in the provider field. Selected Mali observations from the HDX category CSV. Verified indicator licences in WDISeries.csv.",
+  "reuse_url": "https://datacatalog.worldbank.org/public-licenses#cc-by",
+  "comparison_scope": {
+    "geographic_frame": "Mali selon le découpage de la source",
+    "grain": "observation dans le fichier"
+  },
+  "table": "inventory_717",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "indicator_code": "TEXT",
+    "indicator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "provider": "TEXT"
+  },
+  "dimensions": [
+    "indicator",
+    "indicator_code"
+  ],
+  "definitions": {
+    "indicator": "Libellé du fournisseur, avec unité lorsque celle-ci figure dans la série.",
+    "provider": "Producteur ou source créditée à la ligne correspondante dans WDISeries.csv."
+  },
+  "table_snapshot": {
+    "sha256": "dd8a549e7552eddd46062d91d6bacb9e0fd7da844d129c1a4b4700ae49713306",
+    "row_count": 1670,
+    "samples": [
+      {
+        "id": "r2",
+        "locator": "CSV row 2 / AG.CON.FERT.ZS / Mali / 2024",
+        "indicator_code": "AG.CON.FERT.ZS",
+        "indicator": "Fertilizer consumption (kilograms per hectare of arable land)",
+        "year": 2024,
+        "value": 11.9985610850739,
+        "provider": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)"
+      },
+      {
+        "id": "r3",
+        "locator": "CSV row 3 / AG.CON.FERT.ZS / Mali / 2023",
+        "indicator_code": "AG.CON.FERT.ZS",
+        "indicator": "Fertilizer consumption (kilograms per hectare of arable land)",
+        "year": 2023,
+        "value": 10.6180280940849,
+        "provider": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)"
+      },
+      {
+        "id": "r4",
+        "locator": "CSV row 4 / AG.CON.FERT.ZS / Mali / 2022",
+        "indicator_code": "AG.CON.FERT.ZS",
+        "indicator": "Fertilizer consumption (kilograms per hectare of arable land)",
+        "year": 2022,
+        "value": 9.52537946655162,
+        "provider": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)"
+      }
+    ],
+    "dimension_values": {
+      "indicator": {
+        "distinct_count": 34,
+        "examples": [
+          "Rural population",
+          "Rural population (% of total population)",
+          "Rural population growth (annual %)",
+          "Agricultural land (% of land area)",
+          "Agricultural land (sq. km)",
+          "Arable land (% of land area)",
+          "Arable land (hectares per person)",
+          "Arable land (hectares)",
+          "Cereal production (metric tons)",
+          "Cereal yield (kg per hectare)",
+          "Crop production index (2014-2016 = 100)",
+          "Fertilizer consumption (kilograms per hectare of arable land)",
+          "Food production index (2014-2016 = 100)",
+          "Land area (sq. km)",
+          "Land under cereal production (hectares)",
+          "Livestock production index (2014-2016 = 100)",
+          "Permanent cropland (% of land area)",
+          "Surface area (sq. km)",
+          "Average precipitation in depth (mm per year)",
+          "Agriculture, forestry, and fishing, value added (% of GDP)"
+        ]
+      },
+      "indicator_code": {
+        "distinct_count": 34,
+        "examples": [
+          "SP.RUR.TOTL",
+          "SP.RUR.TOTL.ZS",
+          "SP.RUR.TOTL.ZG",
+          "AG.CON.FERT.ZS",
+          "AG.LND.AGRI.K2",
+          "AG.LND.AGRI.ZS",
+          "AG.LND.ARBL.HA",
+          "AG.LND.ARBL.HA.PC",
+          "AG.LND.ARBL.ZS",
+          "AG.LND.CREL.HA",
+          "AG.LND.CROP.ZS",
+          "AG.LND.TOTL.K2",
+          "AG.PRD.CREL.MT",
+          "AG.PRD.CROP.XD",
+          "AG.PRD.FOOD.XD",
+          "AG.PRD.LVSK.XD",
+          "AG.SRF.TOTL.K2",
+          "AG.YLD.CREL.KG",
+          "AG.LND.PRCP.MM",
+          "NV.AGR.TOTL.CD"
+        ]
+      }
+    }
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000717",
+  "upstream_checksum": "fe333b97511a1d92ae0613b00045b1bb324665b85e2284bea6c8dae88f4d3c4c",
+  "url": "https://data.humdata.org/dataset/bfa257bd-4848-45dc-83e0-77af76a435ba/resource/69147d36-3715-4846-aa31-67fc9c4b577e/download/agriculture-and-rural-development_mli.csv",
+  "reuse_evidence_sha256": "701d3fc76a3a1f39fd8b1cfe56d332c4fbe5a783a0f83775e1b736c765a5189d"
+}

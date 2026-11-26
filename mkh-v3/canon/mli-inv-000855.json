@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000855",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° spécial 16",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2023, n° spécial 16 · 2023-12-29",
+  "period": "2023-12-29",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decision n°0101/2022/bvg fixant l’organisation et les modalites de fonctionnement du bureau du verificateur general.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 68,
+      "kind": "source_passage",
+      "locator": "PDF p. 68 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL / art. 1er (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL\nArticle 1er : La présente décision fixe l’organisation et les modalités de fonctionnement du Bureau du Vérificateur Général."
+    },
+    {
+      "page": 68,
+      "kind": "source_passage",
+      "locator": "PDF p. 68 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL / art. 3 (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL\nArticle 3 : Le Bureau du Vérificateur Général est dirigé par un Vérificateur Général nommé par décret du Président de la République, sur la base d’une procédure d’appel à candidatures."
+    },
+    {
+      "page": 68,
+      "kind": "source_passage",
+      "locator": "PDF p. 68 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL / art. 4 (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE FONCTIONNEMENT DU BUREAU DU VERIFICATEUR GENERAL\nArticle 4 : Le Vérificateur Général est assisté et secondé d’un Vérificateur Général Adjoint, nommé par décret du Président de la République, sur proposition du Vérificateur Général, après appel à candidatures :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000855",
+  "upstream_checksum": "739b9b6e7dfec98eb46c626b7eb2a2f6bef84a94088a29e4cec1490b374f6672",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-16-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

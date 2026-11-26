@@ -1,0 +1,52 @@
+{
+  "id": "mli-inv-000854",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° 17",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2023, n° 17 · 2023-06-16",
+  "period": "2023-06-16",
+  "collection": "Journal officiel du Mali — normal",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Ordonnance n°2023-019/pt-rm du 14 juin 2023 completant l’ordonnance n°2023-018/ pt-rm du 26 mai 2023 portant derogation a la loi electorale. Decret n°2023-0338/pt-rm du 02 juin 2023 portant modification du decret n°2021-0385/ pt-rm du 11 juin 2021 portant nomination des membres du gouvernement.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / ORDONNANCE N°2023-019/PT-RM DU 14 JUIN 2023 COMPLETANT L’ORDONNANCE N°2023-018/ PT-RM DU 26 MAI 2023 PORTANT DEROGATION A LA LOI ELECTORALE / art. 1er (extrait)",
+      "text": "ORDONNANCE N°2023-019/PT-RM DU 14 JUIN 2023 COMPLETANT L’ORDONNANCE N°2023-018/ PT-RM DU 26 MAI 2023 PORTANT DEROGATION A LA LOI ELECTORALE\nArticle 1er : Les dispositions de l’Ordonnance n°2023- 018/PT-RM du 26 mai 2023 portant dérogation à la loi électorale sont complétées ainsi qu’il suit, par dérogation à l’article 116 de la loi électorale :"
+    },
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / DECRET N°2023-0338/PT-RM DU 02 JUIN 2023 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT / art. 1er (extrait)",
+      "text": "DECRET N°2023-0338/PT-RM DU 02 JUIN 2023 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT\nArticle 1er : Les dispositions du Décret n°2021-0385/PT- RM du 11 juin 2021 portant nomination des membres du Gouvernement sont abrogées, en ce qui concerne Monsieur Lamine Seydou TRAORE, ministre des Mines, de l’Energie et de l’Eau."
+    },
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / ORDONNANCE N°2023-019/PT-RM DU 14 JUIN 2023 COMPLETANT L’ORDONNANCE N°2023-018/ PT-RM DU 26 MAI 2023 PORTANT DEROGATION A LA LOI ELECTORALE / art. 2 (extrait)",
+      "text": "ORDONNANCE N°2023-019/PT-RM DU 14 JUIN 2023 COMPLETANT L’ORDONNANCE N°2023-018/ PT-RM DU 26 MAI 2023 PORTANT DEROGATION A LA LOI ELECTORALE\nArticle 2 : La présente ordonnance devient caduque dès la proclamation des résultats provisoires du référendum par le Président de l’AIGE."
+    },
+    {
+      "page": 3,
+      "kind": "source_passage",
+      "locator": "PDF p. 3 / DECRET N°2023-0338/PT-RM DU 02 JUIN 2023 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT / art. 2 (extrait)",
+      "text": "DECRET N°2023-0338/PT-RM DU 02 JUIN 2023 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT\nArticle 2 : Monsieur Alousséni SANOU, ministre de l’Economie et des Finances assure cumulativement les fonctions de ministre des Mines, de l’Energie et de l’Eau."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000854",
+  "upstream_checksum": "46ccce393d4e3a67c7e4bf01e53ed0dd3f27e9fb633fdea9bad384b010f296fa",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-17-2.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

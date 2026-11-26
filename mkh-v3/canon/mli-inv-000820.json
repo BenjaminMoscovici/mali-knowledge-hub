@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000820",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2024, n° spécial 09",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° spécial 09 · 2024-03-01",
+  "period": "2024-03-01",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2024-0122/pm-rm du 01 mars 2024 portant abrogation du decret n°2019-0423/ pm-rm du 19 juin 2019, modifie, portant creation, composition, organisation et modalites de fonctionnement du cadre politique de gestion de la crise du centre. Decret n°2024-0123/pm-rm du 01 mars 2024 portant abrogation du decret n°2021- 0399/pm-rm du 29 juin 2021 portant nomination du secretaire permanent du cadre politique de gestion de la crise du centre. Decret n°2024-0124/pm-rm du 01 mars 2024 portant abrogation de decrets.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0122/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DU DECRET N°2019-0423/ PM-RM DU 19 JUIN 2019, MODIFIE, PORTANT CREATION, COMPOSITION, ORGANISATION ET MODALITES DE FONCTIONNEMENT DU CADRE POLITIQUE DE GESTION DE LA CRISE DU CENTRE / art. 1er (extrait)",
+      "text": "DECRET N°2024-0122/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DU DECRET N°2019-0423/ PM-RM DU 19 JUIN 2019, MODIFIE, PORTANT CREATION, COMPOSITION, ORGANISATION ET MODALITES DE FONCTIONNEMENT DU CADRE POLITIQUE DE GESTION DE LA CRISE DU CENTRE\nArticle 1er : Le Décret n°2019-0423/PM-RM du 19 juin 2019, modifié, portant création, composition, organisation et modalités de fonctionnement du Cadre politique de Gestion de la Crise du Centre est abrogé."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0123/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DU DECRET N°2021- 0399/PM-RM DU 29 JUIN 2021 PORTANT NOMINATION DU SECRETAIRE PERMANENT DU CADRE POLITIQUE DE GESTION DE LA CRISE DU CENTRE / art. 1er (extrait)",
+      "text": "DECRET N°2024-0123/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DU DECRET N°2021- 0399/PM-RM DU 29 JUIN 2021 PORTANT NOMINATION DU SECRETAIRE PERMANENT DU CADRE POLITIQUE DE GESTION DE LA CRISE DU CENTRE\nArticle 1er : Le Décret n°2021-0399/PM-RM du 29 juin 2021 portant nomination de Monsieur Mohamed Lamine HAIDARA, Inspecteur des Services économiques, en qualité de Secrétaire permanent du Cadre politique de Gestion de la Crise du Centre, est abrogé."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0124/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DE DECRETS / art. 1er (extrait)",
+      "text": "DECRET N°2024-0124/PM-RM DU 01 MARS 2024 PORTANT ABROGATION DE DECRETS\nArticle 1er : Les Décrets ci-après sont abrogés :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000820",
+  "upstream_checksum": "3e63620b02625a4383ecc62c2c680cbe47cb59c668df2de633aa56752d6c6437",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-09-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000805",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2024, n° spécial 19",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° spécial 19 · 2024-11-21",
+  "period": "2024-11-21",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2024-0656/pt-rm du 20 novembre 2024 mettant fin aux fonctions du premier ministre et des membres du gouvernement.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0656/PT-RM DU 20 NOVEMBRE 2024 METTANT FIN AUX FONCTIONS DU PREMIER MINISTRE ET DES MEMBRES DU GOUVERNEMENT / art. 1er (extrait)",
+      "text": "DECRET N°2024-0656/PT-RM DU 20 NOVEMBRE 2024 METTANT FIN AUX FONCTIONS DU PREMIER MINISTRE ET DES MEMBRES DU GOUVERNEMENT\nArticle 1er : Il est mis fin aux fonctions du Premier ministre et des membres du Gouvernement."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0656/PT-RM DU 20 NOVEMBRE 2024 METTANT FIN AUX FONCTIONS DU PREMIER MINISTRE ET DES MEMBRES DU GOUVERNEMENT / art. 2 (extrait)",
+      "text": "DECRET N°2024-0656/PT-RM DU 20 NOVEMBRE 2024 METTANT FIN AUX FONCTIONS DU PREMIER MINISTRE ET DES MEMBRES DU GOUVERNEMENT\nArticle 2 : Les Décrets, ci-après, sont abrogés :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000805",
+  "upstream_checksum": "91c54c63ecd57ff67543c80921548b6e6cae2b37be1192766524a99ae01eed33",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-19-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

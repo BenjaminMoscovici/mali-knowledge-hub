@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000780",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2025, n° spécial 08",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2025, n° spécial 08 · 2025-07-11",
+  "period": "2025-07-11",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2025-029 du 08 juillet 2025 portant revision de la charte de la transition.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-029 DU 08 JUILLET 2025 PORTANT REVISION DE LA CHARTE DE LA TRANSITION / art. 1er (extrait)",
+      "text": "LOI N°2025-029 DU 08 JUILLET 2025 PORTANT REVISION DE LA CHARTE DE LA TRANSITION\nArticle 1er : Il est substitué au Préambule de la Charte de la Transition les dispositions suivantes :"
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2025-029 DU 08 JUILLET 2025 PORTANT REVISION DE LA CHARTE DE LA TRANSITION / art. 2 (extrait)",
+      "text": "LOI N°2025-029 DU 08 JUILLET 2025 PORTANT REVISION DE LA CHARTE DE LA TRANSITION\nArticle 2 : Les articles 1er, 2, 4, 5, 9, 11, 12, 13, 22, 25 et 26 de la Charte de la Transition sont modifiés ainsi qu’il suit :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000780",
+  "upstream_checksum": "3662b3dc1e69469c6bf4de4ebbd12cc2523cde4ce9f6a5cbc1c829075c38eda6",
+  "url": "https://sgg-mali.ml/JO/2025/mali-jo-2025-08-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

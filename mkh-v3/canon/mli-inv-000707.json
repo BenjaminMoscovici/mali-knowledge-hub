@@ -1,0 +1,176 @@
+{
+  "id": "mli-inv-000707",
+  "edition_family": "education-mali-etats-scolaires",
+  "title": "Mali Schools — ML_Schools_Octobre_2023",
+  "publisher": "Ministère de l’Éducation du Mali / OCHA Mali",
+  "type": "dataset",
+  "release": "2023-10",
+  "period": "2023-10",
+  "collection": "HDX resource — mali-schools",
+  "geography": "Mali",
+  "topics": [
+    "school infrastructure and reference records"
+  ],
+  "description": "Relevé scolaire 2023-10 : 9141 lignes nommées de la feuille BDD, regroupées par région du fichier et statut de fonctionnement déclaré.",
+  "limitations": [
+    "L’unité est une ligne scolaire nommée. Des codes CPS sont absents ou répétés et différents niveaux peuvent partager un site. Le total ne dénombre pas des établissements physiques uniques.",
+    "Le statut correspond au champ « Statut de fonctionnalité de l'école » de cette édition. La couverture géographique et la collecte changent selon les éditions. Aucun contrôle de fonctionnement actuel, ni dénominateur de couverture de la population."
+  ],
+  "license": "Ministère de l’Éducation du Mali / OCHA Mali, CC BY 3.0 IGO. MKH a agrégé la feuille BDD par région et statut déclaré.",
+  "reuse_url": "https://data.humdata.org/dataset/mali-schools",
+  "comparison_scope": {
+    "geographic_frame": "Mali selon le découpage de la source",
+    "grain": "groupe région et statut de lignes scolaires nommées"
+  },
+  "table": "inventory_707",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "region": "TEXT",
+    "reported_status": "TEXT",
+    "reference_month": "TEXT",
+    "school_rows": "INTEGER"
+  },
+  "records": [
+    {
+      "id": "1",
+      "locator": "BDD!A3:AI9144 / C Région=Gao (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Gao",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 448
+    },
+    {
+      "id": "2",
+      "locator": "BDD!A3:AI9144 / C Région=Gao (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Gao",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 133
+    },
+    {
+      "id": "3",
+      "locator": "BDD!A3:AI9144 / C Région=Kidal (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Kidal",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 55
+    },
+    {
+      "id": "4",
+      "locator": "BDD!A3:AI9144 / C Région=Kidal (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Kidal",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 59
+    },
+    {
+      "id": "5",
+      "locator": "BDD!A3:AI9144 / C Région=Koulikoro (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Koulikoro",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 451
+    },
+    {
+      "id": "6",
+      "locator": "BDD!A3:AI9144 / C Région=Koulikoro (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Koulikoro",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 44
+    },
+    {
+      "id": "7",
+      "locator": "BDD!A3:AI9144 / C Région=Menaka (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Menaka",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 127
+    },
+    {
+      "id": "8",
+      "locator": "BDD!A3:AI9144 / C Région=Menaka (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Menaka",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 160
+    },
+    {
+      "id": "9",
+      "locator": "BDD!A3:AI9144 / C Région=Mopti (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Mopti",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 1430
+    },
+    {
+      "id": "10",
+      "locator": "BDD!A3:AI9144 / C Région=Mopti (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Mopti",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 844
+    },
+    {
+      "id": "11",
+      "locator": "BDD!A3:AI9144 / C Région=Segou (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Segou",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 1659
+    },
+    {
+      "id": "12",
+      "locator": "BDD!A3:AI9144 / C Région=Segou (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Segou",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 177
+    },
+    {
+      "id": "13",
+      "locator": "BDD!A3:AI9144 / C Région=Sikasso (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Sikasso",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 2546
+    },
+    {
+      "id": "14",
+      "locator": "BDD!A3:AI9144 / C Région=Sikasso (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Sikasso",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 29
+    },
+    {
+      "id": "15",
+      "locator": "BDD!A3:AI9144 / C Région=Tombouctou (casse harmonisée) / AI statut=fonctionnelle / I nom renseigné",
+      "region": "Tombouctou",
+      "reported_status": "fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 703
+    },
+    {
+      "id": "16",
+      "locator": "BDD!A3:AI9144 / C Région=Tombouctou (casse harmonisée) / AI statut=non fonctionnelle / I nom renseigné",
+      "region": "Tombouctou",
+      "reported_status": "non fonctionnelle",
+      "reference_month": "2023-10",
+      "school_rows": 276
+    }
+  ],
+  "dimensions": [
+    "region",
+    "reported_status"
+  ],
+  "definitions": {
+    "school_rows": "Nombre de lignes dont la colonne I contient un nom. Oui ou Ecole fonctionnelle sont fonctionnelles, Non ou les libellés non fonctionnelle sont non fonctionnelles, selon le mois de la colonne. Aucune extrapolation."
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000707",
+  "upstream_checksum": "76a2ef8f51f5f98fa54482bc308925f545bca8d27b98c35574b160018948bae1",
+  "url": "https://data.humdata.org/dataset/52ba0caf-1caf-4e40-a0c4-7c9d17454f15/resource/c85aa3d0-b42b-47cf-b51c-0c4a2c1bcdca/download/ml_schools_octobre_2023.xlsx",
+  "reuse_evidence_sha256": "3a9c95abd1484a6c016b4869394ec6ec10bad86c7370af9e69561ae3113d915f"
+}

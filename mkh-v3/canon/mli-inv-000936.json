@@ -1,0 +1,71 @@
+{
+  "id": "mli-inv-000936",
+  "edition_family": "instat-ihpc-bamako",
+  "title": "Indice harmonisé des prix à la consommation — District de Bamako — 2018-06",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "dataset",
+  "release": "2018-06",
+  "period": "2018-06",
+  "collection": "INSTAT IHPC",
+  "geography": "District de Bamako",
+  "topics": [
+    "IHPC"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "IHPC District de Bamako, base 2014, niveau et variations publiées à un, trois et douze mois. Bulletin mensuel de 2018-06.",
+  "limitations": [
+    "Champ du bulletin : District de Bamako. Le niveau de l’indice, la variation mensuelle et le glissement annuel sont des mesures distinctes. Les niveaux sur des bases ou des populations différentes ne se raccordent pas directement."
+  ],
+  "comparison_scope": {
+    "geographic_frame": "District de Bamako",
+    "grain": "mois",
+    "measure": "IHPC",
+    "units": "points d’indice et variations en %",
+    "basis": "base 100 en 2014"
+  },
+  "table": "ihpc_936",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "month": "TEXT",
+    "area": "TEXT",
+    "base_year": "INTEGER",
+    "index_level": "REAL",
+    "monthly_pct": "REAL",
+    "three_month_pct": "REAL",
+    "annual_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2018-06",
+      "locator": "PDF p. 1 / INDICE DE BAMAKO / Pondération juin.-17 mars.-18 avr.-18 mai.-18 juin.-18 derniers derniers",
+      "month": "2018-06",
+      "area": "District de Bamako",
+      "base_year": 2014,
+      "index_level": 106.1,
+      "monthly_pct": 0.1,
+      "three_month_pct": 2.8,
+      "annual_pct": 2.6
+    }
+  ],
+  "definitions": {
+    "index_level": "Niveau de l’indice mensuel, base 100 dans l’année indiquée.",
+    "monthly_pct": "Variation publiée sur un mois (%).",
+    "three_month_pct": "Variation publiée sur trois mois (%).",
+    "annual_pct": "Variation publiée sur douze mois (%)."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 1,
+      "locator": "PDF p. 1",
+      "text": "REPUBLIQUE DU MALI\n           UN PEUPLE-UN BUT-UNE FOI\n                          -=-=-=-=-=-\n\n       MINISTERE DE L’AMENAGEMENT DU\n       TERRITOIRE ET DE LA POPULATION\n                          -=-=-=-=-=-\n\n      INSTITUT NATIONAL DE LA STATISTIQUE\n\n\n                                                                     INDICE HARMONISE\n                                                              DES PRIX A LA CONSOMMATION(IHPC)\n                                                              POUR LES PAYS MEMBRES DE L'UEMOA\n                                                                     BAMAKO – JUIN 2018\n                                                                          AVERTISSEMENT\nL’Institut National de la Statistique a le plaisir de mettre à la disposition des utilisateurs l’Indice Harmonisé des Prix à la\nConsommation (IHPC). Cet indice est harmonisé car la méthodologie utilisée pour sa production est identique dans les huit pays\nmembres de l’Union Economique et Monétaire Ouest Africaine (UEMOA). Ainsi, cet indice a été adopté comme instrument de\nmesure de l’évolution des prix au sein des pays de l’UEMOA.\nLa première période de base de l’IHPC est l’année 1996. Elle a été rénovée en 2014 et comme en 2008 et 1996, les pondérations\nproviennent d’une enquête sur les dépenses de plus de 1000 ménages, effectuée en 2008 et révisée en 2014. La population de\nréférence de l’IHPC est l’ensemble des ménages résidant dans le District de Bamako Le panier de la ménagère comprend 650 variétés\nsuivies dans 1511 points de vente.\nL’IHPC est un indice de Laspeyres calculé en utilisant le principe d’agrégations successives du niveau le plus fin (variété) au niveau\nle plus élevé (fonction).\n                                                                      Mois de juin 2018\n                                                                    (Base 100 : année 2014)\n                                                                                                     Indices pour les mois de :                        Variations (en %)\n                                                                                                                                                            des 3           des 12\n                                                                                                                                              du dernier\n                                                                          Pondération   juin.-17   mars.-18    avr.-18   mai.-18   juin.-18                derniers        derniers\n                                                                                                                                                mois\n                                                                                                                                                            mois             mois\n\n        INDICE DE BAMAKO                                                   10 000       103,4       103,2      104,4      106,0    106,1         0,1         2,8             2,6\n\n 01     Produits alimentaires et boissons non alcoolisées                   4 540       108,7       106,7      109,1      112,2    112,3         0,1         5,2             3,3\n\n        - Céréales non transformées                                         1 246       106,9       111,8      112,7      118,5    115,7        -2,4         3,4             8,2\n        - Autres fruits frais                                                 84        116,5       118,3      115,3      113,3    115,4         1,9         -2,5           -1,0\n        -Sel, épices, sauces et produits alimentaires n,d,a                  263        109,9       110,9      111,0      110,7    112,7         1,8         1,5             2,5\n        -Légumes frais en feuilles                                            78        144,9       81,3        99,4      121,8    156,0        28,1        91,8             7,7\n        - Tubercules et plantains                                             84        126,0       77,3       104,1      107,7    111,3         3,3        43,9            -11,7\n        - Huiles                                                             244        105,7       101,0      102,1      101,5    101,8         0,3         0,8            -3,7\n        - Autres matières grasses                                             91        104,3       100,0       91,9       99,9     97,0        -2,9         -3,0           -7,0\n 02     Boissons alcoolisées, Tabac et stupéfiants                            78        125,0       93,2        92,9       92,8     92,5        -0,3         -0,8           -25,9\n\n 03     Articles d'habillement et chaussures                                 999         97,9       98,2        98,2       98,6     98,8         0,3         0,6             0,9\n        - Vêtements de dessus hommes                                         205         96,7       97,8        97,8       98,2     98,2         0,0         0,5             1,5\n\n 04     Logement, eau, gaz, électricité et autres combustibles              1 097        89,3       106,5      106,4      106,9    107,2         0,3         0,7            20,1\n\n        - Combustibles solides et autres                                     222        122,1       124,8      123,9      126,0    127,5         1,2         2,2             4,4\n\n 05     Meubles, articles de ménage et entretien courant du foyer            386        143,8       106,7      106,6      106,9    109,3         2,2         2,5            -24,0\n\n 06     Santé                                                                256         86,7       103,7      103,7      103,3    103,2         0,0         -0,4           19,0\n\n 07     Transports                                                          1 211       112,3       94,4        94,4       95,0     95,3         0,3         0,9            -15,2\n        - Carburants et lubrifiants                                          639         90,3       91,0        91,0       92,0     92,7         0,8         1,9             2,7\n 08     Communication                                                        527         90,1       89,0        89,5       87,6     85,5        -2,4         -4,0           -5,1\n 09     Loisirs et culture                                                   132         87,7       99,1        99,1       99,3     99,3         0,0         0,3            13,3\n 10     Enseignement                                                         178        103,0       104,7      104,7      104,7    104,7         0,0         0,0             1,6\n 11     Restaurants et Hôtels                                                231        106,7       107,7      107,7      107,7    107,7         0,0         0,0             0,9\n 12     Biens et services divers                                             365        103,7       104,2      104,2      104,4    104,4         0,0         0,2             0,6\n\n\n                                                          INSTAT - Bamako, le 10/07/2018 - IHPC                                                                Page                 1"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000936",
+  "upstream_checksum": "02c5aad03fd9d8c3ef5da74635425e673807142c89b5440b1774a742af9f3195",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/ihpc0618_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

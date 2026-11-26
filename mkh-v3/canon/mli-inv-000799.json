@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000799",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2024, n° spécial 23",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° spécial 23 · 2024-12-30",
+  "period": "2024-12-30",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decision n°0101/2022/bvg fixant l’organisation et les modalites de.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 83,
+      "kind": "source_passage",
+      "locator": "PDF p. 83 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE / art. 1er (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE\nArticle 1er : La présente décision fixe l’organisation et les modalités de fonctionnement du Bureau du Vérificateur Général."
+    },
+    {
+      "page": 83,
+      "kind": "source_passage",
+      "locator": "PDF p. 83 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE / art. 3 (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE\nArticle 3 : Le Bureau du Vérificateur Général est dirigé par un Vérificateur Général nommé par décret du Président de la République, sur la base d’une procédure d’appel à candidatures."
+    },
+    {
+      "page": 83,
+      "kind": "source_passage",
+      "locator": "PDF p. 83 / DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE / art. 4 (extrait)",
+      "text": "DECISION N°0101/2022/BVG FIXANT L’ORGANISATION ET LES MODALITES DE\nArticle 4 : Le Vérificateur Général est assisté et secondé d’un Vérificateur Général Adjoint, nommé par décret du Président de la République, sur proposition du Vérificateur Général, après appel à candidatures :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000799",
+  "upstream_checksum": "0bcde67026b80bbdd1a8b96efe2b92d564858aa04b9daf998b6c9a1d9132e70b",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-23-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

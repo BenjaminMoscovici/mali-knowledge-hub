@@ -1,0 +1,46 @@
+{
+  "id": "mli-inv-000857",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2023, n° spécial 15",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2023, n° spécial 15 · 2023-12-27",
+  "period": "2023-12-27",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "finance"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Loi n°2023-060 du 22 decembre 2023 portant loi de finances pour l’exercice 2024.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024 / art. 1er (extrait)",
+      "text": "LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024\nArticle 1er : La perception des impôts, produits et revenus affectés à l’Etat, aux Collectivités territoriales et aux Etablissements publics est effectuée pendant l’année 2024, conformément aux lois et règlements en vigueur et aux dispositions de la présente loi."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024 / art. 2 (extrait)",
+      "text": "LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024\nArticle 2 : Les affectations, résultant des budgets annexes créés et des comptes spéciaux du Trésor ouverts à la date de dépôt de la présente loi, sont confirmées pour l’année 2024."
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024 / art. 3 (extrait)",
+      "text": "LOI N°2023-060 DU 22 DECEMBRE 2023 PORTANT LOI DE FINANCES POUR L’EXERCICE 2024\nArticle 3 : Les ressources de l’Etat sont constituées des recettes budgétaires et des ressources de trésorerie."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000857",
+  "upstream_checksum": "299bd0f20dc2f1d658d95ef6cd98c5254ed4f627a5f72d75289604be79afe022",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-15-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

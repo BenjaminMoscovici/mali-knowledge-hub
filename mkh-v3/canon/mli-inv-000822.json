@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000822",
+  "edition_family": "mali-journal-officiel",
+  "title": "Journal officiel du Mali — 2024, n° spécial 08",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° spécial 08 · 2024-02-28",
+  "period": "2024-02-28",
+  "collection": "Journal officiel du Mali — sp",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "published legal and administrative acts"
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "description": "Extraits de textes officiels publiés au Journal officiel. Decret n°2024-0120/pt-rm du 28 fevrier 2024 portant modification du decret n°2021-0385/ pt-rm du 11 juin 2021 portant nomination des membres du gouvernement. Decret n°2024-0121/pm-rm du 28 fevrier 2024 portant modification du decret n°2023- 0392/pm-rm du 19 juillet 2023 fixant les attributions specifiques des membres du gouvernement.",
+  "limitations": [
+    "Sélection d’extraits du fac-similé à la date du numéro. Une citation renvoie au texte, à l’article et à la page PDF. Pour l’article intégral, ses annexes, les modifications ultérieures et son applicabilité, consulter le numéro original et la législation subséquente."
+  ],
+  "passages": [
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0120/PT-RM DU 28 FEVRIER 2024 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT / art. 1er (extrait)",
+      "text": "DECRET N°2024-0120/PT-RM DU 28 FEVRIER 2024 PORTANT MODIFICATION DU DECRET N°2021-0385/ PT-RM DU 11 JUIN 2021 PORTANT NOMINATION DES MEMBRES DU GOUVERNEMENT\nArticle 1er : Le point 6 de l’article 1er du Décret n°2021- 0385/PT-RM du 11 juin 2021, modifié, portant nomination des membres du Gouvernement est modifié, en ce qui concerne le ministre de la Réconciliation, de la Paix et de la Cohésion nationale, chargé de l’Accord pour la Paix et la Réconciliation nationale, ainsi qu’il suit :"
+    },
+    {
+      "page": 2,
+      "kind": "source_passage",
+      "locator": "PDF p. 2 / DECRET N°2024-0121/PM-RM DU 28 FEVRIER 2024 PORTANT MODIFICATION DU DECRET N°2023- 0392/PM-RM DU 19 JUILLET 2023 FIXANT LES ATTRIBUTIONS SPECIFIQUES DES MEMBRES DU GOUVERNEMENT / art. 1er (extrait)",
+      "text": "DECRET N°2024-0121/PM-RM DU 28 FEVRIER 2024 PORTANT MODIFICATION DU DECRET N°2023- 0392/PM-RM DU 19 JUILLET 2023 FIXANT LES ATTRIBUTIONS SPECIFIQUES DES MEMBRES DU GOUVERNEMENT\nArticle 1er : L’article 7 du Décret n°2023-0392/PM-RM du 19 juillet 2023, susvisé, est modifié ainsi qu’il suit :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000822",
+  "upstream_checksum": "33baeec50d5b851e74dcdcad9c4ef5984c82e09a17f6ccef2ae12b0d276919c0",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-08-sp.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

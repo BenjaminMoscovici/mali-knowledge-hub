@@ -1,0 +1,39 @@
+{
+  "id": "mli-inv-000883",
+  "edition_family": "instat-emop-passages",
+  "title": "EMOP — 2017, passage 3",
+  "publisher": "Institut national de la statistique du Mali (INSTAT)",
+  "type": "document",
+  "release": "EMOP — 2017, passage 3",
+  "period": "2017, passage 3",
+  "collection": "INSTAT EMOP",
+  "geography": "Mali",
+  "topics": [
+    "EMOP"
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Enquête modulaire et permanente auprès des ménages. Indicateurs et résultats du passage 2017, passage 3 recueillis par l’INSTAT.",
+  "limitations": [
+    "Les résultats correspondent à cette vague de l’enquête, à ses ménages, aux zones enquêtées et au champ de chaque tableau. Éviter d’assimiler un passage à une année entière ou à la couverture actuelle."
+  ],
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 14,
+      "locator": "PDF p. 14",
+      "text": "RESUME ANALYTIQUE\n\n\nCe résumé décrit l’état de certains indicateurs socioéconomiques à un moment précis de l’année\n(octobre-décembre 2017). Les indicateurs renseignés à cet effet concernent essentiellement\nceux de l’emploi tels que les taux d’activité, de pluriactivité, de durée de travail, de chômage,\netc. En dehors de ces indicateurs, le passage renseigne également les taux de morbidité, donne\ndes informations sur les stratégies adoptées par les ménages pour faire face aux difficultés\nalimentaires. Il renseigne aussi sur la structure, le volume des dépenses de consommation ainsi\nque le poids des fonctions de consommation. Les informations plus détaillées sont illustrées\ndans les tableaux ou sous forme de graphiques.\n\nL’évolution des taux de morbidité entre les différents passages indique qu’au cours des trois\nderniers trimestres, l’ampleur du phénomène est plus prononcée chez les enfants de moins de 5\nans et les personnes âgées de plus de 60 ans. Ce résultat traduit la vulnérabilité des enfants de\nmoins de 5 ans et les personnes âgées. Sur la période, il est remarquable dans l’ensemble, que\nles femmes sont plus touchées que les hommes (respectivement 28,8 % et 25,8 %). Elles le sont\ndavantage entre 15 et 59 ans.\n\nLa région de Tombouctou est la plus affectée (58,9 %) contre 21,2 % pour la région de Sikasso\nqui est la moins touchée sur la période d'Octobre à Décembre 2017. A l’intérieur de chaque\nrégion, les populations les plus exposées restent les enfants de moins de 5 ans et les personnes\nde 60 ans ou plus. Les résultats par milieu de résidence montrent un taux de 28,4% en milieu\nurbain contre 26,9% pour le milieu rural.\nAu vu des résultats, le taux de morbidité est plus élevé chez les personnes sans niveau\nd’instruction et suivi de ceux ayant un niveau supérieur. Le taux de morbidité est plus élevé\ndans les ménages les plus nantis que dans les autres ménages.\n\nLe paludisme est de loin la maladie la plus répandue (68,8 %) et les douleurs dans le dos (10,3\n%) parmi les personnes malades au cours des 03 derniers mois. Les autres maladies telles que\nla toux et Maux de tête / Céphalées, bien que présentes affectent selon le cas, à peine 10 % de\nla population malade au cours des 03 derniers mois. Dans toutes les régions, plus de 3 personnes\nmalades sur cinq ont contracté le paludisme, excepté Mopti et Bamako. Les régions de Sikasso\net de Tombouctou sont les régions où le paludisme sévit le plus (85,9 % et 79,7 %) contre 50,5\n% à Bamako. Les enfants de 5 à 10 ans et ceux de 11 à 14 ans sont les plus affectés par le\npaludisme. Le quintile4 est le plus affecté par la maladie.\n\nEMOP 2017/2018-3---Résultats                                        Page 14"
+    },
+    {
+      "kind": "source_passage",
+      "page": 15,
+      "locator": "PDF p. 15",
+      "text": "L’effectif de la population en âge de travailler3 est estimé à 8 765 065 individus soit 46,7 % de\nla population totale. Cette population est repartie selon la situation dans l’activité entre les\nactifs occupés (5 807 101), les chômeurs (580 544) et les inactifs (2 377 419). 13,4 % des\nenfants âgés de 6 à 14 ans sont occupés. Des disparités existent au sein de cette sous\npopulation. En effet, la proportion des enfants ayant un emploi est de 7,0 % entre 6 et 9 ans\nalors qu’elle est de 20,1 % entre 10 et 14 ans. La proportion des garçons est plus élevée que\ncelle des filles (15,1 % contre 11,4 %). La proportion des enfants occupés est plus élevée aux\nquintile 3 et 4.\n\nDans tous les groupes d’âges, le taux d’activité est plus élevé chez les hommes\ncomparativement aux femmes. Ce résultat indique que la part des personnes qui participent ou\nqui cherchent à participer à la production de biens et de services est plus élevée chez les hommes\n(85,7 % contre 62,0 %). La faible participation des femmes sur le marché de l'emploi serait due\nà leur occupation au foyer. En effet, 16,7 % de la population inactive sont des femmes au foyer\n(Voir Tableau 6).\nLe taux d’emploi ou ration emploi de la population exprime la part de la population active\noccupée dans une population donnée. Il est estimé à 66,5 % dans la population des individus\nâgés de 15 à 64 ans. Il est plus élevé chez les hommes, atteint son pic entre 30 et 39 ans (79,2 %).\nLe taux d’emploi décroît du quintile le moins nanti au quintile le plus nanti (de 70,1 % à\n60,8 %).\n\nLe secteur pourvoyeur d’emploi est le primaire. En effet, plus de 2 actifs occupés sur 3\ntravaillent dans le primaire. Les autres se répartissent entre l’industrie, le commerce et les\nservices. L’essentiel des emplois pourvus dans le primaire se trouvent en milieu rural (83,1 %)\nprobablement dominés par les activités agricoles contre seulement 0,4 % à Bamako.\n\nLa part des salariés est plus élevée à Bamako (37,8 %) que dans les autres milieux (18,4 %)\ncontre 5,2% en milieu rural. Par contre, c’est en milieu rural que la part des apprentis ou aide\nfamiliale est la plus élevée 34,8 % contre 9,3 % à Bamako. Les patrons ou travailleurs\nindépendants sont présents dans tous les milieux avec des proportions plus élevées dans les\nautres villes urbaines (61,2 %) contre 60,0% et 53,0% respectivement en milieu rural et\n\n\n\n\n3\n La population en âge de travailler regroupe les personnes âgées de 15 à 64 ans au vu de l’EMOP bien que dans\ncertains cas, la borne supérieure peut être ouverte.\n\nEMOP 2017/2018-3---Résultats                                                 Page 15"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000883",
+  "upstream_checksum": "4f3bb5ebf87bd1a2e63f9856d544b0c17e686222d34dfe54299f1d4d00d40d87",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/eq/rana17pas3_eq.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

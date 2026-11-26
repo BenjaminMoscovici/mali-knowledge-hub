@@ -134,7 +134,7 @@ async def sources(request):
         offset = int(request.query_params.get("offset", 0))
         paged = "offset" in request.query_params
         page = k.source_page(query, offset=offset, page_size=24 if paged else max(1, len(k.sources)))
-        if not paged:
+        if not paged and request.query_params.get("view") != "summary":
             page["sources"] = [{**k.describes(k.sources[item["id"]]), **item} for item in page["sources"]]
         return data_response(page)
     except ValueError:

@@ -1,0 +1,2157 @@
+{
+  "id": "mli-inv-000703",
+  "edition_family": "hdx-mali-malnutrition",
+  "title": "Mali: Malnutrition",
+  "publisher": "DHIS2",
+  "type": "dataset",
+  "release": "2023 (DHIS2, année déclarée dans la fiche source) · capture 2026-11-26 · d7f250cd927b",
+  "period": "2023 (DHIS2, année déclarée dans la fiche source)",
+  "collection": "HDX resource — mali-malnutrition",
+  "geography": "Mali",
+  "topics": [
+    "historical nutrition indicators"
+  ],
+  "description": "Suivi mensuel 2023 du cluster nutrition : effectifs réalisés par indicateur et colonne de ventilation dans DHIS2.",
+  "limitations": [
+    "Colonnes Filles/Garçons telles qu’imprimées. Certains indicateurs ciblent des femmes : vérifier l’interprétation de la ventilation dans ce cas. Cellule absente conservée. Un résultat réalisé est distinct d’une cible, d’une prévalence ou de la population à traiter."
+  ],
+  "license": "Creative Commons Attribution International (CC BY)",
+  "reuse_url": "https://data.humdata.org/dataset/mali-malnutrition",
+  "comparison_scope": {
+    "geographic_frame": "Mali selon le découpage de la source",
+    "grain": "observation dans le fichier"
+  },
+  "table": "inventory_703",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "indicator": "TEXT",
+    "month": "INTEGER",
+    "sex": "TEXT",
+    "reported_count": "REAL"
+  },
+  "records": [
+    {
+      "id": "4-2",
+      "locator": "Sheet1!C4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 6695
+    },
+    {
+      "id": "4-3",
+      "locator": "Sheet1!D4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": 5728
+    },
+    {
+      "id": "4-4",
+      "locator": "Sheet1!E4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 6223
+    },
+    {
+      "id": "4-5",
+      "locator": "Sheet1!F4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": 5356
+    },
+    {
+      "id": "4-6",
+      "locator": "Sheet1!G4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 6820
+    },
+    {
+      "id": "4-7",
+      "locator": "Sheet1!H4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": 5839
+    },
+    {
+      "id": "4-8",
+      "locator": "Sheet1!I4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 6515
+    },
+    {
+      "id": "4-9",
+      "locator": "Sheet1!J4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": 5676
+    },
+    {
+      "id": "4-10",
+      "locator": "Sheet1!K4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 8697
+    },
+    {
+      "id": "4-11",
+      "locator": "Sheet1!L4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": 7255
+    },
+    {
+      "id": "4-12",
+      "locator": "Sheet1!M4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 8741
+    },
+    {
+      "id": "4-13",
+      "locator": "Sheet1!N4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": 7345
+    },
+    {
+      "id": "4-14",
+      "locator": "Sheet1!O4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 9807
+    },
+    {
+      "id": "4-15",
+      "locator": "Sheet1!P4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": 8205
+    },
+    {
+      "id": "4-16",
+      "locator": "Sheet1!Q4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 11230
+    },
+    {
+      "id": "4-17",
+      "locator": "Sheet1!R4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": 9546
+    },
+    {
+      "id": "4-18",
+      "locator": "Sheet1!S4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 9918
+    },
+    {
+      "id": "4-19",
+      "locator": "Sheet1!T4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": 8545
+    },
+    {
+      "id": "4-20",
+      "locator": "Sheet1!U4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 9564
+    },
+    {
+      "id": "4-21",
+      "locator": "Sheet1!V4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": 8312
+    },
+    {
+      "id": "4-22",
+      "locator": "Sheet1!W4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 7926
+    },
+    {
+      "id": "4-23",
+      "locator": "Sheet1!X4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": 6967
+    },
+    {
+      "id": "4-24",
+      "locator": "Sheet1!Y4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 6912
+    },
+    {
+      "id": "4-25",
+      "locator": "Sheet1!Z4",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 0-59 mois malnutris aigües sévères a traiter",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": 5787
+    },
+    {
+      "id": "5-2",
+      "locator": "Sheet1!C5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 8496
+    },
+    {
+      "id": "5-3",
+      "locator": "Sheet1!D5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": 7651
+    },
+    {
+      "id": "5-4",
+      "locator": "Sheet1!E5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 8414
+    },
+    {
+      "id": "5-5",
+      "locator": "Sheet1!F5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": 7432
+    },
+    {
+      "id": "5-6",
+      "locator": "Sheet1!G5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 9446
+    },
+    {
+      "id": "5-7",
+      "locator": "Sheet1!H5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": 8517
+    },
+    {
+      "id": "5-8",
+      "locator": "Sheet1!I5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 8743
+    },
+    {
+      "id": "5-9",
+      "locator": "Sheet1!J5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": 7735
+    },
+    {
+      "id": "5-10",
+      "locator": "Sheet1!K5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 9857
+    },
+    {
+      "id": "5-11",
+      "locator": "Sheet1!L5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": 8653
+    },
+    {
+      "id": "5-12",
+      "locator": "Sheet1!M5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 9378
+    },
+    {
+      "id": "5-13",
+      "locator": "Sheet1!N5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": 8424
+    },
+    {
+      "id": "5-14",
+      "locator": "Sheet1!O5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 9940
+    },
+    {
+      "id": "5-15",
+      "locator": "Sheet1!P5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": 8805
+    },
+    {
+      "id": "5-16",
+      "locator": "Sheet1!Q5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 13000
+    },
+    {
+      "id": "5-17",
+      "locator": "Sheet1!R5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": 11599
+    },
+    {
+      "id": "5-18",
+      "locator": "Sheet1!S5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 10314
+    },
+    {
+      "id": "5-19",
+      "locator": "Sheet1!T5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": 8902
+    },
+    {
+      "id": "5-20",
+      "locator": "Sheet1!U5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 8960
+    },
+    {
+      "id": "5-21",
+      "locator": "Sheet1!V5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": 7903
+    },
+    {
+      "id": "5-22",
+      "locator": "Sheet1!W5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 9166
+    },
+    {
+      "id": "5-23",
+      "locator": "Sheet1!X5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": 8385
+    },
+    {
+      "id": "5-24",
+      "locator": "Sheet1!Y5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 8997
+    },
+    {
+      "id": "5-25",
+      "locator": "Sheet1!Z5",
+      "indicator": "Nombre d’enfants (Filles et garcon) de 6 à 59 mois malnutris aigüe modérée a traiter",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": 7570
+    },
+    {
+      "id": "6-2",
+      "locator": "Sheet1!C6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 15191
+    },
+    {
+      "id": "6-3",
+      "locator": "Sheet1!D6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": 13379
+    },
+    {
+      "id": "6-4",
+      "locator": "Sheet1!E6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 14637
+    },
+    {
+      "id": "6-5",
+      "locator": "Sheet1!F6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": 12788
+    },
+    {
+      "id": "6-6",
+      "locator": "Sheet1!G6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 16266
+    },
+    {
+      "id": "6-7",
+      "locator": "Sheet1!H6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": 14356
+    },
+    {
+      "id": "6-8",
+      "locator": "Sheet1!I6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 15258
+    },
+    {
+      "id": "6-9",
+      "locator": "Sheet1!J6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": 13411
+    },
+    {
+      "id": "6-10",
+      "locator": "Sheet1!K6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 18554
+    },
+    {
+      "id": "6-11",
+      "locator": "Sheet1!L6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": 15908
+    },
+    {
+      "id": "6-12",
+      "locator": "Sheet1!M6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 18119
+    },
+    {
+      "id": "6-13",
+      "locator": "Sheet1!N6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": 15769
+    },
+    {
+      "id": "6-14",
+      "locator": "Sheet1!O6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 19747
+    },
+    {
+      "id": "6-15",
+      "locator": "Sheet1!P6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": 17010
+    },
+    {
+      "id": "6-16",
+      "locator": "Sheet1!Q6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 24230
+    },
+    {
+      "id": "6-17",
+      "locator": "Sheet1!R6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": 21145
+    },
+    {
+      "id": "6-18",
+      "locator": "Sheet1!S6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 20232
+    },
+    {
+      "id": "6-19",
+      "locator": "Sheet1!T6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": 17447
+    },
+    {
+      "id": "6-20",
+      "locator": "Sheet1!U6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 18524
+    },
+    {
+      "id": "6-21",
+      "locator": "Sheet1!V6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": 16215
+    },
+    {
+      "id": "6-22",
+      "locator": "Sheet1!W6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 17092
+    },
+    {
+      "id": "6-23",
+      "locator": "Sheet1!X6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": 15352
+    },
+    {
+      "id": "6-24",
+      "locator": "Sheet1!Y6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 15909
+    },
+    {
+      "id": "6-25",
+      "locator": "Sheet1!Z6",
+      "indicator": "Nombre d'enfant admis MAG",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": 13357
+    },
+    {
+      "id": "7-2",
+      "locator": "Sheet1!C7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 2984
+    },
+    {
+      "id": "7-3",
+      "locator": "Sheet1!D7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-4",
+      "locator": "Sheet1!E7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 3019
+    },
+    {
+      "id": "7-5",
+      "locator": "Sheet1!F7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-6",
+      "locator": "Sheet1!G7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 3112
+    },
+    {
+      "id": "7-7",
+      "locator": "Sheet1!H7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-8",
+      "locator": "Sheet1!I7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 2841
+    },
+    {
+      "id": "7-9",
+      "locator": "Sheet1!J7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-10",
+      "locator": "Sheet1!K7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 2796
+    },
+    {
+      "id": "7-11",
+      "locator": "Sheet1!L7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-12",
+      "locator": "Sheet1!M7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 2680
+    },
+    {
+      "id": "7-13",
+      "locator": "Sheet1!N7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-14",
+      "locator": "Sheet1!O7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 2710
+    },
+    {
+      "id": "7-15",
+      "locator": "Sheet1!P7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-16",
+      "locator": "Sheet1!Q7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 4722
+    },
+    {
+      "id": "7-17",
+      "locator": "Sheet1!R7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-18",
+      "locator": "Sheet1!S7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 3557
+    },
+    {
+      "id": "7-19",
+      "locator": "Sheet1!T7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-20",
+      "locator": "Sheet1!U7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 2540
+    },
+    {
+      "id": "7-21",
+      "locator": "Sheet1!V7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-22",
+      "locator": "Sheet1!W7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 2963
+    },
+    {
+      "id": "7-23",
+      "locator": "Sheet1!X7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "7-24",
+      "locator": "Sheet1!Y7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 2832
+    },
+    {
+      "id": "7-25",
+      "locator": "Sheet1!Z7",
+      "indicator": "Nombre de FEFA malnutries aigüe modérée a traiter",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-2",
+      "locator": "Sheet1!C8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 6422
+    },
+    {
+      "id": "8-3",
+      "locator": "Sheet1!D8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-4",
+      "locator": "Sheet1!E8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 369
+    },
+    {
+      "id": "8-5",
+      "locator": "Sheet1!F8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-6",
+      "locator": "Sheet1!G8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 21607
+    },
+    {
+      "id": "8-7",
+      "locator": "Sheet1!H8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-8",
+      "locator": "Sheet1!I8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 28173
+    },
+    {
+      "id": "8-9",
+      "locator": "Sheet1!J8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-10",
+      "locator": "Sheet1!K8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 13819
+    },
+    {
+      "id": "8-11",
+      "locator": "Sheet1!L8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-12",
+      "locator": "Sheet1!M8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 12911
+    },
+    {
+      "id": "8-13",
+      "locator": "Sheet1!N8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-14",
+      "locator": "Sheet1!O8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 15595
+    },
+    {
+      "id": "8-15",
+      "locator": "Sheet1!P8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-16",
+      "locator": "Sheet1!Q8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 32676
+    },
+    {
+      "id": "8-17",
+      "locator": "Sheet1!R8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-18",
+      "locator": "Sheet1!S8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 33939
+    },
+    {
+      "id": "8-19",
+      "locator": "Sheet1!T8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-20",
+      "locator": "Sheet1!U8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 21583
+    },
+    {
+      "id": "8-21",
+      "locator": "Sheet1!V8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-22",
+      "locator": "Sheet1!W8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 18100
+    },
+    {
+      "id": "8-23",
+      "locator": "Sheet1!X8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "8-24",
+      "locator": "Sheet1!Y8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 19217
+    },
+    {
+      "id": "8-25",
+      "locator": "Sheet1!Z8",
+      "indicator": "Nombre d’enfants (Filles et Garçons) de 6-23 mois bénéficiant de BSFP",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-2",
+      "locator": "Sheet1!C9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 11670
+    },
+    {
+      "id": "9-3",
+      "locator": "Sheet1!D9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-4",
+      "locator": "Sheet1!E9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 0
+    },
+    {
+      "id": "9-5",
+      "locator": "Sheet1!F9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-6",
+      "locator": "Sheet1!G9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 2308
+    },
+    {
+      "id": "9-7",
+      "locator": "Sheet1!H9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-8",
+      "locator": "Sheet1!I9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 22302
+    },
+    {
+      "id": "9-9",
+      "locator": "Sheet1!J9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-10",
+      "locator": "Sheet1!K9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 20365
+    },
+    {
+      "id": "9-11",
+      "locator": "Sheet1!L9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-12",
+      "locator": "Sheet1!M9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 8397
+    },
+    {
+      "id": "9-13",
+      "locator": "Sheet1!N9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-14",
+      "locator": "Sheet1!O9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 10357
+    },
+    {
+      "id": "9-15",
+      "locator": "Sheet1!P9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-16",
+      "locator": "Sheet1!Q9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 33077
+    },
+    {
+      "id": "9-17",
+      "locator": "Sheet1!R9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-18",
+      "locator": "Sheet1!S9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 32291
+    },
+    {
+      "id": "9-19",
+      "locator": "Sheet1!T9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-20",
+      "locator": "Sheet1!U9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 4275
+    },
+    {
+      "id": "9-21",
+      "locator": "Sheet1!V9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-22",
+      "locator": "Sheet1!W9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 6496
+    },
+    {
+      "id": "9-23",
+      "locator": "Sheet1!X9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "9-24",
+      "locator": "Sheet1!Y9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 3996
+    },
+    {
+      "id": "9-25",
+      "locator": "Sheet1!Z9",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant de BSFP",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-2",
+      "locator": "Sheet1!C10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 27496
+    },
+    {
+      "id": "10-3",
+      "locator": "Sheet1!D10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-4",
+      "locator": "Sheet1!E10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 1497
+    },
+    {
+      "id": "10-5",
+      "locator": "Sheet1!F10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-6",
+      "locator": "Sheet1!G10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 3805
+    },
+    {
+      "id": "10-7",
+      "locator": "Sheet1!H10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-8",
+      "locator": "Sheet1!I10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 84510
+    },
+    {
+      "id": "10-9",
+      "locator": "Sheet1!J10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-10",
+      "locator": "Sheet1!K10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 54449
+    },
+    {
+      "id": "10-11",
+      "locator": "Sheet1!L10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-12",
+      "locator": "Sheet1!M10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 55967
+    },
+    {
+      "id": "10-13",
+      "locator": "Sheet1!N10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-14",
+      "locator": "Sheet1!O10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 115882
+    },
+    {
+      "id": "10-15",
+      "locator": "Sheet1!P10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-16",
+      "locator": "Sheet1!Q10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 98159
+    },
+    {
+      "id": "10-17",
+      "locator": "Sheet1!R10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-18",
+      "locator": "Sheet1!S10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 88998
+    },
+    {
+      "id": "10-19",
+      "locator": "Sheet1!T10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-20",
+      "locator": "Sheet1!U10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 102377
+    },
+    {
+      "id": "10-21",
+      "locator": "Sheet1!V10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-22",
+      "locator": "Sheet1!W10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 95730
+    },
+    {
+      "id": "10-23",
+      "locator": "Sheet1!X10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "10-24",
+      "locator": "Sheet1!Y10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 52749
+    },
+    {
+      "id": "10-25",
+      "locator": "Sheet1!Z10",
+      "indicator": "Nombre des femmes enceintes et allaitantes bénéficiant du CBT (cash transfert)",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-2",
+      "locator": "Sheet1!C11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 34822
+    },
+    {
+      "id": "11-3",
+      "locator": "Sheet1!D11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-4",
+      "locator": "Sheet1!E11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 35526
+    },
+    {
+      "id": "11-5",
+      "locator": "Sheet1!F11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-6",
+      "locator": "Sheet1!G11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 38594
+    },
+    {
+      "id": "11-7",
+      "locator": "Sheet1!H11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-8",
+      "locator": "Sheet1!I11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 40214
+    },
+    {
+      "id": "11-9",
+      "locator": "Sheet1!J11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-10",
+      "locator": "Sheet1!K11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 44104
+    },
+    {
+      "id": "11-11",
+      "locator": "Sheet1!L11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-12",
+      "locator": "Sheet1!M11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 35905
+    },
+    {
+      "id": "11-13",
+      "locator": "Sheet1!N11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-14",
+      "locator": "Sheet1!O11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 33163
+    },
+    {
+      "id": "11-15",
+      "locator": "Sheet1!P11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-16",
+      "locator": "Sheet1!Q11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 32271
+    },
+    {
+      "id": "11-17",
+      "locator": "Sheet1!R11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-18",
+      "locator": "Sheet1!S11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 36215
+    },
+    {
+      "id": "11-19",
+      "locator": "Sheet1!T11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-20",
+      "locator": "Sheet1!U11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 39139
+    },
+    {
+      "id": "11-21",
+      "locator": "Sheet1!V11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-22",
+      "locator": "Sheet1!W11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 38840
+    },
+    {
+      "id": "11-23",
+      "locator": "Sheet1!X11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "11-24",
+      "locator": "Sheet1!Y11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 44563
+    },
+    {
+      "id": "11-25",
+      "locator": "Sheet1!Z11",
+      "indicator": "Nombre FEFA sensibilisées à l’ANJE-U",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-2",
+      "locator": "Sheet1!C12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 123662
+    },
+    {
+      "id": "12-3",
+      "locator": "Sheet1!D12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-4",
+      "locator": "Sheet1!E12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 77973
+    },
+    {
+      "id": "12-5",
+      "locator": "Sheet1!F12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-6",
+      "locator": "Sheet1!G12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 80086
+    },
+    {
+      "id": "12-7",
+      "locator": "Sheet1!H12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-8",
+      "locator": "Sheet1!I12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 67912
+    },
+    {
+      "id": "12-9",
+      "locator": "Sheet1!J12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-10",
+      "locator": "Sheet1!K12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 79396
+    },
+    {
+      "id": "12-11",
+      "locator": "Sheet1!L12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-12",
+      "locator": "Sheet1!M12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 76193
+    },
+    {
+      "id": "12-13",
+      "locator": "Sheet1!N12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-14",
+      "locator": "Sheet1!O12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 124313
+    },
+    {
+      "id": "12-15",
+      "locator": "Sheet1!P12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-16",
+      "locator": "Sheet1!Q12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 333602
+    },
+    {
+      "id": "12-17",
+      "locator": "Sheet1!R12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-18",
+      "locator": "Sheet1!S12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 210905
+    },
+    {
+      "id": "12-19",
+      "locator": "Sheet1!T12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-20",
+      "locator": "Sheet1!U12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 100618
+    },
+    {
+      "id": "12-21",
+      "locator": "Sheet1!V12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-22",
+      "locator": "Sheet1!W12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 86784
+    },
+    {
+      "id": "12-23",
+      "locator": "Sheet1!X12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "12-24",
+      "locator": "Sheet1!Y12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 124973
+    },
+    {
+      "id": "12-25",
+      "locator": "Sheet1!Z12",
+      "indicator": "Nombre d'enfants de 6 à 59 mois ayant recu une supplémentation en VitA",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-2",
+      "locator": "Sheet1!C13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 76880
+    },
+    {
+      "id": "13-3",
+      "locator": "Sheet1!D13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-4",
+      "locator": "Sheet1!E13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 48538
+    },
+    {
+      "id": "13-5",
+      "locator": "Sheet1!F13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-6",
+      "locator": "Sheet1!G13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 338760
+    },
+    {
+      "id": "13-7",
+      "locator": "Sheet1!H13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-8",
+      "locator": "Sheet1!I13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 35660
+    },
+    {
+      "id": "13-9",
+      "locator": "Sheet1!J13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-10",
+      "locator": "Sheet1!K13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 39476
+    },
+    {
+      "id": "13-11",
+      "locator": "Sheet1!L13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-12",
+      "locator": "Sheet1!M13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 42675
+    },
+    {
+      "id": "13-13",
+      "locator": "Sheet1!N13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-14",
+      "locator": "Sheet1!O13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 74795
+    },
+    {
+      "id": "13-15",
+      "locator": "Sheet1!P13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-16",
+      "locator": "Sheet1!Q13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 224988
+    },
+    {
+      "id": "13-17",
+      "locator": "Sheet1!R13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-18",
+      "locator": "Sheet1!S13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 157399
+    },
+    {
+      "id": "13-19",
+      "locator": "Sheet1!T13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-20",
+      "locator": "Sheet1!U13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 66376
+    },
+    {
+      "id": "13-21",
+      "locator": "Sheet1!V13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-22",
+      "locator": "Sheet1!W13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 51129
+    },
+    {
+      "id": "13-23",
+      "locator": "Sheet1!X13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "13-24",
+      "locator": "Sheet1!Y13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 86077
+    },
+    {
+      "id": "13-25",
+      "locator": "Sheet1!Z13",
+      "indicator": "Nombre d'enfants (Filles et garcon) de 12 à 59 mois attendus et bénéficiant du déparasitage (2 fois l'an)",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-2",
+      "locator": "Sheet1!C14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 1,
+      "sex": "Filles",
+      "reported_count": 9953
+    },
+    {
+      "id": "14-3",
+      "locator": "Sheet1!D14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 1,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-4",
+      "locator": "Sheet1!E14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 2,
+      "sex": "Filles",
+      "reported_count": 11544
+    },
+    {
+      "id": "14-5",
+      "locator": "Sheet1!F14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 2,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-6",
+      "locator": "Sheet1!G14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 3,
+      "sex": "Filles",
+      "reported_count": 19007
+    },
+    {
+      "id": "14-7",
+      "locator": "Sheet1!H14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 3,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-8",
+      "locator": "Sheet1!I14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 4,
+      "sex": "Filles",
+      "reported_count": 6471
+    },
+    {
+      "id": "14-9",
+      "locator": "Sheet1!J14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 4,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-10",
+      "locator": "Sheet1!K14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 5,
+      "sex": "Filles",
+      "reported_count": 5874
+    },
+    {
+      "id": "14-11",
+      "locator": "Sheet1!L14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 5,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-12",
+      "locator": "Sheet1!M14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 6,
+      "sex": "Filles",
+      "reported_count": 5280
+    },
+    {
+      "id": "14-13",
+      "locator": "Sheet1!N14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 6,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-14",
+      "locator": "Sheet1!O14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 7,
+      "sex": "Filles",
+      "reported_count": 7082
+    },
+    {
+      "id": "14-15",
+      "locator": "Sheet1!P14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 7,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-16",
+      "locator": "Sheet1!Q14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 8,
+      "sex": "Filles",
+      "reported_count": 18649
+    },
+    {
+      "id": "14-17",
+      "locator": "Sheet1!R14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 8,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-18",
+      "locator": "Sheet1!S14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 9,
+      "sex": "Filles",
+      "reported_count": 8167
+    },
+    {
+      "id": "14-19",
+      "locator": "Sheet1!T14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 9,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-20",
+      "locator": "Sheet1!U14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 10,
+      "sex": "Filles",
+      "reported_count": 6725
+    },
+    {
+      "id": "14-21",
+      "locator": "Sheet1!V14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 10,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-22",
+      "locator": "Sheet1!W14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 11,
+      "sex": "Filles",
+      "reported_count": 13350
+    },
+    {
+      "id": "14-23",
+      "locator": "Sheet1!X14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 11,
+      "sex": "Garçons",
+      "reported_count": null
+    },
+    {
+      "id": "14-24",
+      "locator": "Sheet1!Y14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 12,
+      "sex": "Filles",
+      "reported_count": 13454
+    },
+    {
+      "id": "14-25",
+      "locator": "Sheet1!Z14",
+      "indicator": "Nombre d'enfants (Filles et garcon) ayant recu du MNPs",
+      "month": 12,
+      "sex": "Garçons",
+      "reported_count": null
+    }
+  ],
+  "dimensions": [
+    "indicator",
+    "sex"
+  ],
+  "definitions": {},
+  "review": "published",
+  "work_id": "MKH-SRC-000703",
+  "upstream_checksum": "d7f250cd927b68ef0cf8d920c7447780a289d3a73f6de02052a37d5da040237b",
+  "url": "https://data.humdata.org/dataset/a4153057-c63b-41a3-91a5-24c10feffe1f/resource/4d90f3dc-ab58-4cf4-a784-0080758f63b7/download/nuttitioncluster_data_2023-2.xlsx",
+  "reuse_evidence_sha256": "1e87830f19ae78157afa22de0aa015ad1516a10669a253fba8ecf0f904d6c1bc"
+}
