@@ -1,0 +1,2 @@
+{"task":"2023-2025-national-plan-decision-note","variant":"Fast/Sol","estimated_usd":0.021125,"accepted":true,"seconds":13.61,"tool_calls":3,"embedding_tokens":16587}
+{"task":"2023-2025-national-plan-decision-note","variant":"Deep/Astra","estimated_usd":0.095676,"accepted":true,"seconds":20.35,"tool_calls":4,"embedding_tokens":15}

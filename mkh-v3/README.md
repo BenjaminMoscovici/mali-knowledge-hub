@@ -170,3 +170,23 @@ financial allowances by account and independent professional qualification remai
   to the least expensive qualified model in paired trials. Ship a routing change only when it
   preserves professional quality. Use observed task mix, volume and shared service costs to
   forecast monthly spend before expanding public access.
+
+On 26 November 2026 the deployed browser returned all 16 registry IDs in Fast chat
+and opened native content in each corresponding source drawer, including live WDI
+observations. The inventory used zero embedding tokens. A local regression also traverses
+165 published sources and excludes a withdrawn release. Each bundled document and table
+was exercised through the model's actual tool dispatcher. A direct live WDI call failed
+once and succeeded on retry. These checks establish reachability and basic use.
+
+A paired browser trial on the same release asked for a financial decision note comparing
+Mali's 2023 and 2025 humanitarian plans. Both modes identified HMLI23 and HMLI25, cited
+their calculated gaps of USD 508,881,258 and 583,250,344, distinguished reported funding
+from expenditure and suggested an appropriate check for the committee. Fast took 13.61 s
+and Deep 20.35 s. This is an engineering check on one task. Fast paid for a cold semantic
+index and Deep reused it. The estimates cover the reported inference and embedding usage.
+
+Run `python scripts/task_cost.py evaluation/20261126-financing.jsonl` to reproduce the
+per-mode cost per accepted task. Use a common task ID for all retries and follow-ups,
+record failed attempts too and supply one final review per task and variant. An unknown
+cost or pending review leaves the rate unreported. Expansion requires varied blind
+professional assignments, order-balanced trials and comparison against provider billing.
