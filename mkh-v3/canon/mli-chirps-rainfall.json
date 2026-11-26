@@ -164,5 +164,27 @@
         ]
       }
     }
-  }
+  },
+  "compatible_fingerprints": [
+    "4c99a15cfa08a9cb07f2babee85dc1ae27c020baf287b2dad1fad444ec3b0e73"
+  ],
+  "comparison_scope": {
+    "geographic_frame": "WFP rainfall polygons (ADM1 and ADM2)",
+    "grain": "Administrative area × ten-day period",
+    "measure": "Rainfall, long-term mean and anomaly",
+    "units": "Millimetres and percentage indices",
+    "basis": "Gridded precipitation estimates aggregated by area",
+    "windows": [
+      [
+        "1981-01-01",
+        "2026-11-20"
+      ]
+    ]
+  },
+  "comparison_fields": [
+    "date",
+    "pcode",
+    "adm_level",
+    "version"
+  ]
 }

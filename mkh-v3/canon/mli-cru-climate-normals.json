@@ -678,5 +678,27 @@
       "unit": "°C",
       "label": "Average daily Minimum Surface Air Temperature"
     }
+  ],
+  "compatible_fingerprints": [
+    "8393c2587b4a993aabd1b36c0d61dfa922da826bf4a51baaff287e53c5e7a3d6"
+  ],
+  "comparison_scope": {
+    "geographic_frame": "Mali national",
+    "grain": "National normal by variable and climatological month or year",
+    "measure": "Precipitation and air temperature normals",
+    "units": "Millimetres and degrees Celsius",
+    "basis": "Historical climate normal",
+    "windows": [
+      [
+        "1991-01-01",
+        "2020-12-31"
+      ]
+    ]
+  },
+  "comparison_fields": [
+    "unit",
+    "aggregation",
+    "variable",
+    "month"
   ]
 }

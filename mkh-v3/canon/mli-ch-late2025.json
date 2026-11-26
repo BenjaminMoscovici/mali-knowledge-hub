@@ -1955,5 +1955,32 @@
       "area_mapping_status": "unresolved",
       "locator": "cadre_harmonise_caf_ipc_mars26.xlsx / Sheet1 / row 38719"
     }
+  ],
+  "compatible_fingerprints": [
+    "e58e772aaab25bd4f16e42ec2c997105f57c81c2296c899f208457cc1833a87e"
+  ],
+  "comparison_scope": {
+    "geographic_frame": "Cadre Harmonisé historical analysis areas",
+    "grain": "Analysis area × assessment period",
+    "measure": "Food insecurity phase and estimated population by phase",
+    "units": "Persons and ordinal phase",
+    "basis": "Assessment and projection distinguished per row",
+    "windows": [
+      [
+        "2025-09-01",
+        "2025-12-31"
+      ],
+      [
+        "2026-06-01",
+        "2026-08-31"
+      ]
+    ]
+  },
+  "comparison_fields": [
+    "source_region",
+    "source_area",
+    "period_type",
+    "period_start",
+    "period_end"
   ]
 }

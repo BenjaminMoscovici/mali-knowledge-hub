@@ -21,6 +21,7 @@ from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
 from companion import Companion, CompanionError, MODES
+from scope_review import compare, evidence_sources
 from jobs import ResearchJobs
 from publication import Publications, extract, preview as source_preview, suggest
 from knowledge import Evidence, Knowledge, KnowledgeError, SOURCE_ID, json_text
@@ -531,9 +532,12 @@ async def chat(request):
                     await sync_catalogue(state)
                     if not answer_available(state, piece):
                         raise StateError("A source changed during this assignment. Run it again with the current release.")
+                    source_ids = evidence_sources(piece["evidence"])
+                    if len(source_ids) > 1:
+                        piece["scope_review"] = compare([state.knowledge.source(k) for k in source_ids], piece["evidence"])
                     title = row["title"] if row else " ".join(prompt.split())[:110]
                     turns.append(state.history.sign(conversation_id, owner, {
-                        "run_id": run_id,
+                        "run_id": run_id, "scope_review": piece.get("scope_review"),
                         "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
                         "objective": objective, "instructions": brief, "requirements": piece.get("requirements", {}),
                         "basis": piece.get("basis", {}),

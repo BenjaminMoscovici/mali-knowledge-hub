@@ -36,6 +36,26 @@ async function openSourceReview() {
     label.append(input); options.append(label); fields.set(name, input);
   }
   form.append(options);
+  const scopeOptions = el("details");
+  scopeOptions.append(el("summary", "", "Scope for cross-source analysis"));
+  const scopeFields = new Map();
+  for (const [name, title] of Object.entries({
+    geographic_frame: "Geographic framework and boundary version", grain: "What one record represents",
+    measure: "Indicator and definition", units: "Units and denominator", basis: "Observation method or evidence type"
+  })) {
+    const label = el("label", "", title);
+    const input = el("input");
+    input.maxLength = 240;
+    scopeFields.set(name, input);
+    label.append(input);
+    scopeOptions.append(label);
+  }
+  const windows = el("textarea");
+  windows.rows = 2;
+  const windowLabel = el("label", "", "Coverage periods, one YYYY-MM-DD / YYYY-MM-DD pair per line");
+  windowLabel.append(windows);
+  scopeOptions.append(windowLabel);
+  form.append(scopeOptions);
   const report = el("div", "review-report");
   async function processFile(op) {
     notice.textContent = "";
@@ -49,6 +69,10 @@ async function openSourceReview() {
         reader.readAsDataURL(chosen);
       });
       const metadata = Object.fromEntries([...fields].map(([name, input]) => [name, input.value]));
+      metadata.comparison_scope = Object.fromEntries([...scopeFields]
+        .map(([name, input]) => [name, input.value.trim()]).filter(([, value]) => value));
+      if (windows.value.trim()) metadata.comparison_scope.windows = windows.value.trim()
+        .split(/\n/).map(line => line.split("/").map(date => date.trim()));
       metadata.column_types = JSON.parse(metadata.column_types || "{}");
       const data = await json("/api/admin/sources", {operation:op, filename:chosen.name, content, metadata});
       fields.get("id").value = data.id; fields.get("title").value = data.title;

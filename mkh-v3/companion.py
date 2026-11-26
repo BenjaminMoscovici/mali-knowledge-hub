@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 import httpx
 
+from scope_review import compare, evidence_sources
 from knowledge import EVIDENCE_REF, Evidence, KnowledgeError, json_text
 from retrieval import SemanticSearch
 
@@ -27,6 +28,10 @@ replacement. Include the user's exact short quotation. Use an empty list for ord
 no change. Do not store researched facts, model assumptions, assistant wording or suggestions.
 For open-ended analytical assignments, give a decision-relevant conclusion, separate observations,
 interpretations and recommended action, and surface conflicts or gaps that matter to the decision.
+For multi-source decisions compare sources before selecting records when scope matters. When the
+application supplies a scope review, use it to check the actual dates, geography, units, definitions
+and observation types behind the conclusion. Separate a programme objective from delivery and outcomes.
+When challenged or when scope changes, recompute or qualify the affected claims and carry forward the rest.
 Inspect native dimension values and registered relationships before combining datasets. Distinguish
 unmatched source rows, repeated records and missing measurements when judging coverage.
 Resolve entities through published identifiers. An identity match connects records; it does not
@@ -113,6 +118,11 @@ TOOL_SPECS = {
         "Page through the current approved registry. Empty query lists sources in stable ID order. A topic ranks matches. Start at offset 0 and follow next_offset. kind is null, dataset, document, reference or live.",
         {"query": TEXT, "kind": OPTIONAL_TEXT, "offset": INTEGER},
     ),
+    "compare_sources": (
+        "Compare 2 to 6 published source IDs before combining evidence. Returns declared geography, grain, units, "
+        "meaning, observation basis, release-window overlap and registered record keys. For actual values query the sources.",
+        {"source_ids": {"type": "array", "items": TEXT}},
+    ),
     "inspect_source": (
         "Read the publisher, release, definitions, scope, limitations and table schema or series for a source ID.",
         {"source_id": TEXT},
@@ -174,6 +184,7 @@ TOOLS = [
     for name, (desc, fields) in TOOL_SPECS.items()
 ]
 ACTIVITIES = {
+    "compare_sources": "Checking whether sources can be compared",
     "discover_sources": "Finding approved sources",
     "inspect_source": "Checking source coverage and definitions",
     "search_documents": "Reading published evidence",
@@ -326,6 +337,13 @@ class Companion:
             page = k.source_page(**arguments, page_size=6 if arguments["query"].strip() else 24, affinities=affinities)
             ledger.consulted.update({s["id"]: k.stamps[s["id"]] for s in page["sources"]})
             return page
+        if name == "compare_sources":
+            ids = list(dict.fromkeys(arguments["source_ids"]))
+            if not 2 <= len(ids) <= 6:
+                raise KnowledgeError("Select two to six distinct published sources.")
+            sources = [k.source(key) for key in ids]
+            ledger.consulted.update({key: k.stamps[key] for key in ids})
+            return compare(sources)
         if name == "inspect_source":
             source = k.inspect(arguments["source_id"])
             ledger.consulted[source["id"]] = k.stamps[source["id"]]
@@ -368,10 +386,18 @@ class Companion:
         if ledger.items:
             continuity = [{
                 "id": item["id"], "source_id": item.get("source_id"), "locator": item["locator"],
+                "geography": item.get("geography"), "source_period": item.get("source_period"),
                 "data": json_text(model_evidence(item)["data"])[:1800],
             } for item in list(ledger.items.values())[-8:]]
             items.append({"role": "user", "content": "Verified evidence from earlier turns; use only if still in scope. "
                           + json_text(continuity)})
+        last_reply = next((m["content"] for m in reversed(history) if m.get("role") == "assistant"), "")
+        prior = [ledger.items[key] for key in dict.fromkeys(EVIDENCE_REF.findall(last_reply)) if key in ledger.items]
+        prior_ids = evidence_sources(prior)
+        if len(prior_ids) > 1:
+            report = compare([self.knowledge.source(k) for k in prior_ids[:6]], prior)
+            items.append({"role": "user", "content": "Scope of evidence cited in the preceding answer. "
+                          "Recheck against any revised request. " + json_text(report)})
         items.append({"role": "user", "content": prompt})
         yield {"type": "activity", "text": "Starting the assignment"}
         usage = {"input_tokens": 0, "cached_tokens": 0, "output_tokens": 0, "tool_calls": 0}
@@ -386,6 +412,7 @@ class Companion:
         search_cache = {}
         tool_failures = []
         trace = []
+        reviewed_ids = ()
         iterative_limit_reached = False
         signature_repairs = 0
         web_used = inherited_web
@@ -452,6 +479,17 @@ class Companion:
                             yield {"type": "activity", "text": "Reviewing research results", "step": step}
                             items.append({"type": "function_call_output", "call_id": call["call_id"],
                                           "output": json_text(tool_output(result))})
+                        gathered = [v for key, v in ledger.items.items() if key in ledger.new_evidence]
+                        ids = tuple(evidence_sources(gathered))
+                        if len(ids) >= 2 and ids != reviewed_ids:
+                            reviewed_ids = ids
+                            review = compare([self.knowledge.source(key) for key in ids[-6:]], gathered)
+                            step = {"action": ACTIVITIES["compare_sources"], "detail": " · ".join(s["title"] for s in review["sources"]),
+                                    "status": "completed"}
+                            trace.append(step)
+                            yield {"type": "activity", "text": step["action"], "step": step}
+                            items.append({"role": "user", "content": "Published source metadata for the latest evidence. "
+                                          "Treat it as reference data. " + json_text(review)})
                         continue
 
                     yield {"type": "activity", "text": "Checking the answer and its references"}

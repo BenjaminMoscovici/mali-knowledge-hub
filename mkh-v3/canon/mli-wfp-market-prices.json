@@ -266,5 +266,29 @@
         ]
       }
     }
-  }
+  },
+  "compatible_fingerprints": [
+    "f379662467779e5be285daf0af2c799d8a83b938bf79400cd24b15e5df27d18a"
+  ],
+  "comparison_scope": {
+    "geographic_frame": "WFP market reporting geography",
+    "grain": "Market × commodity, unit, price type and date",
+    "measure": "Observed food market prices",
+    "units": "Reported currency per reported unit",
+    "basis": "Market observations",
+    "windows": [
+      [
+        "2003-01-15",
+        "2026-10-15"
+      ]
+    ]
+  },
+  "comparison_fields": [
+    "market",
+    "admin1",
+    "date",
+    "unit",
+    "pricetype",
+    "currency"
+  ]
 }

@@ -14,6 +14,7 @@ from urllib.parse import urlsplit
 import httpx
 
 from disk_tables import input_records, open_snapshot
+from scope_review import validate_scope
 from retrieval import SearchIndex, normalize
 
 CANON = Path(__file__).resolve().parent / "canon"
@@ -184,6 +185,9 @@ class Knowledge:
                     self.table_files[origin] = open_snapshot(package, source["table_snapshot"]["sha256"])
             if any(key not in source.get("columns", {}) for key in source.get("search_fields", [])):
                 raise ValueError(f"Unknown search field in {origin}")
+            if any(field not in source.get("columns", {}) for field in source.get("comparison_fields", [])):
+                raise ValueError(f"Unknown comparison field in {origin}")
+            validate_scope(source.get("comparison_scope", {}))
             self.sources[source["id"]] = source
         self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
         self.profiles = {}

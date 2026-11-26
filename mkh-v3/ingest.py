@@ -13,6 +13,7 @@ import unicodedata
 import zipfile
 from pathlib import Path
 
+from scope_review import validate_scope
 from knowledge import KnowledgeError, SOURCE_ID, SQL_TYPES, https_url
 
 MAX_FILE = 1500000
@@ -181,6 +182,11 @@ def materialize(body):
     manifest.update(result, id=source_id, title=title, review="published", upload_sha256=hashlib.sha256(raw).hexdigest(),
                     original_filename=filename, topics=[t.strip() for t in text_field(meta,"topics",600).split(",") if t.strip()],
                     limitations=[v.strip() for v in text_field(meta,"limitations",1500).splitlines() if v.strip()])
+    if "comparison_scope" in meta:
+        scope = meta["comparison_scope"]
+        validate_scope(scope)
+        if scope:
+            manifest["comparison_scope"] = scope
     if body.get("operation") == "draft" and not all(manifest[k] for k in
             ("publisher","url","release","period","geography","license","description","limitations","update_policy")):
         raise KnowledgeError("Complete the provenance, coverage, licence, limitations and update policy before saving a draft.")

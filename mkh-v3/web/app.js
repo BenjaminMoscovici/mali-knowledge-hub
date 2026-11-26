@@ -376,6 +376,36 @@ function researchActivity(steps) {
   return details;
 }
 
+function showScopeReview(review) {
+  openDrawer("Compare sources");
+  drawerBody.append(el("p", "source-description", review.interpretation));
+  const titles = new Map(review.sources.map((s) => [s.source_id, s.title]));
+  for (const pair of review.pairs) {
+    const box = el("article", "evidence-item");
+    box.append(el("h3", "", titles.get(pair.left) + " / " + titles.get(pair.right)),
+      el("p", "", "Reporting periods · " + pair.period_relation),
+      el("p", "", pair.registered_record_keys.length ? "Shared identifiers · " + pair.registered_record_keys.join(", ")
+        : "No registered identifier links these releases."));
+    if (pair.distinct_declarations.length) box.append(el("p", "", "Declared differences · "
+      + pair.distinct_declarations.map((d) => d.replaceAll("_", " ")).join(", ")));
+    if (pair.unspecified.length) box.append(el("p", "evidence-meta", "Undocumented for one or both sources · "
+      + pair.unspecified.map((d) => d.replaceAll("_", " ")).join(", ")));
+    drawerBody.append(box);
+  }
+  for (const source of review.sources) {
+    const box = el("article", "evidence-item");
+    box.append(el("h3", "", source.title), el("p", "", source.geography + " · " + source.period));
+    for (const field of ["grain", "measure", "units", "basis"]) {
+      if (source[field]) box.append(el("p", "evidence-meta", field + " · " + source[field]));
+    }
+    for (const selected of source.returned_labels || []) {
+      const labels = Object.entries(selected.labels).map(([key, values]) => key + " · " + values.join(", "));
+      box.append(el("p", "evidence-meta", labels.join(" / ")));
+    }
+    drawerBody.append(box);
+  }
+}
+
 function appendAnswer(turn, parent = messages) {
   const evidence = turn.evidence || [];
   const message = el("div", "message assistant");
@@ -393,9 +423,10 @@ function appendAnswer(turn, parent = messages) {
     view.addEventListener("click", () => showEvidence(evidence));
     footer.append(view);
   }
+  if (turn.scope_review?.pairs?.length) footer.append(action("Compare sources", () => showScopeReview(turn.scope_review)));
   footer.append(action("Download brief", () => downloadReport(turn, body, evidence)));
   if (evidence.length) footer.append(action("Evidence file", () => downloadFile("MKH-evidence.json",
-    JSON.stringify({evidence, exhibits: turn.artifacts || []}, null, 2), "application/json")));
+    JSON.stringify({evidence, scope_review: turn.scope_review, exhibits: turn.artifacts || []}, null, 2), "application/json")));
   if (Number.isFinite(turn.usage?.estimated_model_usd)) {
     footer.append(el("span", "", "Est. model cost · $" + turn.usage.estimated_model_usd.toFixed(3)));
   }

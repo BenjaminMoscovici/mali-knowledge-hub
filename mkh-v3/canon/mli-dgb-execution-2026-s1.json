@@ -223,5 +223,29 @@
       "share_2026_pct": null,
       "locator": "PDF page 7 (printed page 5), tableau 4 / Transferts en capital"
     }
-  ]
+  ],
+  "compatible_fingerprints": [
+    "b19581eb9258891467d3ed05edac3d4bbd609a6298286c3ecf54c7f614ed7354"
+  ],
+  "comparison_scope": {
+    "geographic_frame": "Mali national",
+    "grain": "General budget by economic category at half year",
+    "measure": "Credits, commitments and liquidations",
+    "units": "Billions of FCFA and percentages",
+    "basis": "Administrative budget reporting",
+    "windows": [
+      [
+        "2024-01-01",
+        "2024-06-30"
+      ],
+      [
+        "2025-01-01",
+        "2025-06-30"
+      ],
+      [
+        "2026-01-01",
+        "2026-06-30"
+      ]
+    ]
+  }
 }
