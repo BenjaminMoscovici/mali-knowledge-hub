@@ -1,0 +1,9 @@
+{"task":"mopti","variant":"fast","trial":1,"turn":1,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.036479,"seconds":25.19,"tool_calls":6,"embedding_tokens":18726}
+{"task":"mopti","variant":"fast","trial":1,"turn":2,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.013954,"seconds":9.52,"tool_calls":0,"embedding_tokens":0}
+{"task":"mopti","variant":"fast","trial":1,"turn":3,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.014606,"seconds":8.08,"tool_calls":0,"embedding_tokens":0,"trial_accepted":true,"accepted":true}
+{"task":"education","variant":"fast","trial":1,"turn":1,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.030286,"seconds":20.78,"tool_calls":6,"embedding_tokens":30}
+{"task":"education","variant":"fast","trial":1,"turn":2,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.01058,"seconds":8.05,"tool_calls":0,"embedding_tokens":0}
+{"task":"education","variant":"fast","trial":1,"turn":3,"revision":"d238df6531643e58233117c2995c0f30427303cf","estimated_usd":0.020988,"seconds":12.18,"tool_calls":2,"embedding_tokens":0,"trial_accepted":false}
+{"task":"education","variant":"fast","trial":2,"turn":1,"revision":"40680141de6c93d73f05d2b3b7dfb8f18e59ce1f","estimated_usd":0.030642,"seconds":19.29,"tool_calls":6,"embedding_tokens":18733}
+{"task":"education","variant":"fast","trial":2,"turn":2,"revision":"40680141de6c93d73f05d2b3b7dfb8f18e59ce1f","estimated_usd":0.011616,"seconds":8.06,"tool_calls":0,"embedding_tokens":0}
+{"task":"education","variant":"fast","trial":2,"turn":3,"revision":"40680141de6c93d73f05d2b3b7dfb8f18e59ce1f","estimated_usd":0.024541,"seconds":19.03,"tool_calls":3,"embedding_tokens":0,"trial_accepted":true,"accepted":true}

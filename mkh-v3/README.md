@@ -45,6 +45,18 @@ budget execution report. Each release carries its source, scope and limitations.
 The HDX tables use the dates, units, administrative identifiers and processing flags
 provided by their publishers. The rainfall series uses WFP administrative areas.
 
+INSTAT’s RGPH5 schooling report contributes all 20 rows of Table 1.4, comparing
+census and school yearbook gross enrolment rates by sex in eight historical regions,
+Bamako and the national total. The PRODEC 2 release contains French extracts from
+pages 66, 70 and 71 of the adopted programme, covering targets and planned actions.
+
+The `compare_sources` research tool checks the geographic frame, grain, measure,
+units, evidence basis, declared dates and registered keys across releases. When
+editors supply shared indicator codes, it also shows which selected releases declare
+a measurement for each policy objective. A missing match is a gap in the cited
+metadata. The model receives these checks during research and revision. Readers
+can open **Compare sources** alongside the answer or inspect the exported evidence.
+
 Large CSV releases use a reviewed column schema and a checksum-pinned SQLite
 snapshot. Build a snapshot with `python scripts/pack_table.py MANIFEST SOURCE.csv`.
 The build preserves source row numbers and missing values. The application opens the
@@ -211,3 +223,14 @@ per-mode cost per accepted task. Use a common task ID for all retries and follow
 record failed attempts too and supply one final review per task and variant. An unknown
 cost or pending review leaves the rate unreported. Expansion requires varied blind
 professional assignments, order-balanced trials and comparison against provider billing.
+
+Two Fast-mode guest assignments on the live preview each used three browser turns
+to request, challenge and revise a French decision brief. A separate model reviewed
+each conversation against a predeclared rubric and the original publications. The
+Mopti market visit passed on the first trial. The initial Gao-to-Bamako education
+revision omitted whether gross enrolment establishes retention. A shared indicator
+check was added and the repeated education assignment passed. All nine turns completed
+with a working source comparison drawer. Estimated inference and embedding charges
+totalled USD 0.193692 across the two accepted tasks, including the unsuccessful trial.
+Reproduce the result with `python scripts/task_cost.py evaluation/20261126-cross-source.jsonl`.
+The estimate excludes the independent review and hosting.
