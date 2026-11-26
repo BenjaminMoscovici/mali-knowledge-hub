@@ -114,3 +114,8 @@ a.nav-action{text-decoration:none}
 .research-activity { color:#46635a; font-size:.85rem; padding:.4rem 0; text-align:left; }
 .research-activity summary { cursor:pointer; }
 .research-activity li { margin:.35rem 0; }
+
+.live-label { color: var(--muted, #53635b); font-size: .86rem; line-height: 1.5; }
+.live-draft { white-space: pre-wrap; overflow-wrap: anywhere; }
+.live-draft:not(:empty) { margin-top: .7rem; }
+.live-draft:not(:empty)::after { content: "▍"; color: var(--muted, #53635b); }

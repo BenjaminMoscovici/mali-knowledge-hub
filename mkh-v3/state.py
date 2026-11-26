@@ -22,7 +22,8 @@ GUEST_COOKIE = "mkh_v3_guest"
 EMAIL_FLOW_COOKIE = "mkh_v3_email_flow"
 PASSWORD_COOKIE = "mkh_v3_password_setup"
 TOP_TURNS = 12
-DAILY_ASSIGNMENTS = 8
+BURST_ATTEMPTS = 12
+BURST_MINUTES = 5
 
 
 class StateError(ValueError):
@@ -186,13 +187,13 @@ class SupabaseState:
                                           json={"enabled": enabled, "notes": notes})
         self.require(response)
 
-    async def reserve(self, token, daily_limit=DAILY_ASSIGNMENTS):
-        after = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+    async def reserve(self, token):
+        after = (datetime.now(timezone.utc) - timedelta(minutes=BURST_MINUTES)).isoformat()
         response = await self.request("GET", ATTEMPTS, token=token,
-                                      params={"select": "id", "attempted_at": f"gte.{after}", "limit": daily_limit})
+                                      params={"select": "id", "attempted_at": f"gte.{after}", "limit": BURST_ATTEMPTS, "order": "attempted_at.asc"})
         self.require(response)
-        if len(response.json()) >= daily_limit:
-            raise StateError("The preview's daily research allowance has been used. Try again tomorrow.")
+        if len(response.json()) >= BURST_ATTEMPTS:
+            raise StateError("Several requests were submitted in quick succession. Try again within five minutes.")
         response = await self.request("POST", ATTEMPTS, token=token, json={"id": str(uuid4())})
         self.require(response)
 
@@ -230,13 +231,16 @@ class PreviewSessions:
 
     def reserve(self, guest=None):
         current = time.monotonic()
-        for slots in ([self.attempts, guest.attempts] if guest else [self.attempts]):
-            while slots and current - slots[0] >= 86400:
-                slots.popleft()
+        while self.attempts and current - self.attempts[0] >= 86400:
+            self.attempts.popleft()
         if len(self.attempts) >= self.DAILY_PREVIEW_ASSIGNMENTS:
-            raise StateError("The shared preview has reached its research limit. Try again later.")
-        if guest and len(guest.attempts) >= DAILY_ASSIGNMENTS:
-            raise StateError("This preview session has reached its research limit. Try again later.")
+            minutes = max(1, int((86400 - current + self.attempts[0]) / 60) + 1)
+            raise StateError(f"The shared preview has used its daily allowance. Try again in {minutes} minutes.")
+        if guest:
+            while guest.attempts and current - guest.attempts[0] >= BURST_MINUTES * 60:
+                guest.attempts.popleft()
+            if len(guest.attempts) >= BURST_ATTEMPTS:
+                raise StateError("Several requests were submitted in quick succession. Try again within five minutes.")
         self.attempts.append(current)
         if guest:
             guest.attempts.append(current)

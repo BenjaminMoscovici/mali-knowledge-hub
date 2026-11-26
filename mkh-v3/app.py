@@ -8,6 +8,7 @@ import logging
 import os
 import re
 import secrets
+import time
 from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -376,10 +377,20 @@ async def signout(request):
 async def conversations(request):
     try:
         token, owner = await account(request)
-        if not owner:
-            return error("Sign in to open your saved conversations.", 401)
         state = settings(request)
         value = request.path_params.get("conversation_id")
+        if not owner:
+            if request.method == "GET" and value:
+                guest_owner = request.cookies.get(GUEST_COOKIE)
+                guest = state.preview.guests.get(guest_owner)
+                chat_id = selected_id(value)
+                if guest and time.monotonic() - guest.touched < state.preview.GUEST_IDLE_SECONDS and chat_id in guest.conversations:
+                    guest.touched = time.monotonic()
+                    turns = state.history.accessible(chat_id, guest_owner, guest.conversations[chat_id])
+                    return data_response({"id": chat_id, "earlier_before": None, "turns": [
+                        {k: v for k, v in turn.items() if k != "signature"} for turn in turns]})
+                return error("This temporary conversation has expired.", 410)
+            return error("Sign in to open your saved conversations.", 401)
         if value is None:
             return data_response({"conversations": await state.store.recent(token)})
         conversation_id = selected_id(value)
@@ -422,8 +433,6 @@ async def chat(request):
             return error("Choose Fast or Deep mode.")
         if not state.companion:
             return error("The V3 model credential has yet to be configured.", 503)
-        if state.slot.locked():
-            return error("The preview is processing another assignment. Try again shortly.", 429)
         token, owner = await account(request)
         if body.get("signed_in") is True and not owner:
             return error("Your sign-in expired. Sign in to reopen saved chats, or start a guest chat.", 401)
@@ -441,80 +450,108 @@ async def chat(request):
     except StateError as failure:
         return error(str(failure), 400)
 
-    async def stream():
-        if state.slot.locked():
-            yield {"type": "error", "text": "The preview is processing another assignment. Try again shortly."}
-            return
-        async with state.slot:
-            try:
-                row = await state.store.load(token, conversation_id) if token else None
-                if token and body.get("conversation_id") and row is None:
-                    yield {"type": "error", "text": "The saved V3 conversation is unavailable."}
-                    return
-                if guest:
-                    turns = list(guest.conversations.get(conversation_id, []))
-                else:
-                    turns = list(row["turns"]) if row else []
-                earlier = list(state.history.accessible(conversation_id, owner, turns))
-                context, prior_evidence = state.history.context(earlier)
-                previous = earlier[-1] if earlier else {}
-                objective = previous.get("objective") or (earlier[0]["prompt"] if earlier else prompt)
-                brief = previous.get("instructions", "") if instructions is None else instructions.strip()
-                if earlier and (objective != earlier[0]["prompt"] or len(earlier) > 5):
-                    context.append({"role": "user", "content": "Original assignment (later changes take precedence): " + objective})
-                if brief:
-                    context.append({"role": "user", "content": "Current user-pinned working instructions: " + brief})
-                if token:
-                    note = await state.store.memory(token)
-                    if note.get("enabled") and note.get("notes"):
-                        context.append({"role": "user", "content": "User-selected personal preferences and context: " + note["notes"]})
-                basis = {}
-                for turn in earlier:
-                    basis.update(turn.get("basis", {}))
-                    basis.update({e["source_id"]: e.get("fingerprint", e["release"]) for e in turn.get("evidence", []) if e["origin"] == "canon"})
-                state.preview.reserve(guest)
-                if token:
-                    await state.store.reserve(token)
-                async def recall(query, ledger):
-                    archived = []
-                    if row and row["revision"] > len(turns):
-                        archived = await state.store.find_work(token, conversation_id, query)
-                    accessible = list(state.history.accessible(conversation_id, owner, archived))
-                    return state.history.recall(accessible + earlier, query, ledger)
+    run_id = str(uuid4())
 
-                async for piece in state.companion.research(prompt, mode, context, prior_evidence, basis,
-                                                           any(turn.get("web_used") for turn in earlier), recall,
-                                                           previous.get("requirements", {})):
-                    if piece["type"] == "answer":
-                        await sync_catalogue(state)
-                        if not answer_available(state, piece):
-                            raise StateError("A source changed during this assignment. Run it again with the current release.")
-                        title = row["title"] if row else " ".join(prompt.split())[:110]
-                        turns.append(state.history.sign(conversation_id, owner, {
-                            "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
-                            "objective": objective, "instructions": brief, "requirements": piece.get("requirements", {}),
-                            "basis": piece.get("basis", {}),
-                            "artifacts": piece.get("artifacts", []), "research_steps": piece.get("research_steps", []),
-                            "web_used": piece["web_used"], "partial": piece["partial"],
-                            "tool_failures": piece["tool_failures"], "usage": piece["usage"], "mode": mode,
-                        }))
-                        if guest:
-                            if conversation_id not in guest.conversations and len(guest.conversations) >= 3:
-                                del guest.conversations[next(iter(guest.conversations))]
-                            guest.conversations[conversation_id] = turns[-TOP_TURNS:]
-                        else:
-                            await state.store.save(token, conversation_id, title, turns, row["revision"] if row else 0)
-                        piece["conversation_id"] = conversation_id
+    async def stream():
+        if owner in state.active_owners:
+            yield {"type": "error", "text": "Another assignment is running in this session. Stop it or wait for its answer."}
+            return
+        if len(state.active_owners) >= 8:
+            yield {"type": "error", "text": "The preview queue is full. Try again in a minute."}
+            return
+        state.active_owners.add(owner)
+        try:
+            if state.slot.locked():
+                yield {"type": "activity", "text": "Waiting for a research slot"}
+            async with asyncio.timeout(165), state.slot:
+                async for piece in execute():
                     yield piece
-            except (KnowledgeError, CompanionError, StateError) as failure:
-                yield {"type": "error", "text": str(failure)}
+        except TimeoutError:
+            yield {"type": "error", "text": "The assignment timed out. You can send the question again."}
+        finally:
+            state.active_owners.discard(owner)
+
+    async def execute():
+        try:
+            row = await state.store.load(token, conversation_id) if token else None
+            if token and body.get("conversation_id") and row is None:
+                yield {"type": "error", "text": "The saved V3 conversation is unavailable."}
+                return
+            if guest:
+                turns = list(guest.conversations.get(conversation_id, []))
+            else:
+                turns = list(row["turns"]) if row else []
+            earlier = list(state.history.accessible(conversation_id, owner, turns))
+            context, prior_evidence = state.history.context(earlier)
+            previous = earlier[-1] if earlier else {}
+            objective = previous.get("objective") or (earlier[0]["prompt"] if earlier else prompt)
+            brief = previous.get("instructions", "") if instructions is None else instructions.strip()
+            if earlier and (objective != earlier[0]["prompt"] or len(earlier) > 5):
+                context.append({"role": "user", "content": "Original assignment (later changes take precedence): " + objective})
+            if brief:
+                context.append({"role": "user", "content": "Current user-pinned working instructions: " + brief})
+            if token:
+                note = await state.store.memory(token)
+                if note.get("enabled") and note.get("notes"):
+                    context.append({"role": "user", "content": "User-selected personal preferences and context: " + note["notes"]})
+            basis = {}
+            for turn in earlier:
+                basis.update(turn.get("basis", {}))
+                basis.update({e["source_id"]: e.get("fingerprint", e["release"]) for e in turn.get("evidence", []) if e["origin"] == "canon"})
+            if token:
+                await state.store.reserve(token)
+            state.preview.reserve(guest)
+            async def recall(query, ledger):
+                archived = []
+                if row and row["revision"] > len(turns):
+                    archived = await state.store.find_work(token, conversation_id, query)
+                accessible = list(state.history.accessible(conversation_id, owner, archived))
+                return state.history.recall(accessible + earlier, query, ledger)
+
+            last_draft_check = 0
+            async for piece in state.companion.research(prompt, mode, context, prior_evidence, basis,
+                                                       any(turn.get("web_used") for turn in earlier), recall,
+                                                       previous.get("requirements", {})):
+                if piece["type"] == "draft" and piece.get("basis"):
+                    if time.monotonic() - last_draft_check > 4:
+                        await sync_catalogue(state)
+                        last_draft_check = time.monotonic()
+                    if not answer_available(state, piece):
+                        raise StateError("A source changed. Run the assignment again with the current release.")
+                if piece["type"] == "answer":
+                    await sync_catalogue(state)
+                    if not answer_available(state, piece):
+                        raise StateError("A source changed during this assignment. Run it again with the current release.")
+                    title = row["title"] if row else " ".join(prompt.split())[:110]
+                    turns.append(state.history.sign(conversation_id, owner, {
+                        "run_id": run_id,
+                        "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
+                        "objective": objective, "instructions": brief, "requirements": piece.get("requirements", {}),
+                        "basis": piece.get("basis", {}),
+                        "artifacts": piece.get("artifacts", []), "research_steps": piece.get("research_steps", []),
+                        "web_used": piece["web_used"], "partial": piece["partial"],
+                        "tool_failures": piece["tool_failures"], "usage": piece["usage"], "mode": mode,
+                    }))
+                    if guest:
+                        if conversation_id not in guest.conversations and len(guest.conversations) >= 3:
+                            del guest.conversations[next(iter(guest.conversations))]
+                        guest.conversations[conversation_id] = turns[-TOP_TURNS:]
+                    else:
+                        await state.store.save(token, conversation_id, title, turns, row["revision"] if row else 0)
+                    piece["conversation_id"] = conversation_id
+                yield piece
+        except (KnowledgeError, CompanionError, StateError) as failure:
+            yield {"type": "error", "text": str(failure)}
+
 
     if body.get("delivery") == "job":
-        job_id = state.jobs.start(owner, prompt, instructions or "", conversation_id, stream)
+        job_id = state.jobs.start(run_id, owner, prompt, instructions or "", conversation_id, stream)
         response = data_response({"job_id": job_id, "conversation_id": conversation_id}, 202)
     else:
         async def encoded():
             async for item in stream():
+                if item["type"] == "draft":
+                    item = {"type": "draft", "text": item["text"]}
                 yield json_text(item) + "\n"
         response = StreamingResponse(encoded(), media_type="application/x-ndjson",
                                      headers={**ERROR_HEADERS, "X-Content-Type-Options": "nosniff"})
@@ -544,16 +581,39 @@ async def job_status(request):
             await asyncio.gather(job.task, return_exceptions=True)
             if job.result is None:
                 job.result = {"type": "error", "text": "Assignment stopped."}
-    if job.result and job.result.get("type") == "answer" and state.registry:
-        try:
-            await sync_catalogue(state)
-        except StateError:
-            return error("The current source catalogue is temporarily unavailable.", 503)
-        if not answer_available(state, job.result):
-            return data_response({"prompt":job.prompt, "instructions":job.instructions, "conversation_id":job.conversation,
-                                  "event":{"type":"error","text":"A source used in this answer changed. Run the assignment again."}})
-    return data_response({"prompt": job.prompt, "instructions": job.instructions,
-                          "conversation_id": job.conversation, "event": job.result or {"type": "activity", "text": job.activity, "research_steps": job.steps}})
+    async def snapshot(check_sources=False):
+        event = job.result or {"type": "activity", "text": job.activity, "research_steps": list(job.steps), "draft": job.draft}
+        basis = job.result if event["type"] == "answer" else {"basis": job.draft_basis}
+        if state.registry and (event["type"] == "answer" or job.draft_basis):
+            if check_sources or event["type"] == "answer":
+                await sync_catalogue(state)
+            if not answer_available(state, basis):
+                event = {"type": "error", "text": "A source used in this answer changed. Run the assignment again."}
+        return {"prompt": job.prompt, "instructions": job.instructions, "conversation_id": job.conversation, "event": event}
+
+    if request.method == "GET" and request.query_params.get("watch") == "1":
+        async def updates():
+            first = True
+            while True:
+                changed = job.changed
+                try:
+                    data = await snapshot(check_sources=first)
+                except StateError:
+                    break  # Close the connection so the browser can reconnect and recheck.
+                first = False
+                yield json_text(data) + "\n"
+                if data["event"]["type"] in {"answer", "error"}:
+                    break
+                try:
+                    await asyncio.wait_for(changed.wait(), 8)
+                except TimeoutError:
+                    pass  # Repeat the current state as a heartbeat through idle proxies.
+        return StreamingResponse(updates(), media_type="application/x-ndjson",
+                                 headers={**ERROR_HEADERS, "X-Accel-Buffering": "no"})
+    try:
+        return data_response(await snapshot(check_sources=True))
+    except StateError:
+        return error("The current source catalogue is temporarily unavailable.", 503)
 
 
 def create_app(transport=None, directory=None):
@@ -578,7 +638,8 @@ def create_app(transport=None, directory=None):
             state.history = History(state.signing_key, state.knowledge, state.web_enabled)
             registry_enabled = os.getenv("MKH_MANAGED_SOURCES", "on" if os.getenv("RENDER") == "true" else "off").lower() in {"1","on","true"}
             state.registry = Publications(state.knowledge, state.store) if registry_enabled and state.store else None
-            state.slot = asyncio.Lock()
+            state.slot = asyncio.Semaphore(2)
+            state.active_owners = set()
             state.preview = PreviewSessions()
             state.jobs = ResearchJobs()
             if state.companion and preview_check_requested():

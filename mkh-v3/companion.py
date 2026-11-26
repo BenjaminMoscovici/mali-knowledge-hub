@@ -71,6 +71,27 @@ ANSWER_FORMAT = {"type": "json_schema", "name": "companion_turn", "strict": True
             "properties": {"dimension": TEXT, "action": {"type": "string", "enum": ["set", "remove"]}, "quote": TEXT}}}}}}
 
 
+def answer_prefix(raw):
+    """Decode only the leading answer string, stopping before any incomplete escape."""
+    start = re.match(r'^\s*\{\s*"answer"\s*:\s*(?=")', raw)
+    if not start:
+        return ""
+    value = raw[start.end():]
+    try:
+        answer, _ = json.JSONDecoder().raw_decode(value)
+    except json.JSONDecodeError:
+        # Close the unfinished string, skipping an incomplete JSON escape at its tail.
+        tail = re.search(r'(?:^|[^\\])(?:\\\\)*(\\(?:u[0-9a-fA-F]{0,3})?)$', value)
+        if tail:
+            value = value[:tail.start(1)]
+        try:
+            answer = json.loads(value + '"')
+        except ValueError:
+            return ""
+    # A surrogate pair can be split across separate provider events.
+    return answer.encode("utf-8", errors="ignore").decode()
+
+
 def apply_requirements(previous, changes, prompt):
     updated = dict(previous)
     for change in changes[:12]:
@@ -380,9 +401,16 @@ class Companion:
                             "The tool budget has ended. Complete the supported portion with evidence, "
                             "explain any limitation, and do not imply omitted work succeeded."
                         )})
-                    document = await self._provider_request(
+                    yield {"type": "activity", "text": "Reviewing the evidence" if trace else "Reading your request", "clear_draft": True}
+                    async for event in self._provider_request(
                         model, options, items, [] if final_step else tools, remaining_tokens, usage, ceiling,
-                    )
+                    ):
+                        if event["type"] == "provider_response":
+                            document = event["response"]
+                        else:
+                            if event["type"] == "draft":
+                                event["basis"] = dict(ledger.consulted)
+                            yield event
                     counts = document.get("usage") or {}
                     usage["input_tokens"] += counts.get("input_tokens", 0)
                     usage["cached_tokens"] += (counts.get("input_tokens_details") or {}).get("cached_tokens", 0)
@@ -398,6 +426,7 @@ class Companion:
                     if calls:
                         if final_step:
                             raise CompanionError("The assignment used its research budget before producing a supported answer.")
+                        yield {"type": "activity", "text": "Preparing source lookups", "clear_draft": True}
                         items.extend(output)
                         for call in calls:
                             name = call.get("name", "")
@@ -420,6 +449,7 @@ class Companion:
                                           "output": json_text(tool_output(result))})
                         continue
 
+                    yield {"type": "activity", "text": "Checking the answer and its references"}
                     answer, cited_web, changes = self._answer(output, ledger)
                     if not answer:
                         raise CompanionError("The model ended the request before returning an answer.")
@@ -483,7 +513,7 @@ class Companion:
 
     async def _provider_request(self, model, options, items, tools, remaining_tokens, usage, ceiling):
         body = {
-            "model": model, "input": items, "store": False,
+            "model": model, "input": items, "store": False, "stream": True,
             "instructions": POLICY + "\nCurrent assignment date (UTC): " + datetime.now(timezone.utc).date().isoformat() + ("\nExternal web research is enabled." if self.web_enabled
                                        else "\nExternal web research is disabled."),
             "reasoning": {"effort": options["effort"]}, "text": {"format": ANSWER_FORMAT},
@@ -494,22 +524,58 @@ class Companion:
             body.update(tools=tools, parallel_tool_calls=True)
         budget_response(body, usage, ceiling)
         try:
-            response = await self.client.post(
-                ENDPOINT, json=body, headers={"Authorization": f"Bearer {self.api_key}"}, timeout=50.0,
-            )
-            if response.status_code in {401, 403, 404}:
-                raise CompanionError("The configured V3 credential or model is unavailable.")
-            if response.status_code == 429:
-                if self._error_code(response) in {"insufficient_quota", "billing_hard_limit_reached"}:
-                    raise CompanionError("The OpenAI project has no available API quota. Check its billing and usage limits.")
-                raise CompanionError("The model provider is rate-limited. Try again later.")
-            if response.status_code == 400:
-                raise CompanionError("OpenAI rejected the V3 model request. Verify the model and tool configuration.")
-            response.raise_for_status()
-            document = response.json()
-            if not isinstance(document, dict):
-                raise ValueError("Unexpected provider response.")
-            return document
+            async with self.client.stream(
+                "POST", ENDPOINT, json=body, headers={"Authorization": f"Bearer {self.api_key}"}, timeout=50.0,
+            ) as response:
+                if not response.is_success:
+                    await response.aread()
+                    if response.status_code in {401, 403, 404}:
+                        raise CompanionError("The configured V3 credential or model is unavailable.")
+                    if response.status_code == 429:
+                        if self._error_code(response) in {"insufficient_quota", "billing_hard_limit_reached"}:
+                            raise CompanionError("The OpenAI project has no available API quota. Check its billing and usage limits.")
+                        raise CompanionError("The model provider is rate-limited. Try again later.")
+                    if response.status_code == 400:
+                        raise CompanionError("OpenAI rejected the V3 model request. Verify the model and tool configuration.")
+                    response.raise_for_status()
+                if "application/json" in response.headers.get("content-type", ""):
+                    await response.aread()
+                    yield {"type": "provider_response", "response": response.json()}
+                    return
+                raw = ""
+                last_text = ""
+                last_sent = 0
+                async for line in response.aiter_lines():
+                    if not line.startswith("data:") or line[5:].strip() == "[DONE]":
+                        continue
+                    event = json.loads(line[5:])
+                    kind = event.get("type")
+                    if kind == "response.output_text.delta":
+                        raw += event["delta"]
+                        now = time.monotonic()
+                        if now - last_sent >= 0.09:
+                            draft = answer_prefix(raw)
+                            if draft and draft != last_text:
+                                yield {"type": "draft", "text": draft}
+                                last_text, last_sent = draft, now
+                    elif kind == "response.output_item.added":
+                        item = event.get("item", {})
+                        if item.get("type") == "function_call" and item.get("name") in ACTIVITIES:
+                            yield {"type": "activity", "text": ACTIVITIES[item["name"]]}
+                        elif item.get("type") == "web_search_call" and self.web_enabled:
+                            yield {"type": "activity", "text": "Searching external web sources"}
+                        elif item.get("type") == "message":
+                            raw, last_text, last_sent = "", "", 0
+                            yield {"type": "activity", "text": "Writing the answer"}
+                    elif kind in {"response.completed", "response.incomplete"}:
+                        draft = answer_prefix(raw)
+                        if draft and draft != last_text:
+                            yield {"type": "draft", "text": draft}
+                        yield {"type": "provider_response", "response": event["response"]}
+                        return
+                    elif kind in {"error", "response.failed"}:
+                        break
+                raise CompanionError("The model stream was interrupted. You can send the question again.")
         except (httpx.HTTPError, ValueError) as error:
             if isinstance(error, CompanionError):
                 raise

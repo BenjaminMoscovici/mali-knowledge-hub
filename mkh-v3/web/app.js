@@ -13,7 +13,9 @@ let workingInstructions = "";
 let currentRequirements = {};
 let earlierBefore = null;
 let active = null;
-let activeJob = null;
+let stopping = Promise.resolve();
+const conversationKey = "mkh-v3-current-chat";
+let viewRevision = 0;
 const pendingJobKey = "mkh-v3-pending-research";
 let authMode = "sign-in";
 let opener = null;
@@ -26,7 +28,7 @@ function el(tag, className, value) {
 }
 
 async function request(path, options = {}) {
-  const response = await fetch(path, options);
+  const response = await fetch(path, {signal: AbortSignal.timeout(path === "/api/session" ? 65000 : 22000), ...options});
   if (!response.ok) {
     const failure = await response.json().catch(() => ({}));
     const error = new Error(failure.error || "The V3 preview could not complete this request.");
@@ -50,10 +52,10 @@ function updateComposer(status = "") {
   byId("profile-button").disabled = Boolean(active);
   byId("send-button").disabled = Boolean(active) || !promptBox.value.trim();
   byId("cancel-button").classList.toggle("hidden", !active);
-  byId("new-chat").disabled = Boolean(active);
+  byId("new-chat").title = active ? "Stop this assignment and start a new chat" : "Start a new chat";
   byId("working-notes").disabled = Boolean(active);
   byId("personal-memory").disabled = Boolean(active);
-  promptBox.readOnly = Boolean(active);
+
   statusLine.textContent = status || (
     !session ? "Checking the V3 preview session…" :
       !session.model_configured ? "V3 preview · Source browsing is available. Model access is being configured." :
@@ -407,6 +409,9 @@ function appendAnswer(turn, parent = messages) {
 }
 
 function reset() {
+  viewRevision++;
+  sessionStorage.removeItem(conversationKey);
+  sessionStorage.removeItem(pendingJobKey);
   earlierBefore = null;
   byId("earlier-turns").classList.add("hidden");
   workingInstructions = "";
@@ -459,10 +464,12 @@ async function recent() {
     button.addEventListener("click", async () => {
       if (active) return;
       try {
+        const opening = ++viewRevision;
         const value = await json("/api/conversations/" + entry.id);
-        if (session !== viewingSession) return;
+        if (session !== viewingSession || opening !== viewRevision || active) return;
         reset();
         conversationId = entry.id;
+        sessionStorage.setItem(conversationKey, entry.id);
         workingInstructions = value.turns.at(-1)?.instructions || "";
         currentRequirements = value.turns.at(-1)?.requirements || {};
         byId("topbar-title").textContent = entry.title;
@@ -590,101 +597,164 @@ function handleEmailLink() {
   }
 }
 
-async function followJob(id, pendingMessage, prompt) {
-  activeJob = id;
-  sessionStorage.setItem(pendingJobKey, id);
+async function* jobUpdates(run) {
+  const deadline = Date.now() + 205000;
   let failures = 0;
-  while (true) {
-    let status;
+  while (Date.now() < deadline && !run.controller.signal.aborted) {
+    const connection = new AbortController();
+    const signal = AbortSignal.any([run.controller.signal, connection.signal]);
+    let timer;
+    const arm = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => connection.abort(), Math.min(22000, Math.max(1, deadline - Date.now())));
+    };
     try {
-      status = await json("/api/jobs/" + encodeURIComponent(id));
-      failures = 0;
-    } catch (failure) {
-      if (failure.status === 410 || failure.status === 401 || ++failures >= 4) throw failure;
-      updateComposer("Reconnecting to the research run…");
-      await new Promise((resolve) => setTimeout(resolve, 1400));
-      continue;
-    }
-    if (!pendingMessage) {
-      prompt = status.prompt;
-      workingInstructions = status.instructions;
-      pendingMessage = appendUser(prompt);
-    }
-    const event = status.event;
-    if (event.type === "activity" && event.research_steps?.length) {
-      const old = pendingMessage.querySelector(".research-activity");
-      if (Number(old?.dataset.count) !== event.research_steps.length) {
-        const panel = researchActivity(event.research_steps);
-        panel.dataset.count = event.research_steps.length;
-        panel.open = old?.open || false;
-        if (old) old.replaceWith(panel); else pendingMessage.append(panel);
+      arm();
+      const response = await request("/api/jobs/" + encodeURIComponent(run.id) + "?watch=1", {signal});
+      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+      let buffer = "";
+      while (true) {
+        const {value, done} = await reader.read();
+        if (done) break;
+        arm();
+        buffer += value;
+        let end;
+        while ((end = buffer.indexOf("\n")) >= 0) {
+          const data = JSON.parse(buffer.slice(0, end));
+          buffer = buffer.slice(end + 1);
+          yield data;
+          if (["error", "answer"].includes(data.event.type)) return;
+        }
       }
+    } catch (failure) {
+      if (run.controller.signal.aborted || [401, 403, 410].includes(failure.status)) throw failure;
+    } finally {
+      clearTimeout(timer);
+      connection.abort();
     }
-    if (event.type === "error") {
-      sessionStorage.removeItem(pendingJobKey);
-      pendingMessage.remove();
-      promptBox.value = prompt;
-      throw new Error(event.text);
-    }
-    if (event.type === "answer") {
-      conversationId = event.conversation_id;
-      currentRequirements = event.requirements || {};
-      pendingMessage.querySelector(".research-activity")?.remove();
-      appendAnswer({...event, prompt});
-      sessionStorage.removeItem(pendingJobKey);
-      await recent().catch(() => {});
-      return;
-    }
-    updateComposer(event.text + "…");
-    await new Promise((resolve) => setTimeout(resolve, 1100));
+    if (++failures >= 4) break;
+    updateComposer("Reconnecting to the research run…");
+    await new Promise((resolve) => setTimeout(resolve, 500 * failures));
   }
+  throw new Error("Connection lost. You can resend your question or start a new chat.");
 }
 
-async function stopResearch() {
-  if (!active) return;
-  active.abort();
-  if (activeJob) {
-    try {
-      await request("/api/jobs/" + encodeURIComponent(activeJob), {method: "DELETE"});
-    } catch (failure) { updateComposer(failure.message); }
+function showLive(run, event) {
+  if (!run.live) {
+    run.live = el("div", "message assistant live-answer");
+    run.label = el("div", "live-label");
+    run.draft = el("div", "assistant-turn live-draft");
+    run.draft.setAttribute("aria-live", "off");
+    run.live.append(run.label, run.draft);
+    messages.append(run.live);
   }
+  const scroller = byId("conversation-scroll");
+  const nearBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 100;
+  const steps = event.research_steps || [];
+  if (steps.length && steps.length !== run.steps) {
+    run.steps = steps.length;
+    const panel = researchActivity(steps);
+    panel.open = run.panel?.open || false;
+    if (run.panel) run.panel.replaceWith(panel); else run.live.insertBefore(panel, run.draft);
+    run.panel = panel;
+  }
+  const last = steps.at(-1);
+  const detail = last?.detail && event.text === "Reviewing research results" ? " · " + last.detail : "";
+  const label = event.text + detail;
+  if (run.label.textContent !== label) run.label.textContent = label;
+  // Citations become interactive after the server has verified and saved the turn.
+  const draft = (event.draft || "").replace(/\[\[E-[0-9a-f]{0,16}(?:\]\]|\]?$)/g, "").replace(/\[{1,2}(?:E-?)?$/, "");
+  if (draft !== run.draft.textContent) run.draft.textContent = draft;
+  const status = draft ? "Draft · Final checks follow" : event.text + "…";
+  if (statusLine.textContent !== status) updateComposer(status);
+  if (nearBottom) scrollToLatest();
+}
+
+function stopResearch(restore = true) {
+  const run = active;
+  if (!run) return;
+  active = null;
+  run.controller.abort();
+  sessionStorage.removeItem(pendingJobKey);
+  run.live?.remove();
+  run.pending?.remove();
+  if (restore && !promptBox.value) promptBox.value = run.prompt;
+  byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
+  updateComposer(restore ? "Assignment stopped." : "");
+  // Wait for admission when Stop was clicked before the server returned its job ID.
+  const prior = stopping;
+  stopping = (async () => {
+    await prior;
+    const id = run.id || (await run.admission)?.job_id;
+    if (id) await request("/api/jobs/" + encodeURIComponent(id), {method: "DELETE"});
+  })().catch(() => {});
 }
 
 async function runAssignment(prompt, resumeId) {
-  active = new AbortController();
-  let pendingMessage = null;
+  const run = {controller: new AbortController(), id: resumeId, prompt};
+  active = run;
+  viewRevision++;
   try {
     if (!resumeId) {
       promptBox.value = "";
-      pendingMessage = appendUser(prompt);
+      run.pending = appendUser(prompt);
       updateComposer("Starting the assignment…");
-      const job = await json("/api/chat", {prompt, instructions: workingInstructions, delivery: "job",
+      await stopping;
+      if (active !== run) return;
+      run.admission = json("/api/chat", {prompt, instructions: workingInstructions, delivery: "job",
         conversation_id: conversationId, signed_in: session.authenticated, mode: byId("analysis-mode").value});
-      resumeId = job.job_id;
+      const job = await run.admission;
+      run.id = job.job_id;
+      if (active !== run) return;
+      sessionStorage.setItem(pendingJobKey, run.id);
     }
-    activeJob = resumeId;
-    if (active.signal.aborted) await stopResearch();
-    await followJob(resumeId, pendingMessage, prompt);
-    active = activeJob = null;
-    updateComposer();
+    for await (const status of jobUpdates(run)) {
+      if (active !== run) return;
+      const event = status.event;
+      if (!run.pending) {
+        run.prompt = status.prompt;
+        workingInstructions = status.instructions;
+        run.pending = appendUser(run.prompt);
+      }
+      if (event.type === "error") throw new Error(event.text);
+      if (event.type === "answer") {
+        conversationId = event.conversation_id;
+        sessionStorage.setItem(conversationKey, conversationId);
+        currentRequirements = event.requirements || {};
+        run.live?.remove();
+        appendAnswer({...event, prompt: run.prompt});
+        sessionStorage.removeItem(pendingJobKey);
+        active = null;
+        updateComposer();
+        recent().catch(() => {});
+        return;
+      }
+      showLive(run, event);
+    }
   } catch (failure) {
-    active = activeJob = null;
-    pendingMessage?.remove();
-    byId("welcome").classList.toggle("hidden", messages.childElementCount > 0);
-    if (failure.status === 401 || failure.status === 410) {
-      sessionStorage.removeItem(pendingJobKey);
-      reset();
+    if (active !== run) return;
+    stopResearch(false);
+    if (!promptBox.value) promptBox.value = run.prompt;
+    if (failure.status === 401) {
+      conversationId = null;
+      sessionStorage.removeItem(conversationKey);
       await refreshSession().catch(() => {});
     }
-    if (prompt) promptBox.value = prompt;
-    updateComposer(sessionStorage.getItem(pendingJobKey)
-      ? "Connection interrupted. Reload this tab to rejoin the assignment." : failure.message);
+    if (failure.status === 410 && !resumeId) {
+      conversationId = null;
+      sessionStorage.removeItem(conversationKey);
+    }
+    if (!active) updateComposer(failure.message);
   }
 }
 
 async function send() {
   const prompt = promptBox.value.trim();
   if (active || !prompt) return;
+  if (!session) {
+    try { await refreshSession(); } catch (failure) { updateComposer(failure.message); return; }
+    if (active) return;
+  }
   if (!session?.chat_enabled) {
     updateComposer(session ? "Model-backed chat is temporarily unavailable. Your draft is kept here."
                            : "The preview is connecting. Try Send again in a moment.");
@@ -765,7 +835,7 @@ document.addEventListener("keydown", (event) => {
 byId("sidebar-open").addEventListener("click", () => setSidebar(true));
 byId("sidebar-collapse").addEventListener("click", () => setSidebar(false));
 byId("sidebar-scrim").addEventListener("click", () => setSidebar(false));
-byId("new-chat").addEventListener("click", () => { reset(); promptBox.focus(); });
+byId("new-chat").addEventListener("click", () => { stopResearch(false); reset(); promptBox.focus(); });
 byId("profile-button").addEventListener("click", async () => {
   try {
     if (session?.authenticated) {
@@ -794,7 +864,7 @@ byId("composer").addEventListener("submit", (event) => {
   event.preventDefault();
   send();
 });
-byId("cancel-button").addEventListener("click", stopResearch);
+byId("cancel-button").addEventListener("click", () => stopResearch());
 promptBox.addEventListener("input", () => { if (!active) updateComposer(); });
 promptBox.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
@@ -809,8 +879,28 @@ document.querySelectorAll(".suggestion").forEach((button) => {
     promptBox.focus();
   });
 });
-refreshSession().then(() => {
+refreshSession().then(async () => {
   handleEmailLink();
   const id = sessionStorage.getItem(pendingJobKey);
-  if (id && !dialog.open) runAssignment("", id);
+  const chat = sessionStorage.getItem(conversationKey);
+  const opening = viewRevision;
+  if (chat && !dialog.open && !active) {
+    try {
+      const saved = await json("/api/conversations/" + encodeURIComponent(chat));
+      if (opening !== viewRevision || active) return;
+      conversationId = chat;
+      currentRequirements = saved.turns.at(-1)?.requirements || {};
+      workingInstructions = saved.turns.at(-1)?.instructions || "";
+      showSavedTurns(saved, messages);
+      if (id && saved.turns.some((turn) => turn.run_id === id)) {
+        sessionStorage.removeItem(pendingJobKey);
+        return;
+      }
+      if (saved.title) byId("topbar-title").textContent = saved.title;
+    } catch (failure) {
+      if (opening !== viewRevision || active) return;
+      if ([401, 404, 410].includes(failure.status)) sessionStorage.removeItem(conversationKey);
+    }
+  }
+  if (id && !dialog.open && !active && opening === viewRevision) runAssignment("", id);
 }).catch((failure) => updateComposer(failure.message));
