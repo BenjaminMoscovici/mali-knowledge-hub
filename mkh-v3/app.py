@@ -118,7 +118,16 @@ async def health(request):
 
 async def sources(request):
     query = request.query_params.get("q", "")[:350]
-    return data_response({"sources": settings(request).knowledge.discover(query, limit=150)})
+    k = settings(request).knowledge
+    try:
+        offset = int(request.query_params.get("offset", 0))
+        paged = "offset" in request.query_params
+        page = k.source_page(query, offset=offset, page_size=24 if paged else max(1, len(k.sources)))
+        if not paged:
+            page["sources"] = [{**k.describes(k.sources[item["id"]]), **item} for item in page["sources"]]
+        return data_response(page)
+    except ValueError:
+        return error("Use a nonnegative source offset.")
 
 
 async def source(request):
@@ -195,7 +204,7 @@ class CatalogueBoundary:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] == "http" and scope["path"].startswith(("/api/sources", "/api/conversations", "/api/chat", "/api/admin")):
+        if scope["type"] == "http" and scope["path"].startswith(("/api/sources", "/api/conversations", "/api/chat", "/api/admin", "/api/health")):
             try:
                 await sync_catalogue(scope["app"].state)
             except StateError:
@@ -485,7 +494,7 @@ async def chat(request):
                             "prompt": prompt, "answer": piece["text"], "evidence": piece["evidence"],
                             "objective": objective, "instructions": brief, "requirements": piece.get("requirements", {}),
                             "basis": piece.get("basis", {}),
-                            "artifacts": piece.get("artifacts", []),
+                            "artifacts": piece.get("artifacts", []), "research_steps": piece.get("research_steps", []),
                             "web_used": piece["web_used"], "partial": piece["partial"],
                             "tool_failures": piece["tool_failures"], "usage": piece["usage"], "mode": mode,
                         }))
@@ -544,7 +553,7 @@ async def job_status(request):
             return data_response({"prompt":job.prompt, "instructions":job.instructions, "conversation_id":job.conversation,
                                   "event":{"type":"error","text":"A source used in this answer changed. Run the assignment again."}})
     return data_response({"prompt": job.prompt, "instructions": job.instructions,
-                          "conversation_id": job.conversation, "event": job.result or {"type": "activity", "text": job.activity}})
+                          "conversation_id": job.conversation, "event": job.result or {"type": "activity", "text": job.activity, "research_steps": job.steps}})
 
 
 def create_app(transport=None, directory=None):

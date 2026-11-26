@@ -36,7 +36,10 @@ Use present_data when a chart, data table or geographic map forms part of the de
 the substantive requested work in the answer as well. Empirical descriptions of source coverage
 must match the inspected releases. Respect source licence and geographic and temporal grain.
 
-Find appropriate sources with discover_sources, inspect them and investigate iteratively. Request
+For inventories or coverage questions, consult the current registry with an empty discovery query.
+Use catalogue_total for the overall count, matching_total for a filtered count and next_offset to
+continue. Distinguish sources available to the Hub from evidence actually used in a particular answer.
+Find appropriate sources for research with a topical query, inspect them and investigate iteratively. Request
 independent lookups together. Anchor tense and advice to the supplied as-of date unless the
 user specifies a historical decision date. An elapsed projection remains a historical forecast
 until an observed assessment establishes the outcome. For present decisions name the evidence gap.
@@ -86,8 +89,8 @@ def apply_requirements(previous, changes, prompt):
 
 TOOL_SPECS = {
     "discover_sources": (
-        "Find published sources by natural-language concepts and optional type, or use empty query for the catalogue.",
-        {"query": TEXT, "kind": OPTIONAL_TEXT},
+        "Page through the current approved registry. Empty query lists sources in stable ID order. A topic ranks matches. Start at offset 0 and follow next_offset. kind is null, dataset, document, reference or live.",
+        {"query": TEXT, "kind": OPTIONAL_TEXT, "offset": INTEGER},
     ),
     "inspect_source": (
         "Read the publisher, release, definitions, scope, limitations and table schema or series for a source ID.",
@@ -191,6 +194,28 @@ def tool_output(result):
     return result
 
 
+def research_step(name, arguments, result, knowledge):
+    step = {"action": ACTIVITIES.get(name, "Research operation"), "status": "completed"}
+    if isinstance(result, dict) and "error" in result:
+        return {**step, "status": "incomplete", "detail": result["error"][:260]}
+    ids = []
+    if isinstance(arguments, dict):
+        for key in ("source_id", "left_id", "right_id"):
+            ids.append(arguments.get(key))
+        ids.extend(arguments.get("source_ids", []))
+    titles = [knowledge.sources[k]["title"] for k in ids if k in knowledge.sources]
+    if name == "discover_sources":
+        detail = f'{len(result["sources"])} shown · {result["matching_total"]} matching · {result["catalogue_total"]} published'
+    elif isinstance(result, list):
+        detail = f"{len(result)} results"
+    elif isinstance(result, dict) and "rows" in result.get("data", {}):
+        detail = f'{len(result["data"]["rows"])} result rows'
+    else:
+        detail = ""
+    step["detail"] = " · ".join([*titles, *([detail] if detail else [])])
+    return step
+
+
 class CompanionError(ValueError):
     """The current assignment could not complete transparently."""
 
@@ -247,6 +272,8 @@ class Companion:
     async def run_tool(self, name, arguments, ledger, search_cache=None, usage=None, recall=None, embedding_allowed=None):
         if name not in TOOL_SPECS:
             raise KnowledgeError("Unknown research capability.")
+        if name == "discover_sources" and isinstance(arguments, dict):
+            arguments = {"offset": 0, **arguments}
         required = TOOL_SPECS[name][1]
         if not isinstance(arguments, dict) or set(required) != set(arguments):
             raise KnowledgeError("Tool parameters do not match the capability.")
@@ -267,12 +294,13 @@ class Companion:
         lookup = name in {"discover_sources", "search_documents", "search_records"}
         affinities = None
         if lookup and self.semantic and usage is not None:
-            affinities = await self.semantic.search(arguments["query"], search_cache, usage, embedding_allowed)
+            affinities = await self.semantic.search(arguments["query"], search_cache, usage, embedding_allowed,
+                kind={"search_documents":"passage", "search_records":"record"}.get(name),
+                source_id=arguments.get("source_id"), source_type=arguments.get("kind"))
         if name == "discover_sources":
-            found = k.discover(arguments["query"], arguments["kind"], limit=5, affinities=affinities)
-            ledger.consulted.update({s["id"]: k.stamps[s["id"]] for s in found})
-            return [{key: s[key] for key in ("id", "title", "type", "period", "geography", "description")}
-                    for s in found]
+            page = k.source_page(**arguments, page_size=6 if arguments["query"].strip() else 24, affinities=affinities)
+            ledger.consulted.update({s["id"]: k.stamps[s["id"]] for s in page["sources"]})
+            return page
         if name == "inspect_source":
             source = k.inspect(arguments["source_id"])
             ledger.consulted[source["id"]] = k.stamps[source["id"]]
@@ -332,6 +360,7 @@ class Companion:
 
         search_cache = {}
         tool_failures = []
+        trace = []
         iterative_limit_reached = False
         signature_repairs = 0
         web_used = inherited_web
@@ -372,16 +401,21 @@ class Companion:
                         items.extend(output)
                         for call in calls:
                             name = call.get("name", "")
+                            arguments = {}
                             if usage["tool_calls"] >= options["tools"]:
                                 result = {"error": "Tool budget exhausted."}
                             else:
                                 usage["tool_calls"] += 1
                                 yield {"type": "activity", "text": ACTIVITIES.get(name, "Checking a research capability")}
                                 try:
-                                    result = await self.run_tool(name, json.loads(call["arguments"]), ledger, search_cache, usage, recall, embedding_allowed)
+                                    arguments = json.loads(call["arguments"])
+                                    result = await self.run_tool(name, arguments, ledger, search_cache, usage, recall, embedding_allowed)
                                 except (KnowledgeError, json.JSONDecodeError) as error:
                                     tool_failures.append(name)
                                     result = {"error": str(error)[:260]}
+                            step = research_step(name, arguments, result, self.knowledge)
+                            trace.append(step)
+                            yield {"type": "activity", "text": "Reviewing research results", "step": step}
                             items.append({"type": "function_call_output", "call_id": call["call_id"],
                                           "output": json_text(tool_output(result))})
                         continue
@@ -422,7 +456,7 @@ class Companion:
                         web_used = True
                     complete = document.get("status") != "incomplete"
                     yield {
-                        "type": "answer", "text": answer, "evidence": evidence,
+                        "type": "answer", "research_steps": trace, "text": answer, "evidence": evidence,
                         "requirements": apply_requirements(requirements, changes, prompt),
                         "basis": ledger.consulted, "artifacts": list(ledger.artifacts.values()),
                         "web_used": web_used, "partial": not complete or iterative_limit_reached or bool(missing_figures),
@@ -440,7 +474,7 @@ class Companion:
             for item in completed:
                 lines.append(f"- {item['title']} · {item['locator']} [[{item['id']}]]")
             selected = {item["id"] for item in completed}
-            yield {"type": "answer", "text": "\n\n".join(lines), "requirements": requirements, "evidence": completed, "basis": ledger.consulted,
+            yield {"type": "answer", "research_steps": trace, "text": "\n\n".join(lines), "requirements": requirements, "evidence": completed, "basis": ledger.consulted,
                    "artifacts": [v for v in ledger.artifacts.values() if v["evidence_id"] in selected],
                    "web_used": web_used or ledger.recalled_web, "partial": True, "tool_failures": list(dict.fromkeys(tool_failures)),
                    "usage": self._usage(model, usage, started, web_used)}

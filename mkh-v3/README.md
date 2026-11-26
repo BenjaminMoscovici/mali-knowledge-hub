@@ -151,3 +151,22 @@ footer displays the model estimate based on provider-reported tokens. External w
 search is off. These per-assignment estimates exclude hosting and external web fees.
 Use positive values for MKH_FAST_MAX_MODEL_USD and MKH_DEEP_MAX_MODEL_USD. Rolling
 financial allowances by account and independent professional qualification remain open.
+
+## Priorities for the next qualification
+
+* **Complete source access.** The source drawer and Companion enumerate the current published
+  registry with total counts. Model calls page through inventories and ranked topical matches.
+  Qualify each release through inspection and an actual native operation, then repeat with
+  unfamiliar sources and withdrawals. An inventory count alone establishes registration.
+* **Research transparency.** Record executed tool activity with source titles, returned rows
+  or passage counts, failures and progress. Show it during the assignment and alongside
+  the answer on reopening. Verify that users can trace an important claim through its activity
+  to the specific evidence or calculation. Personal reasoning and provider payloads stay private.
+* **Economic sustainability.** Compare Fast/Sol and Deep/Astra on the same professional assignments.
+  Predefine the acceptance rubric and count the cost of all attempts, retries and follow-ups in
+  the numerator. Divide by independently accepted tasks. Record unknown costs separately and leave
+  the metric undefined when no task passes. Report latency, evidence support and task success
+  by task family alongside cost. Test scoped embedding caches, smaller input histories and routing
+  to the least expensive qualified model in paired trials. Ship a routing change only when it
+  preserves professional quality. Use observed task mix, volume and shared service costs to
+  forecast monthly spend before expanding public access.

@@ -225,6 +225,40 @@ class Knowledge:
         entries = self.index.find_sources(query, limit, kind, affinities)
         return [self.describes(entry["source"]) for entry in entries]
 
+    def source_page(self, query="", kind=None, offset=0, page_size=24, affinities=None):
+        if type(offset) is not int or offset < 0 or (kind is not None and kind not in SOURCE_TYPES):
+            raise KnowledgeError("Use a nonnegative source offset and a registered source type.")
+        if query.strip():
+            ranked = self.index.find_sources(query, None, kind, affinities)
+            matches = [entry["source"] for entry in ranked]
+        else:
+            matches = [self.sources[key] for key in sorted(self.sources)
+                       if not kind or self.sources[key]["type"] == kind]
+        page = matches[offset:offset + page_size]
+        fields = ("id", "title", "type", "publisher", "period", "geography", "description")
+        return {"catalogue_total": len(self.sources), "matching_total": len(matches), "offset": offset,
+                "next_offset": offset + len(page) if offset + len(page) < len(matches) else None,
+                "sources": [{**{k:s[k] for k in fields}, "operations":self.operations(s)} for s in page]}
+
+    @staticmethod
+    def operations(source):
+        operations = ["inspect_source"]
+        if source.get("passages"):
+            operations.extend(["search_documents", "read_passage"])
+        if "records" in source:
+            operations.append("query_data")
+        if source.get("search_fields"):
+            operations.append("search_records")
+        if source.get("definitions"):
+            operations.append("read_definition")
+        if source.get("place_fields") or source["type"] == "reference":
+            operations.append("resolve_geography")
+        if source.get("entity_keys"):
+            operations.append("link_records")
+        if source.get("adapter") == "world_bank_wdi" and source.get("series"):
+            operations.append("fetch_live")
+        return operations
+
     def passage(self, entry, ledger):
         source = entry["source"]
         p, start, text = entry["payload"]

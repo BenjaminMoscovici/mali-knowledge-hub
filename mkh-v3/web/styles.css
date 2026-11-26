@@ -110,3 +110,7 @@ a.nav-action{text-decoration:none}
 .message-footer {flex-wrap: wrap;}
 
 .notes-form label input:not([type="checkbox"]), .notes-form label textarea, .notes-form select { display:block; width:100%; padding:.55rem; border:1px solid #bccbc5; border-radius:.4rem; font:inherit; color:inherit; background:#fff; }
+
+.research-activity { color:#46635a; font-size:.85rem; padding:.4rem 0; text-align:left; }
+.research-activity summary { cursor:pointer; }
+.research-activity li { margin:.35rem 0; }

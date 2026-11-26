@@ -14,6 +14,7 @@ class ResearchJob:
     conversation: str
     task: asyncio.Task | None = None
     activity: str = "Starting the assignment"
+    steps: list = field(default_factory=list)
     result: dict | None = None
     touched: float = field(default_factory=time.monotonic)
 
@@ -44,6 +45,8 @@ class ResearchJobs:
                 async for event in stream():
                     if event["type"] == "activity":
                         job.activity = event["text"]
+                        if "step" in event:
+                            job.steps.append(event["step"])
                     else:
                         job.result = event
             except asyncio.CancelledError:

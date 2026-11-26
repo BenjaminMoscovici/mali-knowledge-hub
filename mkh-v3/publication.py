@@ -33,10 +33,14 @@ class Publications:
 
     async def refresh(self):
         async with self.lock:
-            # Request an extra row so PostgREST pagination never silently restores bundled data.
-            rows = await self.rows(PUBLICATIONS, "source_id,status,version_id,revision", order="source_id", limit=201)
-            if len(rows) > 200:
-                raise StateError("The source registry exceeds this preview's capacity.")
+            rows = []
+            params = {"order": "source_id", "limit": 200}
+            while True:
+                batch = await self.rows(PUBLICATIONS, "source_id,status,version_id,revision", **params)
+                rows.extend(batch)
+                if len(batch) < params["limit"]:
+                    break
+                params["source_id"] = "gt." + batch[-1]["source_id"]
             signature = tuple((r["source_id"], r["revision"]) for r in rows)
             if self.signature == signature:
                 return self.current

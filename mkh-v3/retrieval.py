@@ -92,7 +92,7 @@ class SearchIndex:
         return [self.entries[i] for i in sorted(ranks, key=ranks.get, reverse=True)[:limit]]
 
     def find_sources(self, query, limit, source_type, affinities):
-        direct = self.rank(query, "source", max(limit, 12), source_type=source_type, affinities=affinities)
+        direct = self.rank(query, "source", None, source_type=source_type, affinities=affinities)
         if not query.strip():
             return direct[:limit]
         # A project identifier or a phrase may occur only inside the release. Give each
@@ -100,7 +100,7 @@ class SearchIndex:
         totals = Counter()
         parents = {}
         for kind, weight in (("source", 1.25), ("passage", 1.0), ("record", 1.0)):
-            matches = direct if kind == "source" else self.rank(query, kind, 12, source_type=source_type, affinities=affinities)
+            matches = direct if kind == "source" else self.rank(query, kind, None, source_type=source_type, affinities=affinities)
             seen = set()
             for rank, entry in enumerate(matches):
                 key = entry["source"]["id"]
@@ -126,7 +126,7 @@ class SemanticSearch:
         self.index = index
         self.client = client
         self.key = key
-        self.vectors = []
+        self.vectors = {}
         self.lock = asyncio.Lock()
         self.retry_after = 0
 
@@ -150,23 +150,32 @@ class SemanticSearch:
             vectors.append(vec)
         return vectors
 
-    async def search(self, query, cache, usage, allowed=None):
+    async def search(self, query, cache, usage, allowed=None, *, kind=None, source_id=None, source_type=None):
         if not query.strip():
             return None
-        if query in cache:
-            return cache[query]
+        selection = (query, kind, source_id, source_type)
+        if selection in cache:
+            return cache[selection]
+        candidates = [i for i, entry in enumerate(self.index.entries)
+                      if (not kind or entry["kind"] == kind)
+                      and (not source_id or entry["source"]["id"] == source_id)
+                      and (not source_type or entry["source"]["type"] == source_type)]
+        if not candidates:
+            return None
         if time.monotonic() < self.retry_after:
             usage["retrieval_fallback"] = True
             return None
         try:
             async with self.lock:
-                # Batches are checkpointed in memory so provider interruptions can resume.
-                while len(self.vectors) < len(self.index.entries):
-                    batch = self.index.entries[len(self.vectors):len(self.vectors) + 64]
-                    self.vectors.extend(await self.embed([entry["text"] for entry in batch], usage, allowed))
-            query_vector, = await self.embed([query], usage, allowed)
-            scores = [sum(x * y for x, y in zip(vector, query_vector)) for vector in self.vectors]
-            cache[query] = scores
+                missing = [i for i in candidates if i not in self.vectors]
+                for offset in range(0, len(missing), 64):
+                    batch = missing[offset:offset + 64]
+                    vectors = await self.embed([self.index.entries[i]["text"] for i in batch], usage, allowed)
+                    self.vectors.update(zip(batch, vectors))
+            if query not in cache:
+                cache[query], = await self.embed([query], usage, allowed)
+            scores = {i: sum(x * y for x, y in zip(self.vectors[i], cache[query])) for i in candidates}
+            cache[selection] = scores
             return scores
         except EmbeddingBudgetReached:
             usage["retrieval_fallback"] = True

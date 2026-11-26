@@ -195,8 +195,8 @@ async function showCatalogue(initial = "") {
   async function load() {
     results.replaceChildren(el("p", "evidence-meta", "Loading approved sources…"));
     try {
-      const {sources} = await json("/api/sources?q=" + encodeURIComponent(input.value));
-      results.replaceChildren();
+      const {sources, catalogue_total, matching_total} = await json("/api/sources?q=" + encodeURIComponent(input.value));
+      results.replaceChildren(el("p", "evidence-meta", matching_total + " matching · " + catalogue_total + " published"));
       if (!sources.length) results.append(el("p", "evidence-meta", "No matching published sources."));
       for (const item of sources) {
         const card = el("article", "evidence-item");
@@ -362,6 +362,18 @@ function appendUser(text, parent = messages) {
   return node;
 }
 
+function researchActivity(steps) {
+  const details = el("details", "research-activity");
+  details.append(el("summary", "", "Research activity"));
+  const list = el("ol");
+  for (const step of steps) {
+    const label = step.status === "completed" ? step.action : step.action + " (incomplete)";
+    list.append(el("li", "", [label, step.detail].filter(Boolean).join(" · ")));
+  }
+  details.append(list);
+  return details;
+}
+
 function appendAnswer(turn, parent = messages) {
   const evidence = turn.evidence || [];
   const message = el("div", "message assistant");
@@ -371,6 +383,7 @@ function appendAnswer(turn, parent = messages) {
     const item = evidence.find((e) => e.id === figure.evidence_id);
     if (item?.data?.rows?.length) body.append(exhibit(figure, item));
   }
+  if (turn.research_steps?.length) message.append(researchActivity(turn.research_steps));
   message.append(body);
   const footer = el("div", "message-footer");
   if (evidence.length) {
@@ -598,6 +611,15 @@ async function followJob(id, pendingMessage, prompt) {
       pendingMessage = appendUser(prompt);
     }
     const event = status.event;
+    if (event.type === "activity" && event.research_steps?.length) {
+      const old = pendingMessage.querySelector(".research-activity");
+      if (Number(old?.dataset.count) !== event.research_steps.length) {
+        const panel = researchActivity(event.research_steps);
+        panel.dataset.count = event.research_steps.length;
+        panel.open = old?.open || false;
+        if (old) old.replaceWith(panel); else pendingMessage.append(panel);
+      }
+    }
     if (event.type === "error") {
       sessionStorage.removeItem(pendingJobKey);
       pendingMessage.remove();
@@ -607,6 +629,7 @@ async function followJob(id, pendingMessage, prompt) {
     if (event.type === "answer") {
       conversationId = event.conversation_id;
       currentRequirements = event.requirements || {};
+      pendingMessage.querySelector(".research-activity")?.remove();
       appendAnswer({...event, prompt});
       sessionStorage.removeItem(pendingJobKey);
       await recent().catch(() => {});
