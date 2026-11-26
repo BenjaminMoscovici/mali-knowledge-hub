@@ -40,6 +40,11 @@ External web research defaults off via `MKH_WEB_RESEARCH`.
 
 ## Development checks
 
+Treat an unsatisfactory answer as a way to discover a failure in a shared capability.
+Trace it to the responsible layer, then exercise the change on an unfamiliar assignment
+or source. Keep the original example as a regression. Exclude question-specific branches,
+source lists embedded in prompts, and prewritten answers.
+
 Use the preserved V2.1 evaluation evidence as regressions. For the first paired browser
 run, record the serving revision, answer, tool/citation support, elapsed time, assignment
 cost and whether the result can be used professionally. Keep failed or interrupted
@@ -97,7 +102,11 @@ lifecycle was verified through Chromium against isolated Supabase Auth and Postg
 Two-account database checks verified owner isolation.
 
 Browser assignments run on the existing web instance and expose an owner-bound status
-URL for progress, reconnection and cancellation. Refreshing the tab rejoins a running
+URL for progress, reconnection and cancellation. The browser subscribes to live tool
+activity and draft answer text from the model. The server verifies evidence and persists
+the turn before delivering the final answer. New Chat can stop the current run.
+The Free preview admits 12 requests per user in a rolling five-minute window and 64
+across the instance per rolling 24 hours. Model spending also has a per-assignment ceiling. Refreshing the tab rejoins a running
 assignment. The service retains completed jobs for up to 15 minutes, with a bounded
 in-memory cache. A new service instance ends pending guest jobs. Signed-in completed
 turns use Supabase. The streaming API remains available for existing clients.
