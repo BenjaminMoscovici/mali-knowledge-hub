@@ -1,0 +1,103 @@
+{
+  "id": "mli-inv-000606",
+  "collection": "BCEAO Quarterly Statistical Bulletin",
+  "edition_family": "bceao-bulletin-statistiques-trimestriel",
+  "release": "BULLETIN TRIMESTRIEL DES STATISTIQUES Quatrième trimestre 2025",
+  "period": "2025 Q4",
+  "publisher": "BCEAO",
+  "title": "BCEAO Quarterly Statistical Bulletin — Q4 2025",
+  "geography": "Mali",
+  "topics": [
+    "UEMOA macro statistics",
+    "Mali balance of payments"
+  ],
+  "type": "dataset",
+  "license": "Source : BCEAO. Les informations originales peuvent être obtenues gratuitement sur le site Internet de la BCEAO. MKH a sélectionné et mis en forme les données institutionnelles. https://ns2.bceao.int/sites/default/files/2026-04/Bulletin-Trimestriel-des-Statistiques-Quatri%C3%A8me-trimestre-2025.pdf",
+  "reuse_url": "https://www.bceao.int/fr/content/mentions-legales",
+  "limitations": [
+    "Chaque ligne reprend le taux moyen pour le Mali. Les valeurs de l’UEMOA et les variations en points sont distinguées dans l’original. Les périodes communes entre bulletins ne doivent pas être additionnées."
+  ],
+  "description": "Taux d’intérêt débiteurs moyens des crédits bancaires au Mali : observations annuelles et trimestrielles du tableau 3.1 de cette édition.",
+  "table": "bceao_credit_606",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "period": "TEXT",
+    "frequency": "TEXT",
+    "rate_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2022",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2022",
+      "period": "2022",
+      "frequency": "année",
+      "rate_pct": 7.48
+    },
+    {
+      "id": "2023",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2023",
+      "period": "2023",
+      "frequency": "année",
+      "rate_pct": 7.48
+    },
+    {
+      "id": "2024",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2024",
+      "period": "2024",
+      "frequency": "année",
+      "rate_pct": 7.3
+    },
+    {
+      "id": "2025",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2025",
+      "period": "2025",
+      "frequency": "année",
+      "rate_pct": 7.46
+    },
+    {
+      "id": "2024-T4",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2024-T4",
+      "period": "2024-T4",
+      "frequency": "trimestre",
+      "rate_pct": 7.92
+    },
+    {
+      "id": "2025-T1",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2025-T1",
+      "period": "2025-T1",
+      "frequency": "trimestre",
+      "rate_pct": 7.53
+    },
+    {
+      "id": "2025-T2",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2025-T2",
+      "period": "2025-T2",
+      "frequency": "trimestre",
+      "rate_pct": 7.6
+    },
+    {
+      "id": "2025-T3",
+      "locator": "PDF p. 13 / Tableau 3.1 / Mali / 2025-T3",
+      "period": "2025-T3",
+      "frequency": "trimestre",
+      "rate_pct": 7.47
+    }
+  ],
+  "definitions": {
+    "rate_pct": "Taux d’intérêt débiteur des crédits bancaires, moyenne sur la période au Mali, en pourcentage. Les variations en points du tableau original sont séparées des taux."
+  },
+  "passages": [
+    {
+      "page": 13,
+      "locator": "PDF p. 13 / Tableau 3.1 / conditions de banque",
+      "kind": "source_passage",
+      "text": "3. CONDITIONS DE BANQUE\nTableau 3.1 Taux d'intérêt débiteurs des crédits bancaires\n(valeur moyenne sur la période, en pourcentage)\n                                                       Côte       Guinée-\n                    Bénin           Burkina                                 Mali          Niger      Sénégal    Togo   UEMOA\n                                                     d'Ivoire     Bissau\n2022                 7,08             7,15             6,00        9,02     7,48          8,41           5,71   7,17   6,48\n2023                 7,30             7,78             6,50        8,70     7,48          8,69           6,01   7,53   6,78\n2024                 7,24             7,71             6,45        8,67     7,30          8,85           5,93   7,50   6,76\n2025                 7,53             7,65             6,22        9,54     7,46          8,77           6,06   7,54   6,73\n2024       T4        7,35         7,58          6,46        9,44          7,92         9,00        6,25       7,54     6,97\n2025       T1        7,45         7,54          6,34        9,47          7,53         8,97        5,93       7,60     6,80\n           T2        7,55         7,59          6,26        9,58          7,60         9,02        5,86       7,55     6,73\n           T3        7,60         7,55          6,22        9,54          7,47         8,90        5,80       7,50     6,67\n        T4 (*)       7,17         7,85          6,07        9,72          7,44         8,40        6,67       7,55     6,73\n                                     Variation par rapport au trimestre précédent (en point de pourcentage)\n2025 T4 (*)          -0,43        0,30         -0,15        0,18         -0,03        -0,50        0,87       0,05     0,06\n                           Variation par rapport au même trimestre de l'année précédente (en point de pourcentage)\n2025 T4 (*)          -0,18        0,27         -0,39        0,28         -0,48        -0,60        0,42       0,01     -0,24\nSource : BCEAO."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000606",
+  "upstream_checksum": "f9f4b8ba44ccfb5164af69a1c5afae98c1ecae9f327924a73e8eca608555b388",
+  "url": "https://ns2.bceao.int/sites/default/files/2026-04/Bulletin-Trimestriel-des-Statistiques-Quatri%C3%A8me-trimestre-2025.pdf",
+  "reuse_evidence_sha256": "93e796e5973ef125bbc68ead941fb5bb591ac392d153767b2473de440616a657"
+}

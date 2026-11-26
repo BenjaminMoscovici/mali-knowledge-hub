@@ -1,0 +1,57 @@
+{
+  "id": "mli-inv-000546",
+  "collection": "INSTAT Trade",
+  "edition_family": "instat-commerce-exterieur-ctci",
+  "release": "Bulletin trimestriel du commerce extérieur (CTCI) — 2023 Q3",
+  "period": "2023 Q3",
+  "publisher": "INSTAT",
+  "title": "Bulletin trimestriel du commerce extérieur (CTCI) — 2023 Q3",
+  "geography": "Mali",
+  "topics": [
+    "Trade"
+  ],
+  "type": "document",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Données douanières de marchandises. Respecter le sens du flux, CAF/FOB, la période de comparaison et l’échelle millions ou milliards de FCFA indiquée. Les éditions se recouvrent."
+  ],
+  "description": "Statistiques trimestrielles INSTAT des importations et exportations de marchandises du Mali selon la CTCI, avec la synthèse des résultats de cette édition.",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 7,
+      "locator": "PDF p. 7",
+      "text": "COMMERCE DES MARCHANDISES - SYNTHESE DES RESULTATS\n\n\n    A. Importations\n\nAu troisième trimestre 2023, les importations sont évaluées à 953,927 milliards de FCFA contre 995,784 milliards au\npremier trimestre de la même année, soit une variation négative de 4,20%. Les Combustibles et produits des industries\nextractives dominent les importations avec une part de 32,65% suivi les Machines et matériel de transport 21,17%.\n\n                         Part des divisions de l'OMC dans les importations aux 2023-T3, 2023-T2 et 2022-T3\n\n  50,00%\n\n  40,00%\n\n  30,00%\n\n  20,00%\n\n  10,00%                                                                                                              2022-T3\n   0,00%                                                                                                              2023-T2\n                                                                                                                      2023-T3\n\n\n\n\nLes principales divisions de la CTCI de produits importés au cours du troisième trimestre de l’année 2023 ont été : Pétrole,\nproduits dérivés du pétrole et produits connexes 31,35% du total des importations ; Articles minéraux non\nmétalliques manufactures, n.d.a. 6,68% ; Machines et appareils électriques, n.d.a., et leurs parties et pièces\ndétachées électriques (y compris les équivalents non électriques, n.d.a., de machines et appareils électriques à\nusage domestique) 5,66% ; Céréales et préparations à base de céréales 5,56%; Machines et appareils spécialises\npour industries particulières 5,12% (Voir tableau 4).\n\nConcernant les denrées de première nécessité, entre le troisième et le deuxième trimestre de l’année 2023, les importations\nont diminué de 20,97% en Céréales et préparations à base de céréales et elles ont augmenté en Sucres, préparations\nà base de sucre et miel (Voir tableau 12 et 15).\n\nLes principaux pays fournisseurs du Mali durant le troisième trimestre 2023 sont : la Cote d’ivoire 226,422 milliards de\nFCFA, le Sénégal 154,752 milliards de FCFA, la Chine 137,515 milliards de FCFA, la France 64,197 milliards de FCFA.\n(Voir tableau 38,40, 41).\n\n\n\n\nStatistiques du commerce extérieur                                                                                        7"
+    },
+    {
+      "kind": "source_passage",
+      "page": 8,
+      "locator": "PDF p. 8",
+      "text": "Valeur en milliard de FCFA des importations des marchandises des principaux pays\n                                     d'origine au troisième trimestre 2023\n  250\n\n\n  200\n\n\n  150\n\n\n  100\n\n\n   50\n\n\n    0\n\n\n\n\n                                                         Importations\n\n\n\nParmi les principales zones d’intégration régionale qui approvisionnent le Mali, l’ACP est la première avec une part de\n24,64 % suivie de la CEDEAO 23,43% et de l’UEMOA 22,25%,\n\n                      Part des intégrations regionales dans les importations du Mali\n\n\n  30,00%\n\n\n\n\n  20,00%\n\n                                                                                                               2022-T3\n                                                                                                               2023-T2\n\n  10,00%                                                                                                       2023-T3\n\n\n\n\n   0,00%\n\n\n\n\nStatistiques du commerce extérieur                                                                                   8"
+    },
+    {
+      "kind": "source_passage",
+      "page": 9,
+      "locator": "PDF p. 9",
+      "text": "B. Exportations\n\nLes exportations globales sont ressorties à 621,276 milliards au troisième trimestre 2023 contre 550,735 milliards au\ndeuxième trimestre de la même année, soit une variation de 12,81%. La division des Articles et transactions non classés\nailleurs dans la CTCI domine les exportations avec une part de 77,99%. Elle est suivie respectivement des, Machines et\nmatériel de transport 8,64%, des Produits agricoles 6,38%, des Combustibles et produits des industries extractives\n3,34% et des produits chimiques 2,15%.\n\n                            Part des exportations des marchandises aux 2O23-T3, 2023-T2, 2022-T3\n\n  100,00%\n   90,00%\n   80,00%\n   70,00%\n   60,00%\n   50,00%\n   40,00%\n   30,00%\n   20,00%\n                                                                                                                   2022-T3\n   10,00%\n    0,00%                                                                                                          2023-T2\n                                                                                                                   2023-T3\n\n\n\n\n        .\nLes principales divisions de la CTCI de produits exportés au cours du troisième trimestre 2023 ont été : Or, à usage non\nmonétaire (à l'exclusion des minerais et concentrés d'or) 77,32 % du total des exportations ; Véhicules routiers (y\ncompris les véhicules a coussin d’air) 5,67% ; Animaux vivants autres que ceux figurant dans la division 03 (4,27%)\n; Pétrole, produits dérives du pétrole et produits connexes 2,74% ; Machines et appareils spécialisés pour\nindustries particulières 1,57%. (Voir tableau 48).\n\nLes principaux pays clients du Mali durant le troisième sont : l’Afrique du Sud 252 ,952 milliards de FCFA, la Suisse 160,\n195 milliards de FCFA l’Australie 53,008 milliards de FCFA, Burkina Faso 17,192 milliards de FCFA, la Côte d’Ivoire\n10,134 milliards de FCFA (Voir tableau 49).\n\nS’agissant des principales zones d’intégration fournies par le Mali, ACP est la première avec une part de 36,50%, suivie\nrespectivement de la SADC 25,47%, l’AELE 12,58%, de la CEDEAO 9,48%, de l’UEMOA 7,85% et de la CEAP 4,67%.\n\n\n\n\nStatistiques du commerce extérieur                                                                                      9"
+    },
+    {
+      "kind": "source_passage",
+      "page": 10,
+      "locator": "PDF p. 10",
+      "text": "Part des intégrations regionales dans les exportations du Mali\n  40,00%\n\n  35,00%\n\n  30,00%\n\n  25,00%\n\n  20,00%                                                                                                         2022-T3\n                                                                                                                 2023-T2\n  15,00%\n                                                                                                                 2023-T3\n  10,00%\n\n   5,00%\n\n   0,00%\n\n\n\n\n                  Valeur en milliard de FCFA des transactions commerciales du Mali avec les\n                                   principaux pays au troisième trimestre 2023\n  300\n\n  250\n\n  200\n\n  150\n\n  100\n\n   50\n\n    0\n\n\n\n\n                                                    Importations   Exportations\n\n\n\n\nAu troisième trimestre 2023, le solde commercial s’est détérioré passant de -445,049 milliards à -332,651 milliards. Le taux\nde couverture est passé de 55% du deuxième trimestre 2023 à 65% au troisième trimestre de la même année.\n\n\n\n\nStatistiques du commerce extérieur                                                                                      10"
+    },
+    {
+      "kind": "source_passage",
+      "page": 11,
+      "locator": "PDF p. 11",
+      "text": "Transactions commerciales principaux produits du Mali au troisième trimestre (en milliard de\n                                                  FCFA) 2023\n\n\n  1 200\n\n\n\n  1 000\n\n\n\n   800\n\n\n\n   600\n\n\n\n   400                                                                                                     Export\n                                                                                                           Import\n                                                                                                           Solde\n   200\n\n\n\n     -\n\n\n\n  -200\n\n\n\n  -400\n\n\n\n\nStatistiques du commerce extérieur                                                                            11"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000546",
+  "upstream_checksum": "3c8ab175e4b61319e542fc232a79c7f3ecdf59d82a31a47816e0aaec11e3c96e",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/cmex-ctci3t23_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

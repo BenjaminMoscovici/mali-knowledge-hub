@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000366",
+  "edition_family": "wdi-mli-eg-elc-hyro-zs",
+  "title": "WDI Mali — Electricity production from hydroelectric sources (% of total)",
+  "publisher": "World Bank, World Development Indicators",
+  "collection": "World Development Indicators",
+  "type": "dataset",
+  "release": "WDI snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "2000–2021 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "electricity"
+  ],
+  "description": "Electricity production from hydroelectric sources (% of total) — série annuelle pour le Mali, EG.ELC.HYRO.ZS (IEA Energy Statistics Data Browser, International Energy Agency (IEA), uri: https://www.iea.org)",
+  "limitations": [
+    "Conserver le dénominateur, les unités, les années et la définition de cette série. Les valeurs absentes sont nulles ; la version du fournisseur peut être révisée."
+  ],
+  "license": "World Bank WDI, IEA Energy Statistics Data Browser, International Energy Agency (IEA), uri: https://www.iea.org/data-and-statistics/data-tools/energy-statistics-data-browser, publisher: International Energy Agency (IEA), date accessed: 2025-03-25. Indicator licence CC BY 4.0. MKH tabulated the dated Mali data.",
+  "reuse_url": "https://api.worldbank.org/v2/sources/2/series/EG.ELC.HYRO.ZS/metadata?format=json&per_page=200",
+  "table": "wdi_366",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "indicator": "TEXT"
+  },
+  "records": [
+    {
+      "id": "EG.ELC.HYRO.ZS-2025",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2025",
+      "year": 2025,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2024",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2024",
+      "year": 2024,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2023",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2023",
+      "year": 2023,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2022",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2022",
+      "year": 2022,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2021",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2021",
+      "year": 2021,
+      "value": 56.5611220580368,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2020",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2020",
+      "year": 2020,
+      "value": 56.5611220580368,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2019",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2019",
+      "year": 2019,
+      "value": 58.0999808858063,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2018",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2018",
+      "year": 2018,
+      "value": 58.1263680538719,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2017",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2017",
+      "year": 2017,
+      "value": 58.1180326749407,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2016",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2016",
+      "year": 2016,
+      "value": 61.2277705214508,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2015",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2015",
+      "year": 2015,
+      "value": 62.375389185638,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2014",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2014",
+      "year": 2014,
+      "value": 65.69585673757,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2013",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2013",
+      "year": 2013,
+      "value": 70.0258360286333,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2012",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2012",
+      "year": 2012,
+      "value": 63.7581384577326,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2011",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2011",
+      "year": 2011,
+      "value": 58.6375967151166,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2010",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2010",
+      "year": 2010,
+      "value": 59.2390729472284,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2009",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2009",
+      "year": 2009,
+      "value": 63.6510760259926,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2008",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2008",
+      "year": 2008,
+      "value": 52.4358727097396,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2007",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2007",
+      "year": 2007,
+      "value": 53.8536620265326,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2006",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2006",
+      "year": 2006,
+      "value": 54.9304605871256,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2005",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2005",
+      "year": 2005,
+      "value": 56.7991486861723,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2004",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2004",
+      "year": 2004,
+      "value": 57.8220728507223,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2003",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2003",
+      "year": 2003,
+      "value": 59.6056018209776,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2002",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2002",
+      "year": 2002,
+      "value": 52.2226271326818,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2001",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2001",
+      "year": 2001,
+      "value": 33.907883582933,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-2000",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 2000",
+      "year": 2000,
+      "value": 26.3361568560003,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1999",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1999",
+      "year": 1999,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1998",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1998",
+      "year": 1998,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1997",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1997",
+      "year": 1997,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1996",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1996",
+      "year": 1996,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1995",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1995",
+      "year": 1995,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1994",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1994",
+      "year": 1994,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1993",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1993",
+      "year": 1993,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1992",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1992",
+      "year": 1992,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1991",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1991",
+      "year": 1991,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1990",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1990",
+      "year": 1990,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1989",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1989",
+      "year": 1989,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1988",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1988",
+      "year": 1988,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1987",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1987",
+      "year": 1987,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1986",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1986",
+      "year": 1986,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1985",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1985",
+      "year": 1985,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1984",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1984",
+      "year": 1984,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1983",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1983",
+      "year": 1983,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1982",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1982",
+      "year": 1982,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1981",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1981",
+      "year": 1981,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1980",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1980",
+      "year": 1980,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1979",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1979",
+      "year": 1979,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1978",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1978",
+      "year": 1978,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1977",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1977",
+      "year": 1977,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1976",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1976",
+      "year": 1976,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1975",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1975",
+      "year": 1975,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1974",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1974",
+      "year": 1974,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1973",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1973",
+      "year": 1973,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1972",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1972",
+      "year": 1972,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1971",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1971",
+      "year": 1971,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1970",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1970",
+      "year": 1970,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1969",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1969",
+      "year": 1969,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1968",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1968",
+      "year": 1968,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1967",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1967",
+      "year": 1967,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1966",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1966",
+      "year": 1966,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1965",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1965",
+      "year": 1965,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1964",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1964",
+      "year": 1964,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1963",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1963",
+      "year": 1963,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1962",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1962",
+      "year": 1962,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1961",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1961",
+      "year": 1961,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    },
+    {
+      "id": "EG.ELC.HYRO.ZS-1960",
+      "locator": "WDI / MLI / EG.ELC.HYRO.ZS / 1960",
+      "year": 1960,
+      "value": null,
+      "indicator": "Electricity production from hydroelectric sources (% of total)"
+    }
+  ],
+  "definitions": {
+    "value": "The share of electricity production from hydroelectric sources of total electricity production. Sources of electricity refer to the inputs used to generate electricity. Hydropower refers to electricity produced by hydroelectric power plants.",
+    "indicator": "Electricity production from hydroelectric sources (% of total)"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000366",
+  "upstream_checksum": "aa7602621f493e37f90ee91c1c0a927f9799b6d2b8b991d2b9fc20d25ddcd7d9",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/EG.ELC.HYRO.ZS?format=json&per_page=100",
+  "reuse_evidence_sha256": "5c4d929ba575a700b1c4f97cbd16a895b79adcb51639287edf45ba0cd057ba4d"
+}

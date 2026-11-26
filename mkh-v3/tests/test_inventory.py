@@ -81,3 +81,19 @@ class InventoryTest(unittest.TestCase):
                 result = run([item], {code: receipt}, root, canon)[0]
                 self.assertEqual(result["status"], "integrated", result)
                 self.assertEqual(run([item], {code: receipt}, root, canon)[0]["status"], "matched")
+
+    def test_typed_snapshot_preserves_codes_zero_and_missing_observations(self):
+        from scripts.pack_table import build_snapshot
+
+        source = {"table": "observations", "dimensions": ["code"],
+                  "columns": {"id": "TEXT", "locator": "TEXT", "code": "TEXT", "value": "REAL"}}
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "observations.sqlite.gz"
+            rows = [("a", "Sheet 2, row 2", "01", 0), ("b", "Sheet 2, row 3", "02", None)]
+            snapshot = build_snapshot(source, iter(rows), path)
+            self.assertEqual(snapshot["row_count"], 2)
+            self.assertEqual([list(r.values()) for r in snapshot["samples"]], [list(r) for r in rows])
+            for bad in [("c", "Sheet 2, row 4", 3, 0), ("c", "Sheet 2, row 4", "03", float("nan"))]:
+                with self.assertRaises(ValueError):
+                    build_snapshot(source, iter([*rows, bad]), path)
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), snapshot["sha256"])

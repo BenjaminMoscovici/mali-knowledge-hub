@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000613",
+  "collection": "Journal officiel du Mali",
+  "edition_family": "mali-journal-officiel",
+  "release": "Soixante-septième Année Numéro 25 16 Octobre 2026",
+  "period": "2026",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "title": "Journal officiel du Mali — 2026, n° 25",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "legal issuances"
+  ],
+  "type": "document",
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "limitations": [
+    "Extraits de la version promulguée. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "description": "Session du Conseil économique, social, environnemental et culturel. Articles reproduits avec leur emplacement dans le Journal officiel.",
+  "passages": [
+    {
+      "page": 3,
+      "locator": "PDF p. 3 / Session du Conseil économique, social, environnemental et culturel",
+      "kind": "source_passage",
+      "text": "Article 1er : Le Conseil économique, social,\n  environnemental et culturel est convoqué en session\n  extraordinaire pour la période allant du mardi, 20 octobre\n  2026 au lundi, 26 octobre 2026.\n\n  Article 2 : L’ordre du jour de la session extraordinaire porte\n  sur l’adoption du projet de rapport général de la 6ème\n  mandature de l’institution."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000613",
+  "upstream_checksum": "ef9f41d8fb7e7cc564cffeb3a3784a66bc7f35ad4f023b232a6c6d936792b7fc",
+  "url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-25.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

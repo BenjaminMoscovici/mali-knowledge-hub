@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000371",
+  "edition_family": "wdi-mli-sh-sta-bass-zs",
+  "title": "WDI Mali — People using at least basic sanitation services (% of population)",
+  "publisher": "World Bank, World Development Indicators",
+  "collection": "World Development Indicators",
+  "type": "dataset",
+  "release": "WDI snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "2000–2024 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "WASH"
+  ],
+  "description": "People using at least basic sanitation services (% of population) — série annuelle pour le Mali, SH.STA.BASS.ZS (WHO/UNICEF Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene, World Hea)",
+  "limitations": [
+    "Conserver le dénominateur, les unités, les années et la définition de cette série. Les valeurs absentes sont nulles ; la version du fournisseur peut être révisée."
+  ],
+  "license": "World Bank WDI, WHO/UNICEF Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene, World Health Organization (WHO), uri: washdata.org, publisher: WHO/UNICEF Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (washdata.org), date accessed: 2025-09-30, date published: 2025-08-25;\nUN Children's Fund (UNICEF), uri: washdata.org, note: WHO/UNICEF Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene. Indicator licence CC BY 4.0. MKH tabulated the dated Mali data.",
+  "reuse_url": "https://api.worldbank.org/v2/sources/2/series/SH.STA.BASS.ZS/metadata?format=json&per_page=200",
+  "table": "wdi_371",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "indicator": "TEXT"
+  },
+  "records": [
+    {
+      "id": "SH.STA.BASS.ZS-2025",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2025",
+      "year": 2025,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2024",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2024",
+      "year": 2024,
+      "value": 47.7561676952566,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2023",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2023",
+      "year": 2023,
+      "value": 46.4485840749361,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2022",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2022",
+      "year": 2022,
+      "value": 45.1434215383033,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2021",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2021",
+      "year": 2021,
+      "value": 43.8404477380485,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2020",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2020",
+      "year": 2020,
+      "value": 42.5396302417606,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2019",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2019",
+      "year": 2019,
+      "value": 41.2415636688459,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2018",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2018",
+      "year": 2018,
+      "value": 39.9458152875809,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2017",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2017",
+      "year": 2017,
+      "value": 38.6530201870083,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2016",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2016",
+      "year": 2016,
+      "value": 37.3629585814102,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2015",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2015",
+      "year": 2015,
+      "value": 36.0760821566718,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2014",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2014",
+      "year": 2014,
+      "value": 34.7924079704944,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2013",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2013",
+      "year": 2013,
+      "value": 33.5119596461235,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2012",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2012",
+      "year": 2012,
+      "value": 32.2352227048023,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2011",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2011",
+      "year": 2011,
+      "value": 30.9622372812507,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2010",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2010",
+      "year": 2010,
+      "value": 29.6932856424804,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2009",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2009",
+      "year": 2009,
+      "value": 28.4286615146563,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2008",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2008",
+      "year": 2008,
+      "value": 27.1686715784898,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2007",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2007",
+      "year": 2007,
+      "value": 25.9143828499992,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2006",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2006",
+      "year": 2006,
+      "value": 24.6671660825145,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2005",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2005",
+      "year": 2005,
+      "value": 23.4264099806876,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2004",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2004",
+      "year": 2004,
+      "value": 22.193273656424,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2003",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2003",
+      "year": 2003,
+      "value": 20.9666083854735,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2002",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2002",
+      "year": 2002,
+      "value": 19.7478525761063,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2001",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2001",
+      "year": 2001,
+      "value": 18.5366288294077,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-2000",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 2000",
+      "year": 2000,
+      "value": 17.3336177697569,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1999",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1999",
+      "year": 1999,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1998",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1998",
+      "year": 1998,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1997",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1997",
+      "year": 1997,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1996",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1996",
+      "year": 1996,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1995",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1995",
+      "year": 1995,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1994",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1994",
+      "year": 1994,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1993",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1993",
+      "year": 1993,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1992",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1992",
+      "year": 1992,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1991",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1991",
+      "year": 1991,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1990",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1990",
+      "year": 1990,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1989",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1989",
+      "year": 1989,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1988",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1988",
+      "year": 1988,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1987",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1987",
+      "year": 1987,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1986",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1986",
+      "year": 1986,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1985",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1985",
+      "year": 1985,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1984",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1984",
+      "year": 1984,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1983",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1983",
+      "year": 1983,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1982",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1982",
+      "year": 1982,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1981",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1981",
+      "year": 1981,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1980",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1980",
+      "year": 1980,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1979",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1979",
+      "year": 1979,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1978",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1978",
+      "year": 1978,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1977",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1977",
+      "year": 1977,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1976",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1976",
+      "year": 1976,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1975",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1975",
+      "year": 1975,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1974",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1974",
+      "year": 1974,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1973",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1973",
+      "year": 1973,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1972",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1972",
+      "year": 1972,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1971",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1971",
+      "year": 1971,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1970",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1970",
+      "year": 1970,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1969",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1969",
+      "year": 1969,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1968",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1968",
+      "year": 1968,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1967",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1967",
+      "year": 1967,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1966",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1966",
+      "year": 1966,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1965",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1965",
+      "year": 1965,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1964",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1964",
+      "year": 1964,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1963",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1963",
+      "year": 1963,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1962",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1962",
+      "year": 1962,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1961",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1961",
+      "year": 1961,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    },
+    {
+      "id": "SH.STA.BASS.ZS-1960",
+      "locator": "WDI / MLI / SH.STA.BASS.ZS / 1960",
+      "year": 1960,
+      "value": null,
+      "indicator": "People using at least basic sanitation services (% of population)"
+    }
+  ],
+  "definitions": {
+    "value": "The percentage of people using at least basic sanitation services, that is, improved sanitation facilities that are not shared with other households.  This indicator encompasses both people using basic sanitation services as well as those using safely managed sanitation services.   Improved sanitation facilities include flush/pour flush to piped sewer systems, septic tanks or pit latrines; ventilated improved pit latrines, composting toilets or pit latrines with slabs.",
+    "indicator": "People using at least basic sanitation services (% of population)"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000371",
+  "upstream_checksum": "361de4cae247b090e90c09098d626b8a9ceda0e43fab082f39350318ab948a55",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/SH.STA.BASS.ZS?format=json&per_page=100",
+  "reuse_evidence_sha256": "2d204ae633ed600d43bac525744965dd484f525130656dd5c4228d8127547dd2"
+}

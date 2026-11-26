@@ -239,6 +239,10 @@ async function showSource(id, previousQuery) {
     drawerBody.append(list);
     const original = link(info.url, "Open original publication ↗");
     if (original) drawerBody.append(original);
+    for (const reference of info.related_references || []) {
+      const related = link(reference.url, reference.title);
+      if (related) drawerBody.append(related, el("p", "evidence-meta", reference.scope));
+    }
     for (const item of info.evidence || []) drawerBody.append(evidenceCard(item));
     if (info.samples) {
       drawerBody.append(el("h3", "", `Sample records · ${info.row_count} in release`), dataTable(info.samples));

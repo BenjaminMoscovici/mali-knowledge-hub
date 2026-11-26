@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000369",
+  "edition_family": "wdi-mli-se-prm-cmpt-zs",
+  "title": "WDI Mali — Primary completion rate, total (% of relevant age group)",
+  "publisher": "World Bank, World Development Indicators",
+  "collection": "World Development Indicators",
+  "type": "dataset",
+  "release": "WDI snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "1971–2023 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "education"
+  ],
+  "description": "Primary completion rate, total (% of relevant age group) — série annuelle pour le Mali, SE.PRM.CMPT.ZS (Data API, UN Educational, Scientific and Cultural Organization (UNESCO), uri: https://databrows)",
+  "limitations": [
+    "Conserver le dénominateur, les unités, les années et la définition de cette série. Les valeurs absentes sont nulles ; la version du fournisseur peut être révisée."
+  ],
+  "license": "World Bank WDI, Data API, UN Educational, Scientific and Cultural Organization (UNESCO), uri: https://databrowser.uis.unesco.org/resources, note: The data are obtained through the UIS API.  Detailed documentation is available at: https://api.uis.unesco.org/api/public/documentation/, publisher: UNESCO Institute for Statistics (UIS), type: Bulk file (csv), date accessed: 2026-03-19, date published: 2026-02. Indicator licence CC BY 4.0. MKH tabulated the dated Mali data.",
+  "reuse_url": "https://api.worldbank.org/v2/sources/2/series/SE.PRM.CMPT.ZS/metadata?format=json&per_page=200",
+  "table": "wdi_369",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "indicator": "TEXT"
+  },
+  "records": [
+    {
+      "id": "SE.PRM.CMPT.ZS-2025",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2025",
+      "year": 2025,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2024",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2024",
+      "year": 2024,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2023",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2023",
+      "year": 2023,
+      "value": 48.4277284647973,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2022",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2022",
+      "year": 2022,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2021",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2021",
+      "year": 2021,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2020",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2020",
+      "year": 2020,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2019",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2019",
+      "year": 2019,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2018",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2018",
+      "year": 2018,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2017",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2017",
+      "year": 2017,
+      "value": 45.9307980826096,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2016",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2016",
+      "year": 2016,
+      "value": 47.4221715789923,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2015",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2015",
+      "year": 2015,
+      "value": 47.4061323474545,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2014",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2014",
+      "year": 2014,
+      "value": 49.6091547349218,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2013",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2013",
+      "year": 2013,
+      "value": 50.4717349644533,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2012",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2012",
+      "year": 2012,
+      "value": 50.6166597102141,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2011",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2011",
+      "year": 2011,
+      "value": 54.7466808923084,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2010",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2010",
+      "year": 2010,
+      "value": 54.4243470820856,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2009",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2009",
+      "year": 2009,
+      "value": 51.7088813781738,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2008",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2008",
+      "year": 2008,
+      "value": 50.1006393432617,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2007",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2007",
+      "year": 2007,
+      "value": 47.006031036377,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2006",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2006",
+      "year": 2006,
+      "value": 44.223030090332,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2005",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2005",
+      "year": 2005,
+      "value": 39.1420288085938,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2004",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2004",
+      "year": 2004,
+      "value": 37.4053688049316,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2003",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2003",
+      "year": 2003,
+      "value": 35.7636604309082,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2002",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2002",
+      "year": 2002,
+      "value": 32.5874481201172,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2001",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2001",
+      "year": 2001,
+      "value": 31.5859298706055,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-2000",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 2000",
+      "year": 2000,
+      "value": 27.8583297729492,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1999",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1999",
+      "year": 1999,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1998",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1998",
+      "year": 1998,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1997",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1997",
+      "year": 1997,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1996",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1996",
+      "year": 1996,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1995",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1995",
+      "year": 1995,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1994",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1994",
+      "year": 1994,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1993",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1993",
+      "year": 1993,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1992",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1992",
+      "year": 1992,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1991",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1991",
+      "year": 1991,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1990",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1990",
+      "year": 1990,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1989",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1989",
+      "year": 1989,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1988",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1988",
+      "year": 1988,
+      "value": 8.64783000946045,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1987",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1987",
+      "year": 1987,
+      "value": 9.07551956176758,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1986",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1986",
+      "year": 1986,
+      "value": 9.2677001953125,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1985",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1985",
+      "year": 1985,
+      "value": 10.1115598678589,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1984",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1984",
+      "year": 1984,
+      "value": 10.6669902801514,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1983",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1983",
+      "year": 1983,
+      "value": 11.1686496734619,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1982",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1982",
+      "year": 1982,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1981",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1981",
+      "year": 1981,
+      "value": 11.0770597457886,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1980",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1980",
+      "year": 1980,
+      "value": 11.465009689331,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1979",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1979",
+      "year": 1979,
+      "value": 12.8914604187012,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1978",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1978",
+      "year": 1978,
+      "value": 12.2346200942993,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1977",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1977",
+      "year": 1977,
+      "value": 13.1628704071045,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1976",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1976",
+      "year": 1976,
+      "value": 11.0530099868774,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1975",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1975",
+      "year": 1975,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1974",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1974",
+      "year": 1974,
+      "value": 9.87965965270996,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1973",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1973",
+      "year": 1973,
+      "value": 9.17862033843994,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1972",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1972",
+      "year": 1972,
+      "value": 8.90524959564209,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1971",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1971",
+      "year": 1971,
+      "value": 9.82141017913818,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1970",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1970",
+      "year": 1970,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1969",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1969",
+      "year": 1969,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1968",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1968",
+      "year": 1968,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1967",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1967",
+      "year": 1967,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1966",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1966",
+      "year": 1966,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1965",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1965",
+      "year": 1965,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1964",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1964",
+      "year": 1964,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1963",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1963",
+      "year": 1963,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1962",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1962",
+      "year": 1962,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1961",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1961",
+      "year": 1961,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    },
+    {
+      "id": "SE.PRM.CMPT.ZS-1960",
+      "locator": "WDI / MLI / SE.PRM.CMPT.ZS / 1960",
+      "year": 1960,
+      "value": null,
+      "indicator": "Primary completion rate, total (% of relevant age group)"
+    }
+  ],
+  "definitions": {
+    "value": "Primary completion rate, or gross intake ratio to the last grade of primary education, is the number of new entrants (enrollments minus repeaters) in the last grade of primary education, regardless of age, divided by the population at the entrance age for the last grade of primary education. Data limitations preclude adjusting for students who drop out during the final year of primary education.",
+    "indicator": "Primary completion rate, total (% of relevant age group)"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000369",
+  "upstream_checksum": "db416ea3c7e1bf6e68b7bde1cf8971d2b61c1ea475cecbd93df9f46dd5e443b5",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/SE.PRM.CMPT.ZS?format=json&per_page=100",
+  "reuse_evidence_sha256": "5ea0630b06dad0e72cb3fd6676765a6d7167b3a978f2a78040a1dbd82eb36579"
+}

@@ -66,9 +66,19 @@ async function regionalMap(canvas, rows, figure, item) {
   }
   const entries = Object.entries(source.geometries);
   const polygons = entries.map(([id, g]) => [id, g.type === "Polygon" ? [g.coordinates] : g.coordinates]);
-  const points = polygons.flatMap(([, rings]) => rings.flat(2));
-  const lons = points.map((p) => p[0]), lats = points.map((p) => p[1]);
-  const west = Math.min(...lons), east = Math.max(...lons), south = Math.min(...lats), north = Math.max(...lats);
+  let west = Infinity, east = -Infinity, south = Infinity, north = -Infinity;
+  for (const [, shapes] of polygons) {
+    for (const rings of shapes) {
+      for (const ring of rings) {
+        for (const [lon, lat] of ring) {
+          west = Math.min(west, lon);
+          east = Math.max(east, lon);
+          south = Math.min(south, lat);
+          north = Math.max(north, lat);
+        }
+      }
+    }
+  }
   const mid = (north + south) * Math.PI / 360;
   const scale = Math.min(610 / ((east - west) * Math.cos(mid)), 400 / (north - south));
   const x = (lon) => 20 + (lon - west) * Math.cos(mid) * scale;

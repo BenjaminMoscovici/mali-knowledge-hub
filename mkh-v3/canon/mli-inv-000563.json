@@ -1,0 +1,62 @@
+{
+  "id": "mli-inv-000563",
+  "collection": "INSTAT Prices",
+  "edition_family": "instat-ihpc-mensuel",
+  "release": "2026-04",
+  "period": "2026-04",
+  "publisher": "INSTAT",
+  "title": "Indice harmonisé des prix à la consommation — 2026-04",
+  "geography": "Mali",
+  "topics": [
+    "Prices"
+  ],
+  "type": "dataset",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Les quatre valeurs sont celles de la ligne nationale de ce bulletin. Les chiffres arrondis ou révisés des autres éditions peuvent différer. Ne pas raccorder des niveaux entre bases sans coefficient officiel."
+  ],
+  "description": "IHPC national, base 2023, niveau d’indice et variations publiées sur un, trois et douze mois pour 2026-04.",
+  "table": "ihpc_563",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "month": "TEXT",
+    "base_year": "INTEGER",
+    "national_index": "REAL",
+    "monthly_pct": "REAL",
+    "three_month_pct": "REAL",
+    "annual_pct": "REAL"
+  },
+  "records": [
+    {
+      "id": "2026-04",
+      "locator": "PDF p. 1 / INDICE NATIONAL / Pondération avr.-25 janv.-26 févr.-26 mars.-26 avr.-26 dernier           derniers   derniers",
+      "month": "2026-04",
+      "base_year": 2023,
+      "national_index": 106.2,
+      "monthly_pct": 0.4,
+      "three_month_pct": 1.3,
+      "annual_pct": 1.0
+    }
+  ],
+  "definitions": {
+    "national_index": "Indice national publié, base 100 pour l’année de base.",
+    "monthly_pct": "Variation publiée sur un mois (%).",
+    "three_month_pct": "Variation publiée sur trois mois (%).",
+    "annual_pct": "Variation publiée en glissement sur douze mois (%)."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 1,
+      "locator": "PDF p. 1",
+      "text": "REPUBLIQUE DU MALI\n        UN PEUPLE-UN BUT-UNE FOI\n                 -=-=-=-=-=-\n\nMINISTERE DE L’ECONOMIE ET DES FINANCES\n                 -=-=-=-=-=-\n\n\n   INSTITUT NATIONAL DE LA STATISTIQUE\n\n\n                                                      INDICE HARMONISE\n                                         DES PRIX A LA CONSOMMATION(IHPC)\n                                         POUR LES PAYS MEMBRES DE L'UEMOA\n                                                    NATIONAL – d’avril 2026\n                                                           AVERTISSEMENT\nL’Institut National de la Statistique a le plaisir de mettre à la disposition des utilisateurs l’Indice Harmonisé des Prix à la\nConsommation (IHPC) base 2023 en remplacement de l’IHPC base 2014. Cet indice est harmonisé car la méthodologie utilisée pour\nsa production est identique dans les huit pays membres de l’Union Economique et Monétaire Ouest Africaine (UEMOA). Ainsi, cet\nindice a été adopté comme instrument de mesure de l’évolution des prix au sein des pays de l’UEMOA.\nLa première période de base de l’IHPC est l’année 1996. Elle a été rénovée en 2023 et comme en 2014, 2008 et 1996, les\npondérations proviennent de l’enquête harmonisée sur les conditions de vie des ménages « EHCVM 2021 ». La population de\nréférence de l’IHPC base 2023 est l’ensemble des ménages résidant sur le territoire malien. Le panier de la ménagère comprend 766\nvariétés suivies dans 4927 points de vente. Environ 30150 relevés de prix sont effectués chaque mois.\nL’Indice rénové est un indice de Young chainé calculer en utilisant le principe d’agrégations successives du niveau le plus fin\n(variété) au niveau le plus élevé (division).\n                                                          Mois d’avril 2026\n                                         (Période de référence : année 2023)\n\n                                                                 Indices pour le mois d’avril                   Variation en %\n                                                                                                  du               des 3      des 12\n                                         Pondération avr.-25 janv.-26 févr.-26 mars.-26 avr.-26 dernier           derniers   derniers\n                                                                                                 mois              mois        mois\n    INDICE NATIONAL                        10000         105,1     104,9     105,4     105,7    106,2    0,4         1,3         1,0\n   PRODUITS ALIMENTAIRES\n   ET BOISSONS NON\n01 ALCOLISSES                               4464         104,0     103,4     104,5     104,6    104,8    0,2         1,4         0,8\n    Céréales                                835          99,3      90,6      89,8      91,6     90,9    -0,7        0,4          -8,5\n    Légumes feuillus ou tiges, frais\n    ou réfrigérés                            75         131,3     112,6     117,3      121,8    127,0   4,3         12,8         -3,2\n    Tubercules, plantains et\n    bananes à cuire                          76         110,3     109,7     105,3       98,6     97,5    -1,1      -11,1      -11,6\n    Autres fruits, frais                     38         147,7     180,4     194,2      133,8    113,7   -15,0      -37,0      -23,0\n    Farines de céréales                      32         110,8     121,4     125,9      124,1    104,9   -15,5      -13,6       -5,3\n   BOISSONS ALCOOLISÉES,\n02 TABAC ET STUPEFIANTS                      54          102,9     106,2     107,9     109,6    109,3   -0,2         3,0         6,2\n    Cigarettes                               30         107,2     111,7     112,9      115,5    114,3   -1,0        2,4          6,7\n   VÊTEMENTS ET\n03 CHAUSSURES                               828          103,3     101,9     101,9     102,5    102,2   -0,3         0,2         -1,1\n   LOGEMENT, EAU,\n   ÉLECTRICITÉ, GAZ ET\n04 AUTRES COMBUSTIBLES                      889          112,3     115,6     116,3     115,9    114,9   -0,9        -0,6         2,3\n   AMEUBLEMENT,\n   ÉQUIPEMENT MÉNAGER\n   ET ENTRETIEN COURANT\n05 DU MÉNAGE                                271          103,1     103,1     103,2     103,6    103,5   -0,1         0,4         0,4\n06 SANTÉ                                    626          106,7     102,8     103,3     102,9    103,2    0,3         0,4         -3,3\n07 TRANSPORT                                783          95,0      96,0      95,4      98,6     104,7    6,1         9,0         10,2\n    Diesel                                   89          84,3      84,2      84,6      90,3     109,1   20,9        29,5      29,5\n   INFORMATION ET\n08 COMMUNICATION                            814          112,8     112,5     112,3     112,3    112,3    0,0        -0,2         -0,4\n                                                 INSTAT - Mali, le 10/04/2026 - IHPC                                                    1\n                                          Page"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000563",
+  "upstream_checksum": "b2c6d89307840b58d03dedbaee5395871c45ab583b3edefa860f0a67c6ce3988",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/ihpc0426_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

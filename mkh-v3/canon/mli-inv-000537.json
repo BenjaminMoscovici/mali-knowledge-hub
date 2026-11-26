@@ -1,0 +1,51 @@
+{
+  "id": "mli-inv-000537",
+  "collection": "INSTAT Trade",
+  "edition_family": "instat-commerce-exterieur-ctci",
+  "release": "Bulletin trimestriel du commerce extérieur (CTCI) — 2026 Q1",
+  "period": "2026 Q1",
+  "publisher": "INSTAT",
+  "title": "Bulletin trimestriel du commerce extérieur (CTCI) — 2026 Q1",
+  "geography": "Mali",
+  "topics": [
+    "Trade"
+  ],
+  "type": "document",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Données douanières de marchandises. Respecter le sens du flux, CAF/FOB, la période de comparaison et l’échelle millions ou milliards de FCFA indiquée. Les éditions se recouvrent."
+  ],
+  "description": "Statistiques trimestrielles INSTAT des importations et exportations de marchandises du Mali selon la CTCI, avec la synthèse des résultats de cette édition.",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 14,
+      "locator": "PDF p. 14",
+      "text": "II. COMMERCE DES MARCHANDISES\n\n2.1. Avertissements\nDans les tableaux de calcul des variations de la valeur en douane, qu’elle soit CAF ou FOB, on observe fréquemment la\nvaleur -100 dans certaines cellules. Cela s’explique par le fait qu’un passage d’un mois à l’autre d’une valeur non nulle à\nune valeur nulle (absence de flux) entraîne systématiquement un taux de variation de -100 %, indiquant une diminution\ntotale.\nÀ l’inverse, lorsqu’on passe d’une valeur nulle à une valeur non nulle entre deux mois consécutifs, le taux de variation\ndevient indéfini. Il en va de même lorsque deux mois consécutifs présentent des valeurs nulles. Ces deux situations\nentraînent l’apparition de cellules vides dans les tableaux de variation.\nDans les tableaux des valeurs unitaires, la valeur unitaire cumulée est calculée en divisant la valeur cumulée du mois par le\nvolume cumulé correspondant de ce même mois.\nConcernant les conventions de présentation : le signe \"–\" est utilisé lorsque la donnée est strictement nulle. En revanche, le\nchiffre 0 est inscrit lorsqu’un résultat, bien que non nul, est très proche de zéro. Par ailleurs, lorsque les variations d’une\npériode à une autre donne lieu à des chiffres exceptionnellement élevés, ceux-ci sont remplacés par le symbole #.\n\n2.2. Synthèse des résultats\n           A. Importations\n\nAu premier trimestre 2026, les importations se sont élevées à 1 048,1 milliards de FCFA, contre 858,1 milliards au premier\ntrimestre 2025 et 867,4 milliards au quatrième trimestre 2025, soit des hausses respectives de 22,1 % et 20,8%. Selon la\nclassification de l’OMC, les principaux produits importés sont les Machines et matériel de transport (27,2%), suivis des\nCombustibles et produits des industries extractives (25,1%) et des Produits agricoles (16,0%).\n\n\n      Graphique 1 : Part des divisions de l’OMC dans les importations au 2026-T1, 2025-T4 et 2025-T1\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n\n\n\n\n                                                                                                                           13\nStatistiques du commerce extérieur"
+    },
+    {
+      "kind": "source_passage",
+      "page": 15,
+      "locator": "PDF p. 15",
+      "text": "Au premier trimestre 2026, les principaux produits importés selon la CTCI sont le pétrole et les produits dérivés (24,0% de\nla valeur totale des importations), suivis des véhicules routiers (8,8%) et des machines et appareils spécialisés pour\nindustries                                                                                                           (6,6%).\nPar rapport au quatrième trimestre 2025, les importations de céréales et préparations à base de céréales ne progressent\nque de 1,4%, tandis que celles des sucres, préparations à base de sucre et miel bondissent de 242,6%, sous l'effet\nprincipalement de la forte augmentation des importations des autres sucres de betterave ou de canne (+229,7%).\nComparativement au premier trimestre 2025, les importations des mêmes produits augmentent respectivement de 39,3% et\n142,5%.\nLes principaux fournisseurs du Mali restent la Chine (306,8 milliards de FCFA), la Côte d’Ivoire (201,4 milliards), le Sénégal\n(160,2 milliards), l’Inde (68,4 milliards) et la France (47,6 milliards de FCFA).\n\n\n      Graphique 2 : Valeur en milliard de FCFA des importations des marchandises des principaux\n                   pays d'origine au premier trimestre 2026\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n\nParmi les principales zones d'intégration régionale fournisseurs du Mali, l'UEMOA arrive en tête avec 29,8% de la valeur\ntotale des importations, suivie des pays ACP (25,3%), de l'AFTA (17,2%) et de la CEAP (16,1%).\n\n\n      Graphique 3 : Part des intégrations régionales dans les importations du Mali\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n\n\n\n                                                                                                                          14\nStatistiques du commerce extérieur"
+    },
+    {
+      "kind": "source_passage",
+      "page": 16,
+      "locator": "PDF p. 16",
+      "text": "B. Exportations\nAu premier trimestre 2026, les exportations se sont élevées à 1 111,3 milliards de FCFA, contre 525,9 milliards au premier\ntrimestre 2025 et 1 286,4 milliards au quatrième trimestre 2025, soit une hausse de 111,3% en glissement annuel et une\nbaisse de 13,6% par rapport au trimestre précédent. Elles demeurent largement dominées par les grands groupes de\nproduits « Articles et transactions non classés ailleurs » principalement constitués de l’or à usage non monétaire, suivis des\n« Produits agricoles », notamment les produits alimentaires.\n\n\n      Graphique 4 : Part des exportations des marchandises aux 2026-T1, 2025-T4, 2025-T1\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n\nSelon la CTCI, les exportations du premier trimestre 2026 sont dominées par l’or à usage non monétaire (hors minerais et\nconcentrés d’or), qui représente 88,3% de la valeur totale. Elles comprennent également les engrais et minéraux bruts\n(4,8%), les animaux vivants (3,0%) et les graines et fruits oléagineux (0,7%) voir tableau 49. Par rapport au quatrième\ntrimestre 2025, les exportations de céréales et préparations à base de céréales reculent de 23,9%, tandis que celles des\nsucres, préparations à base de sucre et miel progressent de 89,9%. Comparativement au premier trimestre 2025, les\nexportations de céréales enregistrent une hausse exceptionnelle de 314,8% sous l’impulsion des exportations de biscuits et\nassimilés, alors que celles des sucres diminuent de 26,5%.\nLes principaux clients du Mali sont l’Afrique du Sud (843,9 milliards de FCFA), l’Australie (135,4 milliards) et la Chine (55,7\nmilliards). Les pays ACP constituent la première destination des exportations (43,6%), devant ceux de la SADC (41,0%).\n\n\n      Graphique 5 : Part des intégrations régionales dans les exportations du Mali\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n                                                                                                                           15\nStatistiques du commerce extérieur"
+    },
+    {
+      "kind": "source_passage",
+      "page": 17,
+      "locator": "PDF p. 17",
+      "text": "Au premier trimestre 2026, le solde commercial se dégrade, passant de 419,0 milliards de FCFA du quatrième trimestre\n2025 à 63,2 milliards de FCFA au premier trimestre 2026, tandis que le taux de couverture recule de 148,3% à 106,2% sur\nles mêmes périodes.\n\n\n      Graphique 6 : Transactions commerciales principaux produits du Mali au premier trimestre (en\n                   milliard de FCFA) 2026\n\n\n\n\nSource : Bulletin Tri1-2026/ INSTAT\n\n\n\n\n                                                                                                                    16\nStatistiques du commerce extérieur"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000537",
+  "upstream_checksum": "2ea843a0c6174bfae7a70948d7eb31a2db932be52aaf2268fd83cd39f322af8f",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/cmex-ctci1t26_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

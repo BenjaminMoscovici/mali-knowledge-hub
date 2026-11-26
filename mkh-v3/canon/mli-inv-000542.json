@@ -1,0 +1,57 @@
+{
+  "id": "mli-inv-000542",
+  "collection": "INSTAT Trade",
+  "edition_family": "instat-commerce-exterieur-ctci",
+  "release": "Bulletin trimestriel du commerce extérieur (CTCI) — 2025 Q2",
+  "period": "2025 Q2",
+  "publisher": "INSTAT",
+  "title": "Bulletin trimestriel du commerce extérieur (CTCI) — 2025 Q2",
+  "geography": "Mali",
+  "topics": [
+    "Trade"
+  ],
+  "type": "document",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Données douanières de marchandises. Respecter le sens du flux, CAF/FOB, la période de comparaison et l’échelle millions ou milliards de FCFA indiquée. Les éditions se recouvrent."
+  ],
+  "description": "Statistiques trimestrielles INSTAT des importations et exportations de marchandises du Mali selon la CTCI, avec la synthèse des résultats de cette édition.",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 14,
+      "locator": "PDF p. 14",
+      "text": "2. COMMERCE DES MARCHANDISES\n\n2.1. Avertissements\nDans les tableaux de calcul des variations de la valeur en douane, qu’elle soit CAF ou FOB, on observe\nfréquemment la valeur -100 dans certaines cellules. Cela s’explique par le fait qu’un passage d’un mois\nà l’autre d’une valeur non nulle à une valeur nulle (absence de flux) entraîne systématiquement un taux\nde variation de -100 %, indiquant une diminution totale.\nÀ l’inverse, lorsqu’on passe d’une valeur nulle à une valeur non nulle entre deux mois consécutifs, le taux\nde variation devient indéfini. Il en va de même lorsque deux mois consécutifs présentent des valeurs\nnulles. Ces deux situations entraînent l’apparition de cellules vides dans les tableaux de variation.\nDans les tableaux des valeurs unitaires, la valeur unitaire cumulée est calculée en divisant la valeur\ncumulée du mois par le volume cumulé correspondant de ce même mois.\nConcernant les conventions de présentation : le signe \"–\" est utilisé lorsque la donnée est strictement\nnulle. En revanche, le chiffre 0 est inscrit lorsqu’un résultat, bien que non nul, est très proche de zéro. Par\nailleurs, lorsque les variations d’une période à une autre donne lieu à des chiffres exceptionnellement\nélevés, ceux-ci sont remplacés par le symbole #.\n\n2.2. Synthèse des résultats\n\nA. Importations\n\nLa valeur des importations au deuxième trimestre 2025 est estimée à 1 000,8 milliards de FCFA contre\n858,2 milliards de FCFA au premier trimestre, soit une progression de 16,6%. Selon la classification par\ndivision de l’OMC, les principales catégories de produits importés sont constituées des Combustibles et\nproduits des industries extractives avec 39,5% du total des importations en valeur, des Machines et\nmatériel de transport (21,8%) et des Produits chimiques (12,5%).\n\n\n\n\n                                                                                                           12"
+    },
+    {
+      "kind": "source_passage",
+      "page": 15,
+      "locator": "PDF p. 15",
+      "text": "Graphique 1 : Part des divisions de l’OMC dans les importations au 2025-T2, 2025-\n                      T1 et 2024-T2\n\n\n\n\nSource : Bulletin Tri2-2025/ INSTAT\n\nDu point de vue de la classification par division du CTCI au deuxième trimestre 2025, les principaux\nproduits importés en valeur sont :\n    •    le pétrole, les produits dérivés et connexes représentant 38,5% du total des importations) ;\n    •    les machines et appareils électriques, n.d.a., ainsi que leurs pièces et parties détachées (y\n         compris les équivalents non électriques à usage domestique) (6,3%) ;\n    •    les machines et appareils spécialisés pour certaines industries (6,3%) ;\n    •    et les articles minéraux non métalliques manufacturés, n.d.a. (5,0%) (voir tableau 4).\nConcernant les produits de première nécessité importés, la comparaison entre le deuxième trimestre et\nle premier 2025 fait ressortir une hausse de 29,7% des importations de céréales et préparations à base\nde céréales au cours du trimestre sous revue, tandis que celles de sucres, préparations à base de\nsucre et miel enregistrent une forte baisse de 63,4% sur la même période (voir tableaux 12 et 14).\nPar ailleurs, les principaux fournisseurs du Mali au deuxième trimestre 2025 sont :\n    •    le Sénégal (241,6 milliards FCFA),\n    •    la Côte d’Ivoire (234,9 milliards FCFA),\n    •    la Chine (210,5 milliards FCFA),\n    •    et l’Inde (50,2 milliards FCFA) (voir tableau 5).\n\n\n\n\n                                                                                                   13"
+    },
+    {
+      "kind": "source_passage",
+      "page": 16,
+      "locator": "PDF p. 16",
+      "text": "Graphique 2 : Valeur en milliard de FCFA des importations des marchandises des\n                      principaux pays d'origine au deuxième trimestre 2025\n\n  300\n\n\n  250\n\n\n  200\n\n\n  150\n\n\n  100\n\n\n   50\n\n\n    0\n\n\n\n\n                                              Importations\n\nSource : Bulletin Tri2-2025/ INSTAT\n\nParmi les principales zones d’intégration régionale qui approvisionnent le Mali, les pays de l’ACP\noccupent la première place avec 25,9% de la valeur totale des importations, suivis des pays de la\nCEDEAO (24,9%) et de ceux des autres pays de l’UEMOA (24,0%). Cette répartition traduit la forte\ndépendance du Mali vis-à-vis de ses partenaires régionaux et souligne l’importance croissante des\néchanges au sein des espaces africains d’intégration économique.\n\n\n        Graphique 3 : Part des intégrations régionales dans les importations du Mali\n\n\n\n\nSource : Bulletin Tri2-2025/ INSTAT\n\n\n                                                                                               14"
+    },
+    {
+      "kind": "source_passage",
+      "page": 17,
+      "locator": "PDF p. 17",
+      "text": "B. Exportations\n\nLa valeur totale des exportations au deuxième trimestre 2025 est estimée à 623,8 milliards de FCFA\ncontre 525,9 milliards de FCFA au premier trimestre, soit une progression de 18,6%. Les exportations\nsont principalement dominées par la catégorie Articles et transactions non classés ailleurs, selon la\nclassification OMC, représentant 79,9%. Les Produits agricoles (10,5%) et les Combustibles et\nproduits des industries extractives (6,1%) se classent respectivement en 2ème et 3ème position.\n\n\n      Graphique 4 : Part des exportations des marchandises aux 2025-T2, 2025-T1,\n                   2024-T2\n\n\n\n\nSource : Bulletin Tri2-2025/ INSTAT\n\nSelon la classification CTCI, les principales exportations en valeur du Mali au deuxième trimestre 2025\nportent sur les produits suivants :\n           •    Or à usage non monétaire (hors minerais et concentrés d’or), qui domine largement\n                avec 79,9% de la valeur totale des exportations,\n           •    Animaux vivants autres que ceux de la division 03 (5,3%),\n           •    Engrais bruts autres que ceux de la division 56 et minéraux bruts (hors charbon,\n                pétrole et pierres précieuses) (4,5%),\n           •    Légumes et fruits (2,2%),\n           •    Matières brutes d’origine animale ou végétale, n.d.a. (1,2%) (voir tableau 48).\nAu cours de la même période, les principaux clients du Mali sont : l’Afrique du Sud (389,2 milliards FCFA),\nl’Australie (83,6 milliards FCFA), la Chine (32,7 milliards FCFA) et la Côte d’Ivoire (22,3 milliards FCFA)\n(voir tableau 49).\nConcernant les zones d’intégration régionale destinataires des exportations maliennes, l’ACP arrive en\ntête avec 40,1%, suivie de la SADC (34,3%), de la CEAP (10,7%), de la CEDEAO (4,9%) et de l’UEMOA\n(4,6%).\n\n\n                                                                                                       15"
+    },
+    {
+      "kind": "source_passage",
+      "page": 18,
+      "locator": "PDF p. 18",
+      "text": "Graphique 5 : Part des intégrations régionales dans les exportations du Mali\n\n\n\n\nSource : Bulletin Tri2-2025/ INSTAT\n\nPar ailleurs, au deuxième trimestre 2025, le déficit du solde commercial s’est aggravé, passant de -332,3\nmilliards de FCFA au premier trimestre à -377,0 milliards de FCFA. Par contre, le taux de couverture s’est\namélioré sur la même période avec 62,3% contre 61,3% au trimestre précèdent.\n\n\n          Graphique 6 : Transactions commerciales principaux produits du Mali au\n                      deuxième trimestre (en milliard de FCFA) 2025\n\n   1 200\n\n   1 000\n\n    800\n\n    600\n\n    400\n                                                                                                  Export\n    200\n                                                                                                  Import\n      -                                                                                           Solde\n   - 200\n\n   - 400\n\n   - 600\n\n\n\n\nSource : Bulletin Tri2-2025/ INSTAT\n\n\n\n\n                                                                                                      16"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000542",
+  "upstream_checksum": "6c64a55645902dea8e0f5bafc7756f15af4fc8cb51a8211f5e13058b9ef5b386",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/cmex-ctci2t25_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

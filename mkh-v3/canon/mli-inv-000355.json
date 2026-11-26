@@ -1,0 +1,115 @@
+{
+  "id": "mli-inv-000355",
+  "edition_family": "mli-inv-000355",
+  "title": "Mali: Greenhouse Gas and Air Pollutant Emissions",
+  "publisher": "Climate TRACE",
+  "collection": "Mali: Greenhouse Gas and Air Pollutant Emissions",
+  "type": "dataset",
+  "release": "Vérifié le 2026-11-26",
+  "period": "Dates et géographie propres à chaque ligne publiée",
+  "geography": "Mali; geographical resolution and completeness depend on the publisher",
+  "topics": [
+    "emissions"
+  ],
+  "description": "Climate TRACE, estimations mensuelles des émissions de méthane (CH4) par secteur et niveau administratif.",
+  "limitations": [
+    "Le fichier vérifié concerne CH4. Ne pas additionner les niveaux national et régional ou les agrégats sectoriels qui se recouvrent. Le CSV ne donne pas l’unité dans son en-tête ; toute conversion en CO₂e exige une définition indépendante."
+  ],
+  "license": "Climate TRACE. Creative Commons Attribution International (CC BY). MKH selected and typed columns from the published resource.",
+  "reuse_url": "https://data.humdata.org/dataset/mli-climate-trace",
+  "table": "inventory_355",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "area": "TEXT",
+    "source_area_id": "TEXT",
+    "admin_level": "INTEGER",
+    "year": "INTEGER",
+    "month": "INTEGER",
+    "sector": "TEXT",
+    "gas": "TEXT",
+    "emissions_quantity": "REAL"
+  },
+  "dimensions": [
+    "admin_level",
+    "gas",
+    "sector"
+  ],
+  "table_snapshot": {
+    "sha256": "f1eae4924c65bdf7a47712837bfa844ee0c0158d88aaab108b169ebfaf91eab8",
+    "row_count": 17160,
+    "samples": [
+      {
+        "id": "r2",
+        "locator": "CSV row 2",
+        "area": "Mali",
+        "source_area_id": "MLI",
+        "admin_level": 0,
+        "year": 2024,
+        "month": 11,
+        "sector": "agriculture",
+        "gas": "ch4",
+        "emissions_quantity": 77386.6033620334
+      },
+      {
+        "id": "r3",
+        "locator": "CSV row 3",
+        "area": "Mali",
+        "source_area_id": "MLI",
+        "admin_level": 0,
+        "year": 2024,
+        "month": 11,
+        "sector": "buildings",
+        "gas": "ch4",
+        "emissions_quantity": 1929.1511114525165
+      },
+      {
+        "id": "r4",
+        "locator": "CSV row 4",
+        "area": "Mali",
+        "source_area_id": "MLI",
+        "admin_level": 0,
+        "year": 2024,
+        "month": 11,
+        "sector": "fluorinated-gases",
+        "gas": "ch4",
+        "emissions_quantity": 0.0
+      }
+    ],
+    "dimension_values": {
+      "admin_level": {
+        "distinct_count": 2,
+        "examples": [
+          1,
+          0
+        ]
+      },
+      "gas": {
+        "distinct_count": 1,
+        "examples": [
+          "ch4"
+        ]
+      },
+      "sector": {
+        "distinct_count": 10,
+        "examples": [
+          "manufacturing",
+          "agriculture",
+          "forestry-and-land-use",
+          "transportation",
+          "mineral-extraction",
+          "fossil-fuel-operations",
+          "waste",
+          "buildings",
+          "power",
+          "fluorinated-gases"
+        ]
+      }
+    }
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000355",
+  "upstream_checksum": "9be72f5e8abf8e1a9ce9b9cf2a5182e143c3634218372321e9f2822fd2c25522",
+  "url": "https://data.humdata.org/dataset/8c7c9560-16ca-4a5f-ade0-19ae9bf3bc0f/resource/fbe39dfe-d514-4b77-8e98-a60190079da9/download/mli_ch4_admin_0_1.csv",
+  "reuse_evidence_sha256": "03659f08b889db7bb5c91adb7efdf27ee621ca2b92a9cf319d7934f0882318db"
+}

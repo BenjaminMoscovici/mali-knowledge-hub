@@ -1,0 +1,51 @@
+{
+  "id": "mli-inv-000541",
+  "collection": "INSTAT Trade",
+  "edition_family": "instat-commerce-exterieur-ctci",
+  "release": "Bulletin trimestriel du commerce extérieur (CTCI) — 2024 Q2",
+  "period": "2024 Q2",
+  "publisher": "INSTAT",
+  "title": "Bulletin trimestriel du commerce extérieur (CTCI) — 2024 Q2",
+  "geography": "Mali",
+  "topics": [
+    "Trade"
+  ],
+  "type": "document",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Données douanières de marchandises. Respecter le sens du flux, CAF/FOB, la période de comparaison et l’échelle millions ou milliards de FCFA indiquée. Les éditions se recouvrent."
+  ],
+  "description": "Statistiques trimestrielles INSTAT des importations et exportations de marchandises du Mali selon la CTCI, avec la synthèse des résultats de cette édition.",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 7,
+      "locator": "PDF p. 7",
+      "text": "COMMERCE DES MARCHANDISES - SYNTHESE DES RESULTATS\n\n\n    A. Importations\n\nAu deuxième trimestre 2024, les importations sont évaluées à 905, 602 milliards de FCFA contre 914, 826 au premier\ntrimestre 2024, soit une variation de diminution 1,01 %. Les Combustibles et produits des industries extractives dominent les\nimportations avec une part de 35,87%, suivi des Machines et matériel de transport 19,48%.\n\n\n\n      Graphique 1 : Part des divisions de l’OMC dans les importations au 2023-T2, 2024-T1et 2024-T2\n\n  40,00%\n\n\n  30,00%\n\n\n  20,00%\n\n\n  10,00%                                                                                                             2023-T2\n                                                                                                                     2024-T1\n\n   0,00%                                                                                                             2024-T2\n\n\n\n\nLes principales divisions de la CTCI de produits importés au cours du deuxième trimestre de l’année 2024 ont été : Pétrole,\nproduits dérivés du pétrole et produits connexes 34,93% du total des importations ; Articles minéraux non métalliques\nmanufactures, n.d.a. 5,58% ; Céréales et préparations à base de céréales 5,50% ; Machines et appareils électriques,\nn.d.a., et leurs parties et pièces détachées électriques (y compris les équivalents non électriques, n.d.a., de machines\net appareils électriques a usage domestique) 5,43% ; Machines et appareils spécialises pour industries particulières\n5,19% (Voir tableau 4).\n\nConcernant les denrées de première nécessité, entre le deuxième trimestre et le premier trimestre de l’année 2024, les\nimportations ont augmenté de 8,42% en Céréales et préparations à base de céréales et en Sucres, préparations à base\nde sucre et miel 0,04% (Voir tableau 12 et 14).\n\nLes principaux pays fournisseurs du Mali durant le deuxième trimestre 2024 sont : Le Sénégal 204, 211 milliards de FCFA,\nla Cote d’ivoire 194, 067 milliards de FCFA, la Chine 136 ,960 milliards de FCFA, la France 56, 083 milliards de FCFA. (Voir\ntableau 38,40, 43).\n\nStatistiques du commerce extérieur                                                                                         7"
+    },
+    {
+      "kind": "source_passage",
+      "page": 8,
+      "locator": "PDF p. 8",
+      "text": "Graphique 2 : Valeur en milliard de FCFA des importations des marchandises des principaux pays\n                     d'origine au deuxième trimestre 2024\n\n\n\n\n 250\n\n\n 200\n\n\n 150\n\n\n 100\n\n\n  50\n\n\n   0\n\n\n\n\n                                                            Importations\n\nParmi les principales zones d’intégration régionale qui approvisionnent le Mali, l’ACP est la première avec une part de 25,24%\nsuivie de la CEDEAO 24,45% et de l’UEMOA 23,41%.\n\n\nGraphique 3 : Part des intégrations régionales dans les importations du Mali\n\n\n  30,00%\n\n\n\n\n  20,00%\n\n                                                                                                               2023-T2\n                                                                                                               2024-T1\n  10,00%                                                                                                       2024-T2\n\n\n\n\n   0,00%\n\n\n\n\nStatistiques du commerce extérieur                                                                                          8"
+    },
+    {
+      "kind": "source_passage",
+      "page": 9,
+      "locator": "PDF p. 9",
+      "text": "B. Exportations\n\nLes exportations globales sont ressorties à 523, 025 milliards au deuxième trimestre 2024 contre 493, 669 milliards au premier\ntrimestre de la même année 2024, soit une variation de 5,95%. La division des Articles et transactions non classés ailleurs\ndans la CTCI domine les exportations avec une part de 88,02%. Elle est suivie respectivement des Produits agricoles\n3,84%, Machines et matériel de transport 2,81%, des Combustibles et produits des industries extractives 2,45% et\ndes produits chimiques 1,02%.\n\n\n\n      Graphique 4 : Part des exportations des marchandises aux 2O23-T2, 2024-T1, 2024-T2\n\n\n  100,00%\n   90,00%\n   80,00%\n   70,00%\n   60,00%\n   50,00%\n   40,00%\n   30,00%\n   20,00%                                                                                                           2023-T2\n   10,00%                                                                                                           2024-T1\n    0,00%\n                                                                                                                    2024-T2\n\n\n\n\n        .\nLes principales divisions de la CTCI de produits exportés au cours du deuxième trimestre 2024 ont été : Or, à usage non\nmonétaire (à l'exclusion des minerais et concentrés d'or) 88,00% du total des exportations ; Véhicules routiers (y\ncompris les véhicules à coussin d'air) 0,69%, Articles manufactures divers, n.d.a. 0,09% ; Machines et appareils de\nbureau ou pour le traitement automatique de l'information 0,02% ; (Voir tableau 48).\n\nLes principaux pays clients du Mali durant le deuxième trimestre sont : l’Afrique du Sud 212, 211 milliards de FCFA, la\nSuisse 189, 357 milliards de FCFA, Australie 51, 465 milliards de FCFA, Côte d’Ivoire 21, 822 milliards de FCFA, Burkina\nFaso 11, 526 milliards de FCFA (Voir tableau 49).\n\nS’agissant des principales zones d’intégration fournies par le Mali, ACP est la première avec une part de 42,29%, suivie\nrespectivement de la SADC 39,37%, CEAP 7,21%, de la CEDEAO 2,69% et de l’AELE 1,89%.\n\n\n\n\nStatistiques du commerce extérieur                                                                                            9"
+    },
+    {
+      "kind": "source_passage",
+      "page": 10,
+      "locator": "PDF p. 10",
+      "text": "Graphique 5 : Part des intégrations régionales dans les exportations du Mali\n\n\n  45,00%\n\n  40,00%\n\n  35,00%\n\n  30,00%\n\n  25,00%\n                                                                                                                  2023-T2\n  20,00%                                                                                                          2024-T1\n\n  15,00%                                                                                                          2024-T2\n\n\n  10,00%\n\n   5,00%\n\n   0,00%\n\n\n\n\nAu deuxième trimestre 2024, le solde commercial s’est détérioré passant de -417,410 milliards à -382,577 milliards. Le taux\nde couverture est passé de 54% du premier trimestre 2023 à 58% au deuxième trimestre 2024.\n\n\n          Graphique 6 : Transactions commerciales principaux produits du Mali au deuxième trimestre (en\n                        milliard de FCFA) 2024\n\n\n  1 000\n\n\n    800\n\n\n    600\n\n\n    400\n\n                                                                                                                    Export\n    200\n                                                                                                                    Import\n                                                                                                                    Solde\n      -\n\n\n   - 200\n\n\n   - 400\n\n\n   - 600\n\n\n\nStatistiques du commerce extérieur                                                                                     10"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000541",
+  "upstream_checksum": "270c18ff70f8553226bfda2558632ea7f50d6b4c7c06fdd253223fedf3dd8e2e",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/cmex-ctci2t24_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

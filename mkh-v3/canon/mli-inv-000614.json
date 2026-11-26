@@ -1,0 +1,173 @@
+{
+  "id": "mli-inv-000614",
+  "collection": "Territorial reform laws",
+  "edition_family": "mli-inv-000614",
+  "release": "Loi n°2023-007 du 13 mars 2023",
+  "period": "13 mars 2023",
+  "publisher": "République du Mali / DNAT",
+  "title": "Loi n°2023-007 portant création des collectivités territoriales en République du Mali",
+  "geography": "Mali",
+  "topics": [
+    "administrative reform",
+    "réforme territoriale",
+    "régions",
+    "communes",
+    "codes administratifs"
+  ],
+  "type": "dataset",
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "limitations": [
+    "Le tableau est transcrit sur le fac-similé de la loi. Les annexes communales ne sont pas intégralement transcrites. Ces dispositions ne contiennent ni géométries SIG ni correspondance vérifiée entre anciens shapeID et nouveaux codes."
+  ],
+  "description": "Réforme territoriale du Mali : catégories de collectivités, article 2 et tableau complet des 19 régions et de leurs codes. Le District fait l’objet d’un statut particulier.",
+  "table": "regions_loi_2023_007",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "region_code": "TEXT",
+    "region": "TEXT"
+  },
+  "records": [
+    {
+      "id": "01",
+      "locator": "PDF p. 1 / article 2 / ligne 1, Région Kayes",
+      "region_code": "01",
+      "region": "Kayes"
+    },
+    {
+      "id": "02",
+      "locator": "PDF p. 1 / article 2 / ligne 2, Région Koulikoro",
+      "region_code": "02",
+      "region": "Koulikoro"
+    },
+    {
+      "id": "03",
+      "locator": "PDF p. 1 / article 2 / ligne 3, Région Sikasso",
+      "region_code": "03",
+      "region": "Sikasso"
+    },
+    {
+      "id": "04",
+      "locator": "PDF p. 1 / article 2 / ligne 4, Région Ségou",
+      "region_code": "04",
+      "region": "Ségou"
+    },
+    {
+      "id": "05",
+      "locator": "PDF p. 1 / article 2 / ligne 5, Région Mopti",
+      "region_code": "05",
+      "region": "Mopti"
+    },
+    {
+      "id": "06",
+      "locator": "PDF p. 1 / article 2 / ligne 6, Région Tombouctou",
+      "region_code": "06",
+      "region": "Tombouctou"
+    },
+    {
+      "id": "07",
+      "locator": "PDF p. 1 / article 2 / ligne 7, Région Gao",
+      "region_code": "07",
+      "region": "Gao"
+    },
+    {
+      "id": "08",
+      "locator": "PDF p. 1 / article 2 / ligne 8, Région Kidal",
+      "region_code": "08",
+      "region": "Kidal"
+    },
+    {
+      "id": "09",
+      "locator": "PDF p. 1 / article 2 / ligne 9, Région Taoudenni",
+      "region_code": "09",
+      "region": "Taoudenni"
+    },
+    {
+      "id": "10",
+      "locator": "PDF p. 1 / article 2 / ligne 10, Région Ménaka",
+      "region_code": "10",
+      "region": "Ménaka"
+    },
+    {
+      "id": "11",
+      "locator": "PDF p. 1 / article 2 / ligne 11, Région Nioro",
+      "region_code": "11",
+      "region": "Nioro"
+    },
+    {
+      "id": "12",
+      "locator": "PDF p. 1 / article 2 / ligne 12, Région Kita",
+      "region_code": "12",
+      "region": "Kita"
+    },
+    {
+      "id": "13",
+      "locator": "PDF p. 1 / article 2 / ligne 13, Région Dioïla",
+      "region_code": "13",
+      "region": "Dioïla"
+    },
+    {
+      "id": "14",
+      "locator": "PDF p. 1 / article 2 / ligne 14, Région Nara",
+      "region_code": "14",
+      "region": "Nara"
+    },
+    {
+      "id": "15",
+      "locator": "PDF p. 1 / article 2 / ligne 15, Région Bougouni",
+      "region_code": "15",
+      "region": "Bougouni"
+    },
+    {
+      "id": "16",
+      "locator": "PDF p. 1 / article 2 / ligne 16, Région Koutiala",
+      "region_code": "16",
+      "region": "Koutiala"
+    },
+    {
+      "id": "17",
+      "locator": "PDF p. 1 / article 2 / ligne 17, Région San",
+      "region_code": "17",
+      "region": "San"
+    },
+    {
+      "id": "18",
+      "locator": "PDF p. 1 / article 2 / ligne 18, Région Douentza",
+      "region_code": "18",
+      "region": "Douentza"
+    },
+    {
+      "id": "19",
+      "locator": "PDF p. 1 / article 2 / ligne 19, Région Bandiagara",
+      "region_code": "19",
+      "region": "Bandiagara"
+    }
+  ],
+  "search_fields": [
+    "region",
+    "region_code"
+  ],
+  "definitions": {
+    "region_code": "Code de la collectivité territoriale de Région, tel qu’imprimé à l’article 2. Conserver le zéro initial."
+  },
+  "passages": [
+    {
+      "page": 1,
+      "locator": "PDF p. 1 / articles 1er–2",
+      "kind": "source_passage",
+      "text": "Article 1er : Les Régions, le District et les Communes sont des Collectivités territoriales.\nArticle 2 : Les Régions ci-après portent le nom de leur Chef-lieu :\nKayes : 01\nKoulikoro : 02\nSikasso : 03\nSégou : 04\nMopti : 05\nTombouctou : 06\nGao : 07\nKidal : 08\nTaoudenni : 09\nMénaka : 10\nNioro : 11\nKita : 12\nDioïla : 13\nNara : 14\nBougouni : 15\nKoutiala : 16\nSan : 17\nDouentza : 18\nBandiagara : 19\nLes codes des Collectivités territoriales Régions sont ceux appliqués aux Circonscriptions administratives de Régions, tel qu’il résulte de la présente loi.\nLa répartition des Communes par Collectivités territoriales de Région est établie à l’annexe de la présente loi."
+    },
+    {
+      "page": 2,
+      "locator": "PDF p. 2 / article 3 et début de l’article 4",
+      "kind": "source_passage",
+      "text": "Article 3 : L’organisation du District fait l’objet d’un statut particulier.\nArticle 4 : Les Régions sont constituées de Communes urbaines ou rurales ainsi qu’il suit :"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000614",
+  "upstream_checksum": "771e0b397edf01276597037e74e0bc304411900cad5d2c8703c03bc152f7cc8d",
+  "url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/Loi_n%C2%B02023-007_portant_cr%C3%A9ation_Collectivit%C3%A9s_territoriales_en_R%C3%A9publique_Mali1.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

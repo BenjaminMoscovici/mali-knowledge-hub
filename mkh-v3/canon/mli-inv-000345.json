@@ -1,0 +1,88 @@
+{
+  "id": "mli-inv-000345",
+  "edition_family": "mli-inv-000345",
+  "title": "Mali - FloodScan: Near Real-Time and Historical Flood Mapping",
+  "publisher": "JANUS Atmospheric and Environmental Research",
+  "collection": "Mali - FloodScan: Near Real-Time and Historical Flood Mapping",
+  "type": "dataset",
+  "release": "Vérifié le 2026-11-26",
+  "period": "Dates et géographie propres à chaque ligne publiée",
+  "geography": "Mali; geographical resolution and completeness depend on the publisher",
+  "topics": [
+    "flood monitoring"
+  ],
+  "description": "FloodScan : fraction inondée par jour et zone administrative, valeur de référence et classe de période de retour.",
+  "limitations": [
+    "La fraction SFED et sa référence sont des pourcentages. Référence par jour calendaire 2014–2023, lissée sur 11 jours. Une valeur absente est inconnue, notamment pour les petites zones. Les retours sont des classes, pas un nombre de personnes exposées."
+  ],
+  "license": "AER FloodScan, Atmospheric and Environmental Research, modified and simplified by UN OCHA. CC BY 3.0 IGO. MKH adapted the two worksheets.",
+  "reuse_url": "https://data.humdata.org/dataset/floodscan-mli",
+  "table": "inventory_345",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "level": "INTEGER",
+    "pcode": "TEXT",
+    "area": "TEXT",
+    "date": "TEXT",
+    "sfed_pct": "REAL",
+    "rp_category": "TEXT",
+    "sfed_baseline_pct": "REAL"
+  },
+  "dimensions": [
+    "level"
+  ],
+  "table_snapshot": {
+    "sha256": "a157a4eb5b5aeea7531f8d7385524d0f88faadcf38ccdfd932605906311b12d5",
+    "row_count": 5481,
+    "samples": [
+      {
+        "id": "1-2",
+        "locator": "admin1 / Excel row 2",
+        "level": 1,
+        "pcode": "ML01",
+        "area": "Kayes",
+        "date": "2026-08-29",
+        "sfed_pct": 0.0014850379,
+        "rp_category": "1-1.5",
+        "sfed_baseline_pct": 0.001132584841269074
+      },
+      {
+        "id": "1-3",
+        "locator": "admin1 / Excel row 3",
+        "level": 1,
+        "pcode": "ML02",
+        "area": "Koulikoro",
+        "date": "2026-08-29",
+        "sfed_pct": 0.00010656928,
+        "rp_category": "1-1.5",
+        "sfed_baseline_pct": 0.0006953598374160854
+      },
+      {
+        "id": "1-4",
+        "locator": "admin1 / Excel row 4",
+        "level": 1,
+        "pcode": "ML03",
+        "area": "Sikasso",
+        "date": "2026-08-29",
+        "sfed_pct": 5.0526313e-07,
+        "rp_category": "1-1.5",
+        "sfed_baseline_pct": 0.002411946657840438
+      }
+    ],
+    "dimension_values": {
+      "level": {
+        "distinct_count": 2,
+        "examples": [
+          2,
+          1
+        ]
+      }
+    }
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000345",
+  "upstream_checksum": "57f4a517e6c0cd13b6e34dd394bfd4e4448f401fe3daba9f7431c1aa43014061",
+  "url": "https://data.humdata.org/dataset/2a40dd56-d11f-404a-ae25-d54d1076d749/resource/4bb62d95-9037-4283-91e4-5aa4aa15a2ae/download/hdx_floodscan_zonal_stats.xlsx",
+  "reuse_evidence_sha256": "7f0d67b4bd415964db895e8a2ce1fc19f14ff6e2473b5d3fa25542eb3c4635c2"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000609",
+  "collection": "Journal officiel du Mali",
+  "edition_family": "mali-journal-officiel",
+  "release": "Soixante-quatrième Année Numéro 04 24 Février 2023",
+  "period": "2023",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "title": "Journal officiel du Mali — 2023, n° 04",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "legal issuances"
+  ],
+  "type": "document",
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "limitations": [
+    "Extraits de la version promulguée. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "description": "Création de l’Usine malienne de Produits pharmaceutiques. Articles reproduits avec leur emplacement dans le Journal officiel.",
+  "passages": [
+    {
+      "page": 3,
+      "locator": "PDF p. 3 / Création de l’Usine malienne de Produits pharmaceutiques",
+      "kind": "source_passage",
+      "text": "Article 1er : Il est créé une Société d’Etat dénommée\n « Usine malienne de Produits pharmaceutiques », en abrégé\n UMPP.\n\n L’Usine malienne de Produits pharmaceutiques est une\n société d’Etat dont le capital social est entièrement détenu\n par l’Etat."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000609",
+  "upstream_checksum": "081d9012323a2b8ce54444763e155691d6d02c5a85006f36e3c5f8cc10deed33",
+  "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-04.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

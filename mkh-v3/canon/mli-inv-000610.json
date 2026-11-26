@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000610",
+  "collection": "Journal officiel du Mali",
+  "edition_family": "mali-journal-officiel",
+  "release": "Soixante-cinquième Année Numéro 30 27 Décembre 2024",
+  "period": "2024",
+  "publisher": "Secrétariat général du Gouvernement du Mali",
+  "title": "Journal officiel du Mali — 2024, n° 30",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "legal issuances"
+  ],
+  "type": "document",
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "limitations": [
+    "Extraits de la version promulguée. La consolidation et la vigueur actuelle exigent une vérification distincte."
+  ],
+  "description": "Loi de finances initiale pour 2025. Articles reproduits avec leur emplacement dans le Journal officiel.",
+  "passages": [
+    {
+      "page": 13,
+      "locator": "PDF p. 13 / Loi de finances initiale pour 2025",
+      "kind": "source_passage",
+      "text": "LOI N°2024-037 DU 27 DECEMBRE 2024 PORTANT LOI DE FINANCES POUR L’EXERCICE 2025\n\nLe Conseil national de Transition a délibéré et adopté, en sa séance du 19 décembre 2024,\n\nLe Président de la Transition, Chef de l’Etat, promulgue la loi dont la teneur suit :\n\n\nPREMIERE PARTIE : CONDITIONS GENERALES DE L’EQUILIBRE BUDGETAIRE ET FINANCIER\n\nTITRE I : DISPOSITIONS RELATIVES AUX RESSOURCES\n\nCHAPITRE I : AUTORISATION DE PERCEPTION DES IMPOTS ET PRODUITS\n\nArticle 1er : La perception des impôts, produits et revenus affectés à l’Etat, aux Collectivités territoriales et aux\nEtablissements publics est effectuée, pendant l’année 2025, conformément aux lois et règlements en vigueur et aux\ndispositions de la présente loi.\n\nArticle 2 : Les affectations, résultant des budgets annexes créés et des Comptes spéciaux du Trésor ouverts à la date de\ndépôt de la présente loi, sont confirmées pour l’année 2025."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000610",
+  "upstream_checksum": "4bf53077536cf0f4bce3d4e862909db68354988efbdc7a2efab2bb371eb01afd",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-30-2.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000368",
+  "edition_family": "wdi-mli-ny-gdp-defl-kd-zg",
+  "title": "WDI Mali — Inflation, GDP deflator (annual %)",
+  "publisher": "World Bank, World Development Indicators",
+  "collection": "World Development Indicators",
+  "type": "dataset",
+  "release": "WDI snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "1968–2025 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "prices"
+  ],
+  "description": "Inflation, GDP deflator (annual %) — série annuelle pour le Mali, NY.GDP.DEFL.KD.ZG (Country official statistics, National Statistical Offices (NSOs);\nNational Accounts data files,)",
+  "limitations": [
+    "Conserver le dénominateur, les unités, les années et la définition de cette série. Les valeurs absentes sont nulles ; la version du fournisseur peut être révisée."
+  ],
+  "license": "World Bank WDI, Country official statistics, National Statistical Offices (NSOs);\nNational Accounts data files, Central Banks;\nStaff estimates, World Bank (WB). Indicator licence CC BY 4.0. MKH tabulated the dated Mali data.",
+  "reuse_url": "https://api.worldbank.org/v2/sources/2/series/NY.GDP.DEFL.KD.ZG/metadata?format=json&per_page=200",
+  "table": "wdi_368",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "indicator": "TEXT"
+  },
+  "records": [
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2025",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2025",
+      "year": 2025,
+      "value": 2.11795252198942,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2024",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2024",
+      "year": 2024,
+      "value": 2.8071329943578,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2023",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2023",
+      "year": 2023,
+      "value": 2.0382877043731,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2022",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2022",
+      "year": 2022,
+      "value": 6.30157800308615,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2021",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2021",
+      "year": 2021,
+      "value": 3.83078832100674,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2020",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2020",
+      "year": 2020,
+      "value": 0.473313578214004,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2019",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2019",
+      "year": 2019,
+      "value": 1.00124513666175,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2018",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2018",
+      "year": 2018,
+      "value": 1.47979493736443,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2017",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2017",
+      "year": 2017,
+      "value": 1.67388511022737,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2016",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2016",
+      "year": 2016,
+      "value": 1.60005889699406,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2015",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2015",
+      "year": 2015,
+      "value": 2.81854906621635,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2014",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2014",
+      "year": 2014,
+      "value": 1.82208435035417,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2013",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2013",
+      "year": 2013,
+      "value": -0.317559104646421,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2012",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2012",
+      "year": 2012,
+      "value": 4.85459786800335,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2011",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2011",
+      "year": 2011,
+      "value": 12.485597880222,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2010",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2010",
+      "year": 2010,
+      "value": 4.20663260033768,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2009",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2009",
+      "year": 2009,
+      "value": 6.03559163725214,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2008",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2008",
+      "year": 2008,
+      "value": 6.25748322420738,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2007",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2007",
+      "year": 2007,
+      "value": 6.33623206353214,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2006",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2006",
+      "year": 2006,
+      "value": 5.62843655963773,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2005",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2005",
+      "year": 2005,
+      "value": 11.6915548242737,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2004",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2004",
+      "year": 2004,
+      "value": 3.68302612749949,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2003",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2003",
+      "year": 2003,
+      "value": -8.16495969793132,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2002",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2002",
+      "year": 2002,
+      "value": 3.58323851143199,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2001",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2001",
+      "year": 2001,
+      "value": 4.28986804871217,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-2000",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 2000",
+      "year": 2000,
+      "value": 0.0562481103927155,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1999",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1999",
+      "year": 1999,
+      "value": 4.67771075471839,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1998",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1998",
+      "year": 1998,
+      "value": 8.07976077066357,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1997",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1997",
+      "year": 1997,
+      "value": -0.0274981567784778,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1996",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1996",
+      "year": 1996,
+      "value": 6.91356075695191,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1995",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1995",
+      "year": 1995,
+      "value": 13.3681419888482,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1994",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1994",
+      "year": 1994,
+      "value": 35.7488199420861,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1993",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1993",
+      "year": 1993,
+      "value": 1.18420677448145,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1992",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1992",
+      "year": 1992,
+      "value": 1.70615304760136,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1991",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1991",
+      "year": 1991,
+      "value": 1.26449979957188,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1990",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1990",
+      "year": 1990,
+      "value": 3.62463462116538,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1989",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1989",
+      "year": 1989,
+      "value": 7.68036776992413,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1988",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1988",
+      "year": 1988,
+      "value": -0.458951362412193,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1987",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1987",
+      "year": 1987,
+      "value": -0.0737721493344878,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1986",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1986",
+      "year": 1986,
+      "value": 3.9153102818299,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1985",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1985",
+      "year": 1985,
+      "value": 4.35191110774778,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1984",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1984",
+      "year": 1984,
+      "value": 9.4053784819895,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1983",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1983",
+      "year": 1983,
+      "value": 5.72025470992247,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1982",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1982",
+      "year": 1982,
+      "value": -0.716923069786532,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1981",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1981",
+      "year": 1981,
+      "value": 3.93291959695652,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1980",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1980",
+      "year": 1980,
+      "value": 75.9706544567852,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1979",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1979",
+      "year": 1979,
+      "value": 11.4212450877516,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1978",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1978",
+      "year": 1978,
+      "value": 8.56215117461142,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1977",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1977",
+      "year": 1977,
+      "value": 8.06394642924,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1976",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1976",
+      "year": 1976,
+      "value": 10.9463376517339,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1975",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1975",
+      "year": 1975,
+      "value": 22.9891382530013,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1974",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1974",
+      "year": 1974,
+      "value": 4.81804731363165,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1973",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1973",
+      "year": 1973,
+      "value": 3.95723277048157,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1972",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1972",
+      "year": 1972,
+      "value": 6.47231420698655,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1971",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1971",
+      "year": 1971,
+      "value": 6.69544008888757,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1970",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1970",
+      "year": 1970,
+      "value": 6.0297446816833,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1969",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1969",
+      "year": 1969,
+      "value": 3.58935608902114,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1968",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1968",
+      "year": 1968,
+      "value": 21.0864475019902,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1967",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1967",
+      "year": 1967,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1966",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1966",
+      "year": 1966,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1965",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1965",
+      "year": 1965,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1964",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1964",
+      "year": 1964,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1963",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1963",
+      "year": 1963,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1962",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1962",
+      "year": 1962,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1961",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1961",
+      "year": 1961,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    },
+    {
+      "id": "NY.GDP.DEFL.KD.ZG-1960",
+      "locator": "WDI / MLI / NY.GDP.DEFL.KD.ZG / 1960",
+      "year": 1960,
+      "value": null,
+      "indicator": "Inflation, GDP deflator (annual %)"
+    }
+  ],
+  "definitions": {
+    "value": "Inflation as measured by the annual growth rate of the GDP implicit deflator shows the rate of price change in the economy as a whole. The GDP implicit deflator is the ratio of GDP in current local currency to GDP in constant local currency.",
+    "indicator": "Inflation, GDP deflator (annual %)"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000368",
+  "upstream_checksum": "15282efb818d57c0010874b578d813a721492d55feac47a51638f6f3cfd4be4e",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.DEFL.KD.ZG?format=json&per_page=100",
+  "reuse_evidence_sha256": "e689d5a0f3606061d3e30dfdd32bf56ab02fe4079b220052f5d568dcdb36ee77"
+}

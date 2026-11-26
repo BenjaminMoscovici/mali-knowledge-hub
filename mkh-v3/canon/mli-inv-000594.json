@@ -1,0 +1,33 @@
+{
+  "id": "mli-inv-000594",
+  "collection": "Mali en chiffres 2023",
+  "edition_family": "mli-inv-000594",
+  "release": "Édition 2023",
+  "period": "2019–2023",
+  "publisher": "INSTAT",
+  "title": "Mali en chiffres 2023",
+  "geography": "Mali",
+  "topics": [
+    "cross-sector indicators"
+  ],
+  "type": "document",
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "limitations": [
+    "Extraits des comptes nationaux attribués à l’INSTAT. Les données de la dette provenant de tiers ne sont pas incluses."
+  ],
+  "description": "Mali en chiffres 2023 : agrégats macroéconomiques et taux de croissance publiés par INSTAT dans les tableaux 25 et 26.",
+  "passages": [
+    {
+      "page": 25,
+      "locator": "PDF p. 25 / tableaux 25–26 / Comptes nationaux INSTAT",
+      "kind": "source_passage",
+      "text": "Tableau 25 : Évolution des principaux agrégats macroéconomiques de 2019 à 2023\n                                                                    Années\nIndicateurs macroéconomiques\n                                            2019          2020             2021        2022       2023\n\nPIB à prix constant                        11 879     11 857,7        12 283,2      13 226,1    14 724\n\nConsommation finale                      10 094,5     10 437,4        10 504,5      11 514,3    12 750\n\nInvestissement                            2 945,5         2931         3 010,9       2 892,6   3 133,7\n\nVariation de stocks                         212,3             -27          -27,4        75,8      51,8\n\nSolde des biens et services              -1 373,3      -1 483,6        -1 204,7     -1 256,6   -1 211,2\n\nPIB par habitant (en milliers FCFA)         584,7          565           566,6         590,6     636,4\n\nCroissance du PIB réel                      5,0%         -1,2%             3,1%        3,7%       4,7%\n\nSource : INSTAT, Comptes nationaux 2019-2023\n\n\n\n\n      Tableau 26 : Évolution de la Part des secteurs d’activités dans le PIB (%) de 2019\n                  à 2023\n\n                                                                    Années\nSecteurs d'activités\n                                          2019          2020            2021         2022         2023\nPIB Secteur primaire (%)                   40,8           41            38,2          41,9        44,9\n\nPIB Secteur secondaire (%)                 22,1         20,7               22         23,6        26,2\nPIB Secteur tertiaire (%)                  37,1         38,3            37,9          42,4        38,9\nSource : INSTAT, Comptes nationaux 2019-2023"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000594",
+  "upstream_checksum": "bff596c496cc88965331a653ffac77fb8c6293f2cca6b6c118774a8d95cb9df1",
+  "url": "https://instat-mali.org/laravel-filemanager/files/shares/pub/machif23_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}
