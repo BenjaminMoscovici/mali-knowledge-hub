@@ -1,11 +1,11 @@
 [
   {
-    "batch": "03",
+    "batch": "04",
     "status": "queued",
-    "after": "02",
-    "file": "MKH_National_Knowledge_Inventory_Batch03.zip",
-    "sha256": "19730c5d385114c2a5886035b841c9cf4976ade4960fd1e5ded04e1ae03fe27f",
-    "reported_new_records": 60,
-    "reported_master_records": 125
+    "after": "03",
+    "file": "MKH_National_Knowledge_Inventory_Batch04.zip",
+    "sha256": "0ea0a4a2a65fde7afdb18a39a59531c35abdea4664a2a71c8f6b1d6a22a33d38",
+    "reported_new_records": 218,
+    "reported_master_records": 343
   }
 ]

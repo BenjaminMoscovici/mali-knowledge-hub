@@ -1,0 +1,39 @@
+{
+  "id": "mli-inv-000097",
+  "edition_family": "mli-inv-000097",
+  "collection": "RGUE",
+  "title": "RGUE — Caractéristiques des très petites et petites entreprises",
+  "publisher": "INSTAT",
+  "type": "document",
+  "release": "2024-11",
+  "geography": "Mali; detailed geographic coverage not audited",
+  "period": "RGUE, édition novembre 2024",
+  "topics": [
+    "firms and employment"
+  ],
+  "limitations": [
+    "Pages PDF intégrées : 10, 11. Respecter le champ des unités dénombrées dans le RGUE."
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Résultats du recensement des unités économiques sur les très petites et petites entreprises.",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 10,
+      "locator": "PDF p. 10",
+      "text": "RESUME EXECUTIF\n\nLa population des entreprises au Mali est constituée essentiellement des TPPE qui représentent plus 76% de\nl’ensemble des entreprises dénombrées lors du recensement général des unités économiques de 2021. Les TPPE\noccupent une place de choix dans l’ancrage et le bien-être social au Mali. De par leur fonction de production de services\net de biens locaux accessibles à la majorité de la population à faible pouvoir d’achat, les TPPE contribuent de manière\nsignificative à la croissance au développement de l’économie sociale du pays et à l’équilibre de la société.\nLe recensement général des unités économiques de 2021 4 a dénombré 212 438 TPPE qui présentent les\ncaractéristiques suivantes :\n       •   Un nombre important des TPPE dénombrées est constitué des Nano-entreprises ;\n       •   L’activité commerciale est dominante au niveau des TPPE dénombrées ;\n       •   Un contraste de représentativité des TPPE entre les régions du nord et les autres régions, les\n           Microentreprises et les Petites entreprises quasi absentes dans la région de Taoudenit ;\n       •   Les TPPE dénombrées lors du RGUE sont jeunes, créées en majorité à partir de l’année 2020 ;\n       •   Les TPPE sont constituées essentiellement d’unités de production informelles ;\n       •   Les TPPE sont dirigées en grande partie par leurs propriétaires ;\n       •   Plus de dirigeants hommes à la tête des TPPE ;\n       •   Les TPPE sont majoritairement dirigées par les jeunes de moins de 40 ans ;\n       •   Les dirigeants mariés des TPPE sont les plus nombreux ;\n       •   Les TPPE sont dirigées quasiment par les maliens ;\n       •   Le niveau d’instruction de la majorité des dirigeants des TPPE ne dépasse pas le primaire ;\n       •   Plus nombreuses sont les TPPE qui ont moins de cinq (5) employés ;\n       •   Le secteur du commerce est en tête de l’emploi au niveau des TPPE ;\n       •   Le commerce de détail déterminant de l’emploi dans le secteur du commerce ;\n       •   Plus nombreuses sont les TPPE qui ont moins d’un (1) million de Francs CFA comme chiffre d’affaires\n           annuel ;\n       •   La réalisation du chiffre d’affaires annuel de moins de cinq (5) millions de Francs CFA par les TPPE ne\n           dépend pas du secteur d’activité des TPPE\n       •   Plus nombreuses sont les TPPE qui n’effectuent pas d’échanges extérieurs de biens avec les non-résidents\n           en 2019 et 2020 ;\n       •   Les pays de l’UEMOA sont les partenaires privilégiés des échanges des services des TPPE ;\n       •   Très peu de TPPE sollicitent du crédit auprès des institutions financières ;\n       •   Les institutions de micro finance sont la principale source de financement sollicitée par les TPPE pour des\n           prêts ;\n       •   Les TPPE ayant fait des demandes de prêt auprès des institutions financières sont en grande partie\n           satisfaites ;\n       •   L’absence de garantie, le dossier incomplet et le taux d’intérêt trop élevé sont les raisons de difficulté\n           d’accès au crédit auprès des institutions financières les plus fréquemment citées par les TPPE ;\n       •   Seule une minorité des TPPE utilisent des outils informatiques ou de télécommunication ;\n       •   Les smartphones sont les plus couramment utilisés par les TPPE ;\n       •   La quasi-totalité des TPPE n’emploient pas des spécialistes en TIC, très peu de ces unités économiques\n           possèdent un site web ;\n\n4\n Les données du RGUE étant annuelles, la collecte qui a démarré en décembre 2021 ne sauraient concernées l’année 2021\ncar elle n’était arrivé à terme.\n                                                                                                                     VIII"
+    },
+    {
+      "kind": "source_passage",
+      "page": 11,
+      "locator": "PDF p. 11",
+      "text": "•   Seule une minorité des TPPE utilisent les réseaux sociaux ;\n•   Nombreuses sont les TPPE qui jugent l’environnement des affaires au Mali satisfaisant ;\n•   La crise socio-politique du pays qui favorise l’insécurité, les effets de la COVID-19 et la mauvaise\n    gouvernance sont les principales raisons les plus évoquées par les TPPE de l’environnement des affaires\n    au Mali pas favorable.\n\n\n\n\n                                                                                                         IX"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000097",
+  "upstream_checksum": "4666bffe54a047f7be981d10b86b1ba6310cfedd7580129d08d199fbf4ecebb4",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgue/rapport-thematique-tppe_rgue.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

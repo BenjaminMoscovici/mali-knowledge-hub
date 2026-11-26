@@ -1,0 +1,779 @@
+{
+  "batch": "03",
+  "archive_sha256": "19730c5d385114c2a5886035b841c9cf4976ade4960fd1e5ded04e1ae03fe27f",
+  "records": [
+    {
+      "work_id": "MKH-SRC-000066",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Gouandiaka",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/Rapport-SCAT-Gouandiaka-VF_2019.pdf",
+      "verified_original_sha256": "9a8a4aa2d586ed20e03020d056fd084daeb5426b1bf30176dada25505ced5d71",
+      "edition": "2019-02"
+    },
+    {
+      "work_id": "MKH-SRC-000067",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Baniéré Koré (Nioro, Kayes)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/SCAT_Bani%C3%A9r%C3%A9_kor%C3%A9_final_2019.pdf",
+      "verified_original_sha256": "4b4239e8301a5eebdb81ca445cdfc0059143cc5d75d5b0828d3ccbfcc61b8c48",
+      "edition": "2019-01"
+    },
+    {
+      "work_id": "MKH-SRC-000068",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Simby (Nioro, Kayes)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/RAPPORT-SCAT-SIMBY-VF_2019.pdf",
+      "verified_original_sha256": "bbed858137ce0cde3cbcfec7a45b73072ed1c1054455b7ecee3f82c6708191af",
+      "edition": "2019-01"
+    },
+    {
+      "work_id": "MKH-SRC-000069",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Kassaro",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/SACAT-Kassaro-VF_2019.pdf",
+      "verified_original_sha256": "489b1657444ec3a532b56b1b242299f964e9fb2f5e3d731c276ae1667a6c5b79",
+      "edition": "2019-02"
+    },
+    {
+      "work_id": "MKH-SRC-000070",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Gouanan",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/SCAT-de-la-commune-de-Gouanan_VF_2018.pdf",
+      "verified_original_sha256": "afa76b32efa2415d7bea95f74a340990c316b7269faa49c72e313342fbfaa046",
+      "edition": "2018-06"
+    },
+    {
+      "work_id": "MKH-SRC-000071",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Diéoura (Diéma, Kayes)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/05/SCAT-Dieoura-VF_2018.pdf",
+      "verified_original_sha256": "16ce72df5c178a2eb3946d74c97fd234d7b5493e50dfcaf78ea330cf721beacc",
+      "edition": "2018-06"
+    },
+    {
+      "work_id": "MKH-SRC-000072",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Dioumara Koussata",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/08/SCAT-Dioumara-Koussata-VF_-Nov-2022.pdf",
+      "verified_original_sha256": "71756b25c36e944840e56f547b22a7b0c2ecfcbad1920e2230167d4443db0d6b",
+      "edition": "2022-11"
+    },
+    {
+      "work_id": "MKH-SRC-000073",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Ourikéla (Yorosso, Sikasso)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/Rapport-SCAT-Ourikela-VALIDE.pdf",
+      "verified_original_sha256": "152f82ba0579e38ac66a0a177dfd407144b11edc7f128132b80470f2327f86f6",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000074",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Niono (Niono, Ségou)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/SCAT-Rapport-Diag-Niono_2022-2042.pdf",
+      "verified_original_sha256": "13b521a44278289b9619a23f15ba75a3ab9b3e98100a04ef1777f95bc6159bc1",
+      "edition": "2021-07"
+    },
+    {
+      "work_id": "MKH-SRC-000075",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Kiffosso 1 (Yorosso, Sikasso)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/RAPPORT-FINAL-SCAT-KIFFOSSO-VALIDE_2020-2039.pdf",
+      "verified_original_sha256": "45dd6f223de13da48bbca9dab2ed1b4b2acb295210a14e17f9d7ee3572b25bb8",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000076",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Siribala (Niono, Ségou)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/SCAt-Rapport-Diag-Siribala_2022-2042.pdf",
+      "verified_original_sha256": "23206edc8784a4b8511a58cb98dabe5a9271d3878cab2ffef1d188afeffb0ced",
+      "edition": "2021-07"
+    },
+    {
+      "work_id": "MKH-SRC-000077",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Yorosso",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/SCAT-YOROSSO-COMMUNE-YOROSSO-RAPPORT-FINAL-Valide_2020-2039.pdf",
+      "verified_original_sha256": "e28bbff8e4bcaa7bae33f0d3b34690a794d64e0b435123fbe4a63bbbf5f95c5a",
+      "edition": "2020-07"
+    },
+    {
+      "work_id": "MKH-SRC-000078",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Sirakoro",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/SCAT_SIRAKORO-2019-2038-VRI.pdf",
+      "verified_original_sha256": "7780bf28e0bb31d4fcfb5db3028856558f2a612de63c6ac179d4587c299e8ebd",
+      "edition": "2019-01"
+    },
+    {
+      "work_id": "MKH-SRC-000079",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Sébékoro",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/SCAT-SEBEKORO-2019-2038-VRI.pdf",
+      "verified_original_sha256": "a0b0f4e6a7f765a5f209bba14b84de71c90003596b2eed987263e7738a422022",
+      "edition": "2019-02"
+    },
+    {
+      "work_id": "MKH-SRC-000080",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Koussan (Yanfolila, Sikasso)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/10/Rapport-SCAT-Koussan-VF_2017-2037.pdf",
+      "verified_original_sha256": "b564ee2b35c9e68c1b44a48cbc43604719eeeeee703724dd7c7129760e6ba4db",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000081",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement du territoire — Konna (Mopti)",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/SCAT-Konna-VF_2024.pdf",
+      "verified_original_sha256": "939011b00a24c62d11b2ff5b66fa81cbe6ad3891665ea107ae08556a8894bc12",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000082",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Mopti",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-Mopti.pdf",
+      "verified_original_sha256": "e9381c0cc20ec6985d5c68eb2bf73aca733de73d78350f7d597636b4b39c77e9",
+      "edition": "2011-07"
+    },
+    {
+      "work_id": "MKH-SRC-000083",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Koulikoro",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-KOULIKORO.2011.pdf",
+      "verified_original_sha256": "addff71ae571c275edf2a5310e06f290ebc3dd3fcc52c95b9e278bf6332216b5",
+      "edition": "2010-12"
+    },
+    {
+      "work_id": "MKH-SRC-000084",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Ségou",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-SEGOU.pdf",
+      "verified_original_sha256": "5deefee2e5cddeab15227374d34af91407362d1137f0bef76d780f973887a0c8",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000085",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Sikasso",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-Sikasso.pdf",
+      "verified_original_sha256": "d58edecb78006a70a97c6bcd9ba17754f4dcbdb02b65968dc47320efc040c5ce",
+      "edition": "2011-04"
+    },
+    {
+      "work_id": "MKH-SRC-000086",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Kayes",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-Kayes.pdf",
+      "verified_original_sha256": "3d0e44f3d625a8aaddcf78aef07c7b7024c617e03499829ea2dd28a286a84f23",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000087",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Gao",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/10/SRAT-Gao-2008.pdf",
+      "verified_original_sha256": "3a49389cd0d3e9c64b4b31b406e360fad38d7e629bc11c0d09afd443c5a1bc77",
+      "edition": "2008-01"
+    },
+    {
+      "work_id": "MKH-SRC-000088",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Kidal",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/10/Kidal-SRAT-2008.pdf",
+      "verified_original_sha256": "1e766ba82e3e98a8f4c19bacf4b98c56016b322bc4ba8d0d54a11c37f5d91be0",
+      "edition": "2008-04"
+    },
+    {
+      "work_id": "MKH-SRC-000089",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma régional d’aménagement du territoire — Tombouctou",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/11/Tombouctou-SRAT-2008.pdf",
+      "verified_original_sha256": "86caaf18ff9ab03af485c6826a148e40478c5e124727a043842d7455d8f6278e",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000090",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma local d’aménagement et de développement — Kidal",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/Schema-amenagement-developpement-cercle-Kidal-PRECAGED.pdf",
+      "verified_original_sha256": "93f102e1696850395573d2839ad87b901041b1363c995c96463f4a9c2a93b686",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000091",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma local d’aménagement et de développement — Gao",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/04/Schema-Amenagement-Territoire-Gao_CC-Gao.pdf",
+      "verified_original_sha256": "ea480b28128959c4ca26efcc19c01a7c2e0205eabbd004155a6e7cd641fef5d4",
+      "edition": "2008-01"
+    },
+    {
+      "work_id": "MKH-SRC-000092",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma local d’aménagement et de développement — Kadiolo",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/09/RAPPORT-DE-SLAT-vfDU-CERCLE-DE-KADIOLO16_01_2019dnatV1.pdf",
+      "verified_original_sha256": "2f34044e0523bc182fd53d72f06777aa0a9e9d52031eb7e3b894c16d040519a1",
+      "edition": "2019-06"
+    },
+    {
+      "work_id": "MKH-SRC-000093",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma local d’aménagement et de développement — Kati",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/10/SLAT-cercle-de-KATI-version-finale.pdf",
+      "verified_original_sha256": "8ef9bd8ac914f62e934a22e6d80c730016bac65ae694d679f37314e34bee392e",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000094",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma local d’aménagement et de développement — Koulikoro",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/11/SLAT-Koulikoro_2015-VF.pdf",
+      "verified_original_sha256": "fe572501eb8b960846db9f7827a48c9d036a5040c8a09cab1f4b82fe72b3cfe2",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000095",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000095"
+      ],
+      "sha256": "f3437b44908da066da310130a176e717d0360781a37ba7b0b39c29b936d15fe3",
+      "passages": 2,
+      "rows": 0,
+      "title": "KHI-DEUX n°53 — Bulletin trimestriel de l’activité statistique",
+      "original_url": "https://instat-mali.org/laravel-filemanager/files/shares/pub/khideux53_pub.pdf",
+      "verified_original_sha256": "f3437b44908da066da310130a176e717d0360781a37ba7b0b39c29b936d15fe3",
+      "edition": "2026-07-20",
+      "qualified_scope": [
+        "Pages PDF intégrées : 5, 6. Grille de notation et diagnostic, édition du deuxième trimestre 2026."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        5,
+        6
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000096",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000096"
+      ],
+      "sha256": "15ba1ad126db4b355de1f8b08b834f5f0763ca22bb3a6c5d4a4e23d16fad4140",
+      "passages": 5,
+      "rows": 0,
+      "title": "PIB trimestriel — résultats provisoires au troisième trimestre 2025",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/pibmali3t25_pub.pdf",
+      "verified_original_sha256": "15ba1ad126db4b355de1f8b08b834f5f0763ca22bb3a6c5d4a4e23d16fad4140",
+      "edition": "2025-12",
+      "qualified_scope": [
+        "Pages PDF intégrées : 2, 3, 5, 6, 7. Résultats provisoires. Prix courants, volumes chaînés et évolutions ne sont pas interchangeables."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000097",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000097"
+      ],
+      "sha256": "4666bffe54a047f7be981d10b86b1ba6310cfedd7580129d08d199fbf4ecebb4",
+      "passages": 2,
+      "rows": 0,
+      "title": "RGUE — Caractéristiques des très petites et petites entreprises",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgue/rapport-thematique-tppe_rgue.pdf",
+      "verified_original_sha256": "4666bffe54a047f7be981d10b86b1ba6310cfedd7580129d08d199fbf4ecebb4",
+      "edition": "2024-11",
+      "qualified_scope": [
+        "Pages PDF intégrées : 10, 11. Respecter le champ des unités dénombrées dans le RGUE."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        10,
+        11
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000098",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000098"
+      ],
+      "sha256": "40d2eb936847a10fb2b3f944d0ac8acc1b31ed783f7692a59bd5b703f8f3c9e0",
+      "passages": 2,
+      "rows": 0,
+      "title": "RGPH5 — Situation des personnes atteintes d’albinisme",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/rgph/rapport-situation-personnes-atteintes-albinisme-rgph5_rgph.pdf",
+      "verified_original_sha256": "40d2eb936847a10fb2b3f944d0ac8acc1b31ed783f7692a59bd5b703f8f3c9e0",
+      "edition": "2024-12",
+      "qualified_scope": [
+        "Pages PDF intégrées : 19, 20. Indicateurs déclarés et populations de référence du RGPH5 de 2022."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        19,
+        20
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000099",
+      "status": "matched",
+      "v3_ids": [
+        "mli-instat-annuaire-2024"
+      ],
+      "sha256": "5f0e43e185108e9b0097021a82971b6772c30056f3d42b45efd8297ff6ca675f",
+      "title": "Annuaire statistique du Mali — 2024",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair24_pub.pdf",
+      "verified_original_sha256": "5f0e43e185108e9b0097021a82971b6772c30056f3d42b45efd8297ff6ca675f",
+      "edition": "Annuaire 2024, avril 2026",
+      "qualified_scope": [
+        "Seuls les tableaux 43 et 54 attribués à INSTAT sont intégrés. Les indices ne donnent pas la production en volume. La base de l’indice n’est pas précisée dans le tableau 54."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+    },
+    {
+      "work_id": "MKH-SRC-000100",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000100"
+      ],
+      "sha256": "2519f7272dd916091b94bfdc0f8036fed6217f25dd4c3a0cbd1ef8e970678400",
+      "passages": 1,
+      "rows": 5,
+      "title": "Annuaire statistique du Mali — 2023",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair23_pub.pdf",
+      "verified_original_sha256": "2519f7272dd916091b94bfdc0f8036fed6217f25dd4c3a0cbd1ef8e970678400",
+      "edition": "2025-07",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        66
+      ],
+      "component_sha256": "b77f3ac35bba6e28c76f7393388cbd8bcf0dd49f1abc72c1609ad67bbd48ae77"
+    },
+    {
+      "work_id": "MKH-SRC-000101",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000101"
+      ],
+      "sha256": "f476074c4b1c5f0c3f0d00a8f3c9c84b15b354a05529d0724bc2c0c1649c38d1",
+      "passages": 1,
+      "rows": 5,
+      "title": "Annuaire statistique du Mali — 2022",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair22_pub.pdf",
+      "verified_original_sha256": "f476074c4b1c5f0c3f0d00a8f3c9c84b15b354a05529d0724bc2c0c1649c38d1",
+      "edition": "2024-02",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        35
+      ],
+      "component_sha256": "dff1a3522e813830ea74b64c8f121fb233652cee4adc486e87689c5b7695ebb8"
+    },
+    {
+      "work_id": "MKH-SRC-000102",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000102"
+      ],
+      "sha256": "0b14a34497ba8aa2f55cac948176e7108a893f8e032fddb551af656af87815ab",
+      "passages": 1,
+      "rows": 7,
+      "title": "Annuaire statistique du Mali — 2021",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair21_pub.pdf",
+      "verified_original_sha256": "0b14a34497ba8aa2f55cac948176e7108a893f8e032fddb551af656af87815ab",
+      "edition": "2021",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        62
+      ],
+      "component_sha256": "e0522de30411a3ea434618db2363d99a0daf9460cd8f62cc864fc93267430bc0"
+    },
+    {
+      "work_id": "MKH-SRC-000103",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000103"
+      ],
+      "sha256": "56f25beeff637d1d6c8d2866aa5c2cdc9877c14d1cbed417b43ed8e7bf9f089a",
+      "passages": 1,
+      "rows": 7,
+      "title": "Annuaire statistique du Mali — 2020",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair20_pub.pdf",
+      "verified_original_sha256": "56f25beeff637d1d6c8d2866aa5c2cdc9877c14d1cbed417b43ed8e7bf9f089a",
+      "edition": "2020",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        71
+      ],
+      "component_sha256": "f1af10a325a2e822479ad4107ca360aaed4644131eac3090fdcbbd0d1b902f25"
+    },
+    {
+      "work_id": "MKH-SRC-000104",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000104"
+      ],
+      "sha256": "6d23b00d7d0e49580297653d110756d044ab005de2c2e9bd776430530937f3d9",
+      "passages": 1,
+      "rows": 7,
+      "title": "Annuaire statistique du Mali — 2019",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair19_pub.pdf",
+      "verified_original_sha256": "6d23b00d7d0e49580297653d110756d044ab005de2c2e9bd776430530937f3d9",
+      "edition": "2019",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        93
+      ],
+      "component_sha256": "0fc4b438313c667f6ff3904c74be2ac50ca0fe3ffe25226bcfc0ca313567258d"
+    },
+    {
+      "work_id": "MKH-SRC-000105",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000105"
+      ],
+      "sha256": "21196f36c76d9475b5b19be5d4d19bfecc8e56806024fa4e1a89110e19283f4a",
+      "passages": 1,
+      "rows": 5,
+      "title": "Annuaire statistique du Mali — 2018",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair18_pub.pdf",
+      "verified_original_sha256": "21196f36c76d9475b5b19be5d4d19bfecc8e56806024fa4e1a89110e19283f4a",
+      "edition": "2018",
+      "qualified_scope": [
+        "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+        "Extraction limitée au tableau des comptes nationaux identifié."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        77
+      ],
+      "component_sha256": "1d48c43dc3534c3f774deabb6b63b38e349c11f997b05634216eb132be4cd628"
+    },
+    {
+      "work_id": "MKH-SRC-000106",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established. A draft budget presentation is separate from enacted statutory text.",
+      "title": "Projet de loi de finances rectificative 2026",
+      "original_url": "https://finances.ml/sites/default/files/2026-07/PLFR%202026_v_CNT_01-07-2026.pdf",
+      "verified_original_sha256": "c949a6a9821083d74cc822e5a051707d07c0cdb9935114af646d132f9d74a51e",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000107",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000107"
+      ],
+      "sha256": "16e7e607af8d809349466a7342d4331013e8330b40602d14717942e764e07e07",
+      "passages": 3,
+      "rows": 0,
+      "title": "RGPH5 INFO n°03 — Objectifs et indicateurs du recensement",
+      "original_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/bulletin03-rgph5_pub.pdf",
+      "verified_original_sha256": "16e7e607af8d809349466a7342d4331013e8330b40602d14717942e764e07e07",
+      "edition": "2021-10",
+      "qualified_scope": [
+        "Pages PDF intégrées : 3, 4, 5. Les matrices décrivent les indicateurs envisagés en 2021. Elles ne donnent pas des observations du recensement."
+      ],
+      "terms_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+      "terms_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+      "pages": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000108",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established. No general reuse grant was identified for the UN activity bulletin.",
+      "title": "ONU Mali — Bulletin trimestriel des activités n°01/2024",
+      "original_url": "https://mali.un.org/sites/default/files/2024-04/BULLETIN%20ONU%20MALI%20UNIS%20DANS%20L%27ACTION.pdf",
+      "verified_original_sha256": "0f698a2c4f528364df41368491bc056280aea852fabd52d8e2f4ff4dd666cdd0",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000109",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000109"
+      ],
+      "sha256": "44ba725122eef3dbec7bc4771578b1c16f6a12a2c7f6d8b8265d0a361db365d1",
+      "passages": 3,
+      "rows": 0,
+      "title": "Loi n°2023-060 portant loi de finances pour 2024 — Journal officiel spécial n°14",
+      "original_url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-14-sp.pdf",
+      "verified_original_sha256": "44ba725122eef3dbec7bc4771578b1c16f6a12a2c7f6d8b8265d0a361db365d1",
+      "edition": "2023-12-23",
+      "qualified_scope": [
+        "Texte à sa date de publication. Les prévisions et les autorisations ne mesurent pas les paiements ni les résultats."
+      ],
+      "terms_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+      "terms_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+      "pages": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "work_id": "MKH-SRC-000110",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000110"
+      ],
+      "sha256": "d216c843a39cf19aeb9fd8d933adc852b75cbc5ce8d36ebef51e6228a5bc0e97",
+      "passages": 1,
+      "rows": 0,
+      "title": "Journal officiel de la République du Mali, n°07",
+      "original_url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-07.pdf",
+      "verified_original_sha256": "d216c843a39cf19aeb9fd8d933adc852b75cbc5ce8d36ebef51e6228a5bc0e97",
+      "edition": "2024-04-05",
+      "qualified_scope": [
+        "Texte à sa date de publication. Les prévisions et les autorisations ne mesurent pas les paiements ni les résultats."
+      ],
+      "terms_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+      "terms_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+      "component_sha256": "b92bef28b1cec5434ef259548cb697f9775cc303dd67220c21384b38560e5d73"
+    },
+    {
+      "work_id": "MKH-SRC-000111",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma national de l’aménagement du territoire — Atlas cartographique",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/12/ATLAS-SNAT-MALI-V3-FINAL-REV-6-Mai-2021-BON.pdf",
+      "verified_original_sha256": "397c84903686343aa08680caede9a211a6c4dfae1d902c58fae67ce5d9b4c97e",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000112",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Politique nationale d’aménagement du territoire",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2017/07/PNAT-version-finale.pdf",
+      "verified_original_sha256": "c08e0ded4e238efc9971989ed3333d5119d326ab8f9cac7dedf5a20c9bda8d76",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000113",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Atlas des infrastructures sanitaires et éducatives du cercle de Kangaba",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2026/03/Atlas_Infrastructures_Sanitaires_Scolaires_KangabaVF.pdf",
+      "verified_original_sha256": "341cc23f29ea8b25a9af73952f8ff52dc4a73d333ac3025f7a50136867711adc",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000114",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Recueil des cartes agropastorales des régions avec SRAT",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/08/RECUEIL_cartes-agropastorales-VF.pdf",
+      "verified_original_sha256": "a5bc2d440b3d361c57eb625572de4f10d764a4e664dc841e92f297d815e14855",
+      "edition": "2024-05-21"
+    },
+    {
+      "work_id": "MKH-SRC-000115",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Prospective territoriale de la région de Sikasso en 2040",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/12/Sikasso-en-2040-GIZ-Rapport-final.pdf",
+      "verified_original_sha256": "24d7439f41052f64d9048e5b05a0eb129d6cd3b0f0a2e12384e506a72000c577",
+      "edition": "2021-11"
+    },
+    {
+      "work_id": "MKH-SRC-000116",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Programme de développement économique, social et culturel de Tombouctou",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/PDESC-CRT-Tombouctou-2024-2028-Vf.pdf",
+      "verified_original_sha256": "a3857078c130f0098f7898e425d119df577af96209c206a1b03e38b189952455",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000117",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Plan stratégique de développement régional de Mopti",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/Rapport-final-du-PSDR-2022-2031-Mopti-28-Sept.pdf",
+      "verified_original_sha256": "8b671c99c3a74ea77b1e1250988b045ced75ea4380fc48d7bc9890c9b9160c1d",
+      "edition": "2022-09"
+    },
+    {
+      "work_id": "MKH-SRC-000118",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established. DRPSIAP assembled this yearbook. Some tables credit INSTAT, but the national licence does not cover the whole compilation and provenance to the same independently licensed table remains open.",
+      "title": "Annuaire statistique régional de Tombouctou 2022",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/Annuaire-stat-2022-DRPSIAP-Tombouctou.pdf",
+      "verified_original_sha256": "c90259ef7cee29079626fc118fb7e711d9b86f2d08408888624a3dda9f3274a7",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000119",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established. DRPSIAP assembled this yearbook. Some tables credit INSTAT, but the national licence does not cover the whole compilation and provenance to the same independently licensed table remains open.",
+      "title": "Annuaire statistique 2023 — Mopti, Bandiagara et Douentza",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2025/03/Annuaire-Statistique-2023_DRPSIAP_Mopti_Bandiagara_Douentza_VF.pdf",
+      "verified_original_sha256": "fe81aa6ee4316aaebd9d62dfb19536de4612aed45c6987b3f47d6cd414a29ac8",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000120",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Recueil cartographique des zones minières",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2026/06/Atlas_CARTES-MINIERES-DU-MALI-VP.pdf",
+      "verified_original_sha256": "385c91f8d7423e60c1c55907527089c9e61871077a142787e9a91b6c166ed7c0",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000121",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Atlas cartographique des projections démographiques du Mali à l’horizon 2050",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2026/06/Atlas-Projections-Populations-du-Mali-1.pdf",
+      "verified_original_sha256": "1db7657b1837f2d5183e50c4407d930a5489cd729f66896fe70e43f072e46e57",
+      "edition": null
+    },
+    {
+      "work_id": "MKH-SRC-000122",
+      "status": "flagged",
+      "reason": "The public publisher copy was verified. No redistribution grant for this publication or independently cleared component was established.",
+      "title": "Schéma d’aménagement de la commune rurale de Kéméné Tambo",
+      "original_url": "https://dnat.gouv.ml/wp-content/uploads/2024/11/SCAT-Kemene-Tambo-VF-2013.pdf",
+      "verified_original_sha256": "7eac3f6ed588755822ad9ded9551f6f45848d60493a2a55789a761ceaeed7eda",
+      "edition": "2013-02"
+    },
+    {
+      "work_id": "MKH-SRC-000123",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000123"
+      ],
+      "sha256": "a88e3aea6e28516ead0adfbea9305e61b6c46eef51f0b4bfef8930a938426acd",
+      "passages": 0,
+      "rows": 262326,
+      "title": "Mali — Spatial Distribution of Population, 2020 (R2025A v1)",
+      "original_url": "https://data.worldpop.org/GIS/Population/Global_2015_2030/R2025A/2020/MLI/v1/1km_ua/constrained/mli_pop_2020_CN_1km_R2025A_UA_v1.tif",
+      "verified_original_sha256": "a88e3aea6e28516ead0adfbea9305e61b6c46eef51f0b4bfef8930a938426acd",
+      "edition": "R2025A v1 · 2020 · constrained 1 km UA",
+      "qualified_scope": [
+        "Modèle spatial de population, personnes par cellule. Pas un dénombrement du recensement. Les cellules NoData sont exclues et les zéros observés sont conservés.",
+        "Grille géographique 30 secondes d’arc, résolution nominale 1 km. Une agrégation communale nécessite des limites datées compatibles et une méthode de zonage."
+      ],
+      "terms_url": "https://hub.worldpop.org/geodata/summary?id=78170",
+      "terms_sha256": "0b180b1547f199b06868421a1357fdb10834b57c6c60b70942d94fbcb34d94a4",
+      "component_sha256": "c03bd42aa8c0a7fbe5c22b4e9a4d69ade15af48c6f803903b1a1206782843aa1"
+    },
+    {
+      "work_id": "MKH-SRC-000124",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000124"
+      ],
+      "sha256": "7268a6f7e9b23c96bc13a190532c3255614411b8cde9b0197625f2173ad83aa2",
+      "passages": 0,
+      "rows": 181,
+      "title": "Mali COD-AB v03 — administrative codes workbook",
+      "original_url": "https://data.humdata.org/dataset/d2ec62bb-5a93-436d-8297-88b3ee9b6818/resource/3374291a-7d3b-4fdc-99bb-f3932b45aa41/download/mli_admin_boundaries.xlsx",
+      "verified_original_sha256": "7268a6f7e9b23c96bc13a190532c3255614411b8cde9b0197625f2173ad83aa2",
+      "edition": "COD-AB v03 · 2025-09-04",
+      "qualified_scope": [
+        "Les tables administratives portent sur ADM0 à ADM2. Aucune géométrie communale ni table de correspondance historique dans cette extraction. Les autres feuilles portent sur des objets cartographiques."
+      ],
+      "terms_url": "https://data.humdata.org/dataset/cod-ab-mli",
+      "terms_sha256": "05e5b2ad7f0dd5159caefc3d250f284225d616179dcad031450345ae58ac6749",
+      "component_sha256": "5aced76683b09dd86b195cf3b73f18b1e33c10e5860d2a481471d472196b5e31"
+    },
+    {
+      "work_id": "MKH-SRC-000125",
+      "status": "integrated",
+      "v3_ids": [
+        "mli-inv-000125"
+      ],
+      "sha256": "86fcea2d46843b16cb9d19b0b8fa16f973a87d5a7582c2b4b6a8c4d4304cda59",
+      "passages": 0,
+      "rows": 701,
+      "title": "Mali COD-PS — 2018 commune population projections",
+      "original_url": "https://data.humdata.org/dataset/ce21c7db-d8f0-40f8-adc2-452d2d2d105c/resource/6a73b827-302d-47be-94a9-580fa73011b5/download/mli_pop_adm3_v2.csv",
+      "verified_original_sha256": "86fcea2d46843b16cb9d19b0b8fa16f973a87d5a7582c2b4b6a8c4d4304cda59",
+      "edition": "HDX CSV ADM3 · projection 2018",
+      "qualified_scope": [
+        "Les totaux publiés diffèrent de la somme des sexes dans 167 lignes (écart absolu maximal 1 personne(s)). La cause n’est pas documentée ici.",
+        "Géographie antérieure à la réforme de 2023. Les noms ou codes ne constituent pas un raccord aux communes actuelles."
+      ],
+      "terms_url": "https://data.humdata.org/dataset/cod-ps-mli",
+      "terms_sha256": "22723fc75402e381adedc1fd2cd1fa57904d7f4b75e85f23ba3ef5ef84589a2e",
+      "component_sha256": "baa3776aef4e8d5197d30211215203c92c04f754a702be6b2f1abc47ece64db8"
+    }
+  ]
+}

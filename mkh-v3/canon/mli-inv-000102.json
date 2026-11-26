@@ -1,0 +1,96 @@
+{
+  "id": "mli-inv-000102",
+  "edition_family": "INSTAT · Annuaire statistique du Mali",
+  "collection": "Annuaire statistique du Mali",
+  "title": "Annuaire statistique du Mali — 2021",
+  "publisher": "INSTAT",
+  "type": "dataset",
+  "release": "2021",
+  "geography": "Mali; detailed geographic coverage not audited",
+  "period": "Comptes nationaux 2015–2021",
+  "topics": [
+    "cross-sector statistics"
+  ],
+  "limitations": [
+    "Même année de référence peut figurer dans plusieurs éditions révisées. Utiliser une édition cohérente pour une série temporelle.",
+    "Extraction limitée au tableau des comptes nationaux identifié."
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "description": "Série du PIB en prix courants dans cette édition, valeurs imprimées et tableau original des comptes nationaux.",
+  "table": "gdp_vintage_102",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "printed_value": "TEXT",
+    "nominal_gdp_billion_fcfa": "REAL"
+  },
+  "records": [
+    {
+      "id": "2015",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2015",
+      "year": 2015,
+      "printed_value": "7747,69",
+      "nominal_gdp_billion_fcfa": 7747.69
+    },
+    {
+      "id": "2016",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2016",
+      "year": 2016,
+      "printed_value": "8311,915",
+      "nominal_gdp_billion_fcfa": 8311.915
+    },
+    {
+      "id": "2017",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2017",
+      "year": 2017,
+      "printed_value": "8922,205",
+      "nominal_gdp_billion_fcfa": 8922.205
+    },
+    {
+      "id": "2018",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2018",
+      "year": 2018,
+      "printed_value": "9481,95294",
+      "nominal_gdp_billion_fcfa": 9481.95294
+    },
+    {
+      "id": "2019",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2019",
+      "year": 2019,
+      "printed_value": "10213,96948",
+      "nominal_gdp_billion_fcfa": 10213.96948
+    },
+    {
+      "id": "2020",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2020",
+      "year": 2020,
+      "printed_value": "10052,84",
+      "nominal_gdp_billion_fcfa": 10052.84
+    },
+    {
+      "id": "2021",
+      "locator": "PDF p. 62 / Tableau 8 / PIB courant / 2021",
+      "year": 2021,
+      "printed_value": "10613,97",
+      "nominal_gdp_billion_fcfa": 10613.97
+    }
+  ],
+  "definitions": {
+    "nominal_gdp_billion_fcfa": "PIB national en valeur courante, milliards de francs CFA. La version du tableau peut réviser les valeurs des années précédentes."
+  },
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 62,
+      "locator": "PDF p. 62",
+      "text": "TABLEAU 8: STATISTIQUES COMPTABILITE NATIONALE\n                 Indicateurs                                                             Années                                      Source\n                                                 2015          2016        2017         2018        2019        2020      2021\nPIB en valeur courante\n                                                 7747,69     8311,915    8922,205 9481,95294 10213,96948       10052,84   10613,97   INSTAT\n(Milliards de FCFA)\nPIB à prix constant\n                                                7530,546     8201,108      8752,9   9345,69606 9966,463139     9999,60    10359,71   INSTAT\n(Milliards de FCFA)\nPIB au niveau du secteur primaire aux prix\n                                                                                                                          3788,17\ncourants (Milliards de FCFA)                    2922,681     3108,964    3339,799 3566,39416 3828,479497       3637,92               INSTAT\nPIB au niveau du secteur secondaire aux prix\ncourants (Milliards de FCFA)                    1363,436     1486,191    1681,576 1918,09928 2151,468484       2126,92    2187,07    INSTAT\nPIB au niveau du secteur tertiaire du PIB\naux prix courants (Milliards de FCFA)           2887,259     2962,594    3112,686 3218,96919 3403,724595       3460,84    3756,34    INSTAT\nPIB au niveau du secteur primaire aux prix\nconstants (Milliards de FCFA)                   2843,483      3155,36     3271,16 3518,91313 3750,687632       3615,82    3690,70    INSTAT\nPIB au niveau du secteur secondaire aux prix\nconstants (Milliards de FCFA)                   1296,442     1357,877     1592,74 1832,36889      2022,54885   2115,53    2135,69    INSTAT\nPIB au niveau du secteur tertiaire aux prix\nconstants (Milliards de FCFA)                   2823,452     3061,192    3106,176 3215,72778 3371,919385       3445,83    3668,94    INSTAT\nFormation brute du capital fixe par nature\n                                               1388,204     1536,878    1487,923 1613,63539 1884,619525        2004,90    2092,69    INSTAT\n(Milliards de FCFA)\nEmploi Tableau des Comptes                     15520,03        PD          PD           PD           PD          PD         PD       INSTAT\nEconomiques Intégrés (Milliards de FCFA)\nRessource du Tableau des Comptes               15520,03        PD          PD           PD           PD          PD         PD       INSTAT\nEconomiques Intégrés (Milliards de FCFA)\n\n      Source : Institut National de la Statistique (INSTAT) : Comptes économiques du Mali\n      PD : Pas Disponible\n\n\n\n\n                                                                           61"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000102",
+  "upstream_checksum": "0b14a34497ba8aa2f55cac948176e7108a893f8e032fddb551af656af87815ab",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/pub/anuair21_pub.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

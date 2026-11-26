@@ -11,6 +11,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -44,14 +46,14 @@ def pdf_passages(original, pages):
     return passages
 
 
-def verify_operations(source):
+def verify_operations(source, directory=CANON):
     required = ("title", "publisher", "period", "geography", "release", "description", "license",
                 "limitations", "topics", "url", "upstream_checksum", "edition_family", "reuse_url")
     if not all(source.get(key) for key in required) or not all(https_url(source[k]) for k in ("url", "reuse_url")):
         raise ValueError("Missing identity, provenance, coverage or reuse evidence")
     if not SOURCE_ID.fullmatch(source["id"]):
         raise ValueError("Invalid V3 ID")
-    k = Knowledge(releases=[source])
+    k = Knowledge(directory, releases=[source])
     key = source["id"]
     ledger = Evidence(k, False)
     if not k.discover(source["title"]):
@@ -63,7 +65,18 @@ def verify_operations(source):
             if not ledger.allowed(k.read_passage(key, p["locator"], 0, ledger)):
                 raise ValueError("Unresolved passage")
     if source["type"] in {"dataset", "reference"}:
-        rows = source["records"]
+        packed = source.get("table_snapshot")
+        rows = packed["samples"] if packed else source["records"]
+        count = packed["row_count"] if packed else len(rows)
+        if packed:
+            table = source["table"]
+            with sqlite3.connect(k.table_files[key], uri=True) as db:
+                cols = {r[1]: r[2] for r in db.execute(f'PRAGMA table_info("{table}")')}
+                if cols != source["columns"] or db.execute("PRAGMA quick_check").fetchone() != ("ok",):
+                    raise ValueError("Packaged table definition or integrity check failed")
+                bounds = db.execute(f'SELECT count(DISTINCT id), count(*) FROM "{table}" WHERE length(id)>0 AND length(locator)>0').fetchone()
+                if bounds != (count, count):
+                    raise ValueError("Packaged rows lack unique identity or location")
         if not rows or any(not r.get("locator") or set(r) != set(source["columns"]) for r in rows):
             raise ValueError("Missing cells or original row locator")
         for row in rows:
@@ -75,7 +88,7 @@ def verify_operations(source):
                 if type(value) not in types[dtype]:
                     raise ValueError(f"Unexpected value type in {col}")
         result = k.query([key], f'SELECT count(*) AS n FROM "{source["table"]}"', ledger)
-        if result["data"]["rows"] != [{"n": len(rows)}] or not ledger.allowed(result):
+        if result["data"]["rows"] != [{"n": count}] or not ledger.allowed(result):
             raise ValueError("Native count failed")
     elif not source.get("passages"):
         raise ValueError("Missing usable components")
@@ -111,7 +124,7 @@ def integrate(record, receipt, assets, directory, catalogue):
         extracted = verified_asset(assets, receipt["component_asset"], receipt["component_sha256"])
         components = json.loads(extracted.read_text())
         allowed = {"table", "columns", "records", "passages", "geometries", "dimensions", "definitions",
-                   "search_fields", "place_fields", "map_key"}
+                   "search_fields", "place_fields", "map_key", "table_snapshot"}
         if set(components) - allowed:
             raise ValueError("Unexpected extraction fields")
         src.update(components)
@@ -119,7 +132,24 @@ def integrate(record, receipt, assets, directory, catalogue):
         src.setdefault("passages", []).extend(pdf_passages(original, receipt["pages"]))
     src.update(review="published", work_id=work_id, upstream_checksum=digest,
                url=receipt["original_url"], reuse_evidence_sha256=receipt["rights_sha256"])
-    verify_operations(src)
+    if "table_snapshot" in src:
+        if not SOURCE_ID.fullmatch(key):
+            raise ValueError("Invalid packaged release identity")
+        archive = verified_asset(assets, receipt["table_asset"], src["table_snapshot"]["sha256"])
+        with tempfile.TemporaryDirectory(dir=directory) as temporary:
+            stage = Path(temporary)
+            (stage / "tables").mkdir()
+            package = stage / "tables" / (key + ".sqlite.gz")
+            shutil.copyfile(archive, package)
+            verify_operations(src, stage)
+            target = directory / "tables" / package.name
+            target.parent.mkdir(exist_ok=True)
+            try:
+                os.link(package, target)
+            except FileExistsError:
+                verified_asset(target.parent, target.name, src["table_snapshot"]["sha256"])
+    else:
+        verify_operations(src)
     data = (json.dumps(src, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode()
     # Atomic create-only install. A concurrent writer may have installed the same release.
     with tempfile.NamedTemporaryFile(dir=directory, suffix=".tmp") as staged:
@@ -133,7 +163,7 @@ def integrate(record, receipt, assets, directory, catalogue):
                 raise ValueError("Conflicting concurrent publication") from None
     catalogue[key] = src
     return {"status": "integrated", "v3_ids": [key], "sha256": digest,
-            "passages": len(src.get("passages", [])), "rows": len(src.get("records", []))}
+            "passages": len(src.get("passages", [])), "rows": src.get("table_snapshot", {}).get("row_count", len(src.get("records", [])))}
 
 
 def run(records, receipts, assets, directory=CANON):
