@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000153",
+  "edition_family": "instat-emop-passages",
+  "collection": "EMOP fieldwork waves",
+  "title": "EMOP — 2025, passage 3",
+  "publisher": "INSTAT",
+  "type": "document",
+  "release": "EMOP — 2025, passage 3",
+  "period": "2025, passage 3",
+  "geography": "Mali",
+  "topics": [
+    "household survey",
+    "social and economic statistics"
+  ],
+  "description": "EMOP — 2025, passage 3 — résultats statistiques et contexte méthodologique des pages intégrées.",
+  "limitations": [
+    "Pages PDF intégrées : 3, 4. Vérifier le passage d’enquête, la période, le dénominateur et les exclusions géographiques avant toute comparaison. Les données annuelles et celles d’un passage peuvent concerner les mêmes ménages."
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 3,
+      "locator": "PDF p. 3",
+      "text": "Tableau 1-1 : Récapitulatif des résultats sur les indicateurs de conditions de vie de la population\n                                                                      Milieu                Sexe\nIndicateurs                                       Ensemble\n                                                                 Urbain    Rural        Homme Femme\nSanté\nTaux de morbidité (%)                                     24,4     23,8       24,8        22,3    26,4\nFréquence du Paludisme (%)                                15,4     14,1       16,5        14,4    16,5\nDépenses de consommation\nDépenses moyennes par ménage (FCFA)                  740 288 952 961 643 728\nDépenses moyennes par tête (FCFA)                    122 677 160 799 105 354\nDépenses par équivalent adulte (FCFA)                162 377 210 221 140 637\n\n Source : EMOP 2025, passage 3 (juillet-septembre)\n\n\n\n\n                EMOP 2025-Passage 3 – Rapport d’analyse                P a g e 3 | 10"
+    },
+    {
+      "kind": "source_passage",
+      "page": 4,
+      "locator": "PDF p. 4",
+      "text": "INTRODUCTION\nL’Enquête Modulaire et Permanente auprès des ménages (EMOP) est un dispositif de collecte mis en\nplace par l’Institut National de la Statistique (INSTAT), en collaboration avec la Statistique Suède, pour\nrépondre aux besoins de disposer d’informations fiables et actualisées pour la formulation, la mise en\nœuvre et l’évaluation du Cadre Stratégique pour la Relance Economique et le Développement Durable\n(CREDD), des Objectifs du Développement Durable (ODD) et divers programmes et politiques sectoriels.\nL’EMOP est une enquête à quatre passages et chaque passage dure trois mois et le questionnaire de\nbase est composé de modules fixes et de certains modules rotatifs offrant l’opportunité d’intégrer de\nnouvelles questions provenant des sectoriels et d’autres partenaires.\nLa présente édition est la quatorzième d’une série dont la première génération a démarré en avril 2011.\nPour la présente édition, le premier passage a couvert la période de janvier à mars 2025 et le deuxième\npassage a couvert la période d’avril à juin 2025. La présente note de synthèse résulte de l’analyse des\nrésultats du troisième passage qui couvre la période de juillet à septembre 2025 et les résultats sont\nreprésentatifs au niveau national, pour chacune des régions et le district de Bamako et selon le milieu de\nrésidence (urbain et rural).\nLa présente note fait la synthèse de quelques principaux indicateurs résultant de l’analyse des données\nissues de la collecte dudit troisième passage de l’EMOP traitant des questions de santé de la population\net les dépenses de consommation des ménages. Les indicateurs sont contenus en annexe constitués de\ntableaux dans un fichier séparé qui accompagnent ce rapport.\n\n\n\n\n               EMOP 2025-Passage 3 – Rapport d’analyse                 P a g e 4 | 10"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000153",
+  "upstream_checksum": "2dcdec5e7b6b42be62cd5e17438379ee36cff751d62f574bc51c42ced26d5f5f",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/eq/rana25pas3_eq.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

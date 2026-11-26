@@ -1,11 +1,1 @@
-[
-  {
-    "batch": "04",
-    "status": "queued",
-    "after": "03",
-    "file": "MKH_National_Knowledge_Inventory_Batch04.zip",
-    "sha256": "0ea0a4a2a65fde7afdb18a39a59531c35abdea4664a2a71c8f6b1d6a22a33d38",
-    "reported_new_records": 218,
-    "reported_master_records": 343
-  }
-]
+[]

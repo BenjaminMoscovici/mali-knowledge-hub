@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000338",
+  "edition_family": "wdi-mli-ag-yld-crel-kg",
+  "collection": "World Development Indicators",
+  "title": "WDI Mali — Cereal yield (kg per hectare)",
+  "publisher": "World Bank",
+  "type": "dataset",
+  "release": "WDI API snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "1961–2024 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "agriculture"
+  ],
+  "description": "Cereal yield (kg per hectare) — série annuelle Mali, AG.YLD.CREL.KG",
+  "limitations": [
+    "Valeurs manquantes conservées. Respecter la définition, l’unité et le dénominateur de cet indicateur. Capture datée susceptible de révision."
+  ],
+  "license": "World Bank WDI, FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), uri: https://www.fao.org/faostat/en/#data/QCL, publisher: Food and Agriculture Organization of the United Nations (FAO). Indicator licence CC BY 4.0. MKH tabulated the dated Mali response.",
+  "reuse_url": "https://data.worldbank.org/indicator/AG.YLD.CREL.KG",
+  "table": "wdi_338",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "unit": "TEXT"
+  },
+  "records": [
+    {
+      "id": "AG.YLD.CREL.KG-2025",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2025",
+      "year": 2025,
+      "value": null,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2024",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2024",
+      "year": 2024,
+      "value": 1656.3,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2023",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2023",
+      "year": 2023,
+      "value": 1587.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2022",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2022",
+      "year": 2022,
+      "value": 1671,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2021",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2021",
+      "year": 2021,
+      "value": 1441.2,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2020",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2020",
+      "year": 2020,
+      "value": 1686,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2019",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2019",
+      "year": 2019,
+      "value": 1767.7,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2018",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2018",
+      "year": 2018,
+      "value": 1728.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2017",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2017",
+      "year": 2017,
+      "value": 1601.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2016",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2016",
+      "year": 2016,
+      "value": 1607.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2015",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2015",
+      "year": 2015,
+      "value": 1575.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2014",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2014",
+      "year": 2014,
+      "value": 1550.7,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2013",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2013",
+      "year": 2013,
+      "value": 1512.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2012",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2012",
+      "year": 2012,
+      "value": 1506.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2011",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2011",
+      "year": 2011,
+      "value": 1046.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2010",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2010",
+      "year": 2010,
+      "value": 1452.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2009",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2009",
+      "year": 2009,
+      "value": 1800.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2008",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2008",
+      "year": 2008,
+      "value": 1397.7,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2007",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2007",
+      "year": 2007,
+      "value": 1101.2,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2006",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2006",
+      "year": 2006,
+      "value": 1124.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2005",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2005",
+      "year": 2005,
+      "value": 1089.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2004",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2004",
+      "year": 2004,
+      "value": 1206.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2003",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2003",
+      "year": 2003,
+      "value": 981.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2002",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2002",
+      "year": 2002,
+      "value": 788.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2001",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2001",
+      "year": 2001,
+      "value": 986.3,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-2000",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 2000",
+      "year": 2000,
+      "value": 1006.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1999",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1999",
+      "year": 1999,
+      "value": 1174.1,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1998",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1998",
+      "year": 1998,
+      "value": 1204.2,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1997",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1997",
+      "year": 1997,
+      "value": 1063.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1996",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1996",
+      "year": 1996,
+      "value": 1100.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1995",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1995",
+      "year": 1995,
+      "value": 810.1,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1994",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1994",
+      "year": 1994,
+      "value": 817.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1993",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1993",
+      "year": 1993,
+      "value": 762.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1992",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1992",
+      "year": 1992,
+      "value": 738,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1991",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1991",
+      "year": 1991,
+      "value": 1055.3,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1990",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1990",
+      "year": 1990,
+      "value": 726.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1989",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1989",
+      "year": 1989,
+      "value": 939.7,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1988",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1988",
+      "year": 1988,
+      "value": 962,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1987",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1987",
+      "year": 1987,
+      "value": 1033.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1986",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1986",
+      "year": 1986,
+      "value": 1089.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1985",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1985",
+      "year": 1985,
+      "value": 1084,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1984",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1984",
+      "year": 1984,
+      "value": 696.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1983",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1983",
+      "year": 1983,
+      "value": 840.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1982",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1982",
+      "year": 1982,
+      "value": 785,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1981",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1981",
+      "year": 1981,
+      "value": 837.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1980",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1980",
+      "year": 1980,
+      "value": 726.1,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1979",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1979",
+      "year": 1979,
+      "value": 847.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1978",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1978",
+      "year": 1978,
+      "value": 1077.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1977",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1977",
+      "year": 1977,
+      "value": 615.7,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1976",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1976",
+      "year": 1976,
+      "value": 679.1,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1975",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1975",
+      "year": 1975,
+      "value": 880.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1974",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1974",
+      "year": 1974,
+      "value": 796.2,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1973",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1973",
+      "year": 1973,
+      "value": 673.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1972",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1972",
+      "year": 1972,
+      "value": 687.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1971",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1971",
+      "year": 1971,
+      "value": 831.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1970",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1970",
+      "year": 1970,
+      "value": 829.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1969",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1969",
+      "year": 1969,
+      "value": 872.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1968",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1968",
+      "year": 1968,
+      "value": 766.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1967",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1967",
+      "year": 1967,
+      "value": 748.2,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1966",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1966",
+      "year": 1966,
+      "value": 787.3,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1965",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1965",
+      "year": 1965,
+      "value": 811.9,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1964",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1964",
+      "year": 1964,
+      "value": 748.6,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1963",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1963",
+      "year": 1963,
+      "value": 644.8,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1962",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1962",
+      "year": 1962,
+      "value": 729.4,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1961",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1961",
+      "year": 1961,
+      "value": 707.5,
+      "unit": "kg per hectare"
+    },
+    {
+      "id": "AG.YLD.CREL.KG-1960",
+      "locator": "WDI / MLI / AG.YLD.CREL.KG / 1960",
+      "year": 1960,
+      "value": null,
+      "unit": "kg per hectare"
+    }
+  ],
+  "definitions": {
+    "value": "Cereal yield, measured as kilograms per hectare of harvested land, includes wheat, rice, maize, barley, oats, rye, millet, sorghum, buckwheat, and mixed grains. Production data on cereals relate to crops harvested for dry grain only. Cereal crops harvested for hay or harvested green for food, feed, or silage and those used for grazing are excluded. The FAO allocates production data to the calendar year in which the bulk of the harvest took place. Most of a crop harvested near the end of a year will be used in the following year.",
+    "unit": "kg per hectare"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000338",
+  "upstream_checksum": "692b1fdb51541bfd6f92347788961136217758744c55c79c801acdfa3d1c30d1",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/AG.YLD.CREL.KG?format=json&per_page=100",
+  "reuse_evidence_sha256": "43f6428732bc4064cff4d9d2741b83b6174fc97a39e739b4015734a3575c1452"
+}

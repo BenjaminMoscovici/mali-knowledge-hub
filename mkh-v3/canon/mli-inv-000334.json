@@ -1,0 +1,502 @@
+{
+  "id": "mli-inv-000334",
+  "edition_family": "wdi-mli-ag-lnd-arbl-zs",
+  "collection": "World Development Indicators",
+  "title": "WDI Mali — Arable land (% of land area)",
+  "publisher": "World Bank",
+  "type": "dataset",
+  "release": "WDI API snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "1961–2024 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "agriculture",
+    "land"
+  ],
+  "description": "Arable land (% of land area) — série annuelle Mali, AG.LND.ARBL.ZS",
+  "limitations": [
+    "Valeurs manquantes conservées. Respecter la définition, l’unité et le dénominateur de cet indicateur. Capture datée susceptible de révision."
+  ],
+  "license": "World Bank WDI, FAO electronic files and website, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO). Indicator licence CC BY 4.0. MKH tabulated the dated Mali response.",
+  "reuse_url": "https://data.worldbank.org/indicator/AG.LND.ARBL.ZS?locations=ML",
+  "table": "wdi_334",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "unit": "TEXT"
+  },
+  "records": [
+    {
+      "id": "AG.LND.ARBL.ZS-2025",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2025",
+      "year": 2025,
+      "value": null,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2024",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2024",
+      "year": 2024,
+      "value": 5.49713921602373,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2023",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2023",
+      "year": 2023,
+      "value": 5.49713921602373,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2022",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2022",
+      "year": 2022,
+      "value": 5.49713921602373,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2021",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2021",
+      "year": 2021,
+      "value": 6.08054704595186,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2020",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2020",
+      "year": 2020,
+      "value": 5.61104049369361,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2019",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2019",
+      "year": 2019,
+      "value": 5.25383579606455,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2018",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2018",
+      "year": 2018,
+      "value": 5.15715683623042,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2017",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2017",
+      "year": 2017,
+      "value": 4.89304936116506,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2016",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2016",
+      "year": 2016,
+      "value": 4.87973184504053,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2015",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2015",
+      "year": 2015,
+      "value": 4.86642244240651,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2014",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2014",
+      "year": 2014,
+      "value": 4.85310484432752,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2013",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2013",
+      "year": 2013,
+      "value": 4.83979544169351,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2012",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2012",
+      "year": 2012,
+      "value": 4.82647784361452,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2011",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2011",
+      "year": 2011,
+      "value": 4.8131684409805,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2010",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2010",
+      "year": 2010,
+      "value": 4.79985084290151,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2009",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2009",
+      "year": 2009,
+      "value": 4.7865414402675,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2008",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2008",
+      "year": 2008,
+      "value": 4.77322384218851,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2007",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2007",
+      "year": 2007,
+      "value": 4.7599144395545,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2006",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2006",
+      "year": 2006,
+      "value": 4.65255411042543,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2005",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2005",
+      "year": 2005,
+      "value": 4.59190781763496,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2004",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2004",
+      "year": 2004,
+      "value": 4.01740712511986,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2003",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2003",
+      "year": 2003,
+      "value": 4.86973340217507,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2002",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2002",
+      "year": 2002,
+      "value": 4.01576803612552,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2001",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2001",
+      "year": 2001,
+      "value": 3.70745539629074,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-2000",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 2000",
+      "year": 2000,
+      "value": 3.70745539629074,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1999",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1999",
+      "year": 1999,
+      "value": 3.70745539629074,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1998",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1998",
+      "year": 1998,
+      "value": 3.70745539629074,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1997",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1997",
+      "year": 1997,
+      "value": 3.71130725542743,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1996",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1996",
+      "year": 1996,
+      "value": 3.71253657217319,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1995",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1995",
+      "year": 1995,
+      "value": 2.70859456314181,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1994",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1994",
+      "year": 1994,
+      "value": 2.58976061105238,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1993",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1993",
+      "year": 1993,
+      "value": 2.50780616133553,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1992",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1992",
+      "year": 1992,
+      "value": 1.77267474737541,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1991",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1991",
+      "year": 1991,
+      "value": 1.69072029765856,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1990",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1990",
+      "year": 1990,
+      "value": 1.68252485268688,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1989",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1989",
+      "year": 1989,
+      "value": 1.68252485268688,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1988",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1988",
+      "year": 1988,
+      "value": 1.68252485268688,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1987",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1987",
+      "year": 1987,
+      "value": 1.66859259623501,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1986",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1986",
+      "year": 1986,
+      "value": 1.66859259623501,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1985",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1985",
+      "year": 1985,
+      "value": 1.66613396274351,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1984",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1984",
+      "year": 1984,
+      "value": 1.64974307280014,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1983",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1983",
+      "year": 1983,
+      "value": 1.64974307280014,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1982",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1982",
+      "year": 1982,
+      "value": 1.64974307280014,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1981",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1981",
+      "year": 1981,
+      "value": 1.64974307280014,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1980",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1980",
+      "year": 1980,
+      "value": 1.64728443930863,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1979",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1979",
+      "year": 1979,
+      "value": 1.64728443930863,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1978",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1978",
+      "year": 1978,
+      "value": 1.65138216179447,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1977",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1977",
+      "year": 1977,
+      "value": 1.65138216179447,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1976",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1976",
+      "year": 1976,
+      "value": 1.65302125078881,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1975",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1975",
+      "year": 1975,
+      "value": 1.48993189585229,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1974",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1974",
+      "year": 1974,
+      "value": 1.44895467099386,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1973",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1973",
+      "year": 1973,
+      "value": 1.40797744613544,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1972",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1972",
+      "year": 1972,
+      "value": 1.40797744613544,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1971",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1971",
+      "year": 1971,
+      "value": 1.40797744613544,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1970",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1970",
+      "year": 1970,
+      "value": 1.40797744613544,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1969",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1969",
+      "year": 1969,
+      "value": 1.36700022127701,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1968",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1968",
+      "year": 1968,
+      "value": 1.36700022127701,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1967",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1967",
+      "year": 1967,
+      "value": 1.36700022127701,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1966",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1966",
+      "year": 1966,
+      "value": 1.362082954294,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1965",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1965",
+      "year": 1965,
+      "value": 1.35880477630533,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1964",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1964",
+      "year": 1964,
+      "value": 1.35470705381949,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1963",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1963",
+      "year": 1963,
+      "value": 1.35060933133364,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1962",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1962",
+      "year": 1962,
+      "value": 1.3465116088478,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1961",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1961",
+      "year": 1961,
+      "value": 1.34241388636196,
+      "unit": "% of land area"
+    },
+    {
+      "id": "AG.LND.ARBL.ZS-1960",
+      "locator": "WDI / MLI / AG.LND.ARBL.ZS / 1960",
+      "year": 1960,
+      "value": null,
+      "unit": "% of land area"
+    }
+  ],
+  "definitions": {
+    "value": "Arable land includes land defined by the FAO as land under temporary crops (double-cropped areas are counted once), temporary meadows for mowing or for pasture, land under market or kitchen gardens, and land temporarily fallow. Land abandoned as a result of shifting cultivation is excluded.",
+    "unit": "% of land area"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000334",
+  "upstream_checksum": "00afb280d013596527212d9f54bdb90c136211c9f7fbe32d9f38583af84b4a95",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/AG.LND.ARBL.ZS?format=json&per_page=100",
+  "reuse_evidence_sha256": "802fee7e85e09865a9da733e0d5680eca8c263ff63a3d8ce0f361f4d58245d04"
+}

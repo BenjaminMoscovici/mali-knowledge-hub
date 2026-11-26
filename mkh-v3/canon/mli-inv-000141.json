@@ -1,0 +1,40 @@
+{
+  "id": "mli-inv-000141",
+  "edition_family": "instat-emop-passages",
+  "collection": "EMOP fieldwork waves",
+  "title": "EMOP — 2021, passage 3",
+  "publisher": "INSTAT",
+  "type": "document",
+  "release": "EMOP — 2021, passage 3",
+  "period": "2021, passage 3",
+  "geography": "Mali",
+  "topics": [
+    "household survey",
+    "social and economic statistics"
+  ],
+  "description": "EMOP — 2021, passage 3 — résultats statistiques et contexte méthodologique des pages intégrées.",
+  "limitations": [
+    "Pages PDF intégrées : 3, 5. Vérifier le passage d’enquête, la période, le dénominateur et les exclusions géographiques avant toute comparaison. Les données annuelles et celles d’un passage peuvent concerner les mêmes ménages."
+  ],
+  "license": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 3,
+      "locator": "PDF p. 3",
+      "text": "TABLEAU RECAPITULATIF DES RESULTATS : INDICATEURS DE CONDITIONS DE VIE DE LA\n                                          POPULATION\n\n\n                                                                                          Milieu          Sexe\nIndicateurs\n                                                                         Ensemble   Urbain     Rural     H       F\n\nSanté\n\n\nTaux de morbidité (%)                                                      30,0       26,0      31,0    29,1 30,8\n\nFréquence du Paludisme (%)                                                 65,1       59,4      66,4    64,8 65,4\n\nSécurité alimentaire\n\nProportion des ménages ayant rencontré des difficultés pour se nourrir     27,8       20,6      30,3    67,9 65,3\n\nDépenses de consommation\n\nDépenses moyennes par ménage (FCFA)                                      632 441    896 530 543 708\n\nDépenses moyennes par tête (FCFA)                                         97 290    153 627    78 360\n\nDépenses par équivalent adulte (FCFA)                                    128 958    201 823 104 476\n\n                                  Source : EMOP 2021, passage 3 (juillet-septembre)\n\n\n\n\n                         EMOP 2021-Passage 3 – Rapport d’analyse              P a g e 3 | 11"
+    },
+    {
+      "kind": "source_passage",
+      "page": 5,
+      "locator": "PDF p. 5",
+      "text": "SYNTHESE GENERALE\n      Ce résumé décrit l’état de certains indicateurs socioéconomiques à un moment précis de l’année (juillet-\n      septembre 2021). Ce passage renseigne essentiellement les taux de morbidité, la sécurité alimentaire\n      qui donne des informations sur les stratégies adoptées par les ménages pour faire face aux difficultés\n      alimentaires. Il renseigne aussi sur la structure, le volume des dépenses de consommation ainsi que le\n      poids des fonctions de consommation.\n\n      L’exploitation des données issues de ce passage a abouti aux résultats suivants :\n\n             1. Santé de la population\n      L’évolution des taux de morbidité entre les différents passages indique qu’au cours des trois derniers\n      trimestres, l’ampleur du phénomène est plus prononcée chez les enfants de moins de 5 ans et les\n      personnes âgées de plus de 60 ans. Ce résultat traduit la vulnérabilité des enfants de moins de 5 ans et\n      les personnes âgées. Sur la période (juillet-septembre 2021), il est remarquable dans l’ensemble, que les\n      femmes sont légèrement plus touchées que les hommes (respectivement 30,8 % et 30,0 %).\n\n      Tableau 2: Evolution des taux de morbidité1 par groupe d’âge selon le sexe (%)\n\n                               Janvier-mars 2021                         Avril-juin 2021               Juillet-septembre 2021\n Groupe d’âge\n                      Masculin Féminin Ensemble Masculin Féminin Ensemble Masculin Féminin Ensemble\nMoins de 5 ans          38,4          34,8       36,7      31,1       30,4         30,8              39,9      38,4       39,2\n5 - 10 ans              29,1          25,7       27,5      21,2       20,7         21,0              31,2      31,4       31,3\n11 -14 ans              21,4          24,1       22,6      17,1       17,7         17,4              23,4      23,4       23,4\n15 - 59 ans             22,9          33,1       28,5      16,7       24,1         20,8              21,1      27,6       24,7\n60 ans et plus          53,0          49,5       51,6      44,3       43,6         44,0              44,4      46,4       45,2\nEnsemble                29,2          31,8       30,5      22,3       24,9         23,6              29,1      30,8       30,0\n                                         Source : EMOP 2021, passage 3 (juillet-septembre)\n\n      La région de Tombouctou est la plus affectée (67,6 %) contre 21,8 % pour Kidal qui est la moins touchée\n      sur la période de juillet à septembre 2021. A l’intérieur de chaque région, les populations les plus\n      exposées restent les enfants de moins de 5 ans et les personnes de 60 ans ou plus. Les résultats par\n      milieu de résidence montrent un taux de 26,0% en milieu urbain contre 31,0% pour le milieu rural.\n\n      Tableau 3:Taux de morbidité par région, milieu selon le groupe d’âge (%)\n\n           Caractéristiques             Moins de                                                 60 ans et\n          sociodémographiques            5 ans           5-10 ans      11-14 ans    15-59 ans      plus       Ensemble\n                                                                    Région\n          Kayes                            38,6            33,4           22,4         19,0        43,7         27,9\n          Koulikoro                        28,3            26,0           25,7         19,3        35,2         24,0\n          Sikasso                          31,7            27,6           19,5         20,4        41,4         25,3\n          Ségou                            40,9            29,6           18,6         19,6        43,3         27,5\n          Mopti                            56,3            38,2           32,7         39,3        49,1         42,2\n\n\n\n      1\n          La morbidité se réfère aux trois mois précédent l’interview\n\n                           EMOP 2021-Passage 3 – Rapport d’analyse                         P a g e 5 | 11"
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000141",
+  "upstream_checksum": "d5e5b4f2aa6295624ff230a7072d1831f4593f40b31cab9ac5b4df88ce749697",
+  "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/eq/rana21pas3_eq.pdf",
+  "reuse_evidence_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29"
+}

@@ -1,0 +1,34 @@
+{
+  "id": "mli-inv-000185",
+  "edition_family": "mli-inv-000185",
+  "collection": "Journal officiel du Mali",
+  "title": "Journal officiel du Mali — 2024, n° 16",
+  "publisher": "Secrétariat général du Gouvernement",
+  "type": "document",
+  "release": "Journal officiel du Mali — 2024, n° 16",
+  "period": "2024",
+  "geography": "Mali",
+  "topics": [
+    "gazette",
+    "laws and administrative acts"
+  ],
+  "description": "Mandat du Cadre de concertation sur le contenu local dans les projets miniers.",
+  "limitations": [
+    "Extrait du Journal officiel dans sa version publiée. La vigueur actuelle et les résultats d’exécution exigent des preuves distinctes."
+  ],
+  "license": "Textes officiels législatifs ou administratifs exclus de la protection, ordonnance 2026-015/PT-RM, art. 12. Extraits civils avec références au SGG et au Journal officiel.",
+  "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+  "passages": [
+    {
+      "kind": "source_passage",
+      "page": 3,
+      "locator": "Journal officiel / p. 635, passage relatif à la mission du CCCL",
+      "text": "Le « CCCL » a pour mission, entre autres, la régulation et\nle suivi du Contenu local dans les projets miniers\ndéveloppés en République du Mali. Il coordonne\nl’élaboration du document de stratégie du Contenu local\net définit les orientations et les lignes directrices à caractère\nobligatoire relatives au Contenu local, notamment celles\nconcernant les emplois locaux, l’utilisation de biens et\nservices locaux, les capitaux locaux, le transfert de\ntechnologie et de savoir-faire."
+    }
+  ],
+  "review": "published",
+  "work_id": "MKH-SRC-000185",
+  "upstream_checksum": "1f54b463916a05b775f0dd7c8eaf494201381fcdf21d2ce2e99a3069a81e9ac5",
+  "url": "https://sgg-mali.ml/JO/2024/mali-jo-2024-16.pdf",
+  "reuse_evidence_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e"
+}

@@ -106,20 +106,26 @@ def integrate(record, receipt, assets, directory, catalogue):
         raise ValueError("Identity conflicts with the Work record")
     original = verified_asset(assets, receipt["asset"], digest)
     twins = [s for s in catalogue.values() if s.get("upstream_checksum") == digest]
+    component = receipt.get("archive_component")
     if twins:
         if any(s.get("review") != "published" for s in twins):
             raise ValueError("Original is associated with a non-published release")
         intended = receipt.get("match_id", receipt["metadata"]["id"])
         same_component = [s for s in twins if s["id"] == intended]
-        if not same_component:
+        if same_component:
+            return {"status": "matched", "v3_ids": [intended], "sha256": digest}
+        if not component or set(component["siblings"]) != {s["id"] for s in twins}:
             raise ValueError("Same original bytes under another identity; component equivalence is unresolved")
-        return {"status": "matched", "v3_ids": [intended], "sha256": digest}
     src = dict(receipt["metadata"])
     key = src["id"]
     if key in catalogue or any(s.get("edition_family", s["id"]) == src["edition_family"]
                                and s["release"] == src["release"] for s in catalogue.values()):
         raise ValueError("Existing identity or edition has different bytes")
     verified_asset(assets, receipt["rights_asset"], receipt["rights_sha256"])
+    for evidence in receipt.get("supporting_evidence", []):
+        if not https_url(evidence["url"]):
+            raise ValueError("Invalid supporting evidence URL")
+        verified_asset(assets, evidence["asset"], evidence["sha256"])
     if "component_asset" in receipt:
         extracted = verified_asset(assets, receipt["component_asset"], receipt["component_sha256"])
         components = json.loads(extracted.read_text())
@@ -128,6 +134,19 @@ def integrate(record, receipt, assets, directory, catalogue):
         if set(components) - allowed:
             raise ValueError("Unexpected extraction fields")
         src.update(components)
+    if component:
+        with ZipFile(original) as archive, archive.open(component["member"]) as member:
+            if hashlib.file_digest(member, "sha256").hexdigest() != component["sha256"]:
+                raise ValueError("Archive member checksum mismatch")
+        column = component["identity_column"]
+        identities = {row[column] for row in src["records"]}
+        if not identities or len(identities) != len(src["records"]):
+            raise ValueError("Archive component requires distinct record identities")
+        for sibling in twins:
+            previous = {row[column] for row in sibling["records"]}
+            if not previous or identities & previous:
+                raise ValueError("Archive component overlaps existing record identities")
+        src["archive_component"] = component
     if receipt.get("pages"):
         src.setdefault("passages", []).extend(pdf_passages(original, receipt["pages"]))
     src.update(review="published", work_id=work_id, upstream_checksum=digest,

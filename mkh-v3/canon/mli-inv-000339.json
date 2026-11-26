@@ -1,0 +1,501 @@
+{
+  "id": "mli-inv-000339",
+  "edition_family": "wdi-mli-ag-prd-food-xd",
+  "collection": "World Development Indicators",
+  "title": "WDI Mali — Food production index (2014-2016 = 100)",
+  "publisher": "World Bank",
+  "type": "dataset",
+  "release": "WDI API snapshot 2026-11-26 / provider 2026-11-11",
+  "period": "1961–2024 (non-null observations)",
+  "geography": "Mali; national",
+  "topics": [
+    "agriculture"
+  ],
+  "description": "Food production index (2014-2016 = 100) — série annuelle Mali, AG.PRD.FOOD.XD",
+  "limitations": [
+    "Valeurs manquantes conservées. Respecter la définition, l’unité et le dénominateur de cet indicateur. Capture datée susceptible de révision."
+  ],
+  "license": "World Bank WDI, FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO). Indicator licence CC BY 4.0. MKH tabulated the dated Mali response.",
+  "reuse_url": "https://data.worldbank.org/indicator/AG.PRD.FOOD.XD",
+  "table": "wdi_339",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "year": "INTEGER",
+    "value": "REAL",
+    "unit": "TEXT"
+  },
+  "records": [
+    {
+      "id": "AG.PRD.FOOD.XD-2025",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2025",
+      "year": 2025,
+      "value": null,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2024",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2024",
+      "year": 2024,
+      "value": 140.87,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2023",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2023",
+      "year": 2023,
+      "value": 138.79,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2022",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2022",
+      "year": 2022,
+      "value": 137,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2021",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2021",
+      "year": 2021,
+      "value": 126.15,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2020",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2020",
+      "year": 2020,
+      "value": 136.25,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2019",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2019",
+      "year": 2019,
+      "value": 127.08,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2018",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2018",
+      "year": 2018,
+      "value": 123.82,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2017",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2017",
+      "year": 2017,
+      "value": 113.25,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2016",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2016",
+      "year": 2016,
+      "value": 112.99,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2015",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2015",
+      "year": 2015,
+      "value": 98.03,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2014",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2014",
+      "year": 2014,
+      "value": 88.98,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2013",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2013",
+      "year": 2013,
+      "value": 90.89,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2012",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2012",
+      "year": 2012,
+      "value": 87.23,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2011",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2011",
+      "year": 2011,
+      "value": 87.91,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2010",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2010",
+      "year": 2010,
+      "value": 80.13,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2009",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2009",
+      "year": 2009,
+      "value": 83.73,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2008",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2008",
+      "year": 2008,
+      "value": 76.75,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2007",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2007",
+      "year": 2007,
+      "value": 66.45,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2006",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2006",
+      "year": 2006,
+      "value": 56.81,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2005",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2005",
+      "year": 2005,
+      "value": 56.1,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2004",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2004",
+      "year": 2004,
+      "value": 49.57,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2003",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2003",
+      "year": 2003,
+      "value": 51.92,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2002",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2002",
+      "year": 2002,
+      "value": 43.97,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2001",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2001",
+      "year": 2001,
+      "value": 44.25,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-2000",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 2000",
+      "year": 2000,
+      "value": 42.72,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1999",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1999",
+      "year": 1999,
+      "value": 46.1,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1998",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1998",
+      "year": 1998,
+      "value": 42.79,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1997",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1997",
+      "year": 1997,
+      "value": 39.67,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1996",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1996",
+      "year": 1996,
+      "value": 40.06,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1995",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1995",
+      "year": 1995,
+      "value": 39.38,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1994",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1994",
+      "year": 1994,
+      "value": 40.63,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1993",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1993",
+      "year": 1993,
+      "value": 38.36,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1992",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1992",
+      "year": 1992,
+      "value": 36.42,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1991",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1991",
+      "year": 1991,
+      "value": 40.13,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1990",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1990",
+      "year": 1990,
+      "value": 33.14,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1989",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1989",
+      "year": 1989,
+      "value": 32.36,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1988",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1988",
+      "year": 1988,
+      "value": 32.35,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1987",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1987",
+      "year": 1987,
+      "value": 27.25,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1986",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1986",
+      "year": 1986,
+      "value": 27.98,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1985",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1985",
+      "year": 1985,
+      "value": 26.59,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1984",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1984",
+      "year": 1984,
+      "value": 23.18,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1983",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1983",
+      "year": 1983,
+      "value": 25.89,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1982",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1982",
+      "year": 1982,
+      "value": 25.94,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1981",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1981",
+      "year": 1981,
+      "value": 25.45,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1980",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1980",
+      "year": 1980,
+      "value": 23.44,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1979",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1979",
+      "year": 1979,
+      "value": 23.6,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1978",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1978",
+      "year": 1978,
+      "value": 24.5,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1977",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1977",
+      "year": 1977,
+      "value": 23.74,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1976",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1976",
+      "year": 1976,
+      "value": 23.75,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1975",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1975",
+      "year": 1975,
+      "value": 23.17,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1974",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1974",
+      "year": 1974,
+      "value": 20.28,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1973",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1973",
+      "year": 1973,
+      "value": 17.49,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1972",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1972",
+      "year": 1972,
+      "value": 18.61,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1971",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1971",
+      "year": 1971,
+      "value": 21.53,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1970",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1970",
+      "year": 1970,
+      "value": 22.24,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1969",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1969",
+      "year": 1969,
+      "value": 22.43,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1968",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1968",
+      "year": 1968,
+      "value": 20.47,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1967",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1967",
+      "year": 1967,
+      "value": 20.98,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1966",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1966",
+      "year": 1966,
+      "value": 19.8,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1965",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1965",
+      "year": 1965,
+      "value": 19.65,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1964",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1964",
+      "year": 1964,
+      "value": 18.51,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1963",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1963",
+      "year": 1963,
+      "value": 18.61,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1962",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1962",
+      "year": 1962,
+      "value": 18.08,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1961",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1961",
+      "year": 1961,
+      "value": 17.45,
+      "unit": "2014-2016 = 100"
+    },
+    {
+      "id": "AG.PRD.FOOD.XD-1960",
+      "locator": "WDI / MLI / AG.PRD.FOOD.XD / 1960",
+      "year": 1960,
+      "value": null,
+      "unit": "2014-2016 = 100"
+    }
+  ],
+  "definitions": {
+    "value": "Food production index covers food crops that are considered edible and that contain nutrients. Coffee and tea are excluded because, although edible, they have no nutritive value.",
+    "unit": "2014-2016 = 100"
+  },
+  "review": "published",
+  "work_id": "MKH-SRC-000339",
+  "upstream_checksum": "bab57f3ab0c8f4bba467a626e34b361644ba5e1686351f3d33b2d391600fee9c",
+  "url": "https://api.worldbank.org/v2/country/MLI/indicator/AG.PRD.FOOD.XD?format=json&per_page=100",
+  "reuse_evidence_sha256": "ae8252365b33e5cbaf12bc1e6a191ef1e5bcde0e263d3f18907ba636f2d52c63"
+}
