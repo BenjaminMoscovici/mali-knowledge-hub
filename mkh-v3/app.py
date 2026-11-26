@@ -16,7 +16,7 @@ from uuid import UUID, uuid4
 import httpx
 from starlette.applications import Starlette
 from starlette.requests import ClientDisconnect
-from starlette.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
+from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
@@ -97,8 +97,17 @@ async def account(request):
     return (token, identifier) if identifier else (None, None)
 
 
+def version_asset(match):
+    filename = match[1]
+    digest = hashlib.sha256((WEB / filename).read_bytes()).hexdigest()[:16]
+    return f'"/assets/{filename}?v={digest}"'
+
+
+HOME_HTML = re.sub(r'"/assets/([a-z]+\.(?:js|css))"', version_asset, (WEB / "index.html").read_text())
+
+
 async def home(request):
-    return FileResponse(WEB / "index.html", headers={
+    return HTMLResponse(HOME_HTML, headers={
         "Cache-Control": "no-cache",
         "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
                                    "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
@@ -136,7 +145,7 @@ async def source(request):
     try:
         source_id = request.path_params["source_id"]
         item = k.inspect(source_id)
-        if item["type"] == "document":
+        if item.get("pages"):
             item["evidence"] = k.search_documents("", source_id, Evidence(k, False))
         if item["type"] == "live":
             code = request.query_params.get("series")
@@ -582,6 +591,7 @@ async def job_status(request):
             if job.result is None:
                 job.result = {"type": "error", "text": "Assignment stopped."}
     async def snapshot(check_sources=False):
+        revision = job.revision
         event = job.result or {"type": "activity", "text": job.activity, "research_steps": list(job.steps), "draft": job.draft}
         basis = job.result if event["type"] == "answer" else {"basis": job.draft_basis}
         if state.registry and (event["type"] == "answer" or job.draft_basis):
@@ -589,9 +599,10 @@ async def job_status(request):
                 await sync_catalogue(state)
             if not answer_available(state, basis):
                 event = {"type": "error", "text": "A source used in this answer changed. Run the assignment again."}
-        return {"prompt": job.prompt, "instructions": job.instructions, "conversation_id": job.conversation, "event": event}
+        return {"revision": revision, "prompt": job.prompt, "instructions": job.instructions, "conversation_id": job.conversation, "event": event}
 
-    if request.method == "GET" and request.query_params.get("watch") == "1":
+    watch = request.query_params.get("watch")
+    if request.method == "GET" and watch in {"1", "events"}:
         async def updates():
             first = True
             while True:
@@ -601,15 +612,19 @@ async def job_status(request):
                 except StateError:
                     break  # Close the connection so the browser can reconnect and recheck.
                 first = False
-                yield json_text(data) + "\n"
+                payload = json_text(data)
+                yield "data: " + payload + "\n\n" if watch == "events" else payload + "\n"
                 if data["event"]["type"] in {"answer", "error"}:
                     break
                 try:
-                    await asyncio.wait_for(changed.wait(), 8)
+                    await asyncio.wait_for(changed.wait(), 2.5)
                 except TimeoutError:
                     pass  # Repeat the current state as a heartbeat through idle proxies.
-        return StreamingResponse(updates(), media_type="application/x-ndjson",
-                                 headers={**ERROR_HEADERS, "X-Accel-Buffering": "no"})
+        return StreamingResponse(updates(), media_type="text/event-stream" if watch == "events" else "application/x-ndjson",
+                                 headers={**ERROR_HEADERS, "Cache-Control": "no-store, no-transform", "X-Accel-Buffering": "no"})
+    if request.method == "GET" and not job.result and request.query_params.get("after") == str(job.revision):
+        with suppress(TimeoutError):
+            await asyncio.wait_for(job.changed.wait(), 3)
     try:
         return data_response(await snapshot(check_sources=True))
     except StateError:

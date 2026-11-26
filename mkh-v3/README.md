@@ -38,6 +38,18 @@ The public catalogue uses local text search. Use `MKH_SEMANTIC_SEARCH=off` for
 offline tests or an explicit lexical-only comparison.
 External web research defaults off via `MKH_WEB_RESEARCH`.
 
+The V3 catalogue also includes full dated HDX snapshots of WFP market prices and
+CHIRPS v2 subnational rainfall indicators, CRU national climate normals from the
+reviewed MKH country foundation, and selected figures from Mali’s June 2026 general
+budget execution report. Each release carries its source, scope and limitations.
+The HDX tables use the dates, units, administrative identifiers and processing flags
+provided by their publishers. The rainfall series uses WFP administrative areas.
+
+Large CSV releases use a reviewed column schema and a checksum-pinned SQLite
+snapshot. Build a snapshot with `python scripts/pack_table.py MANIFEST SOURCE.csv`.
+The build preserves source row numbers and missing values. The application opens the
+table read-only for calculations. Review a new upstream release before republishing.
+
 ## Development checks
 
 Treat an unsatisfactory answer as a way to discover a failure in a shared capability.

@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from disk_tables import input_records, open_snapshot
 from retrieval import SearchIndex, normalize
 
 CANON = Path(__file__).resolve().parent / "canon"
@@ -162,6 +163,7 @@ class Evidence:
 class Knowledge:
     def __init__(self, directory=CANON, *, releases=None):
         self.sources = {}
+        self.table_files = {}
         directory = Path(directory)
         if releases is None:
             releases = self.read_releases(directory)
@@ -175,12 +177,20 @@ class Knowledge:
                 raise ValueError(f"Invalid published source metadata in {origin}")
             if source["type"] in {"dataset", "reference"}:
                 self._validate_table(source, origin)
+                if "table_snapshot" in source:
+                    package = directory / "tables" / (origin + ".sqlite.gz")
+                    if not package.is_file():
+                        raise ValueError("Missing packaged table for " + origin)
+                    self.table_files[origin] = open_snapshot(package, source["table_snapshot"]["sha256"])
             if any(key not in source.get("columns", {}) for key in source.get("search_fields", [])):
                 raise ValueError(f"Unknown search field in {origin}")
             self.sources[source["id"]] = source
         self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
         self.profiles = {}
         for key, source in self.sources.items():
+            if key in self.table_files:
+                self.profiles[key] = source["table_snapshot"]["dimension_values"]
+                continue
             dims = {}
             for column in source.get("dimensions", []):
                 if column not in source["columns"]:
@@ -208,6 +218,10 @@ class Knowledge:
             raise ValueError(f"Invalid table metadata in {filename}")
         if not all(SQL_NAME.fullmatch(n) and t in SQL_TYPES for n, t in columns.items()):
             raise ValueError(f"Invalid table columns in {filename}")
+        if "table_snapshot" in source:
+            if any(source.get(field) for field in ("records", "entity_keys", "place_fields", "search_fields")) or source["type"] != "dataset":
+                raise ValueError("Packaged tables support SQL and dimension discovery.")
+            return
         identifiers = [row["id"] for row in source["records"]]
         if len(set(identifiers)) != len(identifiers):
             raise ValueError(f"Duplicate record ID in {filename}")
@@ -219,7 +233,7 @@ class Knowledge:
 
     @staticmethod
     def describes(source):
-        return {k: v for k, v in source.items() if k not in {"passages", "records", "adapter", "join_group", "geometries"}}
+        return {k: v for k, v in source.items() if k not in {"passages", "records", "adapter", "join_group", "geometries", "table_snapshot"}}
 
     def discover(self, query="", kind=None, limit=8, affinities=None):
         entries = self.index.find_sources(query, limit, kind, affinities)
@@ -245,7 +259,7 @@ class Knowledge:
         operations = ["inspect_source"]
         if source.get("passages"):
             operations.extend(["search_documents", "read_passage"])
-        if "records" in source:
+        if "records" in source or "table_snapshot" in source:
             operations.append("query_data")
         if source.get("search_fields"):
             operations.append("search_records")
@@ -317,8 +331,9 @@ class Knowledge:
         source = self.source(source_id)
         detail = self.describes(source)
         if source["type"] in {"dataset", "reference"}:
-            detail["row_count"] = len(source["records"])
-            detail["samples"] = source["records"][:3]
+            snapshot = source.get("table_snapshot")
+            detail["row_count"] = snapshot["row_count"] if snapshot else len(source["records"])
+            detail["samples"] = snapshot["samples"] if snapshot else source["records"][:3]
             if self.profiles[source_id]:
                 detail["dimension_values"] = self.profiles[source_id]
             detail["relationships"] = [
@@ -326,7 +341,7 @@ class Knowledge:
                 for entity, key in source.get("entity_keys", {}).items() for other in self.sources.values()
                 if other["id"] != source_id and entity in other.get("entity_keys", {})
             ]
-        elif source["type"] == "document":
+        if source.get("passages"):
             detail["pages"] = [
                 {"page": p.get("page"), "locator": p["locator"], "characters": len(p["text"])} for p in source["passages"]
             ]
@@ -396,14 +411,14 @@ class Knowledge:
         if not isinstance(sql, str) or not 1 <= len(sql) <= 4000:
             raise KnowledgeError("Provide a single SQL SELECT, up to 4,000 characters.")
 
-        conn = sqlite3.connect(":memory:")
+        uri = self.table_files.get(tables[0].get("id")) if len(tables) == 1 else None
+        conn = sqlite3.connect(uri, uri=True) if uri else sqlite3.connect(":memory:")
         try:
-            names = set()
-            for source in tables:
+            names = {table["table"] for table in tables}
+            if len(names) != len(tables):
+                raise KnowledgeError("The selected table names collide.")
+            for source in ([] if uri else tables):
                 table, columns = source["table"], source["columns"]
-                if table in names:
-                    raise KnowledgeError("The selected table names collide.")
-                names.add(table)
                 definition = ", ".join(f'"{name}" {kind}' for name, kind in columns.items())
                 conn.execute(f'CREATE TABLE "{table}" ({definition})')
                 slots = ", ".join("?" for _ in columns)
@@ -450,7 +465,7 @@ class Knowledge:
 
         releases = [
             {"source_id": s["id"], "release": s["release"], "period": s["period"],
-             "release_id": s.get("release_id"), "fingerprint": self.stamps[s["id"]], "table": s.get("table"), "record_count": len(s["records"]) if "records" in s else None,
+             "release_id": s.get("release_id"), "fingerprint": self.stamps[s["id"]], "table": s.get("table"), "record_count": len(s["records"]) if "records" in s else s.get("table_snapshot", {}).get("row_count"),
              "url": s["url"]}
             for s in sources
         ]
@@ -459,6 +474,11 @@ class Knowledge:
             {"source_id": s["id"], "id": row["id"], "locator": row["locator"]}
             for s in sources for row in s.get("records", []) if row["id"] in row_ids
         ]
+        for source in sources:
+            if source["id"] in self.table_files:
+                locations = input_records(self.table_files[source["id"]], source["table"], row_ids)
+                input_locations.extend({"source_id": source["id"], "id": key, "locator": locator}
+                                       for key, locator in locations)
         derivation = {"relationship": relation} if relation else {}
         if parent:
             derivation["parent_evidence"] = {key: parent[key] for key in

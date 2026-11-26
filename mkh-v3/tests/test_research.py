@@ -139,10 +139,10 @@ class RetrievalTest(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(usage, before)
         async with httpx.AsyncClient(transport=httpx.MockTransport(lambda r: httpx.Response(503))) as client:
             usage = {"embedding_tokens": 0}
-            scores = await SemanticSearch(k.index, client, "test").search("financement", {}, usage)
+            scores = await SemanticSearch(k.index, client, "test").search("financement humanitaire OCHA FTS", {}, usage)
             self.assertIsNone(scores)
             self.assertTrue(usage["retrieval_fallback"])
-            self.assertEqual(k.discover("financement", affinities=scores)[0]["id"], target)
+            self.assertEqual(k.discover("financement humanitaire OCHA FTS", affinities=scores)[0]["id"], target)
 
 
 class ResearchDeliveryTest(unittest.TestCase):

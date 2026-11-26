@@ -1,0 +1,168 @@
+{
+  "id": "mli-chirps-rainfall",
+  "review": "published",
+  "type": "dataset",
+  "title": "CHIRPS rainfall indicators for Mali administrative areas",
+  "publisher": "Climate Hazards Center UC Santa Barbara & WFP",
+  "attribution": "Climate Hazards Center UC Santa Barbara & WFP via HDX",
+  "url": "https://data.humdata.org/dataset/mli-rainfall-subnational",
+  "resource_url": "https://data.humdata.org/dataset/44da9888-81dc-4b9a-b0d9-1d4c2e515318/resource/1fa3b640-9c74-4f9c-8c2d-80c2b4f54904/download/mli-rainfall-subnat-full.csv",
+  "release_id": "1fa3b640-9c74-4f9c-8c2d-80c2b4f54904@2026-11-23T17:46:51.230937",
+  "release": "HDX snapshot 2026-11-23",
+  "upstream_checksum": "041b4f391c6a6ce60862a6d3f05a9ec78f7365ecfa9e4f7ff720b4cd0dc64d89",
+  "license": "Creative Commons Attribution International (CC BY)",
+  "license_url": "http://www.opendefinition.org/licenses/cc-by",
+  "geography": "Mali · source administrative areas",
+  "period": "1981-01-01 to 2026-11-11 (dekad start dates)",
+  "description": "CHIRPS v2 dekadal precipitation, long-term averages, rolling accumulations and anomalies aggregated by WFP administrative unit.",
+  "topics": [
+    "rainfall",
+    "CHIRPS v2",
+    "précipitations",
+    "pluie décadaire",
+    "sécheresse",
+    "pluviométrie",
+    "drought monitoring"
+  ],
+  "dimensions": [
+    "adm_level",
+    "pcode",
+    "version"
+  ],
+  "limitations": [
+    "WFP source polygons and codes. A current region label cannot be inferred from a matching code alone. ADM1 and ADM2 observations overlap.",
+    "Separate preliminary and final estimates. Rolling windows overlap and missing values are unknown. This release contains the publisher’s aggregates."
+  ],
+  "definitions": {
+    "date": "Beginning of dekad (1st, 11th or 21st of calendar month).",
+    "rfh": "Area-aggregated dekadal rainfall estimate in mm. rfh_avg is the corresponding long-term average.",
+    "r1h": "One-month rolling rainfall in mm, r3h is the three-month equivalent. The _avg suffix identifies a long-term average.",
+    "rfq": "Provider rainfall anomaly indicator (%), with r1q and r3q for rolling windows.",
+    "version": "Source processing status: final or prelim in this release.",
+    "n_pixels": "Count of input pixels in the source administrative area."
+  },
+  "table": "dekadal_rain",
+  "columns": {
+    "id": "TEXT",
+    "locator": "TEXT",
+    "date": "TEXT",
+    "adm_level": "INTEGER",
+    "adm_id": "INTEGER",
+    "pcode": "TEXT",
+    "n_pixels": "REAL",
+    "rfh": "REAL",
+    "rfh_avg": "REAL",
+    "r1h": "REAL",
+    "r1h_avg": "REAL",
+    "r3h": "REAL",
+    "r3h_avg": "REAL",
+    "rfq": "REAL",
+    "r1q": "REAL",
+    "r3q": "REAL",
+    "version": "TEXT"
+  },
+  "table_snapshot": {
+    "sha256": "6655417d344878c5b3a2351f7f5f9231c6cc1b5ab99ef09634fa0bce35083754",
+    "row_count": 97468,
+    "samples": [
+      {
+        "id": "r2",
+        "locator": "CSV row 2",
+        "date": "1981-01-01",
+        "adm_level": 1,
+        "adm_id": 1926,
+        "pcode": "ML09",
+        "n_pixels": 9.0,
+        "rfh": 0.0,
+        "rfh_avg": 0.0,
+        "r1h": null,
+        "r1h_avg": null,
+        "r3h": null,
+        "r3h_avg": null,
+        "rfq": 100.0,
+        "r1q": null,
+        "r3q": null,
+        "version": "final"
+      },
+      {
+        "id": "r3",
+        "locator": "CSV row 3",
+        "date": "1981-01-11",
+        "adm_level": 1,
+        "adm_id": 1926,
+        "pcode": "ML09",
+        "n_pixels": 9.0,
+        "rfh": 0.0,
+        "rfh_avg": 0.0,
+        "r1h": null,
+        "r1h_avg": null,
+        "r3h": null,
+        "r3h_avg": null,
+        "rfq": 100.0,
+        "r1q": null,
+        "r3q": null,
+        "version": "final"
+      },
+      {
+        "id": "r4",
+        "locator": "CSV row 4",
+        "date": "1981-01-21",
+        "adm_level": 1,
+        "adm_id": 1926,
+        "pcode": "ML09",
+        "n_pixels": 9.0,
+        "rfh": 0.0,
+        "rfh_avg": 0.0,
+        "r1h": 0.0,
+        "r1h_avg": 0.0,
+        "r3h": null,
+        "r3h_avg": null,
+        "rfq": 100.0,
+        "r1q": 100.0,
+        "r3q": null,
+        "version": "final"
+      }
+    ],
+    "dimension_values": {
+      "adm_level": {
+        "distinct_count": 2,
+        "examples": [
+          2,
+          1
+        ]
+      },
+      "pcode": {
+        "distinct_count": 59,
+        "examples": [
+          "ML01",
+          "ML0101",
+          "ML0102",
+          "ML0103",
+          "ML0104",
+          "ML0105",
+          "ML0106",
+          "ML0107",
+          "ML02",
+          "ML0201",
+          "ML0202",
+          "ML0203",
+          "ML0204",
+          "ML0205",
+          "ML0206",
+          "ML0207",
+          "ML03",
+          "ML0301",
+          "ML0302",
+          "ML0303"
+        ]
+      },
+      "version": {
+        "distinct_count": 2,
+        "examples": [
+          "final",
+          "prelim"
+        ]
+      }
+    }
+  }
+}

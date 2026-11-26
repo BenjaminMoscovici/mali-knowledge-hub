@@ -366,7 +366,7 @@ function appendUser(text, parent = messages) {
 
 function researchActivity(steps) {
   const details = el("details", "research-activity");
-  details.append(el("summary", "", "Research activity"));
+  details.append(el("summary", "", "Research activity · " + steps.length + (steps.length === 1 ? " step" : " steps")));
   const list = el("ol");
   for (const step of steps) {
     const label = step.status === "completed" ? step.action : step.action + " (incomplete)";
@@ -385,8 +385,8 @@ function appendAnswer(turn, parent = messages) {
     const item = evidence.find((e) => e.id === figure.evidence_id);
     if (item?.data?.rows?.length) body.append(exhibit(figure, item));
   }
-  if (turn.research_steps?.length) message.append(researchActivity(turn.research_steps));
   message.append(body);
+  if (turn.research_steps?.length) message.append(researchActivity(turn.research_steps));
   const footer = el("div", "message-footer");
   if (evidence.length) {
     const view = el("button", "sources-button", `View sources (${evidence.length})`);
@@ -599,69 +599,100 @@ function handleEmailLink() {
 
 async function* jobUpdates(run) {
   const deadline = Date.now() + 205000;
+  const path = "/api/jobs/" + encodeURIComponent(run.id);
+  let revision = -1;
   let failures = 0;
+  let stream = typeof TextDecoderStream !== "undefined";
   while (Date.now() < deadline && !run.controller.signal.aborted) {
     const connection = new AbortController();
     const signal = AbortSignal.any([run.controller.signal, connection.signal]);
     let timer;
-    const arm = () => {
+    const arm = (ms) => {
       clearTimeout(timer);
-      timer = setTimeout(() => connection.abort(), Math.min(22000, Math.max(1, deadline - Date.now())));
+      timer = setTimeout(() => connection.abort(), Math.min(ms, Math.max(1, deadline - Date.now())));
     };
     try {
-      arm();
-      const response = await request("/api/jobs/" + encodeURIComponent(run.id) + "?watch=1", {signal});
-      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-      let buffer = "";
-      while (true) {
-        const {value, done} = await reader.read();
-        if (done) break;
-        arm();
-        buffer += value;
-        let end;
-        while ((end = buffer.indexOf("\n")) >= 0) {
-          const data = JSON.parse(buffer.slice(0, end));
-          buffer = buffer.slice(end + 1);
-          yield data;
-          if (["error", "answer"].includes(data.event.type)) return;
+      if (stream) {
+        // Some workplace proxies release an entire stream only when the response ends.
+        arm(1800);
+        const response = await request(path + "?watch=events", {signal});
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+        let buffer = "";
+        while (true) {
+          const {value, done} = await reader.read();
+          if (done) break;
+          buffer += value;
+          let end;
+          while ((end = buffer.indexOf("\n\n")) >= 0) {
+            const frame = buffer.slice(0, end);
+            buffer = buffer.slice(end + 2);
+            if (!frame.startsWith("data: ")) continue;
+            const data = JSON.parse(frame.slice(6));
+            arm(5200);
+            revision = data.revision;
+            yield data;
+            if (["answer", "error"].includes(data.event.type)) return;
+          }
         }
+      } else {
+        arm(14000);
+        const response = await request(path + "?after=" + revision, {signal});
+        const data = await response.json();
+        failures = 0;
+        revision = data.revision;
+        yield data;
+        if (["answer", "error"].includes(data.event.type)) return;
+        await new Promise((resolve) => setTimeout(resolve, 350));
       }
     } catch (failure) {
       if (run.controller.signal.aborted || [401, 403, 410].includes(failure.status)) throw failure;
+      if (!stream) {
+        if (++failures >= 4) break;
+        updateComposer("Reconnecting to the research run…");
+        await new Promise((resolve) => setTimeout(resolve, 500 * failures));
+      }
     } finally {
       clearTimeout(timer);
       connection.abort();
     }
-    if (++failures >= 4) break;
-    updateComposer("Reconnecting to the research run…");
-    await new Promise((resolve) => setTimeout(resolve, 500 * failures));
+    stream = false;
   }
   throw new Error("Connection lost. You can resend your question or start a new chat.");
 }
 
 function showLive(run, event) {
+  const scroller = byId("conversation-scroll");
+  const nearBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 110;
   if (!run.live) {
+    run.started = Date.now();
     run.live = el("div", "message assistant live-answer");
-    run.label = el("div", "live-label");
+    const card = el("div", "live-research");
+    const head = el("div", "live-heading");
+    run.label = el("span", "live-label");
+    run.label.setAttribute("role", "status");
+    run.elapsed = el("time", "live-elapsed");
+    run.elapsed.setAttribute("aria-hidden", "true");
+    run.clock = setInterval(() => {
+      run.elapsed.textContent = Math.floor((Date.now() - run.started) / 1000) + "s";
+    }, 1000);
+    head.append(run.label, run.elapsed);
+    run.trail = el("ul", "live-steps");
+    card.append(head, run.trail);
     run.draft = el("div", "assistant-turn live-draft");
     run.draft.setAttribute("aria-live", "off");
-    run.live.append(run.label, run.draft);
+    run.live.append(card, run.draft);
     messages.append(run.live);
   }
-  const scroller = byId("conversation-scroll");
-  const nearBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 100;
   const steps = event.research_steps || [];
-  if (steps.length && steps.length !== run.steps) {
+  if (steps.length !== run.steps) {
     run.steps = steps.length;
-    const panel = researchActivity(steps);
-    panel.open = run.panel?.open || false;
-    if (run.panel) run.panel.replaceWith(panel); else run.live.insertBefore(panel, run.draft);
-    run.panel = panel;
+    run.trail.replaceChildren(...steps.slice(-3).map((step) => {
+      const line = el("li", "", [step.action, step.detail].filter(Boolean).join(" · "));
+      if (step.status !== "completed") line.classList.add("incomplete");
+      return line;
+    }));
   }
-  const last = steps.at(-1);
-  const detail = last?.detail && event.text === "Reviewing research results" ? " · " + last.detail : "";
-  const label = event.text + detail;
-  if (run.label.textContent !== label) run.label.textContent = label;
+  if (run.label.textContent !== event.text) run.label.textContent = event.text;
   // Citations become interactive after the server has verified and saved the turn.
   const draft = (event.draft || "").replace(/\[\[E-[0-9a-f]{0,16}(?:\]\]|\]?$)/g, "").replace(/\[{1,2}(?:E-?)?$/, "");
   if (draft !== run.draft.textContent) run.draft.textContent = draft;
@@ -676,6 +707,7 @@ function stopResearch(restore = true) {
   active = null;
   run.controller.abort();
   sessionStorage.removeItem(pendingJobKey);
+  clearInterval(run.clock);
   run.live?.remove();
   run.pending?.remove();
   if (restore && !promptBox.value) promptBox.value = run.prompt;
@@ -698,7 +730,7 @@ async function runAssignment(prompt, resumeId) {
     if (!resumeId) {
       promptBox.value = "";
       run.pending = appendUser(prompt);
-      updateComposer("Starting the assignment…");
+      showLive(run, {text: "Sending your question"});
       await stopping;
       if (active !== run) return;
       run.admission = json("/api/chat", {prompt, instructions: workingInstructions, delivery: "job",
@@ -721,6 +753,7 @@ async function runAssignment(prompt, resumeId) {
         conversationId = event.conversation_id;
         sessionStorage.setItem(conversationKey, conversationId);
         currentRequirements = event.requirements || {};
+        clearInterval(run.clock);
         run.live?.remove();
         appendAnswer({...event, prompt: run.prompt});
         sessionStorage.removeItem(pendingJobKey);

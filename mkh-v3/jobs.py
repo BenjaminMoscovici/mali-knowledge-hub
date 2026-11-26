@@ -14,6 +14,7 @@ class ResearchJob:
     task: asyncio.Task | None = None
     activity: str = "Starting the assignment"
     changed: asyncio.Event = field(default_factory=asyncio.Event)
+    revision: int = 0
     draft: str = ""
     draft_basis: dict = field(default_factory=dict)
     steps: list = field(default_factory=list)
@@ -57,6 +58,7 @@ class ResearchJobs:
                             job.steps.append(event["step"])
                     else:
                         job.result = event
+                    job.revision += 1
                     job.changed.set()
                     job.changed = asyncio.Event()
             except asyncio.CancelledError:

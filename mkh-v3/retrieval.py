@@ -59,6 +59,7 @@ class SearchIndex:
                 if source.get("search_fields"):
                     values = [str(row[key]) for key in source["search_fields"] if row.get(key) is not None]
                     self.add("record", source, row, " ".join(values), source["title"])
+        self.catalogue = {e["source"]["id"]: e for e in self.entries if e["kind"] == "source"}
         self.df = Counter(term for entry in self.entries for term in entry["counts"])
         self.mean_length = sum(e["length"] for e in self.entries) / max(1, len(self.entries))
 
@@ -70,7 +71,7 @@ class SearchIndex:
 
     def rank(self, query, kind, limit, source_id=None, source_type=None, affinities=None):
         terms = set(tokens(query))
-        candidates = [i for i, e in enumerate(self.entries) if e["kind"] == kind
+        candidates = [i for i, e in enumerate(self.entries) if (kind is None or e["kind"] == kind)
                       and (not source_id or e["source"]["id"] == source_id)
                       and (not source_type or e["source"]["type"] == source_type)]
         if not terms:
@@ -84,31 +85,23 @@ class SearchIndex:
             if score:
                 lexical[i] = score
         semantic = {i: affinities[i] for i in candidates if affinities is not None and affinities[i] >= 0.26}
-        # Reciprocal ranks combine exact terms and cross-language meaning on different scales.
+        # For discovery, take the best hit per release in each ranking. A source
+        # with multiple formats or many similar rows still gets one vote per channel.
         ranks = Counter()
         for scores in (lexical, semantic):
-            for rank, i in enumerate(sorted(scores, key=scores.get, reverse=True)):
-                ranks[i] += 1 / (12 + rank)
-        return [self.entries[i] for i in sorted(ranks, key=ranks.get, reverse=True)[:limit]]
+            ordered = sorted(scores, key=scores.get, reverse=True)
+            if kind is None:
+                ordered = list(dict.fromkeys(self.entries[i]["source"]["id"] for i in ordered))
+            for rank, key in enumerate(ordered):
+                ranks[key] += 1 / (12 + rank)
+        ranked = [key for key, _ in ranks.most_common(limit)]
+        if kind is None:
+            return [self.catalogue[key] for key in ranked]
+        return [self.entries[i] for i in ranked]
 
     def find_sources(self, query, limit, source_type, affinities):
-        direct = self.rank(query, "source", None, source_type=source_type, affinities=affinities)
-        if not query.strip():
-            return direct[:limit]
-        # A project identifier or a phrase may occur only inside the release. Give each
-        # parent one vote per result type, so large releases cannot win by repetition.
-        totals = Counter()
-        parents = {}
-        for kind, weight in (("source", 1.25), ("passage", 1.0), ("record", 1.0)):
-            matches = direct if kind == "source" else self.rank(query, kind, None, source_type=source_type, affinities=affinities)
-            seen = set()
-            for rank, entry in enumerate(matches):
-                key = entry["source"]["id"]
-                if key not in seen:
-                    totals[key] += weight / (8 + rank)
-                    parents[key] = entry
-                    seen.add(key)
-        return [parents[key] for key, _ in totals.most_common(limit)]
+        kind = None if query.strip() else "source"
+        return self.rank(query, kind, limit, source_type=source_type, affinities=affinities)
 
 
 class EmbeddingBudgetReached(Exception):

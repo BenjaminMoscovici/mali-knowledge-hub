@@ -43,3 +43,16 @@ class SourceAccess(unittest.IsolatedAsyncioTestCase):
                     result = await comp.run_tool("query_data", {"source_ids":[key],"sql":"SELECT count(*) AS n FROM " + meta["table"]}, ledger)
                     self.assertEqual(result["data"]["rows"][0]["n"], meta["row_count"])
                 self.assertTrue(ledger.allowed(result))
+
+    async def test_packaged_tables_support_row_provenance_and_scoped_follow_up(self):
+        k = Knowledge()
+        for key in k.table_files:
+            ledger = Evidence(k, False)
+            meta = k.inspect(key)
+            first = meta["samples"][0]
+            result = k.query([key], 'SELECT id FROM "' + meta["table"] + '" WHERE id = ' + repr(first["id"]), ledger)
+            self.assertEqual(result["data"]["input_records"], [
+                {"source_id": key, "id": first["id"], "locator": first["locator"]}])
+            derived = k.query_result(result["id"], "SELECT count(*) AS n FROM prior_result", ledger)
+            self.assertEqual(derived["data"]["rows"], [{"n": 1}])
+            self.assertTrue(ledger.allowed(derived))

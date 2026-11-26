@@ -215,16 +215,20 @@ def tool_output(result):
     return result
 
 
+def source_titles(arguments, knowledge):
+    if not isinstance(arguments, dict):
+        return []
+    keys = [arguments.get(k) for k in ("source_id", "left_id", "right_id")]
+    if isinstance(arguments.get("source_ids"), list):
+        keys.extend(arguments["source_ids"])
+    return [knowledge.sources[k]["title"] for k in keys if isinstance(k, str) and k in knowledge.sources]
+
+
 def research_step(name, arguments, result, knowledge):
     step = {"action": ACTIVITIES.get(name, "Research operation"), "status": "completed"}
     if isinstance(result, dict) and "error" in result:
         return {**step, "status": "incomplete", "detail": result["error"][:260]}
-    ids = []
-    if isinstance(arguments, dict):
-        for key in ("source_id", "left_id", "right_id"):
-            ids.append(arguments.get(key))
-        ids.extend(arguments.get("source_ids", []))
-    titles = [knowledge.sources[k]["title"] for k in ids if k in knowledge.sources]
+    titles = source_titles(arguments, knowledge)
     if name == "discover_sources":
         detail = f'{len(result["sources"])} shown · {result["matching_total"]} matching · {result["catalogue_total"]} published'
     elif isinstance(result, list):
@@ -435,9 +439,10 @@ class Companion:
                                 result = {"error": "Tool budget exhausted."}
                             else:
                                 usage["tool_calls"] += 1
-                                yield {"type": "activity", "text": ACTIVITIES.get(name, "Checking a research capability")}
                                 try:
                                     arguments = json.loads(call["arguments"])
+                                    labels = [ACTIVITIES.get(name, "Checking a research capability"), *source_titles(arguments, self.knowledge)]
+                                    yield {"type": "activity", "text": " · ".join(labels)}
                                     result = await self.run_tool(name, arguments, ledger, search_cache, usage, recall, embedding_allowed)
                                 except (KnowledgeError, json.JSONDecodeError) as error:
                                     tool_failures.append(name)
