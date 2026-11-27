@@ -1,0 +1,140 @@
+{
+  "runtime_commit": "754dcda66498e84db9d3b7f159feefa84c3ad898",
+  "checked_documents": 77,
+  "full_editions": 24,
+  "formats": {
+    "PDF": 17,
+    "HTML": 7
+  },
+  "pdf_pages": 907,
+  "ocr_pages": 6,
+  "sections": 8335,
+  "regression_tests_passed": 31,
+  "dispositions_checked_in_live_catalogue": 77,
+  "publication_replay_changed_versions": 0,
+  "prior_components_retaining_original_version": 77,
+  "source_drawer_checks": [
+    "Exact structural heading",
+    "PDF page deep link",
+    "Previous and next section",
+    "OCR-only education law, article 72 on physical PDF page 6"
+  ],
+  "chat_checks": [
+    {
+      "assignment": "constitution",
+      "partial": false,
+      "tool_calls": 2,
+      "tool_failures": [],
+      "evidence": [
+        {
+          "source_id": "r3-found-94c37b5e6b63c89b",
+          "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-13-sp.pdf#page=17",
+          "locator": "PDF p. 17 · §232"
+        }
+      ],
+      "visible_answer": "Under Article 184 (Title XI, PDF p. 17) of Mali’s 2023 Constitution, either the President of the Republic or members of Parliament may initiate a constitutional revision. Both chambers must adopt identical text, with at least two-thirds of the members of each chamber voting in favor. The revision becomes final only when voters approve it in a referendum. 1"
+    },
+    {
+      "assignment": "statistics",
+      "partial": false,
+      "tool_calls": 9,
+      "tool_failures": [],
+      "evidence": [
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=3",
+          "locator": "PDF p. 3 · §7"
+        },
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=7",
+          "locator": "PDF p. 7 · §15"
+        },
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=7",
+          "locator": "PDF p. 7 · §16"
+        },
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=11",
+          "locator": "PDF p. 11 · §37"
+        },
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=11",
+          "locator": "PDF p. 11 · §38"
+        },
+        {
+          "source_id": "r3-found-46d04b3166281bdc",
+          "url": "https://www.instat-mali.org/laravel-filemanager/files/shares/ca/loi-statisitques-publiques_ca.pdf#page=11",
+          "locator": "PDF p. 11 · §39"
+        }
+      ],
+      "visible_answer": "La loi malienne n° 2016-005 régissant les statistiques publiques distingue l’interdiction de divulguer les réponses individuelles et l’interdiction de les utiliser à d’autres fins que la statistique.\n\nNon-divulgation pendant 60 ans — article 1er, point 30, p. 3. Les services qui conservent les questionnaires ne peuvent divulguer les données individuelles qui y figurent avant l’expiration de 60 ans à compter de la réalisation du recensement, de l’enquête ou de l’autre opération statistique. Le secret couvre la vie personnelle et familiale, les faits et comportements d’ordre privé, y compris les renseignements individuels d’ordre économique ou financier. 1\nUsage strictement statistique — article 2, principe 5, p. 7. Les autorités statistiques doivent garantir la confidentialité des réponses et protéger la vie privée ou le secret des affaires des répondants. Les données recueillies sur une personne physique ou morale ne peuvent en aucun cas servir à des fins de répression, à des poursuites judiciaires ni, plus généralement, à des mesures administratives concernant cette personne. Les répondants doivent être informés du but des questions et des mesures de protection adoptées. 2 3\nSanctions et serment — articles 22, 23 et 25, p. 11. L’article 22 renvoie aux peines du Code pénal pour la divulgation de renseignements individuels sur la vie personnelle ou familiale ou sur des faits et comportements privés. L’article 23 soumet les violations du secret statistique aux dispositions pénales relatives à la violation du secret professionnel. L’article 25 impose au personnel technique de prêter serment de respecter le secret statistique avant son entrée en fonction. 4 5 6"
+    },
+    {
+      "assignment": "combined",
+      "partial": false,
+      "tool_calls": 10,
+      "tool_failures": [],
+      "evidence": [
+        {
+          "source_id": "r3-found-94c37b5e6b63c89b",
+          "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-13-sp.pdf#page=2",
+          "locator": "PDF p. 2 · §3"
+        },
+        {
+          "source_id": "r3-found-94c37b5e6b63c89b",
+          "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-13-sp.pdf#page=17",
+          "locator": "PDF p. 17 · §232"
+        },
+        {
+          "source_id": "r3-found-94c37b5e6b63c89b",
+          "url": "https://sgg-mali.ml/JO/2023/mali-jo-2023-13-sp.pdf#page=17",
+          "locator": "PDF p. 17 · §233"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=1",
+          "locator": "PDF p. 1 · §1"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=1",
+          "locator": "PDF p. 1 · §2"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=21",
+          "locator": "PDF p. 21 · §131"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=21",
+          "locator": "PDF p. 21 · §134"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=21",
+          "locator": "PDF p. 21 · §132"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=25",
+          "locator": "PDF p. 25 · §161"
+        },
+        {
+          "source_id": "r3-master-6bc1e9c7ada5747f",
+          "url": "https://cnt-mali.ml/wp-content/uploads/2025/08/20250815-Loi-No.25-038-loi-organique-relative-lois-finances.pdf#page=25",
+          "locator": "PDF p. 25 · §162"
+        }
+      ],
+      "visible_answer": "1. Révision de la Constitution : le vote du Parlement est nécessaire, mais il n’est pas définitif. Selon la Constitution du Mali, promulguée par le décret n° 2023-0401/PT-RM du 22 juillet 2023, l’initiative de la révision appartient concurremment au Président de la République et aux membres du Parlement. Chaque chambre doit ensuite adopter le même texte à la majorité des deux tiers de ses membres. Seule l’approbation par référendum rend la révision définitive. Référence : Constitution, titre XI, art. 184, p. 17 du *Journal officiel* ; décret de promulgation, p. 2. 1 2\n\nCe pouvoir est limité : aucune révision ne peut être engagée ou poursuivie lorsqu’il est porté atteinte à l’intégrité du territoire. La forme républicaine de l’État, la laïcité, le nombre de mandats du Président de la République et le multipartisme ne peuvent faire l’objet d’une révision. Référence : Constitution, art. 185, p. 17. 3\n\n2. Exécution du budget : l’ordonnateur donne l’ordre, le comptable recouvre ou paie. La loi n° 2025-038 du 15 août 2025 portant loi organique relative aux lois de finances confie les opérations d’exécution du budget de l’État aux ordonnateurs et aux comptables publics. Leurs fonctions sont incompatibles : celui qui ordonne une dépense n’est pas celui qui la paie. Référence : loi organique, titre VII, chap. I, art. 63 et règle d’incompatibilité, p. 21. 4 5 6 7\n\nL’ordonnateur gère les crédits dont il a la charge. Il peut, conformément à la réglementation, déléguer ses pouvoirs à des agents publics et leur confier la gestion de tout ou partie de ces crédits. Référence : art. 64, p. 21. 8\nLe comptable public assure le recouvrement des recettes et le paiement des dépenses. Il répond personnellement et pécuniairement des opérations et des contrôles qui lui incombent ; sa responsabilité est notamment engagée lorsqu’une recette n’a pas été recouvrée ou qu’une dépense a été irrégulièrement payée. Référence : art. 81 et 82, p. 25. 9 10"
+    }
+  ],
+  "rollout_observations": [
+    "One source check returned HTTP 502 during rollout. A complete repeat reconciled all 77 document states and reopened late text for every full edition.",
+    "One earlier fast-mode two-document assignment reached the 12-call cap; final-build result recorded above."
+  ]
+}
