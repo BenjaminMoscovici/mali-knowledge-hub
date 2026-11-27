@@ -1,0 +1,10 @@
+{
+  "name": "MKH Master Knowledge Database",
+  "round": 3,
+  "filename": "MKH_Master.sqlite",
+  "sha256": "d60cc8f82bfe512a19fb28df33e15ada7c144bce44104fa5a5b248d86c1adbe4",
+  "scope": "private research catalogue; excluded from runtime source discovery",
+  "logical_sources": 702,
+  "releases": 1695,
+  "requirements_including_inapplicable": 1714
+}
