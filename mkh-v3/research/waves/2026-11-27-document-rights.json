@@ -1,0 +1,221 @@
+[
+  {
+    "source_id": "mli-eu-current-overview",
+    "scope": "whole_work",
+    "upstream_sha256": "b0dd0898fc4ec8f71655a216f33b8037cfa4c82d4822f7fd1a1eb79d1fba4e60",
+    "reuse_url": "https://commission.europa.eu/legal-notice_en",
+    "reuse_sha256": "61722f92921476b0112eee5bbd609aec8cee1bf88ed50e26479067e6b78f1a49",
+    "basis": "CC BY 4.0, European Union-owned web material.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "mli-fao-country-programme-evaluation",
+    "scope": "whole_work",
+    "upstream_sha256": "613189ef71cce98d6143059c9127138ab47cc51cdedb0cba664f7eb1d585e432",
+    "reuse_url": "https://www.fao.org/contact-us/terms/en/",
+    "reuse_sha256": "bb1e3344b3430ca88a3a4d63d168aca005e6d1bc838ef82e0d04c18d7bbe51c4",
+    "basis": "© FAO. Attributed FAO web content for non-commercial products and services under FAO website terms. Original English extracts. No endorsement.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-canada-kenieba",
+    "scope": "whole_work",
+    "upstream_sha256": "7c7d0b1ebba07bc6b8451dc630d71bed2c7d5dc9f63143ad2181603c8e736c54",
+    "reuse_url": "https://www.canada.ca/en/transparency/terms.html",
+    "reuse_sha256": "a29e1214b7c4dce953d162be5e121bef8341791b3d45c4b04fe0c3caf017bc79",
+    "basis": "Government of Canada, Global Affairs Canada. Non-commercial reproduction. Original words, MKH independent of the Government of Canada.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-fao-ipon",
+    "scope": "whole_work",
+    "upstream_sha256": "2beac14bbbda9b6c5a233d9b0f0318587bdd29f29962df007130b6513c3acaa9",
+    "reuse_url": "https://www.fao.org/contact-us/terms/en/",
+    "reuse_sha256": "bb1e3344b3430ca88a3a4d63d168aca005e6d1bc838ef82e0d04c18d7bbe51c4",
+    "basis": "© FAO. Original English web content for non-commercial use, under the FAO terms. No endorsement.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-065813753f8072dd",
+    "scope": "whole_work",
+    "upstream_sha256": "4671b8c9bcc3e5e08539cd143ff4d379b862efa9f7ea457b90937927c2ad9dd2",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-1c6a4bedef500c7b",
+    "scope": "whole_work",
+    "upstream_sha256": "e1beecf244a75aee5b88c569969b3adf0d6a8fdecd897b213b88736e70322ef6",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-254dd3d64feab9ee",
+    "scope": "whole_work",
+    "upstream_sha256": "e67a5382581b93a6c638ed071dbf6f10bcbcda6863e625b4f9d0f5fce4ab3576",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-33333ccd1c65c8b1",
+    "scope": "whole_work",
+    "upstream_sha256": "f92d594fe6a62926caa2a40f1615907eeb6f41017d34f95c4e7562d128d88154",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-3e9bf72dfa1473b9",
+    "scope": "whole_work",
+    "upstream_sha256": "b25a92d5ece1629ba46c96bd9c5182967a91b3ef63b34ba65fb131e06b20b12c",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-3f0c17df7b68f15d",
+    "scope": "whole_work",
+    "upstream_sha256": "4672ee531362d150d029db470ead05fa53e0e5597374bf24cbb63dd374da6218",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-46d04b3166281bdc",
+    "scope": "whole_work",
+    "upstream_sha256": "245bb0273d986607b2a813a4a64712396a05c5789d2446e30930cfe9d0d74e17",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-56678bbf19e690ef",
+    "scope": "whole_work",
+    "upstream_sha256": "76648a9de636f48f2a582694eaaa526ca553603966c8c7b14bec9da6f713bc0f",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-5b47e3790b3dbae1",
+    "scope": "whole_work",
+    "upstream_sha256": "26004e4fbffa8317041c6c2d3a56cb783aaf71398e541539d0d817da1bb6587e",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-5ce9e012b1922e81",
+    "scope": "whole_work",
+    "upstream_sha256": "98f7c098c53cc66b446e930d56ffdbd5d015ad7e405a228eb16e2a4d7d70cfb9",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-6a1282fd94b96181",
+    "scope": "whole_work",
+    "upstream_sha256": "9776e3f7ec6810ec611f6a3312d913141239b86699ba39c1413b2ed9aca35ab8",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-6c1f87846b919f21",
+    "scope": "whole_work",
+    "upstream_sha256": "95fde1ad9a5f60dfb8596f7a75d5f65863ebbe16b860aed0f6a8be7b63eeb2d9",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-94c37b5e6b63c89b",
+    "scope": "whole_work",
+    "upstream_sha256": "df43f81ecaaf8472853188bbac1571f9d1e7620e8d0273635c49fe0ed40040ea",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-cdc372946c7570fd",
+    "scope": "whole_work",
+    "upstream_sha256": "a2fd9728605cfcdf654166755266b6f135398c942a1a00fdf281c2df7b5f3db3",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-found-fce04d9aa48a26bd",
+    "scope": "whole_work",
+    "upstream_sha256": "d1cf09c5070ca9531ec92488241a6a3f82825e3d5ee7a40d87825976fdbda280",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-govdec",
+    "scope": "whole_work",
+    "upstream_sha256": "5b643fdb627a86fbbcd49a9234bf0891078ba31db6f882630b2ab9366f9045e6",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng",
+    "body_xpath": "//*[contains(concat(\" \",normalize-space(@class),\" \"),\" elementor-widget-theme-post-content \")]"
+  },
+  {
+    "source_id": "r3-instat",
+    "scope": "whole_work",
+    "upstream_sha256": "5f0e43e185108e9b0097021a82971b6772c30056f3d42b45efd8297ff6ca675f",
+    "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "reuse_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+    "basis": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-master-6bc1e9c7ada5747f",
+    "scope": "whole_work",
+    "upstream_sha256": "93f85de1617a49d0f6ba0a8dbdc97425e591feed147f2311700d372871a7008c",
+    "reuse_url": "https://sgg-mali.ml/JO/2026/mali-jo-2026-07.pdf",
+    "reuse_sha256": "b859e89f828946697288631ac54da455f974b16629f3c5deb271b035e1467c9e",
+    "basis": "République du Mali, ordonnance 2026-015/PT-RM, article 12 : texte officiel de nature législative ou administrative. Source et édition indiquées.",
+    "ocr_language": "fra+eng"
+  },
+  {
+    "source_id": "r3-master-89021c10e0ae50bd",
+    "scope": "whole_work",
+    "upstream_sha256": "ac9c60ffdb417aa5367ba5ecf4935b0a20b26f641ce459da5ad2b3bfea13daa1",
+    "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "reuse_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+    "basis": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "ocr_language": "fra+eng",
+    "body_xpath": "//*[contains(concat(\" \",normalize-space(@class),\" \"),\" page-catalog \")]"
+  },
+  {
+    "source_id": "r3-micro",
+    "scope": "whole_work",
+    "upstream_sha256": "58b7f260a757fc0dbdd9c82c8718919d15cb45cd8eaaec5c42a95302ccf62119",
+    "reuse_url": "https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "reuse_sha256": "1afb991bdf58afb6ddd6fa49ee85ec96fe8b4738e7d840cad0f87ddefa67ad29",
+    "basis": "Ce produit a été adapté à partir des informations de l’Institut national de la statistique du Mali, qui sont sous licence conformément à l’Accord de licence de données ouvertes de l’INSTAT. Conditions d’utilisation : cette œuvre est sous licence dans le cadre d’un accord de licence de données ouvertes. Elle est attribuée à l’INSTAT. https://www.instat-mali.org/laravel-filemanager/files/shares/doc/conditions-utilisation-donnees-ouvertes_doc.pdf",
+    "ocr_language": "fra+eng",
+    "body_xpath": "//*[contains(concat(\" \",normalize-space(@class),\" \"),\" page-catalog \")]"
+  }
+]

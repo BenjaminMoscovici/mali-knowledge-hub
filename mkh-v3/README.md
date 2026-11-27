@@ -256,3 +256,9 @@ python scripts/build_document.py manifest.json original rights.json terms canon 
 ```
 
 Deploy the resulting package before promoting the new immutable manifest through the V3.1 publication pipeline. Keep the same source ID and Canon edition relationship. Regenerate on changes to the original, rights, or extractor. Public reachability and permission to extract individual facts do not establish permission for a complete work. When the publication is a web profile, the searchable edition is the profile itself. PDF citations refer to physical file pages. Tables and graphics should be checked against the facsimile before interpreting column alignment, maps or numerical series.
+
+For a Canon wave, pass the manifest directory, a directory of original and terms files named by SHA-256, an array of rights receipts, the Canon directory and an empty output directory. The batch command emits qualified manifests and one disposition per published document. Repeated editions share the same stored package. It can process a wave before any live publication.
+
+```sh
+python scripts/build_document_batch.py manifests assets whole-work-rights.json canon qualified-wave
+```

@@ -257,6 +257,15 @@ class Knowledge:
         entries = self.index.find_sources(query, limit, kind, affinities)
         return [self.describes(entry["source"]) for entry in entries]
 
+    @staticmethod
+    def document_coverage(source):
+        if source["type"] != "document":
+            return {}
+        snapshot = source.get("document_snapshot")
+        if snapshot:
+            return {"document_coverage":"full text","sections":snapshot["sections"],"pdf_pages":snapshot.get("pages")}
+        return {"document_coverage":"published passages"}
+
     def source_page(self, query="", kind=None, offset=0, page_size=24, affinities=None):
         if type(offset) is not int or offset < 0 or (kind is not None and kind not in SOURCE_TYPES):
             raise KnowledgeError("Use a nonnegative source offset and a registered source type.")
@@ -270,7 +279,7 @@ class Knowledge:
         fields = ("id", "title", "type", "publisher", "period", "geography", "description", "table", "entity_keys")
         return {"catalogue_total": len(self.sources), "matching_total": len(matches), "offset": offset,
                 "next_offset": offset + len(page) if offset + len(page) < len(matches) else None,
-                "sources": [{**{k:s[k] for k in fields if k in s}, "operations":self.operations(s)} for s in page]}
+                "sources": [{**{k:s[k] for k in fields if k in s}, "operations":self.operations(s), **self.document_coverage(s)} for s in page]}
 
     @staticmethod
     def operations(source):

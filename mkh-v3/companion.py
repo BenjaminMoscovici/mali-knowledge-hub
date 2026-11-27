@@ -28,7 +28,7 @@ replacement. Include the user's exact short quotation. Use an empty list for ord
 no change. Do not store researched facts, model assumptions, assistant wording or suggestions.
 For open-ended analytical assignments, give a decision-relevant conclusion, separate observations,
 interpretations and recommended action, and surface conflicts or gaps that matter to the decision.
-For multi-source decisions use compare_sources with one focused query to inspect the selected releases together. Use its schemas, citable matches and scope information directly. Request more evidence only for unresolved claims. When the
+For multi-source decisions use compare_sources with one focused query to inspect the selected releases together. Use its schemas, citable matches and scope information directly. For an in-document question, prefer a matching full-text edition when discovery also finds a narrower extract of the same work. Request more evidence only for unresolved claims. When the
 application supplies a scope review, use it to check the actual dates, geography, units, definitions
 and observation types behind the conclusion. Separate a programme objective from delivery and outcomes.
 When a decision turns on programme delivery, use the outcome alignment in the scope review:
@@ -164,8 +164,8 @@ TOOL_SPECS = {
         {"source_id": TEXT, "key": TEXT},
     ),
     "read_passage": (
-        "Open original context using the issued locator, next_locator or previous_locator and character offset (usually zero).",
-        {"source_id": TEXT, "locator": TEXT, "offset": INTEGER},
+        "Open a published locator at a character offset (usually zero). Set context to adjacent to also read both neighboring full-text sections as separate citations, or null for just the locator.",
+        {"source_id": TEXT, "locator": TEXT, "offset": INTEGER, "context": OPTIONAL_TEXT},
     ),
     "link_records": (
         "Inner-join two published tables on a shared entity_keys namespace. Run a SQLite SELECT on linked. "
@@ -352,6 +352,8 @@ class Companion:
             arguments = {"offset": 0, **arguments}
         if name == "compare_sources" and isinstance(arguments, dict):
             arguments = {"query": None, **arguments}
+        if name == "read_passage" and isinstance(arguments, dict):
+            arguments = {"context":None, **arguments}
         required = TOOL_SPECS[name][1]
         if not isinstance(arguments, dict) or set(required) != set(arguments):
             raise KnowledgeError("Tool parameters do not match the capability.")
@@ -395,8 +397,9 @@ class Companion:
                     profile["dimension_examples"] = {
                         col: values["examples"][:5] for col, values in k.profiles[key].items()
                     }
+                profile.update(k.document_coverage(source))
                 if arguments["query"]:
-                    hits = k.search_documents(arguments["query"], key, ledger, limit=1)
+                    hits = k.search_documents(arguments["query"], key, ledger, limit=2 if source.get("document_snapshot") else 1)
                     for entry in k.index.rank(arguments["query"], "record", 2, key):
                         row = entry["payload"]
                         hits.append(ledger.add(source, "source_record", row["locator"], row))
@@ -418,7 +421,19 @@ class Companion:
         if name == "read_definition":
             return k.definition(**arguments, ledger=ledger)
         if name == "read_passage":
-            return k.read_passage(**arguments, ledger=ledger)
+            context = arguments["context"]
+            if context not in (None, "adjacent"):
+                raise KnowledgeError("Use adjacent or null for passage context.")
+            key = arguments["source_id"]
+            item = k.read_passage(key, arguments["locator"], arguments["offset"], ledger)
+            if context != "adjacent":
+                return item
+            data = item["data"]
+            result = [item]
+            for side in ("previous_locator","next_locator"):
+                if data.get(side):
+                    result.append(k.read_passage(key, data[side], 0, ledger))
+            return result
         if name == "link_records":
             return await asyncio.to_thread(k.link_records, **arguments, ledger=ledger)
         if name == "query_result":
