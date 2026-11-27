@@ -195,7 +195,15 @@ class Knowledge:
             if "document_snapshot" in source:
                 from document_store import load_document
                 full = load_document(directory, source)
-                self.sources[key] = {**source, "passages": [*full, *source.get("passages", [])]}
+                # Keep independently written factual extracts; omit a legacy transcription
+                # already present on the same original page.
+                page_text = defaultdict(list)
+                for passage in full:
+                    page_text[passage["page"]].append(passage["text"])
+                normalized = {page:" ".join(normalize(" ".join(text)).split()) for page,text in page_text.items()}
+                extra = [p for p in source.get("passages", [])
+                         if " ".join(normalize(p["text"]).split()) not in normalized.get(p.get("page"), "")]
+                self.sources[key] = {**source, "passages": [*full, *extra]}
         self.profiles = {}
         for key, source in self.sources.items():
             if key in self.table_files:

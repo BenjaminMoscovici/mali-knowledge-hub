@@ -58,12 +58,24 @@ def ocr(page, language):
     return [(" ".join(words), 0) for words in lines.values()]
 
 
+def running_label(value):
+    return re.sub(r"\d+", "#", " ".join(value.casefold().split()))
+
+
 def pdf_units(raw, language):
     with fitz.open(stream=raw, filetype="pdf") as doc:
         outline = {}
         for level, label, number in doc.get_toc():
             if number > 0:
                 outline.setdefault(number, []).append((level, label))
+        margin_frequency = Counter()
+        for page in doc:
+            margin_lines = set()
+            for x0,y0,x1,y1,text,*_ in page.get_text("blocks"):
+                if y1 < page.rect.height*.15 or y0 > page.rect.height*.85:
+                    margin_lines.update(running_label(line) for line in text.splitlines())
+            margin_frequency.update(margin_lines)
+        repeated = {line for line,n in margin_frequency.items() if n >= max(3,len(doc)*.28)}
         for page in doc:
             blocks = page.get_text("dict", flags=fitz.TEXTFLAGS_DICT & ~fitz.TEXT_PRESERVE_IMAGES)["blocks"]
             lines = []
@@ -74,7 +86,11 @@ def pdf_units(raw, language):
                     value = "".join(s["text"] for s in spans).strip()
                     if value:
                         size = max(s["size"] for s in spans)
-                        lines.append((value, size))
+                        # Preserve running headers as text without treating them as section titles.
+                        y0,y1=line["bbox"][1],line["bbox"][3]
+                        in_margin = y1 < page.rect.height*.15 or y0 > page.rect.height*.85
+                        style_size = 0 if in_margin and running_label(value) in repeated else size
+                        lines.append((value, style_size))
                         sizes.append(size)
             method = "embedded text"
             body = " ".join(v for v,_ in lines)
@@ -163,10 +179,15 @@ def build(source, raw, rights, terms):
         for line, size in lines:
             label=LABEL.match(line)
             level = -size if size<0 else LEVEL.get(label[1].lower(),5) if label else 0
-            if not level and normal and len(line)<110 and size>normal*1.23:
+            if (not level and normal and len(line)<110 and size>normal*1.23
+                    and len(re.findall(r"[^\W\d_]", line)) >= 4):
                 level=4
             if level:
-                flush();heading(level,line.split(" : ",1)[0] if label and label[1].lower()=="article" else line)
+                flush()
+                title = line
+                if label and label[1].lower() == "article":
+                    title = re.split(r"\s*[:–]\s*|\.\s+", line, maxsplit=1)[0]
+                heading(level,title)
             buf.append(line)
         flush()
     if not sections:raise ValueError("The original contained no searchable text")
