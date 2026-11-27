@@ -254,10 +254,10 @@ class Knowledge:
             matches = [self.sources[key] for key in sorted(self.sources)
                        if not kind or self.sources[key]["type"] == kind]
         page = matches[offset:offset + page_size]
-        fields = ("id", "title", "type", "publisher", "period", "geography", "description")
+        fields = ("id", "title", "type", "publisher", "period", "geography", "description", "table", "entity_keys")
         return {"catalogue_total": len(self.sources), "matching_total": len(matches), "offset": offset,
                 "next_offset": offset + len(page) if offset + len(page) < len(matches) else None,
-                "sources": [{**{k:s[k] for k in fields}, "operations":self.operations(s)} for s in page]}
+                "sources": [{**{k:s[k] for k in fields if k in s}, "operations":self.operations(s)} for s in page]}
 
     @staticmethod
     def operations(source):

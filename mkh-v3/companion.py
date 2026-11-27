@@ -145,9 +145,9 @@ TOOL_SPECS = {
         {"name": TEXT, "level": OPTIONAL_TEXT},
     ),
     "query_data": (
-        "Run bounded SQLite SELECT or nonrecursive CTE over selected approved table IDs. "
+        "Run bounded SQLite SELECT or nonrecursive CTE on one approved table. Use link_records for an identifier join. "
         "Returns an evidence ID, SQL, result rows and input releases. Include id in row results for individual locators.",
-        {"source_ids": {"type": "array", "items": TEXT}, "sql": TEXT},
+        {"source_ids": {"type": "array", "items": TEXT, "minItems": 1, "maxItems": 1}, "sql": TEXT},
     ),
     "recall_work": (
         "Find previous work, instructions, evidence IDs and deliverables within this same assignment. "
