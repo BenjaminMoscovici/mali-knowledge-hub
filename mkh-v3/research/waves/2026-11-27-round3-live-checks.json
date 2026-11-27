@@ -1,0 +1,156 @@
+{
+  "verified_on": "2026-11-27",
+  "runtime_commit": "1dd7fa0c5ac3e50c59ed6e70a8325a13036a01a8",
+  "catalogue_components": 101,
+  "previous_components_retained": 20,
+  "new_component_drawers_verified": 81,
+  "new_native_table_rows": 501952,
+  "new_document_passages": 113,
+  "candidate_outcomes": {
+    "integrated": 96,
+    "skipped": 58,
+    "blocked": 171
+  },
+  "idempotence": "Replayed the full immutable publication packet; identical active version and revision IDs for all 101 components.",
+  "guest_chat_tests": [
+    {
+      "test": "market",
+      "prompt": "Au marché de Bamako, quels étaient les prix de détail du mil et du sorgho en janvier 2003 dans les données WFP ? Donne les deux prix au kg en FCFA, leur écart et la source originale.",
+      "answer": "Au marché de Bamako, le 15 janvier 2003, le **mil coûtait 185,42 FCFA/kg** au détail, contre **176,25 FCFA/kg pour le sorgho**. [[E-77a71b822258abf4]] Le mil était donc **plus cher de 9,17 FCFA/kg**. [[E-de3ea2bfdcda00e1]]\n\n**Source originale :** base de prix du Programme alimentaire mondial (WFP), [fichier CSV des prix au Mali sur HDX](https://data.humdata.org/dataset/d73f8595-0b0b-4b64-91b3-986b1cad5ae6/resource/e7489e71-2c7b-48d4-8ae7-f378b735dcba/download/wfp_food_prices_mli.csv), lignes 3 (mil) et 4 (sorgho).",
+      "evidence": [
+        {
+          "source_id": "mli-wfp-market-prices",
+          "locator": "Reproducible SQL over approved release snapshots"
+        },
+        {
+          "source_id": "mli-wfp-market-prices",
+          "locator": "Reproducible SQL over approved release snapshots"
+        }
+      ],
+      "tool_calls": 5,
+      "tool_failures": [
+        "query_data"
+      ],
+      "partial": false,
+      "estimated_model_usd": 0.113135
+    },
+    {
+      "test": "health",
+      "prompt": "For the October 2024 HeRAMS Mali update, how many health facilities were assessed against the targeted frame, and can we infer what share of the population had access to a functioning facility? Give the as-of date and cite the source.",
+      "answer": "As of **17 October 2024**, WHO’s [HeRAMS Mali update, p. 7](https://www.afro.who.int/sites/default/files/2024-11/herams_mali_status_update_summary_report_2024-10.pdf#page=7) reported that **3,139 of the 3,335 targeted health facilities had been assessed**. Verification was still ongoing. [[E-a8f20ec338962b42]]\n\n**No population-access share can be inferred from those counts.** They measure how many targeted facilities were assessed, not how many were functioning or how many people could reach a functioning facility. [[E-a8f20ec338962b42]]",
+      "evidence": [
+        {
+          "source_id": "r3-master-9846fa28dfb57e8c",
+          "locator": "PDF p. 7 / Avertissement et champ de l’évaluation"
+        }
+      ],
+      "tool_calls": 3,
+      "tool_failures": [],
+      "partial": false,
+      "estimated_model_usd": 0.060671
+    },
+    {
+      "test": "climate",
+      "prompt": "Compare the CHIRPS rainfall series for Mali with the WorldPop 2020 raster available here. What do their dates, geographic units and units of measurement allow us to compare? Could either establish how many people have drinking-water access? Cite both datasets.",
+      "answer": "**The datasets can help estimate how many people lived in areas with below-average rainfall in 2020. Neither dataset, alone or combined, can establish how many people had drinking-water access.**\n\n- **CHIRPS rainfall indicators for Mali** (Climate Hazards Center, UC Santa Barbara, and WFP) report rainfall for roughly ten-day periods beginning from 1 January 1981 through 11 November 2026. Each estimate is for a WFP administrative area at level 1 or 2. Rainfall and its long-term average are measured in millimetres; rainfall anomaly indicators are expressed as percentage indices. [[E-d396de7cd39f4bdd]]\n- **WorldPop’s *Mali — Spatial Distribution of Population, 2020* (R2025A v1)** estimates **people per grid cell** on a 30-arc-second grid (nominally 1 km). It is a modelled population snapshot for 2020, not a census count or a population series spanning the CHIRPS record. [[E-cbc380f1e0d15e7f]]\n\nFor a comparison, choose a ten-day period in 2020 and identify areas where CHIRPS rainfall was below the long-term average for that period. Then aggregate WorldPop cells to the **same WFP boundaries**, using one administrative level so people are not counted twice. The result estimates residents of those areas; it does not show the rainfall at each home or where those residents lived in other years. [[E-d396de7cd39f4bdd]] [[E-cbc380f1e0d15e7f]]\n\nDrinking-water access is a different measure: rainfall does not identify the drinking-water service people use, and WorldPop does not distinguish people with access from those without it. An access count would require a separate household survey or service-coverage estimate for a defined level of drinking-water service, matched to the relevant population, place and year. [[E-d396de7cd39f4bdd]] [[E-cbc380f1e0d15e7f]]",
+      "evidence": [
+        {
+          "source_id": "mli-chirps-rainfall",
+          "locator": "Published definition / rfh"
+        },
+        {
+          "source_id": "mli-inv-000123",
+          "locator": "Published definition / population_estimate"
+        }
+      ],
+      "tool_calls": 7,
+      "tool_failures": [
+        "query_data"
+      ],
+      "partial": false,
+      "estimated_model_usd": 0.123098
+    },
+    {
+      "test": "sikasso",
+      "prompt": "Dans le schéma de Sikasso, quels besoins journaliers en eau le tableau 121 projette-t-il pour 2035, pour les centres semi-urbains et urbains puis au total ? Peut-on en déduire le pourcentage de population effectivement desservie ? Cite le tableau.",
+      "answer": "Pour 2035, le [tableau 121 du Schéma régional d’aménagement du territoire de Sikasso](https://dnat.gouv.ml/wp-content/uploads/2017/04/SRAT-Sikasso.pdf#page=280) (avril 2011, p. 280 du PDF) projette, dans le scénario aménagé, **3 265 m³/jour** pour les centres semi-urbains et **417 300 m³/jour** pour les centres urbains, soit **420 565 m³/jour au total**. [[E-f21dd38d1be86266]]\n\n**Non**, on ne peut pas en déduire le pourcentage de population effectivement desservie. Le tableau estime les besoins en eau à partir d’une projection démographique ; il ne mesure pas le nombre de personnes réellement desservies, qu’il faudrait rapporter à la population totale du même périmètre à la même date. [[E-f21dd38d1be86266]]",
+      "evidence": [
+        {
+          "source_id": "r3-found-8339050b54634150",
+          "locator": "PDF p. 280 / Tableau 121, besoins journaliers projetés"
+        }
+      ],
+      "tool_calls": 3,
+      "tool_failures": [],
+      "partial": false,
+      "estimated_model_usd": 0.055496
+    },
+    {
+      "test": "projects",
+      "prompt": "For a portfolio review, how many Mali World Bank project records can be matched to Bank-reported IATI activities by project ID? Of the matched projects, what does the independent review conclude about the outcome of P144442? Explain the denominator and cite the original evidence.",
+      "answer": "**36 of 215 Mali World Bank project records** matched Bank-reported IATI activities by exact World Bank project ID in the 27 November 2026 snapshots. All 36 distinct IATI activities matched one project each; 179 Bank project records had no match in this IATI extract. [[E-cf9cbc2f79bcae4d]]\n\nThe **215** denominator is the set of World Bank project profiles whose country field was exactly *Mali*, not all 277 search results. It excludes regional operations but includes closed and pipeline projects, so it is not a count of active projects. On the IATI side, the Bank’s 136 source rows included repeated sector rows; counting each activity ID once yielded 36 activities for publisher 44000. [[E-cf9cbc2f79bcae4d]]\n\n**P144442 — Mali Reconstruction and Economic Recovery — had a “Moderately Satisfactory” outcome.** The Bank project record matches IATI activity `44000-P144442` (CSV rows 13549–13552). [[E-12e6ce36be3079e4]] [[E-c248c772db370b24]] The rating comes from the Independent Evaluation Group’s review **ICRR0023565**, §11, PDF p. 16, *Outcome* row, IEG column. [[E-e338e5addb415ad2]] IEG found that 86% of productive assets remained in use, below the revised 95% target (p. 9), and rated efficiency *Modest*, noting delivery delays and a closing-date extension of almost four years (p. 11). [[E-28b0797d3049b6e7]] [[E-da290e718d4b1d88]]",
+      "evidence": [
+        {
+          "source_id": "mli-world-bank-v3",
+          "locator": "Reproducible SQL over approved release snapshots"
+        },
+        {
+          "source_id": "mli-world-bank-v3",
+          "locator": "World Bank v3 API / projects / P144442"
+        },
+        {
+          "source_id": "mli-iati-worldbank",
+          "locator": "iati-activities-in-mali-no-location-information.csv / CSV rows 13549,13550,13551,13552"
+        },
+        {
+          "source_id": "mli-ieg-p144442",
+          "locator": "ICRR0023565 / PDF p. 16 / §11 Ratings / Outcome / IEG column"
+        },
+        {
+          "source_id": "mli-ieg-p144442",
+          "locator": "IEG ICRR0023565 / P144442 / PDF page 9"
+        },
+        {
+          "source_id": "mli-ieg-p144442",
+          "locator": "IEG ICRR0023565 / P144442 / PDF page 11"
+        }
+      ],
+      "tool_calls": 7,
+      "tool_failures": [],
+      "partial": false,
+      "estimated_model_usd": 0.159814
+    },
+    {
+      "test": "nutrition",
+      "prompt": "Using the Mali SMART 2018 and HeRAMS 2024 reports, compare what each study actually measured. Give the July–August 2018 acute malnutrition prevalence for Mopti and Mali, and the October 2024 health facility assessment counts. Could either establish current treatment coverage in Mopti? Cite the original pages.",
+      "answer": "**No. Neither report establishes current acute malnutrition treatment coverage in Mopti.** SMART measured how common malnutrition was; HeRAMS monitored health resources and service availability. Neither measured what share of eligible cases in Mopti received treatment.\n\n- **Mali SMART 2018 (PDF p. 10):** In the July–August 2018 anthropometric survey, global acute malnutrition prevalence was **8.9% in Mopti** and **10.0% nationally**. Severe acute malnutrition prevalence was **1.6% in Mopti** and **2.0% nationally**. These are prevalence estimates for the survey period, not treatment rates. [[E-727bf5ce73a6b2d4]]\n- **WHO HeRAMS Mali 2024 (PDF p. 7):** As of **17 October 2024**, HeRAMS had assessed **3,139 of 3,335 targeted health facilities** across Mali. The assessment also included **3,398 community health workers**, counted separately from facilities. Verification was still underway. The facility counts describe the reach of the assessment, not how many facilities were functioning or how many patients received care. [[E-a8f20ec338962b42]]\n\nTo establish current treatment coverage, the numerator would be eligible cases receiving treatment in Mopti and the denominator would be all eligible cases in Mopti, including untreated cases, for the same period and case definition.",
+      "evidence": [
+        {
+          "source_id": "r3-smart",
+          "locator": "PDF p. 10 / Récapitulatif, prévalence de la malnutrition aiguë"
+        },
+        {
+          "source_id": "r3-master-9846fa28dfb57e8c",
+          "locator": "PDF p. 7 / Avertissement et champ de l’évaluation"
+        }
+      ],
+      "tool_calls": 2,
+      "tool_failures": [],
+      "partial": false,
+      "estimated_model_usd": 0.058466
+    }
+  ],
+  "regression_tests": {
+    "passed": 30,
+    "suite": "unittest; isolated copy of current V3.1 code populated with the historical test fixtures required by the suite."
+  },
+  "original_reference_negative_tests": [
+    "Unlinked original URL rejected",
+    "Malformed landing-page SHA-256 rejected"
+  ],
+  "v3_fallback": {
+    "commit": "4ab7c795f83660574e73fa9930d071b8d5aacaeb",
+    "published_components": 508,
+    "status": "ok"
+  }
+}

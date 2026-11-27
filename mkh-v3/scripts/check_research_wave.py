@@ -6,7 +6,9 @@ import json
 import sqlite3
 import sys
 from contextlib import closing
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urljoin
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from knowledge import Evidence, Knowledge, https_url
@@ -15,6 +17,36 @@ from knowledge import Evidence, Knowledge, https_url
 def file_sha256(path):
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+class ResourceLinks(HTMLParser):
+    def __init__(self, base):
+        super().__init__()
+        self.base = base
+        self.links = set()
+
+    def handle_starttag(self, tag, attrs):
+        href = dict(attrs).get("href")
+        if tag == "a" and href:
+            self.links.add(urljoin(self.base, href))
+
+
+def original_anchor(source, assets):
+    research = source["research"]
+    if "anchor_url" not in research:
+        return source["url"]
+    anchor = research["anchor_url"]
+    digest = research["anchor_sha256"]
+    if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+        raise ValueError("Invalid landing-page digest.")
+    page = assets / digest
+    if not https_url(anchor) or file_sha256(page) != digest:
+        raise ValueError("Original landing-page verification failed.")
+    links = ResourceLinks(anchor)
+    links.feed(page.read_text(encoding="utf-8", errors="replace"))
+    if not https_url(source["url"]) or source["url"] not in links.links:
+        raise ValueError("The registered landing page does not link the selected original.")
+    return anchor
 
 
 def check(wave, catalogue, packet, assets):
@@ -40,7 +72,7 @@ def check(wave, catalogue, packet, assets):
             anchor = research["anchor_release_id"]
             if not db.execute(
                 "select 1 from release r join location l on l.release=r.id where r.source=? and r.id=? and l.url=?",
-                (owner, anchor, source["url"]),
+                (owner, anchor, original_anchor(source, assets)),
             ).fetchone():
                 raise ValueError(f"Unverified edition or original reference: {native_id}")
             if owner != candidate and not db.execute(
