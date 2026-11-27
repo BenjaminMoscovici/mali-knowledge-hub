@@ -84,7 +84,7 @@ class SearchIndex:
                         * f * 2.2 / (f + scale) for t in terms if (f := e["counts"].get(t)))
             if score:
                 lexical[i] = score
-        semantic = {i: affinities[i] for i in candidates if affinities is not None and affinities[i] >= 0.26}
+        semantic = {i: affinities[i] for i in candidates if affinities is not None and affinities.get(i, 0) >= 0.26}
         # For discovery, take the best hit per release in each ranking. A source
         # with multiple formats or many similar rows still gets one vote per channel.
         ranks = Counter()

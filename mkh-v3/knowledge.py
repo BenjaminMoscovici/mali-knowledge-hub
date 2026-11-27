@@ -386,6 +386,7 @@ class Knowledge:
                    for k, v in source["columns"].items()}
         relation = {"entity": entity, "left": left_id, "left_key": lk, "right": right_id,
                     "right_key": rk, "method": "inner equality on the registered nonempty identifier",
+                    "left_total_rows": len(left["records"]), "right_total_rows": len(right["records"]),
                     "matched_pairs": len(pairs), "matched_identifiers": len(shared),
                     "left_unmatched_rows": len(left["records"]) - sum(left_counts[key] for key in shared),
                     "right_unmatched_rows": len(right["records"]) - sum(len(index[key]) for key in shared),

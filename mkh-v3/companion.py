@@ -28,7 +28,7 @@ replacement. Include the user's exact short quotation. Use an empty list for ord
 no change. Do not store researched facts, model assumptions, assistant wording or suggestions.
 For open-ended analytical assignments, give a decision-relevant conclusion, separate observations,
 interpretations and recommended action, and surface conflicts or gaps that matter to the decision.
-For multi-source decisions compare sources before selecting records when scope matters. When the
+For multi-source decisions use compare_sources with one focused query to inspect the selected releases together. Use its schemas, citable matches and scope information directly. Request more evidence only for unresolved claims. When the
 application supplies a scope review, use it to check the actual dates, geography, units, definitions
 and observation types behind the conclusion. Separate a programme objective from delivery and outcomes.
 When a decision turns on programme delivery, use the outcome alignment in the scope review:
@@ -129,8 +129,9 @@ TOOL_SPECS = {
     ),
     "compare_sources": (
         "Compare 2 to 6 published source IDs before combining evidence. Returns declared geography, grain, units, "
-        "meaning, observation basis, release-window overlap and registered record keys. For actual values query the sources.",
-        {"source_ids": {"type": "array", "items": TEXT}},
+        "meaning, observation basis, usable table schemas and registered keys in one lookup. Supply a focused query for "
+        "citable matching records and passages per release. These ranked hits are not exhaustive counts.",
+        {"source_ids": {"type": "array", "items": TEXT, "minItems": 2, "maxItems": 6}, "query": OPTIONAL_TEXT},
     ),
     "inspect_source": (
         "Read the publisher, release, definitions, scope, limitations and table schema or series for a source ID.",
@@ -168,7 +169,7 @@ TOOL_SPECS = {
     ),
     "link_records": (
         "Inner-join two published tables on a shared entity_keys namespace. Run a SQLite SELECT on linked. "
-        "Left fields start with l_, right with r_. Include IDs or locators for individual matches.",
+        "The same result includes native row totals, matched IDs and unmatched rows on each side. Left fields start with l_, right with r_. Include IDs or locators for individual matches.",
         {"left_id": TEXT, "right_id": TEXT, "entity": TEXT, "sql": TEXT},
     ),
     "query_result": (
@@ -349,6 +350,8 @@ class Companion:
             raise KnowledgeError("Unknown research capability.")
         if name == "discover_sources" and isinstance(arguments, dict):
             arguments = {"offset": 0, **arguments}
+        if name == "compare_sources" and isinstance(arguments, dict):
+            arguments = {"query": None, **arguments}
         required = TOOL_SPECS[name][1]
         if not isinstance(arguments, dict) or set(required) != set(arguments):
             raise KnowledgeError("Tool parameters do not match the capability.")
@@ -371,7 +374,7 @@ class Companion:
         affinities = None
         if lookup and self.semantic and usage is not None:
             affinities = await self.semantic.search(arguments["query"], search_cache, usage, embedding_allowed,
-                kind={"search_documents":"passage", "search_records":"record"}.get(name),
+                kind={"discover_sources":"source", "search_documents":"passage", "search_records":"record"}[name],
                 source_id=arguments.get("source_id"), source_type=arguments.get("kind"))
         if name == "discover_sources":
             page = k.source_page(**arguments, page_size=6 if arguments["query"].strip() else 24, affinities=affinities)
@@ -383,7 +386,24 @@ class Companion:
                 raise KnowledgeError("Select two to six distinct published sources.")
             sources = [k.source(key) for key in ids]
             ledger.consulted.update({key: k.stamps[key] for key in ids})
-            return compare(sources)
+            report = compare(sources)
+            for source, profile in zip(sources, report["sources"]):
+                key = source["id"]
+                if source.get("table"):
+                    profile.update(table=source["table"], columns=source["columns"],
+                                   entity_keys=source.get("entity_keys", {}))
+                    profile["dimension_examples"] = {
+                        col: values["examples"][:5] for col, values in k.profiles[key].items()
+                    }
+                if arguments["query"]:
+                    hits = k.search_documents(arguments["query"], key, ledger, limit=1)
+                    for entry in k.index.rank(arguments["query"], "record", 2, key):
+                        row = entry["payload"]
+                        hits.append(ledger.add(source, "source_record", row["locator"], row))
+                    profile["ranked_evidence"] = [
+                        {"id": item["id"], "locator": item["locator"], "data": item["data"]} for item in hits
+                    ]
+            return report
         if name == "inspect_source":
             source = k.inspect(arguments["source_id"])
             ledger.consulted[source["id"]] = k.stamps[source["id"]]
