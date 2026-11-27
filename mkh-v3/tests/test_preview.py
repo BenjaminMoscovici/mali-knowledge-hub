@@ -116,7 +116,7 @@ class CompanionEntryPointTest(unittest.TestCase):
                 return httpx.Response(200, json={
                     "id": "test-user", "aud": "authenticated", "email_confirmed_at": "2026-10-01",
                 })
-            if path == "/rest/v1/mkh_v3_conversations":
+            if path == "/rest/v1/mkh_v31_conversations":
                 if request.method == "GET":
                     return httpx.Response(200, json=list(stored.values()))
                 if request.method == "POST":
@@ -126,9 +126,9 @@ class CompanionEntryPointTest(unittest.TestCase):
                 entry = next(iter(stored.values()))
                 entry.update(payload)
                 return httpx.Response(200, json=[entry])
-            if path == "/rest/v1/mkh_v3_memory":
+            if path == "/rest/v1/mkh_v31_memory":
                 return httpx.Response(200, json=[])
-            if path == "/rest/v1/mkh_v3_attempts":
+            if path == "/rest/v1/mkh_v31_attempts":
                 return httpx.Response(200, json=[]) if request.method == "GET" else httpx.Response(201)
             if request.url.host == "api.worldbank.org":
                 base = {"indicator": {"id": "AG.YLD.CREL.KG"}, "countryiso3code": "MLI"}
@@ -167,7 +167,7 @@ class CompanionEntryPointTest(unittest.TestCase):
             headers = {"Origin": "http://testserver"}
             blocked = client.post("/api/chat", json={"prompt": "Bonjour", "signed_in": True}, headers=headers)
             self.assertEqual(blocked.status_code, 401)
-            client.cookies.set("mkh_v3_session", "test-only-session")
+            client.cookies.set("mkh_v31_session", "test-only-session")
             result = client.post("/api/chat", json={"prompt": "Note en français pour la zone historique de Mopti."},
                                  headers=headers)
             events = [json.loads(line) for line in result.text.splitlines()]
@@ -246,11 +246,11 @@ class CompanionEntryPointTest(unittest.TestCase):
                                          headers=headers).status_code, 200)
             callback = client.get("/auth/callback?code=fixture-auth-code", follow_redirects=False)
             self.assertEqual(callback.headers["location"], "/?auth=set-password")
-            self.assertNotIn("mkh_v3_session", client.cookies)
+            self.assertNotIn("mkh_v31_session", client.cookies)
             result = client.post("/api/auth/set-password", json={"password": "test-password-123"}, headers=headers)
             self.assertTrue(result.json()["authenticated"])
-            self.assertIn("mkh_v3_session", client.cookies)
-            self.assertNotIn("mkh_v3_password_setup", client.cookies)
+            self.assertIn("mkh_v31_session", client.cookies)
+            self.assertNotIn("mkh_v31_password_setup", client.cookies)
             self.assertEqual(calls, ["/auth/v1/recover", "/auth/v1/token", "/auth/v1/user"])
 
 

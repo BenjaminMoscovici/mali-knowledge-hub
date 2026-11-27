@@ -132,3 +132,5 @@ a.nav-action{text-decoration:none}
 .live-steps li.incomplete::before { content:"·"; }
 @keyframes research-pulse { from { opacity:.4; } to { opacity:1; } }
 @media (prefers-reduced-motion:reduce) { .live-label::before { animation:none; } }
+
+.version-label { font-size: .8rem; font-weight: 650; white-space: nowrap; }

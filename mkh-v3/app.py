@@ -121,7 +121,7 @@ async def home(request):
 async def health(request):
     state = settings(request)
     return data_response({
-        "status": "ok", "environment": "v3-preview", "commit": os.getenv("RENDER_GIT_COMMIT", "local"),
+        "status": "ok", "environment": "v3.1-preview", "commit": os.getenv("RENDER_GIT_COMMIT", "local"),
         "chat_configured": bool(state.companion), "public_web_research": state.web_enabled,
         "sources": len(state.knowledge.sources), "managed_sources": state.registry is not None,
     })

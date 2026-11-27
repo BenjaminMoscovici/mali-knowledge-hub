@@ -163,11 +163,11 @@ class ResearchDeliveryTest(unittest.TestCase):
             res = client.post("/api/chat", json={"prompt": "Write a decision note.", "delivery": "job"}, headers=hdr)
             self.assertEqual(res.status_code, 202)
             job = "/api/jobs/" + res.json()["job_id"]
-            owner = client.cookies["mkh_v3_guest"]
+            owner = client.cookies["mkh_v31_guest"]
             self.assertEqual(client.get(job).json()["event"]["type"], "activity")
             client.cookies.clear()
             self.assertEqual(client.get(job).status_code, 410)
-            client.cookies.set("mkh_v3_guest", owner)
+            client.cookies.set("mkh_v31_guest", owner)
             self.assertEqual(client.delete(job).status_code, 403)
             self.assertEqual(client.delete(job, headers=hdr).json()["event"]["text"], "Assignment stopped.")
             self.assertEqual(client.get(job).json()["event"]["type"], "error")

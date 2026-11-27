@@ -14,9 +14,9 @@ let currentRequirements = {};
 let earlierBefore = null;
 let active = null;
 let stopping = Promise.resolve();
-const conversationKey = "mkh-v3-current-chat";
+const conversationKey = "mkh-v31-current-chat";
 let viewRevision = 0;
-const pendingJobKey = "mkh-v3-pending-research";
+const pendingJobKey = "mkh-v31-pending-research";
 let authMode = "sign-in";
 let opener = null;
 
@@ -31,7 +31,7 @@ async function request(path, options = {}) {
   const response = await fetch(path, {signal: AbortSignal.timeout(path === "/api/session" ? 65000 : 22000), ...options});
   if (!response.ok) {
     const failure = await response.json().catch(() => ({}));
-    const error = new Error(failure.error || "The V3 preview could not complete this request.");
+    const error = new Error(failure.error || "The V3.1 preview could not complete this request.");
     error.status = response.status;
     throw error;
   }
@@ -57,10 +57,10 @@ function updateComposer(status = "") {
   byId("personal-memory").disabled = Boolean(active);
 
   statusLine.textContent = status || (
-    !session ? "Checking the V3 preview session…" :
-      !session.model_configured ? "V3 preview · Source browsing is available. Model access is being configured." :
+    !session ? "Checking the V3.1 preview session…" :
+      !session.model_configured ? "V3.1 preview · Source browsing is available. Model access is being configured." :
         !session.authenticated ? "Guest chat · Temporary conversation" :
-        "V3 preview · Saved to your V3 account."
+        "V3.1 preview · Saved to your MKH account."
   );
 }
 
@@ -566,7 +566,7 @@ function authStatus(text) {
 
 function openSignIn(mode = "sign-in", message = "") {
   if (!session?.auth_enabled) {
-    updateComposer("V3 sign-in is temporarily unavailable.");
+    updateComposer("V3.1 sign-in is temporarily unavailable.");
     return;
   }
   authMode = mode;
@@ -575,10 +575,10 @@ function openSignIn(mode = "sign-in", message = "") {
   const password = byId("auth-password");
   const confirm = byId("auth-confirm");
   const labels = {
-    "sign-in": ["Sign in to V3", "Sign in to save and reopen your conversations.", "Sign in"],
-    signup: ["Create a V3 account", "Use your preview team email. Choose a password with at least 12 characters.", "Create account"],
-    recover: ["Set or reset your V3 password", "Open the link from your email in the browser where you request it.", "Email password link"],
-    "set-password": ["Choose your V3 password", "Use at least 12 characters for your V3 password.", "Save password"],
+    "sign-in": ["Sign in to V3.1", "Sign in to save and reopen your conversations.", "Sign in"],
+    signup: ["Create an MKH account", "Use your preview team email. Choose a password with at least 12 characters.", "Create account"],
+    recover: ["Set or reset your MKH password", "Open the link from your email in the browser where you request it.", "Email password link"],
+    "set-password": ["Choose your MKH password", "Use at least 12 characters for your MKH password.", "Save password"],
   };
   const [title, description, submit] = labels[mode];
   byId("auth-title").textContent = title;
@@ -623,7 +623,7 @@ async function submitAuth(event) {
     if (result.authenticated) {
       const draft = promptBox.value;
       await refreshSession();
-      if (!session.authenticated) throw new Error("V3 could not open your session. Please sign in again.");
+      if (!session.authenticated) throw new Error("V3.1 could not open your session. Please sign in again.");
       reset();
       promptBox.value = draft;
       dialog.close();
@@ -651,7 +651,7 @@ function handleEmailLink() {
   if (session.password_setup_pending) {
     openSignIn("set-password");
   } else if (stage === "ready" && session.authenticated) {
-    updateComposer("Account verified. Your V3 chats will be saved.");
+    updateComposer("Account verified. Your V3.1 chats will be saved.");
   } else if (stage === "expired") {
     openSignIn("recover", "Request a fresh email link and open it in this browser.");
   }

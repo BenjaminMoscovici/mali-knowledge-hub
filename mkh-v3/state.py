@@ -14,13 +14,13 @@ import httpx
 from knowledge import Evidence, json_text
 from retrieval import tokens
 
-CONVERSATIONS = "/rest/v1/mkh_v3_conversations"
-ATTEMPTS = "/rest/v1/mkh_v3_attempts"
-MEMORY = "/rest/v1/mkh_v3_memory"
-COOKIE = "mkh_v3_session"
-GUEST_COOKIE = "mkh_v3_guest"
-EMAIL_FLOW_COOKIE = "mkh_v3_email_flow"
-PASSWORD_COOKIE = "mkh_v3_password_setup"
+CONVERSATIONS = "/rest/v1/mkh_v31_conversations"
+ATTEMPTS = "/rest/v1/mkh_v31_attempts"
+MEMORY = "/rest/v1/mkh_v31_memory"
+COOKIE = "mkh_v31_session"
+GUEST_COOKIE = "mkh_v31_guest"
+EMAIL_FLOW_COOKIE = "mkh_v31_email_flow"
+PASSWORD_COOKIE = "mkh_v31_password_setup"
 TOP_TURNS = 12
 BURST_ATTEMPTS = 12
 BURST_MINUTES = 5
@@ -161,14 +161,14 @@ class SupabaseState:
         self.require(response)
 
     async def earlier_page(self, token, chat, before):
-        response = await self.request("GET", "/rest/v1/mkh_v3_archived_turns", token=token, params={
+        response = await self.request("GET", "/rest/v1/mkh_v31_archived_turns", token=token, params={
             "select": "ordinal,turn", "conversation_id": "eq." + chat, "ordinal": f"lt.{before}",
             "order": "ordinal.desc", "limit": TOP_TURNS})
         self.require(response)
         return list(reversed(response.json()))
 
     async def find_work(self, token, chat, query):
-        response = await self.request("POST", "/rest/v1/rpc/mkh_v3_find_archived_work", token=token,
+        response = await self.request("POST", "/rest/v1/rpc/mkh_v31_find_archived_work", token=token,
                                       json={"chat": chat, "terms": query[:250]})
         self.require(response)
         return [r["turn"] for r in response.json()]

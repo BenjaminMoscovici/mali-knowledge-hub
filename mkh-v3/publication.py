@@ -9,9 +9,9 @@ from uuid import uuid4
 from knowledge import Knowledge, KnowledgeError
 from state import StateError
 
-PUBLICATIONS = "/rest/v1/mkh_v3_publications"
-VERSIONS = "/rest/v1/mkh_v3_source_versions"
-EDITORS = "/rest/v1/mkh_v3_editors"
+PUBLICATIONS = "/rest/v1/mkh_v31_publications"
+VERSIONS = "/rest/v1/mkh_v31_source_versions"
+EDITORS = "/rest/v1/mkh_v31_editors"
 
 
 class Publications:

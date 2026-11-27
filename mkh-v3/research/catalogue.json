@@ -6,5 +6,7 @@
   "scope": "private research catalogue; excluded from runtime source discovery",
   "logical_sources": 702,
   "releases": 1695,
-  "requirements_including_inapplicable": 1714
+  "requirements_including_inapplicable": 1714,
+  "storage_bucket": "mkh-v31-research",
+  "storage_object": "round-3/MKH_Master.sqlite.gz"
 }

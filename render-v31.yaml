@@ -20,3 +20,13 @@ services:
         generateValue: true
       - key: MKH_WEB_RESEARCH
         value: "off"
+      - key: SUPABASE_URL
+        fromService:
+          type: web
+          name: mali-knowledge-hub-v3-dev
+          envVarKey: SUPABASE_URL
+      - key: SUPABASE_PUBLISHABLE_KEY
+        fromService:
+          type: web
+          name: mali-knowledge-hub-v3-dev
+          envVarKey: SUPABASE_PUBLISHABLE_KEY
