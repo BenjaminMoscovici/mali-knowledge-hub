@@ -43,7 +43,7 @@ def ocr(page, language):
     pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), colorspace=fitz.csGRAY, alpha=False)
     if (np.frombuffer(pix.samples, dtype="uint8") < 190).mean() < .00015:
         return []
-    run = subprocess.run(["tesseract", "stdin", "stdout", "-l", language, "tsv"],
+    run = subprocess.run(["tesseract", "stdin", "stdout", "-l", language, "-c", "tessedit_create_tsv=1"],
                          input=pix.tobytes("png"), capture_output=True, timeout=90, check=True)
     lines = {}
     scores = []
@@ -199,7 +199,14 @@ def publishable(source, package, rights, canon):
     preview={k:package[k] for k in ("format","pages","ocr_pages","blank_pages","keywords","model","upstream_sha256","metadata")}
     result=dict(source)
     result["document_snapshot"]=dict(**preview,sha256=digest,sections=len(package["passages"]),rights=rights)
-    result["release"]=source["release"][:110]+" · full text "+digest[:12]
+    old = source.get("document_snapshot", {})
+    if old.get("sha256") == digest and old.get("rights") == rights:
+        result["release"] = source["release"]
+    else:
+        # A terms-only change also needs a distinct immutable release.
+        revision = sha(json.dumps([digest,rights],sort_keys=True,ensure_ascii=False).encode()) if old else digest
+        base_release = source["release"].split(" · full text ")[0]
+        result["release"] = base_release[:110]+" · full text "+revision[:12]
     result["license"]=rights["basis"]
     return result
 
