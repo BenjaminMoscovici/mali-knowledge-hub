@@ -18,6 +18,9 @@ class ScopeReviewTest(unittest.TestCase):
         first = {**published, "comparison_scope": profile}
         other = {**published, "id": "survey-b", "comparison_scope": {
             "windows": [["2023-01-01", "2023-12-31"]], "measure": "Planned target"}}
+        passage = {"kind": "factual_extract", "locator": "Survey, section 2",
+                   "text": "The survey recorded rainfall in May."}
+        first["passages"] = [passage]
         k = Knowledge(releases=[first, other])
         async def run():
             async with httpx.AsyncClient() as client:
@@ -25,6 +28,15 @@ class ScopeReviewTest(unittest.TestCase):
                 ledger = Evidence(k, False)
                 result = await c.run_tool("compare_sources", {"source_ids":["survey-a", "survey-b"]}, ledger)
                 self.assertEqual(set(ledger.consulted), {"survey-a", "survey-b"})
+                self.assertFalse(ledger.new_evidence)
+                queried = await c.run_tool("compare_sources", {
+                    "source_ids": ["survey-a", "survey-b"], "query": "rainfall"
+                }, ledger)
+                hit, = queried["sources"][0]["ranked_evidence"]
+                self.assertEqual(hit["locator"], passage["locator"])
+                self.assertEqual(ledger.items[hit["id"]]["data"]["text"], passage["text"])
+                self.assertEqual(queried["sources"][1]["ranked_evidence"], [])
+                self.assertEqual(ledger.new_evidence, {hit["id"]})
                 with self.assertRaises(KnowledgeError):
                     await c.run_tool("compare_sources", {"source_ids":["survey-a", "unpublished"]}, ledger)
                 return result["pairs"][0]

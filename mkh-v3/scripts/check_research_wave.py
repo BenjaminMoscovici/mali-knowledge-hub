@@ -55,7 +55,8 @@ def check(wave, catalogue, packet, assets):
                     raise ValueError(f"Invalid asset digest: {native_id}")
                 if file_sha256(assets / digest) != digest:
                     raise ValueError(f"Changed original or reuse evidence: {native_id}")
-            if not knowledge.discover(source["title"]):
+            matches = knowledge.discover(source["title"], limit=len(knowledge.sources))
+            if native_id not in {match["id"] for match in matches}:
                 raise ValueError(f"Source cannot be discovered: {native_id}")
             operations = knowledge.operations(source)
             if "query_data" in operations:

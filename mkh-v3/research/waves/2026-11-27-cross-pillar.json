@@ -1,0 +1,363 @@
+{
+  "qualified_on": "2026-11-27",
+  "target": "MKH V3.1",
+  "scope": "Round 3, second publication wave",
+  "catalogue_sha256": "d60cc8f82bfe512a19fb28df33e15ada7c144bce44104fa5a5b248d86c1adbe4",
+  "held": [
+    {
+      "candidate_id": "R2-e6aba535853a1158",
+      "reason": "WFP general terms limit copying to personal non-commercial use and exclude redistribution and derivative works. A broader licence for the evaluation was not verified.",
+      "terms": "https://cdn.wfp.org/legal/terms"
+    }
+  ],
+  "components": [
+    {
+      "native_id": "mli-ch-late2025",
+      "round": 3,
+      "candidate_id": "CH",
+      "logical_source_id": "CH",
+      "anchor_release_id": "V3VER-4075c2410289da9c",
+      "relationship_to_anchor": "Verified all 112 original worksheet locators and restored granular analysis area labels",
+      "component": "Analysis-area phase estimates by assessment and projection period",
+      "title": "Mali Cadre Harmonise — late-2025 analysis / June-August 2026 projection",
+      "publisher": "Food Security and Nutrition Working Group, West and Central Africa",
+      "release": "2025 Sep-Dec exercise",
+      "manifest_sha256": "ecc84c6f96b0ebf769efa30d9dcd093cad971df5208c412aaf983680a3df5483",
+      "upstream_sha256": "358f5c1c6f65598a146524148e7bf89cc965e4f9e02381727a66d3d9d6e66524",
+      "url": "https://data.humdata.org/dataset/5123033a-2db1-496c-b381-df804ac30595/resource/c689cb9f-2475-4b7e-8beb-178ed9f6253d/download/cadre_harmonise_caf_ipc_mars26.xlsx",
+      "reuse_basis": "Creative Commons Attribution International (CC BY)",
+      "reuse_url": "https://data.humdata.org/dataset/cadre-harmonise",
+      "rows": 112,
+      "passages": 0,
+      "limitations": [
+        "112 records: 56 current and 56 projected analysis areas; latest Mali exercise in this workbook is late 2025, despite March 2026 filename.",
+        "Old P-codes and parent labels may conflict with COD v03; unresolved matches retained; no commune-level estimates.",
+        "Population phase estimates have decimal precision; raw publisher numbers retained; population phase is distinct from area phase.",
+        "Treat June–August 2026 as a projection from the late-2025 exercise.",
+        "For percentages use people_phase_3_plus and analysed_population from the same row or compatible, non-overlapping rows. Retain the historical source-area labels.",
+        "The workbook assigns ML0605 to both Taoudenit and Tombouctou. Use the original label and row locator; this code alone cannot identify an area."
+      ],
+      "version_id": "753e3169-7d74-4483-a6e9-d79a003454cb"
+    },
+    {
+      "native_id": "mli-dtm-round83-regional-idps",
+      "round": 3,
+      "candidate_id": "DTM",
+      "logical_source_id": "DTM",
+      "anchor_release_id": "V3VER-2a9ae5b274c8a795",
+      "relationship_to_anchor": "Regional aggregation of the checked original",
+      "component": "Regional IDP stocks from the PDIs worksheet",
+      "title": "IOM DTM Mali · Round 83 · regional IDP stocks",
+      "publisher": "International Organization for Migration (IOM)",
+      "release": "Round 83 September 2025",
+      "manifest_sha256": "0dec3049487168b7e7d34e8962fe81b0c82e6ffbce105cab563d7c369812b7f1",
+      "upstream_sha256": "6bb7abca9f28331dfad4efc99294774b857c64a95184231e5dbb9b9e19eae68d",
+      "url": "https://data.humdata.org/dataset/ea41f7c7-2ebe-456b-b5eb-e3e0ac8d708b/resource/8f39ee3e-2fe2-49c6-9727-a589112b646c/download/dtm_mali_baseline_assessment_09_2025_round_83_vf.xlsx",
+      "reuse_basis": "Creative Commons Attribution International (CC BY)",
+      "reuse_url": "https://data.humdata.org/dataset/mali-baseline-assessment-data-iom-dtm",
+      "rows": 17,
+      "passages": 0,
+      "limitations": [
+        "September 2025 stock in assessed areas. A missing region has unknown coverage.",
+        "Excludes returnees and repatriated people. This edition supplies no movement flows or current needs estimate."
+      ],
+      "version_id": "9b202641-be95-42de-9566-35f67ff43267"
+    },
+    {
+      "native_id": "mli-eu-joint-programming-addendum",
+      "round": 3,
+      "candidate_id": "R2-fd5d95ff24289882",
+      "logical_source_id": "R2-fd5d95ff24289882",
+      "anchor_release_id": "R3V-8d3dd9cd8ed97a",
+      "relationship_to_anchor": "Separately registered amendment to the historical programme",
+      "component": "Operative Mali amendment, p. 39",
+      "title": "EU · Addendum No. 1 · Mali joint programming applicability",
+      "publisher": "European Commission",
+      "release": "C(2024)7502, Addendum No. 1",
+      "manifest_sha256": "7ab800616c01ffea2c1a132bdf720f3f8f382b6eab83005a5eaca3358ee2fe22",
+      "upstream_sha256": "dfa675abf041078c03cc0904124ffa63752bd4553eb6a2f15a921abc0cfa4d30",
+      "url": "https://international-partnerships.ec.europa.eu/document/download/10d4ba3f-ee66-426e-8c60-bcd89b09fd11_en?filename=ad-mip-2024-c2024-7502-sub-saharan-africa-annex_en.pdf&prefLang=hr",
+      "reuse_basis": "CC BY 4.0 for European Union-owned material. Original passage attributed to the Commission.",
+      "reuse_url": "https://commission.europa.eu/legal-notice_en",
+      "rows": 0,
+      "passages": 1,
+      "limitations": [
+        "The provision applies to the Union component. It does not establish the status of every other partner or subsequent EU financing."
+      ],
+      "version_id": "f21092bc-f52d-4f8e-9c84-6823c6906b0d"
+    },
+    {
+      "native_id": "mli-eu-original-programming",
+      "round": 3,
+      "candidate_id": "R2-fd5d95ff24289882",
+      "logical_source_id": "R2-fd5d95ff24289882",
+      "anchor_release_id": "R2V-f72f580be78d9f97",
+      "relationship_to_anchor": "Checked registered original; historical provisions",
+      "component": "Original joint programming annex, selected facts",
+      "title": "Mali joint programming and NDICI 2021–2027 annex",
+      "publisher": "European Commission DG INTPA",
+      "release": "C(2021)9376 annex; original programming",
+      "manifest_sha256": "be755c7fc0ef5ab4be8c0df3b9651924473ba40486e68c953e5fb7ef1d4b26fa",
+      "upstream_sha256": "971c69e5080c53df93ed5348dbd3630dd07a14c2f1fdff24b428989fda6efbd4",
+      "url": "https://international-partnerships.ec.europa.eu/document/download/b79ab8be-c041-4d28-bd0e-74d80e8217b1_en?filename=mip-2021-c2021-9376-mali-annex_fr.pdf&prefLang=de",
+      "reuse_basis": "CC BY 4.0 for EU-owned content; factual extraction and changes indicated",
+      "reuse_url": "https://commission.europa.eu/legal-notice_en",
+      "rows": 0,
+      "passages": 3,
+      "limitations": [
+        "Historical priorities and indicative amounts only. For applicable dates consult Addendum No. 1, PDF p. 39."
+      ],
+      "version_id": "d730860c-31f0-4c04-b477-23eebd1f406f"
+    },
+    {
+      "native_id": "mli-fao-country-programme-evaluation",
+      "round": 3,
+      "candidate_id": "MASTER-6a982487f901ed26",
+      "logical_source_id": "MASTER-6a982487f901ed26",
+      "anchor_release_id": "REL-e0940e10ec4b98d1",
+      "relationship_to_anchor": "Original non-commercial FAO web text only, with section locators",
+      "component": "Publisher summary, evaluation scope and reported findings",
+      "title": "FAO · Country Programme Evaluation of FAO in Mali · scope and findings",
+      "publisher": "Food and Agriculture Organization of the United Nations (FAO)",
+      "release": "Evaluation of the 2018–2022 country programme, publisher summary checked 2026-11-27",
+      "manifest_sha256": "5390261993f2ba71645045a37aa0b79c646ed3c41e26587aaf026108cb124fd4",
+      "upstream_sha256": "613189ef71cce98d6143059c9127138ab47cc51cdedb0cba664f7eb1d585e432",
+      "url": "https://www.fao.org/evaluation/list/country-programme-evaluation-of-fao-in-mali/en",
+      "reuse_basis": "© FAO. Attributed FAO web content for non-commercial products and services under FAO website terms. Original English extracts. No endorsement.",
+      "reuse_url": "https://www.fao.org/contact-us/terms/en/",
+      "rows": 0,
+      "passages": 2,
+      "limitations": [
+        "Country programme findings cover the 2018–2022 evaluation frame. No beneficiary-level causal estimates or later outcomes are established by this summary."
+      ],
+      "version_id": "2cdfca9d-6fd9-461e-860e-8e538a287722"
+    },
+    {
+      "native_id": "mli-fts-requirements-funding",
+      "round": 3,
+      "candidate_id": "FTS",
+      "logical_source_id": "FTS",
+      "anchor_release_id": "V3VER-bfcf1873a427b910",
+      "relationship_to_anchor": "New dated export at the registered URL; earlier snapshot retained in research history",
+      "component": "Plan/year funding and requirements in USD",
+      "title": "Mali FTS plan requirements and reported funding",
+      "publisher": "OCHA Financial Tracking System (FTS)",
+      "release": "FTS export updated 2026-11-27T05:08:03.069330",
+      "manifest_sha256": "7020d21f7989501fe225be1720797d301892d6ff571e551beebc19a0d0a32cf3",
+      "upstream_sha256": "2625c69718227baeb710fd50444dfeac033c5a9d3bfec15d0f71f3b090fb522e",
+      "url": "https://data.humdata.org/dataset/1a1e4b16-727c-410c-9814-af63728505e6/resource/4010184f-a633-47bb-98bb-00d5497a00db/download/fts_requirements_funding_mli.csv",
+      "reuse_basis": "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)",
+      "reuse_url": "https://data.humdata.org/dataset/mli-requirements-and-funding-data",
+      "rows": 49,
+      "passages": 0,
+      "limitations": [
+        "National plan/year aggregates only; no actor, project or sector attribution.",
+        "Plan and non-plan funding remain separate; future usage years are not current funding.",
+        "Percent funded is publisher-rounded; requirements are not funding. Reported funding is not proof of disbursement or service delivery."
+      ],
+      "version_id": "9762e73b-8fa1-43eb-93b9-524440da5e25"
+    },
+    {
+      "native_id": "mli-inv-000334",
+      "round": 3,
+      "candidate_id": "WDI",
+      "logical_source_id": "WDI",
+      "anchor_release_id": "VER-41823308e875708e",
+      "relationship_to_anchor": "Rechecked provider series and observation values",
+      "component": "AG.LND.ARBL.ZS annual Mali observations incl. explicitly missing years",
+      "title": "WDI Mali — Arable land (% of land area)",
+      "publisher": "World Bank",
+      "release": "WDI API snapshot 2026-11-26 / provider 2026-11-11",
+      "manifest_sha256": "5a19b7cbe83a3d1ec7393156c1eda8fa22a0ac2c8aea62c60a1e2fbeb07bda3d",
+      "upstream_sha256": "00afb280d013596527212d9f54bdb90c136211c9f7fbe32d9f38583af84b4a95",
+      "url": "https://api.worldbank.org/v2/country/MLI/indicator/AG.LND.ARBL.ZS?format=json&per_page=100",
+      "reuse_basis": "World Bank WDI, FAO electronic files and website, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO). Indicator licence CC BY 4.0. MKH tabulated the dated Mali response.",
+      "reuse_url": "https://data.worldbank.org/indicator/AG.LND.ARBL.ZS?locations=ML",
+      "rows": 66,
+      "passages": 0,
+      "limitations": [
+        "Valeurs manquantes conservées. Respecter la définition, l’unité et le dénominateur de cet indicateur. Capture datée susceptible de révision."
+      ],
+      "version_id": "8ae9e037-ea96-4ded-9ea8-329e2d369039"
+    },
+    {
+      "native_id": "mli-inv-000335",
+      "round": 3,
+      "candidate_id": "WDI",
+      "logical_source_id": "WDI",
+      "anchor_release_id": "VER-5f9796de3e7c4504",
+      "relationship_to_anchor": "Rechecked provider series and observation values",
+      "component": "EG.FEC.RNEW.ZS annual Mali observations incl. explicitly missing years",
+      "title": "WDI Mali — Renewable energy consumption (% of total final energy consumption)",
+      "publisher": "World Bank",
+      "release": "WDI API snapshot 2026-11-26 / provider 2026-11-11",
+      "manifest_sha256": "5a5f429241eae6ea9a46162107846bbd2fd7acaa63b8530126f79b0a7ca067d4",
+      "upstream_sha256": "7ed0c1f4954acb630bcc7390a9b6f1332a1964abe82ab01b8eddfb53bd66c16b",
+      "url": "https://api.worldbank.org/v2/country/MLI/indicator/EG.FEC.RNEW.ZS?format=json&per_page=100",
+      "reuse_basis": "World Bank WDI, IEA Energy Statistics Data Browser, International Energy Agency (IEA), uri: https://www.iea.org/data-and-statistics/data-tools/energy-statistics-data-browser, publisher: International Energy Agency (IEA), date accessed: 2025-03-25. Indicator licence CC BY 4.0. MKH tabulated the dated Mali response.",
+      "reuse_url": "https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS",
+      "rows": 66,
+      "passages": 0,
+      "limitations": [
+        "Valeurs manquantes conservées. Respecter la définition, l’unité et le dénominateur de cet indicateur. Capture datée susceptible de révision."
+      ],
+      "version_id": "5c10b92a-535a-4d01-b0e5-a8834749adf4"
+    },
+    {
+      "native_id": "mli-ocha-3w-2026-q1-regional",
+      "round": 3,
+      "candidate_id": "OCHA3W",
+      "logical_source_id": "OCHA3W",
+      "anchor_release_id": "V3VER-e564b0950b374a69",
+      "relationship_to_anchor": "Distinct regional projection of the checked Q1 workbook",
+      "component": "Regional actor/sector presence, deduplicated with contributing row locators",
+      "title": "OCHA Mali 3W · Q1 2026 · reported organizations, sectors and regions",
+      "publisher": "OCHA Mali",
+      "release": "Q1 2026",
+      "manifest_sha256": "39396fcfa927e0c712e3d9bc2cba1ab3bb3550f6896727269228ff5e9cae3d06",
+      "upstream_sha256": "0d3f99b1cbcf8f0dbabeac3719e0697e09a6b5e3ccbb388954f0c325709ea238",
+      "url": "https://data.humdata.org/dataset/d7ab89e4-bcb2-4127-be3c-5e8cf804ffd3/resource/296ddf39-9b19-4cff-85b4-5c16eaf95281/download/mali-3w_all-3.xlsx",
+      "reuse_basis": "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)",
+      "reuse_url": "https://data.humdata.org/dataset/mali-operational-presence",
+      "rows": 875,
+      "passages": 0,
+      "limitations": [
+        "Presence records only: activity, project title, start/end dates, targets and reached fields are empty in this release.",
+        "Rows may repeat an actor/sector/location; row counts are not unique projects or beneficiaries.",
+        "Commune labels/P-codes remain unverified; village fields are excluded."
+      ],
+      "version_id": "5485d6cf-ec5e-468f-a191-51823df3c4c0"
+    }
+  ],
+  "browser_verification": {
+    "method": "Separate guest conversations on live V3.1, Deep, same 12-call maximum. All new source drawers opened and the first cited source was opened in every answer. Estimated model costs include embeddings and are not provider invoices.",
+    "unchanged_11_release_catalogue": {
+      "projects": {
+        "before": {
+          "runtime_commit": "6440a877d44c7184feb646aa338328fbe6e1dc79",
+          "prompt": "For a portfolio review, how many Mali World Bank project records can be matched to Bank-reported IATI activities by project ID? Of the matched projects, what does the independent review conclude about the outcome of P144442? Explain the denominator and cite the original evidence.",
+          "tool_calls": 12,
+          "partial": true,
+          "estimated_model_usd": 0.283345,
+          "evidence_sources": [
+            "mli-world-bank-v3",
+            "mli-iati-worldbank",
+            "mli-ieg-p144442"
+          ]
+        },
+        "after": {
+          "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+          "prompt": "For a portfolio review, how many Mali World Bank project records can be matched to Bank-reported IATI activities by project ID? Of the matched projects, what does the independent review conclude about the outcome of P144442? Explain the denominator and cite the original evidence.",
+          "tool_calls": 6,
+          "partial": false,
+          "estimated_model_usd": 0.142814,
+          "evidence_sources": [
+            "mli-world-bank-v3",
+            "mli-iati-worldbank",
+            "mli-ieg-p144442"
+          ]
+        }
+      },
+      "population": {
+        "before": {
+          "runtime_commit": "6440a877d44c7184feb646aa338328fbe6e1dc79",
+          "prompt": "For a service planning memo, compare Mali’s national population in the 2022 census with the figure for 2023 in the locality directory. State the figures and methods, and whether the approved administrative boundaries establish a current commune-level service coverage rate.",
+          "tool_calls": 12,
+          "partial": true,
+          "estimated_model_usd": 0.243726,
+          "evidence_sources": [
+            "mli-instat-rgph5-global-2022",
+            "mli-instat-localities-2023-nov2026"
+          ]
+        },
+        "after": {
+          "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+          "prompt": "For a service planning memo, compare Mali’s national population in the 2022 census with the figure for 2023 in the locality directory. State the figures and methods, and whether the approved administrative boundaries establish a current commune-level service coverage rate.",
+          "tool_calls": 10,
+          "partial": false,
+          "estimated_model_usd": 0.20911,
+          "evidence_sources": [
+            "mli-instat-rgph5-global-2022",
+            "mli-instat-localities-2023-nov2026",
+            "mli-inv-000124"
+          ]
+        }
+      }
+    },
+    "expanded_20_release_catalogue": [
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "For a portfolio review, how many Mali World Bank project records can be matched to Bank-reported IATI activities by project ID? Of the matched projects, what does the independent review conclude about the outcome of P144442? Explain the denominator and cite the original evidence.",
+        "tool_calls": 7,
+        "partial": false,
+        "estimated_model_usd": 0.16407,
+        "evidence_sources": [
+          "mli-world-bank-v3",
+          "mli-iati-worldbank",
+          "mli-ieg-p144442"
+        ],
+        "checked_result": "36 of 215 exact Mali projects, 179 unmatched, P144442 IEG Outcome Moderately Satisfactory."
+      },
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "For a service planning memo, compare Mali’s national population in the 2022 census with the figure for 2023 in the locality directory. State the figures and methods, and whether the approved administrative boundaries establish a current commune-level service coverage rate.",
+        "tool_calls": 8,
+        "partial": false,
+        "estimated_model_usd": 0.195642,
+        "evidence_sources": [
+          "mli-instat-rgph5-global-2022",
+          "mli-instat-localities-2023-nov2026",
+          "mli-inv-000124"
+        ],
+        "checked_result": "Adjusted 2022 census 22,395,489, projected 2023 directory 23,143,456. Current commune coverage unavailable."
+      },
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "Pour le briefing national, quel financement a été déclaré pour le plan humanitaire Mali 2026 par rapport aux besoins financiers ? Combien d’organisations distinctes figurent dans la 3W du premier trimestre et ces chiffres prouvent-ils combien de personnes ont reçu une aide ? Cite les sources.",
+        "tool_calls": 5,
+        "partial": false,
+        "estimated_model_usd": 0.10435,
+        "evidence_sources": [
+          "mli-fts-requirements-funding",
+          "mli-ocha-3w-2026-q1-regional"
+        ],
+        "checked_result": "HMLI26 reported funding USD 173,011,344 and requirements USD 577,866,412; 166 distinct Q1 3W organization labels. No supported beneficiary total."
+      },
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "A delegation is preparing a joint agricultural programme. What did FAO’s evaluation in Mali find about programme alignment and the constraints on results? Can the delegation assume the EU component of the original joint programme is still in force in 2026? Cite the operative amendment and distinguish the two periods.",
+        "tool_calls": 4,
+        "partial": false,
+        "estimated_model_usd": 0.09186,
+        "evidence_sources": [
+          "mli-fao-country-programme-evaluation",
+          "mli-eu-joint-programming-addendum"
+        ],
+        "checked_result": "FAO country programme covers 2018–2022. Programme alignment and short-term resource constraints supported by the evaluation. End of EU component on 31 December 2024 confirmed on PDF p. 39."
+      },
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "How did the share of Mali’s land area that was arable change between 2010 and 2020? Quote both observed percentages and the percentage-point change. Could this national series establish how many displaced people received land?",
+        "tool_calls": 3,
+        "partial": false,
+        "estimated_model_usd": 0.063933,
+        "evidence_sources": [
+          "mli-inv-000334"
+        ],
+        "checked_result": "WDI 2010 and 2020 observations 4.79985084290151 and 5.61104049369361. Increase 0.81119 percentage points rounded. No beneficiary evidence."
+      },
+      {
+        "runtime_commit": "6c5c5db4beb0347aacfe75e8016758ec642ddf36",
+        "prompt": "For a Mali needs assessment, how many internally displaced people did DTM record across its assessed areas in September 2025? In the Cadre Harmonisé workbook, was June–August 2026 observed or projected, and can its estimates be added to that DTM count to get a unique total in need? Cite both sources.",
+        "tool_calls": 5,
+        "partial": false,
+        "estimated_model_usd": 0.090034,
+        "evidence_sources": [
+          "mli-dtm-round83-regional-idps",
+          "mli-ch-late2025"
+        ],
+        "checked_result": "DTM Round 83 IDP stock 414,524 in assessed areas. June–August 2026 CH projection. Distinct concepts, periods and unknown overlap prevent a unique combined count."
+      }
+    ]
+  }
+}
