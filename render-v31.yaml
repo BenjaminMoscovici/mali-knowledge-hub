@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: mali-knowledge-hub-v31-dev
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: v3.1-development
+    rootDir: mkh-v3
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeployTrigger: off
+    envVars:
+      - key: OPENAI_API_KEY
+        fromService:
+          type: web
+          name: mali-knowledge-hub-v3-dev
+          envVarKey: OPENAI_API_KEY
+      - key: MKH_HISTORY_SIGNING_KEY
+        generateValue: true
+      - key: MKH_WEB_RESEARCH
+        value: "off"
