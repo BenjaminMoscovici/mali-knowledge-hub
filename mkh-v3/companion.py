@@ -138,7 +138,7 @@ TOOL_SPECS = {
         {"source_id": TEXT},
     ),
     "search_documents": (
-        "Find citable original passages and verified factual extracts. Use null source_id to search all approved documents.",
+        "Search full document sections with multilingual embeddings and keywords, alongside verified extracts. Use distinctive concepts in the publication language when known, including article numbers or headings. Use null source_id to search all approved documents.",
         {"query": TEXT, "source_id": OPTIONAL_TEXT},
     ),
     "resolve_geography": (
@@ -164,7 +164,7 @@ TOOL_SPECS = {
         {"source_id": TEXT, "key": TEXT},
     ),
     "read_passage": (
-        "Open further original text or extracts from a published locator. Pass a character offset, usually zero.",
+        "Open original context using the issued locator, next_locator or previous_locator and character offset (usually zero).",
         {"source_id": TEXT, "locator": TEXT, "offset": INTEGER},
     ),
     "link_records": (

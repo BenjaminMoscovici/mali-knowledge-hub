@@ -147,7 +147,13 @@ async def source(request):
         source_id = request.path_params["source_id"]
         item = k.inspect(source_id)
         if item.get("pages"):
-            item["evidence"] = k.search_documents("", source_id, Evidence(k, False))
+            ledger = Evidence(k, False)
+            locator = request.query_params.get("locator")
+            if locator:
+                item["evidence"] = [k.read_passage(source_id, locator, 0, ledger)]
+            else:
+                query = request.query_params.get("q", "")[:350]
+                item["evidence"] = k.search_documents(query, source_id, ledger)
         if item["type"] == "live":
             code = request.query_params.get("series")
             if code:

@@ -129,6 +129,7 @@ function evidenceCard(item, number) {
     card.append(attribution);
   }
   const data = item.data || {};
+  if (data.path?.length) card.append(el("p", "evidence-meta", data.path.join(" › ")));
   if (data.text) card.append(el("blockquote", "", data.text));
   if (data.sql) {
     const operations = el("details");
@@ -253,7 +254,50 @@ async function showSource(id, returnToList) {
       const related = link(reference.url, reference.title);
       if (related) drawerBody.append(related, el("p", "evidence-meta", reference.scope));
     }
-    for (const item of info.evidence || []) drawerBody.append(evidenceCard(item));
+    if (info.document_snapshot) {
+      const snapshot = info.document_snapshot;
+      const units = snapshot.pages ? snapshot.pages + " PDF pages" : "HTML publication";
+      drawerBody.append(el("p", "evidence-meta", "Full text · " + units + " · " + snapshot.sections + " searchable sections"));
+      const form = el("form", "source-search");
+      const input = el("input");
+      input.type = "search";
+      input.maxLength = 350;
+      input.setAttribute("aria-label", "Search this document");
+      input.placeholder = "Search this document";
+      const submit = el("button", "sources-button", "Find sections");
+      form.append(input, submit);
+      const results = el("div");
+      drawerBody.append(form, results);
+      let searchVersion = 0;
+      async function load(params) {
+        const version = ++searchVersion;
+        results.replaceChildren(el("p", "evidence-meta", "Reading sections…"));
+        try {
+          const found = await json("/api/sources/" + encodeURIComponent(id) + "?" + new URLSearchParams(params));
+          if (version === searchVersion) display(found.evidence);
+        } catch (failure) {
+          if (version === searchVersion) results.replaceChildren(el("p", "evidence-meta", failure.message));
+        }
+      }
+      function display(entries) {
+        results.replaceChildren();
+        if (!entries.length) results.append(el("p", "evidence-meta", "No matching sections."));
+        for (const entry of entries) {
+          const card = evidenceCard(entry);
+          for (const [key, label] of [["previous_locator", "Previous section"], ["next_locator", "Next section"]]) {
+            if (!entry.data[key]) continue;
+            const button = el("button", "sources-button", label);
+            button.addEventListener("click", () => load({locator:entry.data[key]}));
+            card.append(button);
+          }
+          results.append(card);
+        }
+      }
+      form.addEventListener("submit", event => { event.preventDefault(); load({q:input.value}); });
+      display(info.evidence || []);
+    } else {
+      for (const item of info.evidence || []) drawerBody.append(evidenceCard(item));
+    }
     if (info.samples) {
       drawerBody.append(el("h3", "", `Sample records · ${info.row_count} in release`), dataTable(info.samples));
     }

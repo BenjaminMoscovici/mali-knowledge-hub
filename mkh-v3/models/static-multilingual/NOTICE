@@ -1,0 +1,6 @@
+Static Similarity MRL Multilingual v1, Sentence Transformers / Hugging Face.
+Apache License 2.0. Model and tokenizer revision b68f4122911bcffcd6e1f695f2d99cd6788972d8
+https://huggingface.co/sentence-transformers/static-similarity-mrl-multilingual-v1
+MKH truncates the published embedding weights to the first 128 Matryoshka dimensions
+and quantizes each token row to int8 with a separate floating-point scale.
+Original model.safetensors SHA-256: 8245ab78ee71dded845a82d2270fcb9e785b29dad0e1619f69d5390c47d9ba00

@@ -9,7 +9,7 @@ import sqlite3
 import time
 from datetime import date, datetime, timezone
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 import httpx
 
@@ -191,6 +191,11 @@ class Knowledge:
             validate_scope(source.get("comparison_scope", {}))
             self.sources[source["id"]] = source
         self.stamps = {key: hashlib.sha256(json_text(s).encode()).hexdigest() for key, s in self.sources.items()}
+        for key, source in list(self.sources.items()):
+            if "document_snapshot" in source:
+                from document_store import load_document
+                full = load_document(directory, source)
+                self.sources[key] = {**source, "passages": [*full, *source.get("passages", [])]}
         self.profiles = {}
         for key, source in self.sources.items():
             if key in self.table_files:
@@ -284,6 +289,10 @@ class Knowledge:
         page = p.get("page")
         url = source["url"] if not page else f"{source['url'].split('#')[0]}#page={page}"
         data = {"text": text, "page": page, "offset": start, "period": p.get("period", source["period"])}
+        if "path" in p:
+            data.update({k:p[k] for k in ("path","method","previous_locator","next_locator") if k in p})
+            if p.get("anchor"):
+                url = source["url"].split("#")[0] + "#" + quote(p["anchor"], safe="")
         return ledger.add(source, p["kind"], p["locator"], data, url=url)
 
     def search_documents(self, query, source_id, ledger, limit=4, affinities=None):
@@ -348,7 +357,7 @@ class Knowledge:
             ]
         if source.get("passages"):
             detail["pages"] = [
-                {"page": p.get("page"), "locator": p["locator"], "characters": len(p["text"])} for p in source["passages"]
+                {"page": p.get("page"), "locator": p["locator"], "characters": len(p["text"])} for p in (source["passages"][:16] if source.get("document_snapshot") else source["passages"])
             ]
         return detail
 

@@ -244,3 +244,15 @@ python scripts/publish_inventory.py batch.zip receipts.json verified-files --can
 ```
 
 Receipts pin the original URL and SHA-256, the reuse evidence file and SHA-256, and the precise components covered by the grant. Each eligible receipt carries native release metadata plus PDF page numbers or a checksum-pinned JSON extraction. An existing equivalent component can be identified with `match_id`. Unresolved records can carry a reason. Missing qualification, invalid schema, changed bytes and ambiguous editions produce per-record flags. Successful additions are immutable and use the same catalogue, search, SQL and citation interfaces as other V3 sources. The checked-in inventory reports retain Work IDs and release decisions. Checked-in queue entries refer to original research archives by name and checksum.
+
+### Full documents in the V3.1 Canon
+
+A full-document edition uses the existing publication registry. Its manifest references a compressed, content-addressed package in `canon/documents/`. The Companion loads that package only through its active manifest, checks its digest and reuses its precomputed multilingual section embeddings. A rollback to the earlier manifest restores its earlier search scope.
+
+Build a qualified PDF or HTML edition with the offline dependencies in `scripts/full_document_requirements.txt` and the runtime requirements. Install Tesseract and the edition’s language data for image pages. The rights receipt is JSON with `source_id`, `scope` (value `whole_work`), `basis`, `reuse_url`, `reuse_sha256`, and `upstream_sha256`. The two hashes bind the rights evidence and original bytes. Optional `ocr_language` uses Tesseract language codes. For HTML templates without a unique main element or article, `body_xpath` identifies one complete editorial body verified against the original.
+
+```sh
+python scripts/build_document.py manifest.json original rights.json terms canon full-manifest.json
+```
+
+Deploy the resulting package before promoting the new immutable manifest through the V3.1 publication pipeline. Keep the same source ID and Canon edition relationship. Regenerate on changes to the original, rights, or extractor. Public reachability and permission to extract individual facts do not establish permission for a complete work. When the publication is a web profile, the searchable edition is the profile itself. PDF citations refer to physical file pages. Tables and graphics should be checked against the facsimile before interpreting column alignment, maps or numerical series.
